@@ -1,0 +1,7 @@
+Add evaluation materials for DeepSeek-V4.1-Flash support
+
+Under eval/deepseek_v41_flash/: the serving recipe and the runnable checks for native
+support, the served configuration, API use, quality, numerical fidelity and efficiency,
+with the measurement client and its text sample, the fidelity examples, the list of the
+engine's existing tests that must keep passing, and offline copies of the GSM8K files.
+See eval/deepseek_v41_flash/README.md.

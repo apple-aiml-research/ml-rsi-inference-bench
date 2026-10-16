@@ -1,0 +1,1160 @@
+{
+ "set": "pool",
+ "file": "pool.jsonl.xz",
+ "sha256": "fc9428a776ecc030c4b0eeb6b5aea3c7425052913acb3d880b4b0cb4190cd472",
+ "bytes": 1706944,
+ "uncompressed_sha256": "98a31c5923ed1822eceec27a1d47c62a5b9019a3f85e195c910361f0215b64e9",
+ "documents": 360,
+ "by_family": {
+  "prose": 90,
+  "math": 90,
+  "code": 90,
+  "struct": 90
+ },
+ "min_tokens_by_tokenizer": {
+  "dsv4": 4332,
+  "glm53": 4306,
+  "qwen38": 4471,
+  "gptoss": 4305,
+  "kimi": 4307
+ },
+ "min_tokens_required": 4300,
+ "target_chars": {
+  "prose": 21000,
+  "math": 21000,
+  "code": 18500,
+  "struct": 17500
+ },
+ "answer_addresses_screened": {
+  "prs": 222,
+  "shas": 114,
+  "rule": "a document containing any is dropped",
+  "generic_pr_backstop": false
+ },
+ "factbook_commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+ "works": [
+  {
+   "key": "austen-pride",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+   "sha256": "3f6bb9d6f78e0293b56acd4714dd68cb7d6d1d293402031ce9d5a216bcaf9d75",
+   "bytes": 772386,
+   "title": "Pride and Prejudice",
+   "author": "Jane Austen",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 4,
+   "offsets_chars": [
+    36541,
+    254271,
+    469147,
+    685503
+   ]
+  },
+  {
+   "key": "dickens-twocities",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/98/pg98.txt",
+   "sha256": "d54c2b80d40a40b982cd88852c6180bb944d95acdb028af3d0e01a1750681784",
+   "bytes": 807197,
+   "title": "A Tale of Two Cities",
+   "author": "Charles Dickens",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 4,
+   "offsets_chars": [
+    37906,
+    263184,
+    488618,
+    713810
+   ]
+  },
+  {
+   "key": "melville-mobydick",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/2701/pg2701.txt",
+   "sha256": "907420db6c4b68c70e2988cd2ad9c8cf79138667a01b63376d18dd17fef1a18b",
+   "bytes": 1276267,
+   "title": "Moby Dick; Or, The Whale",
+   "author": "Herman Melville",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    61287,
+    281659,
+    501389,
+    721627,
+    941120,
+    1161880
+   ]
+  },
+  {
+   "key": "doyle-holmes",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1661/pg1661.txt",
+   "sha256": "922e2a12ccb43a4c9544c260b2166c6ad2097aeb5957faeee113f173bb857cd0",
+   "bytes": 607606,
+   "title": "The Adventures of Sherlock Holmes",
+   "author": "Arthur Conan Doyle",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 3,
+   "offsets_chars": [
+    28213,
+    276216,
+    524321
+   ]
+  },
+  {
+   "key": "shelley-frankenstein",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/84/pg84.txt",
+   "sha256": "7810cd483cffcf2cc8a1d8f0d5807931e69d4f48cd14149b8c76f88af82fead3",
+   "bytes": 448885,
+   "title": "Frankenstein; or, the modern prometheus",
+   "author": "Mary Wollstonecraft Shelley",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 2,
+   "offsets_chars": [
+    20998,
+    385708
+   ]
+  },
+  {
+   "key": "stoker-dracula",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/345/pg345.txt",
+   "sha256": "96cd16eacdbfebae8fdda5591f66e0cc8ee76be18e0cd1aca02bc00615782d28",
+   "bytes": 890348,
+   "title": "Dracula",
+   "author": "Bram Stoker",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 4,
+   "offsets_chars": [
+    42412,
+    294798,
+    547768,
+    799955
+   ]
+  },
+  {
+   "key": "wells-timemachine",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/35/pg35.txt",
+   "sha256": "2892e919000e17c83e1dac51b30f4675db50536b644d7579fe8a89bb399a9bdc",
+   "bytes": 204384,
+   "title": "The Time Machine",
+   "author": "H. G. Wells",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 1,
+   "offsets_chars": [
+    9037
+   ]
+  },
+  {
+   "key": "conrad-darkness",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/219/pg219.txt",
+   "sha256": "c0b0bc91c7695f9d01aacb240e82a9b559f57558f98ad0b1f167eba21f6be6f7",
+   "bytes": 237072,
+   "title": "Heart of Darkness",
+   "author": "Joseph Conrad",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 1,
+   "offsets_chars": [
+    10887
+   ]
+  },
+  {
+   "key": "hardy-tess",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/110/pg110.txt",
+   "sha256": "503e08df0ca12fb21f4db9df75cfa97f9ba31b4d136add695b9e3e350b1699b1",
+   "bytes": 895508,
+   "title": "Tess of the d'Urbervilles: A Pure Woman",
+   "author": "Thomas Hardy",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 4,
+   "offsets_chars": [
+    42330,
+    294368,
+    543968,
+    794991
+   ]
+  },
+  {
+   "key": "eliot-middlemarch",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/145/pg145.txt",
+   "sha256": "dc2e0107e6ae07e8e33da934b2ec4e8e600826a2e0cd48df265119cd02e5fb50",
+   "bytes": 1865684,
+   "title": "Middlemarch",
+   "author": "George Eliot",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    90099,
+    291142,
+    494009,
+    695452,
+    897503,
+    1099504
+   ]
+  },
+  {
+   "key": "twain-huckfinn",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/76/pg76.txt",
+   "sha256": "d617a37aa7ae1e1a93dcde2634db2bccb86824e31e29a55230bdbf77d6872d59",
+   "bytes": 622460,
+   "title": "Adventures of Huckleberry Finn",
+   "author": "Mark Twain",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 3,
+   "offsets_chars": [
+    29592,
+    280864,
+    532921
+   ]
+  },
+  {
+   "key": "wilde-dorian",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/174/pg174.txt",
+   "sha256": "38f36b510417177aa87a6a24c968e3ec63a447b7df36a9c1a7c5a3f2d9e51547",
+   "bytes": 465814,
+   "title": "The Picture of Dorian Gray",
+   "author": "Oscar Wilde",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 2,
+   "offsets_chars": [
+    22185,
+    395359
+   ]
+  },
+  {
+   "key": "cbronte-janeeyre",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1260/pg1260.txt",
+   "sha256": "13414dee2951c3ee731d76d2ffd822016b2479c892162760c5d0eb2aa5fa7631",
+   "bytes": 1084803,
+   "title": "Jane Eyre: An Autobiography",
+   "author": "Charlotte Brontë",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 5,
+   "offsets_chars": [
+    51129,
+    280987,
+    511167,
+    740723,
+    970528
+   ]
+  },
+  {
+   "key": "ebronte-wuthering",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/768/pg768.txt",
+   "sha256": "e533fe750589f0421d5d744576315f5c2b9b0d69e981179ea0551bbf134c5e02",
+   "bytes": 693819,
+   "title": "Wuthering Heights",
+   "author": "Emily Brontë",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 3,
+   "offsets_chars": [
+    32501,
+    318992,
+    605336
+   ]
+  },
+  {
+   "key": "dickens-expectations",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1400/pg1400.txt",
+   "sha256": "9a637118af8e953e9764ec603d9b0a032883384d465acac2e27966a80cf1c6f8",
+   "bytes": 1058204,
+   "title": "Great Expectations",
+   "author": "Charles Dickens",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 5,
+   "offsets_chars": [
+    49745,
+    273215,
+    496792,
+    720225,
+    943541
+   ]
+  },
+  {
+   "key": "darwin-origin",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/2009/pg2009.txt",
+   "sha256": "27c02feed0b90e0163811a35a7565d03611dc1d3f86703d6bec4ae73d2d612b8",
+   "bytes": 1303005,
+   "title": "The Origin of Species by Means of Natural Selection",
+   "author": "Charles Darwin",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    63064,
+    290503,
+    517490,
+    744792,
+    972137,
+    1198507
+   ]
+  },
+  {
+   "key": "plato-republic",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt",
+   "sha256": "917c1cb469e1a8eba6083808764d7131da8d79140b575b4214c9d02a73ec4528",
+   "bytes": 1244164,
+   "title": "The Republic",
+   "author": "Plato",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    60403,
+    275831,
+    492469,
+    706548,
+    923191,
+    1137598
+   ]
+  },
+  {
+   "key": "hobbes-leviathan",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/3207/pg3207.txt",
+   "sha256": "3de1e492641d939567a8b0de827fb13e1ad992324f9ac8b204f60475009b7294",
+   "bytes": 1254939,
+   "title": "Leviathan",
+   "author": "Thomas Hobbes",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    60686,
+    281503,
+    497704,
+    716220,
+    934728,
+    1153012
+   ]
+  },
+  {
+   "key": "russell-problems",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/5827/pg5827.txt",
+   "sha256": "2505ea57849c64abe7962ffe56972174c9160606348e08cb7876d46b2c5b2d96",
+   "bytes": 269536,
+   "title": "The Problems of Philosophy",
+   "author": "Bertrand Russell",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 1,
+   "offsets_chars": [
+    12695
+   ]
+  },
+  {
+   "key": "tolstoy-warpeace",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/2600/pg2600.txt",
+   "sha256": "2d5bb2ad5f422765e714617e21fa31bbaf8958aa79682c86fca6660fcc5d1b2b",
+   "bytes": 3359610,
+   "title": "War and Peace",
+   "author": "graf Leo Tolstoy",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    160385,
+    355630,
+    551033,
+    746477,
+    941969,
+    1139157
+   ]
+  },
+  {
+   "key": "joyce-ulysses",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/4300/pg4300.txt",
+   "sha256": "e03094626f9528cf3fc287a49d6edbdbf47cd40483cb13ceb301e74e15ebbf9e",
+   "bytes": 1586344,
+   "title": "Ulysses",
+   "author": "James Joyce",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    75997,
+    272878,
+    469485,
+    666556,
+    862883,
+    1059544
+   ]
+  },
+  {
+   "key": "cervantes-quixote",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/996/pg996.txt",
+   "sha256": "2864143e9addf498c1c5fd585db4a1ff3e06651c344cddf0931342f1a0ce24d4",
+   "bytes": 2391678,
+   "title": "Don Quixote",
+   "author": "Miguel de Cervantes Saavedra",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    115147,
+    305653,
+    495662,
+    686364,
+    875841,
+    1067821
+   ]
+  },
+  {
+   "key": "dudeney-amusements",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/16713/pg16713.txt",
+   "sha256": "211a254547e147a9c0448121a4558ee9e8a05d550961dc9b6a434d802dee400d",
+   "bytes": 993883,
+   "title": "Amusements in Mathematics",
+   "author": "Henry Ernest Dudeney",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 21,
+   "offsets_chars": [
+    47545,
+    69408,
+    90604,
+    111858,
+    133693,
+    155369,
+    177017,
+    198072,
+    219159,
+    240703,
+    261728,
+    282934,
+    304257,
+    325267,
+    346948,
+    368178,
+    389188,
+    410847,
+    432446,
+    453497,
+    474749
+   ]
+  },
+  {
+   "key": "conant-number",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/16449/pg16449.txt",
+   "sha256": "c84637c91a828dc4b084d7f46f9b9d606a8af6ef95fccc5870eba4557075cf13",
+   "bytes": 358256,
+   "title": "The Number Concept: Its Origin and Development",
+   "author": "Levi L. Conant",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 14,
+   "offsets_chars": [
+    17712,
+    40607,
+    62027,
+    83056,
+    104955,
+    126839,
+    149213,
+    170377,
+    191414,
+    212594,
+    233851,
+    255212,
+    276772,
+    298550
+   ]
+  },
+  {
+   "key": "russell-mysticism",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/25447/pg25447.txt",
+   "sha256": "3644c1c3c8d2cb996a72caffbcb9513e2229de66856fe7394544051c98506a29",
+   "bytes": 452476,
+   "title": "Mysticism and Logic and Other Essays",
+   "author": "Bertrand Russell",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 18,
+   "offsets_chars": [
+    21897,
+    43874,
+    65228,
+    86586,
+    110585,
+    131653,
+    153325,
+    175154,
+    198183,
+    219671,
+    241996,
+    263413,
+    285339,
+    306466,
+    328240,
+    349267,
+    371718,
+    394782
+   ]
+  },
+  {
+   "key": "laplace-probabilities",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/58881/pg58881.txt",
+   "sha256": "ee8b509dbf5ba6e9c0c7b68a9c7601509cc7f686855086791f3600217558e3bd",
+   "bytes": 332352,
+   "title": "A Philosophical Essay on Probabilities",
+   "author": "marquis de Pierre Simon Laplace",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 13,
+   "offsets_chars": [
+    16490,
+    38439,
+    59558,
+    81053,
+    103430,
+    126606,
+    149028,
+    170224,
+    192187,
+    215856,
+    237529,
+    259096,
+    281716
+   ]
+  },
+  {
+   "key": "thorndike-arithmetic",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/39300/pg39300.txt",
+   "sha256": "61fc5e1600a681ae1ad01f8bf8d7b67a259c6236adb85daafabfd6865dfb9bb3",
+   "bytes": 557355,
+   "title": "The Psychology of Arithmetic",
+   "author": "Edward L. Thorndike",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 20,
+   "offsets_chars": [
+    26326,
+    48458,
+    70876,
+    97499,
+    118553,
+    141220,
+    162661,
+    183743,
+    205024,
+    226213,
+    248285,
+    270138,
+    291758,
+    312873,
+    334993,
+    357570,
+    379333,
+    401105,
+    423659,
+    445088
+   ]
+  },
+  {
+   "key": "rivenburg-algebra",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/38536/pg38536.txt",
+   "sha256": "421f6177b84e7d55ca087375e0fe6e38c6eaef723d31ef0a0f0c56454c4247aa",
+   "bytes": 124453,
+   "title": "A Review of Algebra",
+   "author": "Romeyn Henry Rivenburg",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 4,
+   "offsets_chars": [
+    5088,
+    28968,
+    52896,
+    76866
+   ]
+  },
+  {
+   "key": "sqlite3c-a",
+   "family": "code",
+   "url": "https://www.sqlite.org/2024/sqlite-amalgamation-3460000.zip",
+   "sha256": "712a7d09d2a22652fb06a49af516e051979a3984adb067da86760e60ed51a7f5",
+   "bytes": 2763740,
+   "title": "SQLite amalgamation sqlite3.c, characters 0%-60%",
+   "author": "D. Richard Hipp and the SQLite developers",
+   "licence": "public domain (sqlite.org/copyright.html)",
+   "documents": 90,
+   "offsets_chars": [
+    0,
+    47545,
+    95014,
+    142498,
+    189971,
+    237509,
+    284960,
+    332437,
+    379957,
+    427409,
+    474889,
+    522444,
+    569898,
+    617411,
+    664868,
+    712349,
+    759850,
+    807356,
+    854849,
+    902316,
+    949831,
+    997270,
+    1044778,
+    1092257,
+    1139765,
+    1187258,
+    1234751,
+    1282212,
+    1329721,
+    1377184,
+    1424693,
+    1472221,
+    1519642,
+    1567135,
+    1614623,
+    1662157,
+    1709634,
+    1757114,
+    1804608,
+    1852112,
+    1899558,
+    1947099,
+    1994545,
+    2042026,
+    2089514,
+    2137035,
+    2184536,
+    2231982,
+    2279467,
+    2326949,
+    2374505,
+    2421951,
+    2469444,
+    2516960,
+    2564399,
+    2611897,
+    2659417,
+    2706894,
+    2754397,
+    2801892,
+    2849375,
+    2896816,
+    2944363,
+    2991807,
+    3039294,
+    3086815,
+    3134271,
+    3181790,
+    3229251,
+    3276747,
+    3324227,
+    3371720,
+    3419209,
+    3466694,
+    3514170,
+    3561654,
+    3609179,
+    3656633,
+    3704123,
+    3751626,
+    3799110,
+    3846645,
+    3894111,
+    3941594,
+    3989053,
+    4036588,
+    4084065,
+    4131566,
+    4179036,
+    4226506
+   ]
+  },
+  {
+   "key": "factbook-africa",
+   "family": "struct",
+   "files": [
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ag.json",
+     "sha256": "17d654eddd14bd5a5bc8f8c05cc4f3de26f33c7063bc67bac60855fd3470924f",
+     "bytes": 49218
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ao.json",
+     "sha256": "d91341ae0e95a042e92c9cc15065f1449da9326084bed06495d3bf8ef83bb1da",
+     "bytes": 44001
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/bc.json",
+     "sha256": "d50db8fddf55ef92542fef29f9d119a5fa5968e0e8f079f4a73e14f3dd56cbfd",
+     "bytes": 40200
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/bn.json",
+     "sha256": "fd64d50e971da22978cded737b031d16371bd262627aed8f09e381ae75c97e3d",
+     "bytes": 42018
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/by.json",
+     "sha256": "fff3fcb3a295f8c34fdaba64d208cb535957c1a8fe19e36e4b64f58e8649ca14",
+     "bytes": 42852
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cd.json",
+     "sha256": "37168c7d27cb4ddc611d2f123525d2d1192d1c71d72866070bb2ce4ab40fdb1a",
+     "bytes": 46666
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cf.json",
+     "sha256": "5798bfa307bc658adf028d90a4d103df50433ea2240cf23f1e73d35e34b5c96e",
+     "bytes": 40178
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cg.json",
+     "sha256": "773654d968b3cd24d3a83e79065f7567c7069ff847f0be72dc1b4e85f1c9d958",
+     "bytes": 51488
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cm.json",
+     "sha256": "0d0d3ef94d26732a0658d36bd78f94a146b23c6afbcfcd328da9a30c99acdcb9",
+     "bytes": 45058
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cn.json",
+     "sha256": "ccc6f32ab1cac0f92b70340baa5371f9d7f007fe6399212750e8b9f8a1238671",
+     "bytes": 35711
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ct.json",
+     "sha256": "fe1db14772072fe82100f4e49fa88dc15a512e8a96f210f8a0590b806fac9cb3",
+     "bytes": 41744
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/cv.json",
+     "sha256": "cf82efe0a87e07922e55c80de3d4ddd29ae3c96d7a96a1cd3a9c3ad5ffdd8fe0",
+     "bytes": 40030
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/dj.json",
+     "sha256": "8933fbd3c7395924a28e785c2c6e2ab95a1722a90eea6768915d4af034007ae9",
+     "bytes": 39782
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/eg.json",
+     "sha256": "24da5422db36ea2a78e44afe1983379241b56be3d1f29b94da4f30cabfd3b7b8",
+     "bytes": 54299
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ek.json",
+     "sha256": "27ff4d90a9e2ebf0df13748a991f0f5cf166ea8a88f2b573ceb322fa83708c62",
+     "bytes": 38593
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/er.json",
+     "sha256": "804d9b029d8a28a24e0ab4206444cab3799d2668f3af2af9b844bd41861330af",
+     "bytes": 35453
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/et.json",
+     "sha256": "895d5f44a372770d78f58bb77a51dd9a79e9af26f124b0e595c0c3e0ba77e30d",
+     "bytes": 49583
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ga.json",
+     "sha256": "f9f789f590ed05c7708875f7113a84321a94c6867e138577ece1eb923cb3faca",
+     "bytes": 38019
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/gb.json",
+     "sha256": "ac34748266c50fa4427bd21b2c08a6e73e8a8b7f8f1acf2f427819cc03ae4203",
+     "bytes": 42025
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/gh.json",
+     "sha256": "5256f329a00ac29eed62fd981b1800568867ac7091e4143270a70b10c2437564",
+     "bytes": 45222
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/gv.json",
+     "sha256": "bc920c7ae85b8cc8e96cd9965b72ff61d8cd80f601ce42bf9849c2beba354897",
+     "bytes": 41568
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/iv.json",
+     "sha256": "5f9ca66eb5aa8245881561a62d79a6790641b75150aac9b6cc049187f4b4663d",
+     "bytes": 47483
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ke.json",
+     "sha256": "b70f6a693b57f9b28f97995273446234032e05cd39782b6efd9ec7061d53fdf3",
+     "bytes": 49542
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/li.json",
+     "sha256": "9a87c0654b7f8228df5c69997938de7622cac90c87d5f43830fab2ebcb8ab303",
+     "bytes": 40551
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/lt.json",
+     "sha256": "2597087b1af42205c4e6a680249578a766188285b9f0a33aee8a9f5fe06816e3",
+     "bytes": 38663
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ly.json",
+     "sha256": "79d955eeb57d33ac8a773439575bd57c117e7e47ab8b0609e042c55290cc9827",
+     "bytes": 38003
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ma.json",
+     "sha256": "54f859aa83603b087c336ab19ff9725523be506dc11cf2685bf2a3930960e5c5",
+     "bytes": 41528
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mi.json",
+     "sha256": "2380a372cb3f15eb428510a3810ff160dc18c29df8049909dcd52cb81a04727d",
+     "bytes": 39808
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ml.json",
+     "sha256": "76c9d32eee51e4640772adcc10da1201257d201048516bbaeaf357a4d5f00745",
+     "bytes": 46296
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mo.json",
+     "sha256": "3b357c46b1d38302198c982f192920930a21378817c6907a6b5379086b064b40",
+     "bytes": 49160
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mp.json",
+     "sha256": "beaf980681f5463c16cda2e65b7ff74f8825b4ee36cd01e3b6aa3265d8cb671b",
+     "bytes": 39155
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mr.json",
+     "sha256": "1bd49afb3192ef9250b17c7ed2933854e59ca5e70cc0517f4a4f667514b152ef",
+     "bytes": 42842
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/mz.json",
+     "sha256": "7a932c9bbcfffc39921b2fd4121dd6a3dea82ae9c1e54dd42866da48f93fab50",
+     "bytes": 43831
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ng.json",
+     "sha256": "b475e97d6f7100bfb83bd17332df57b38c05c4d0584f56c081ba84b3a43039fc",
+     "bytes": 45003
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ni.json",
+     "sha256": "93dbb46cd66270fb0ff9f5306ad77276d86c96ab299ec47d0310e997b94220eb",
+     "bytes": 49451
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/od.json",
+     "sha256": "f3125799f53fa2e2f97283e4d2da38aa1798d5eb6b246e53133553edbce41118",
+     "bytes": 40847
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/pu.json",
+     "sha256": "1f6ee3fa9b194385bbe7c4282ba9d14d82e45d8786255e5d52d5cab3286530c6",
+     "bytes": 38511
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/rw.json",
+     "sha256": "bd576f1919bae666a47c058b5af9a51632cb2d929cce30b460f35feb97c6d33b",
+     "bytes": 46188
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/se.json",
+     "sha256": "926ad85433283720ee4630d1c299ef1614b64aecf413a22eed0147e7fbc3e459",
+     "bytes": 35356
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sf.json",
+     "sha256": "955a5945f35eda49a55295b10f0367651da2b8e2529e47a0bc4f6347ec4d63b8",
+     "bytes": 52006
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sg.json",
+     "sha256": "7110a6f8cc217ba37bd52f73df8019619dce037097fe01d1787c6cdc4c597eee",
+     "bytes": 45294
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sh.json",
+     "sha256": "7cd8ce44a4e9a53754ba80f051b79a30ee38cb1064acec3099d4587a16108363",
+     "bytes": 24330
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/sl.json",
+     "sha256": "5ba79d17b15740992610381dd9cab74ad5c20f61d94f3b5490a6640d35051959",
+     "bytes": 38146
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/so.json",
+     "sha256": "fb210bda375e899a61f8dfe91861a1c4aa3243723775c7780e4bfc2005bbad47",
+     "bytes": 40863
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/su.json",
+     "sha256": "0fcdfcec573c22b8c85fa4c249c95eec5e6a297da55cb545910a1d31731255b3",
+     "bytes": 44991
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/to.json",
+     "sha256": "929c80a3931548f3e57a64cea43fe766e53f494e4a6d9b058236805ab1294e39",
+     "bytes": 42881
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/tp.json",
+     "sha256": "ca5c54a7a88b44c07470a22e527ff9bf657c2be7e1206f745a9e8e8b4f9c9174",
+     "bytes": 36188
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ts.json",
+     "sha256": "bcf1d02d34fdbaecef3a273647d27628503c4943efe1e481355d9c1e634f56c4",
+     "bytes": 45421
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/tz.json",
+     "sha256": "4039d0e23675abffe59ccf0e839cc3a0cdc2aa1c27f2478ba39953b6dc76db03",
+     "bytes": 47846
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/ug.json",
+     "sha256": "34bf292a3b50cd476b2206014b2edf7a1a8601df790860e40b946561eb17e8df",
+     "bytes": 44326
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/uv.json",
+     "sha256": "65ad4cb683b90b26d97ae7fabf3e0d8b3ab64370e5f8f7309b2e1d34c9fb32cf",
+     "bytes": 43874
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wa.json",
+     "sha256": "4ddc78c135fdaf9cfed916a2a6ee5dd52d454d08bc0766a621019c95d1e4dc6d",
+     "bytes": 41179
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wi.json",
+     "sha256": "eec8065067daf6d027a9daa5da0c99879a254dc018505b44089296fe0405de62",
+     "bytes": 22376
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/wz.json",
+     "sha256": "390346c2aca0a98d6cccf701ee3d9b4eb329e4d907c64a5f274c37310427a599",
+     "bytes": 38326
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/za.json",
+     "sha256": "05fe2863fd2a6589cf0a9b6bcd241b1c7144d7946b1662bce2c121fd70598fe5",
+     "bytes": 42108
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/africa/zi.json",
+     "sha256": "0d8416b8f2ae4ab8e23ca2f262d909bbbf0a71bc51e71375d7d2bc35fe8a8d5e",
+     "bytes": 45190
+    }
+   ],
+   "title": "World Factbook country profiles, region africa",
+   "author": "US Central Intelligence Agency (factbook/factbook.json)",
+   "licence": "US government work, public domain; repository CC0-1.0",
+   "commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+   "documents": 65,
+   "offsets_chars": [
+    0,
+    26530,
+    53059,
+    79602,
+    106097,
+    133074,
+    159161,
+    185660,
+    212195,
+    238707,
+    265819,
+    291756,
+    318302,
+    344866,
+    371332,
+    398127,
+    424372,
+    450891,
+    477432,
+    503996,
+    530472,
+    557670,
+    583825,
+    610720,
+    636557,
+    663203,
+    689848,
+    716148,
+    742665,
+    769177,
+    795766,
+    822215,
+    848844,
+    875264,
+    901815,
+    928342,
+    954826,
+    981347,
+    1007885,
+    1034392,
+    1060937,
+    1087512,
+    1113961,
+    1140686,
+    1167004,
+    1193565,
+    1220127,
+    1247195,
+    1273153,
+    1299637,
+    1326151,
+    1352666,
+    1379221,
+    1405725,
+    1432237,
+    1458760,
+    1485480,
+    1512418,
+    1538327,
+    1564857,
+    1591444,
+    1618181,
+    1644456,
+    1670951,
+    1697472
+   ]
+  },
+  {
+   "key": "factbook-mideast",
+   "family": "struct",
+   "files": [
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/ae.json",
+     "sha256": "3dc6a46b663cfe7ecf00f91796d2b5d6117f93662e7c59c47506a2a4a3eb4e0c",
+     "bytes": 44624
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/ba.json",
+     "sha256": "1839eb844aec75baf4422ac2b3034df68a5f2ed9a0d9e1c7618b1cf361e4c6c6",
+     "bytes": 41662
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/gz.json",
+     "sha256": "11a8edbfa5146e50f3e765063b798b272d4aa1beef67f129d14d75e51f47076c",
+     "bytes": 29511
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/ir.json",
+     "sha256": "38b035f8e5b5279f28166b9b47d2d73207fd700e5d6be7b42222d36567b8c52d",
+     "bytes": 54829
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/is.json",
+     "sha256": "795e3676c8aced2c3235c79bf32389f739883a89ee45c54c1c9486e7b49cc5ff",
+     "bytes": 49577
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/iz.json",
+     "sha256": "dfab210a5286e6c26b5a2a029bdc9243ebf3d4b9cc2f3d4d66343bdc8804111c",
+     "bytes": 46919
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/jo.json",
+     "sha256": "9b8309289ae587bd0085f4259df1ecbc2c8b95d43ef4cdf671ea14c1a670f502",
+     "bytes": 44992
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/ku.json",
+     "sha256": "5d6c43ff9ada4254a18b0eb0c048fb6d446ccfd4bf73cddcecb710f18fb345c6",
+     "bytes": 38920
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/le.json",
+     "sha256": "37f71848f2b28f7b439106c85aced0cba952bae996eb11cacf31b146778891c6",
+     "bytes": 42760
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/mu.json",
+     "sha256": "d499b77e0e8b20d09ee91917c88b333ad24267c3adfaeae289f014810118a2b1",
+     "bytes": 40115
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/qa.json",
+     "sha256": "3adf12893118e21cd39fe416ece3e355ebd18414a112b3ca1da3975fdd7ffd08",
+     "bytes": 38453
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/sa.json",
+     "sha256": "27f05fe5ad2f5ea39c9b6121537270e558285d2078758a7f0405fdd789a3d776",
+     "bytes": 47054
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/sy.json",
+     "sha256": "8cc56c158f1179ea7dd98899523bbd47bebd181ea2f57bbb28bb24b112439def",
+     "bytes": 44580
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/tu.json",
+     "sha256": "dd91a5bb0629c5a7a0a32dd64e240d2e21f8e322173d6a7ea436335cb8e1233f",
+     "bytes": 51147
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/we.json",
+     "sha256": "199c60edadf9e503dcbc5f12eb9c788496f5045de0d6adcf9e235d9666ea701e",
+     "bytes": 31381
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/middle-east/ym.json",
+     "sha256": "94819d9362f23f12808160620f7348efa5976100dfcce46faa312c049a29c7dc",
+     "bytes": 44000
+    }
+   ],
+   "title": "World Factbook country profiles, region middle-east",
+   "author": "US Central Intelligence Agency (factbook/factbook.json)",
+   "licence": "US government work, public domain; repository CC0-1.0",
+   "commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+   "documents": 25,
+   "offsets_chars": [
+    0,
+    27143,
+    54294,
+    81547,
+    108517,
+    135899,
+    162944,
+    189930,
+    217329,
+    244430,
+    271311,
+    298429,
+    325548,
+    352701,
+    379810,
+    406937,
+    435666,
+    461290,
+    488319,
+    515865,
+    542786,
+    569694,
+    596826,
+    623951,
+    651118
+   ]
+  }
+ ]
+}

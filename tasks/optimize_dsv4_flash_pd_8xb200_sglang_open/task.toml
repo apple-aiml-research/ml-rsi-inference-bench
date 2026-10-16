@@ -1,0 +1,149 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+
+[task]
+name = "inference-bench/optimize_dsv4_flash_pd_8xb200_sglang_open"
+description = "Optimize SGLang prefill/decode DISAGGREGATED serving for DeepSeek-V4-Flash on 8xB200, scored on the geometric mean of continuation-turn tail latency AND tail inter-token latency (pooled P99 ITL) in a multi-turn agent workload. Two pools behind a conversation-sticky router: 4 GPUs of prefill instances and 4 of decode, joined by SGLang's NIXL transfer engine. 64 attention heads and a single MLA kv head, so TP=4 per pool is legal and TP=6 is not, which is why a 2P:6D topology cannot boot for this model. Why these axes and not throughput: vLLM's own docs say disaggregation does not improve throughput and make no TTFT claim -- what it controls is tail ITL rather than TTFT, and on a max_concurrency=1 workload a correct PD optimization scores NEGATIVE. Measured on 8xH100, PD improves continuation-turn p95 by 22.6% where the aggregated deployment has decode interference to remove, and loses on every single-turn shape."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "throughput-optimization", "mla", "moe", "deepseek-v4", "flash", "fp4", "fp8", "hybrid-attention", "b200", "sm100", "tp2", "srt", "pd-disaggregation", "prefill-decode", "mooncake", "latency-optimization", "multi-turn", "8xb200"]
+
+[agent]
+timeout_sec = 30000  # 8.33h
+
+[verifier]
+timeout_sec = 21600
+
+[environment]
+build_timeout_sec = 7200
+cpus = 16
+memory_mb = 262144
+storage_mb = 81920
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 8
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "sglang"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.pd]
+prefill_gpus = 4
+decode_gpus = 4
+engine = "sglang"
+chunked_prefill_size = 8192
+transfer_backend = "nixl"
+router_port = 10001
+discovery_port = 30001
+conversation_turns = 8          # 4 user turns and their replies
+first_turn_prefix_tokens = 8000
+new_tokens_per_turn = 12000
+reply_tokens = 512
+conversations = 16
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+commit = "v0.5.12.post1"
+workdir = "/app/repo"
+edit_policies = ["python", "csrc:jit_kernel", "csrc:sgl-kernel"]
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.8"
+engine_install = "task_scoped_sglang_0_5_10_editable_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "deepseek-ai/DeepSeek-V4-Flash"
+architecture = "DeepseekV4ForCausalLM"
+total_parameters = "284B"
+activated_parameters = "13B"
+context_window = 1000000
+dtype = "auto"
+tensor_parallel_size = 4  # per pool, not per machine
+
+[metadata.inference_bench.scoring]
+primary_metric = "pd_latency_itl_geomean_ms"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.4
+rtol = 0.15
+min_pass_rate = 0.85
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "pd_multiturn"
+input_len = 12000
+output_len = 512
+num_prompts = 64
+max_concurrency = 16
+
+[metadata.inference_bench.commands]
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_ENGINE = "sglang"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+SGLANG_DSV4_FP4_EXPERTS = "1"
+SGLANG_ENABLE_JIT_DEEPGEMM = "0"
+USE_HUB_KERNELS = "NO"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_SGLANG_PINNED_COMMIT = "v0.5.12.post1"
+INFB_BUILD_SGL_KERNEL_SH = "/app/scripts/build_sgl_kernel.sh"
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+INFB_SGLKERNEL_BUILD_TIMEOUT_SEC = "9000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_LIVE_REF_TIMEOUT_SEC = "7200"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_ENGINE = "sglang"
+INFB_OFFICIAL = "1"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+SGLANG_DSV4_FP4_EXPERTS = "1"
+SGLANG_ENABLE_JIT_DEEPGEMM = "0"
+USE_HUB_KERNELS = "NO"
+VLLM_USE_AOT_COMPILE = "0"
+
+[metadata.inference_bench.scoring.num_runs_per_workload]
+pd_multiturn = 3

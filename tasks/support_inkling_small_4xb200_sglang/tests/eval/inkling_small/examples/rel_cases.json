@@ -1,0 +1,161 @@
+{
+ "what": "Public examples of the relative-attention contract (rel_attention/README.md). Each case is one call: `kind` F (full layer: E = 1,024, window (None, None)) or L (sliding-window layer: E = 512, window (511, 0)); `form` ragged or paged; `requests` lists (k_len, q_len) per request, so k_len > q_len is a prefix and (k, 1) a decode step. Values are V-rand from the public seed inkling-rel-v1-public/<id>/<kind> (rel_attention/check.py, materialize). Unreferenced slots and pages hold +-96, or NaN in whole unreferenced pages where `unreferenced` is nan. These explain the contract; they do not exhaust it.",
+ "cases": [
+  {
+   "id": "ragged-prefill-full",
+   "kind": "F",
+   "form": "ragged",
+   "requests": [
+    [
+     300,
+     300
+    ]
+   ]
+  },
+  {
+   "id": "ragged-prefix-full",
+   "kind": "F",
+   "form": "ragged",
+   "requests": [
+    [
+     700,
+     188
+    ],
+    [
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "id": "paged-decode-full",
+   "kind": "F",
+   "form": "paged",
+   "requests": [
+    [
+     1,
+     1
+    ],
+    [
+     129,
+     1
+    ],
+    [
+     513,
+     1
+    ],
+    [
+     1025,
+     1
+    ],
+    [
+     5000,
+     1
+    ]
+   ]
+  },
+  {
+   "id": "paged-extend-full",
+   "kind": "F",
+   "form": "paged",
+   "requests": [
+    [
+     4224,
+     129
+    ]
+   ]
+  },
+  {
+   "id": "ragged-prefill-local",
+   "kind": "L",
+   "form": "ragged",
+   "requests": [
+    [
+     300,
+     300
+    ]
+   ]
+  },
+  {
+   "id": "ragged-prefix-local",
+   "kind": "L",
+   "form": "ragged",
+   "requests": [
+    [
+     700,
+     188
+    ],
+    [
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "id": "paged-decode-local",
+   "kind": "L",
+   "form": "paged",
+   "requests": [
+    [
+     1,
+     1
+    ],
+    [
+     129,
+     1
+    ],
+    [
+     513,
+     1
+    ],
+    [
+     1025,
+     1
+    ],
+    [
+     5000,
+     1
+    ]
+   ]
+  },
+  {
+   "id": "paged-extend-local",
+   "kind": "L",
+   "form": "paged",
+   "requests": [
+    [
+     4224,
+     129
+    ]
+   ]
+  },
+  {
+   "id": "paged-decode-local-nan",
+   "kind": "L",
+   "form": "paged",
+   "requests": [
+    [
+     1,
+     1
+    ],
+    [
+     129,
+     1
+    ],
+    [
+     513,
+     1
+    ],
+    [
+     1025,
+     1
+    ],
+    [
+     5000,
+     1
+    ]
+   ],
+   "unreferenced": "nan"
+  }
+ ]
+}

@@ -1,0 +1,130 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/optimize_qwen3_5_397b_a17b_fp8_8xh100_open"
+description = "Optimize vLLM throughput for Qwen/Qwen3.5-397B-A17B-FP8 on 8×H100 / vLLM 0.19.1. Sparse MoE: 397B total / 17B active parameters, 512 experts (top-10 routing), 3:1 hybrid linear+full attention (45 linear + 15 full layers, like Kimi-Linear), FP8-quantized weights (block-scaled, weight_block_size=[128,128]), GQA-2 attention with head_dim=256. Multimodal architecture (vision tower idle for text-only inference). Highest-active-params MoE in the throughput-opt suite."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "throughput-optimization", "qwen3_5", "moe", "fp8", "linear-attention", "h100", "tp8", "multimodal"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+timeout_sec = 18000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 524288
+storage_mb = 524288
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 8
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "vllm"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "v0.19.1"
+workdir = "/app/repo"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.8"
+engine_install = "task_scoped_vllm_0_19_1_with_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "Qwen/Qwen3.5-397B-A17B-FP8"
+architecture = "Qwen3_5MoeForConditionalGeneration"
+total_parameters = "397B"
+activated_parameters = "17B"
+context_window = 4096
+dtype = "auto"
+tensor_parallel_size = 8
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 1
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "tokens"
+atol = 0.36
+rtol = 0.1
+min_pass_rate = 0.85
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "decode_heavy"
+input_len = 1024
+output_len = 8192
+num_prompts = 4
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "prefill_heavy"
+input_len = 8192
+output_len = 1
+num_prompts = 256
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "high_load"
+input_len = 1024
+output_len = 1024
+num_prompts = 256
+
+[metadata.inference_bench.commands]
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_OFFICIAL = "1"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

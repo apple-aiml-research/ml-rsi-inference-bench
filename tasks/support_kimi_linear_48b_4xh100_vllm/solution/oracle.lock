@@ -1,0 +1,126 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/vllm-project/vllm.git",
+ "upstream_base": "1994de99ea0bf8dd84257a19800f4f62526a7edf",
+ "prepared_base": "acb5b28091e784d9f6f0a0d61338aa31b5f4b86f",
+ "prepared_base_note": "Constructed root commit: the adapted engine tree f02109e9 (upstream base tree with exactly #27654 reversed, exported into a fresh Git object database; its own root commit is d89bba62, the engine stage's) plus the three-line upstream test-registry entry and the evaluation tree eval/kimi_linear/, committed as one parentless commit by environment/baseprep/prepare_base.py. No parent/history from upstream. This kernel-authoring adaptation withholds optimized FLA/vLLM KDA code; the final reference engine tree is unchanged.",
+ "base": "acb5b28091e784d9f6f0a0d61338aa31b5f4b86f",
+ "base_tree": "7f270f8da80f40edd60f6cc0e9e4c11f474045c4",
+ "landing": {
+  "pr": 27809,
+  "sha": "4e68cc9b6aa2b9cfe8d799c2b1cd156a01bca438",
+  "tree": "3dd5c344d3d81ec849eec227caf67a8361598418",
+  "merged_at": "2025-10-30T13:02:27Z",
+  "files_from_base": 15,
+  "insertions": 1326,
+  "deletions": 49,
+  "note": "Single parent 1994de99, two commits squashed. Test Plan and Test Result are empty in the PR body."
+ },
+ "repairs_in_squash": [],
+ "repairs_in_squash_note": "None. Every repair to this model is a SEPARATE post-merge PR, which is why the criticality test below decides the closure rather than the squash's own contents.",
+ "post_merge_repairs": [],
+ "post_merge_repairs_note": "Empty, by verdict: no candidate is critical at this recipe (criticality_results). Three expected-out candidates were executed separately and gate nothing.",
+ "criticality_candidates": [
+  28445,
+  27871,
+  27905,
+  27834,
+  27811,
+  27322
+ ],
+ "criticality_results": {
+  "28445": {
+   "verdict": "NOT CRITICAL at this recipe",
+   "expected": "in",
+   "reason": "slices q/k/v/g/beta and the decode conv indices to num_actual_tokens and writes only live output rows. At the reference the CUDA-graph mode is FULL_AND_PIECEWISE with capture sizes 1, 2, 4, then 8-248 by 8, then 256-512 by 16, so any decode batch that is not a capture size is padded and the padded rows reach the recurrent kernel. Upstream's own report is TP8 with EP; the executed test at this task's TP4 recipe decides.",
+   "evidence": "Every upstream trigger lies outside the recipe: TP8 with expert parallelism, --max-num-seqs 32, DP2, Blackwell. A tree with #28445 removed was served beside the closure over a padded-decode sweep -- pure decode at B = 3..255 across the non-capture sizes of the whole capture range, and mixed rounds with short prefills landing mid-decode at 31, 63 and 129 -- with no errors, no non-finite log-probabilities and no crash lines on either side, and agreement with each prompt served alone identical through B = 31 and within noise beyond. By the pre-registered branch of the task's design, the closure is the landing alone."
+  },
+  "27871": {
+   "verdict": "OUT: a carrier only",
+   "expected": "in, as a carrier only",
+   "reason": "a performance refactor, not a repair: it moves the projections and gates out of the opaque custom op so torch.compile sees them. It is admitted only because #28445's hunks are written against that structure and do not apply without it. The closure stays the efficiency reference even so, and the difficulty that adds is intended.",
+   "evidence": "admitted only as the structure #28445's hunks are written against; with #28445 out it has no role."
+  },
+  "27905": {
+   "verdict": "OUT: a carrier only",
+   "expected": "in, as a carrier only",
+   "reason": "restores `output[:] = self.o_proj(core_attn_out)[0]`, which #27871 replaced by a `return` the decoder layer discards. Without it the KDA layers' output never reaches the caller. The landing already had the write, so the pair is semantically neutral.",
+   "evidence": "the repair of #27871's dropped output write; out with #27871. The tree without it behind #27871 (b3ccfa35ce, upstream main of 2025-10-31) is kept as a labelled control, which the fidelity gate must fail."
+  },
+  "27834": {
+   "verdict": "EXPECTED OUT: executed separately, gates nothing",
+   "expected": "out",
+   "reason": "prefix names for shared_experts and block_sparse_moe, motivated by AWQ exclusions. Prefixes feed quantization matching only, and this recipe is BF16. Executed anyway because it is cheap.",
+   "evidence": "this candidate's criticality trial was executed separately from the graded set; the closure moves only if such a trial FAILS where the landing passes."
+  },
+  "27811": {
+   "verdict": "EXPECTED OUT: executed separately, gates nothing",
+   "expected": "out",
+   "reason": "reached only with --mamba-block-size, which requires prefix caching; prefix caching is off at this recipe and cannot be turned on for this class. Executed anyway because it is cheap.",
+   "evidence": "this candidate's criticality trial was executed separately from the graded set; the closure moves only if such a trial FAILS where the landing passes."
+  },
+  "27322": {
+   "verdict": "EXPECTED OUT: executed separately, gates nothing",
+   "expected": "out",
+   "reason": "a platform check that uses current_platform, for a plugin crash; a no-op on CUDA. Executed if cheap.",
+   "evidence": "this candidate's criticality trial was executed separately from the graded set; the closure moves only if such a trial FAILS where the landing passes."
+  }
+ },
+ "closure_oracle": "4e68cc9b6aa2b9cfe8d799c2b1cd156a01bca438",
+ "closure_oracle_note": "The landing alone, by the pre-registered branch for a non-critical #28445. The efficiency reference is the same tree (tests/reference/solution.patch is this patch byte for byte), so every oracle run is also a null sample of the efficiency ratios. The five-commit closure under `closure_candidates` is the one-line alternative reference.",
+ "closure_candidates": {
+  "with_27834_27871_27905_28445": {
+   "tree": "488362891ec687333a22c3602d41eedc8137e66e"
+  },
+  "without_27834": {
+   "tree": "a56003ed9c14f85fc5f21a175050701d551ba940"
+  }
+ },
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "ab5d48c1475c66d8c521ad7f5a3a65b70f011d4f5cdacf20f517f4b0a6b8fbb6",
+  "bytes": 186744,
+  "produced_by": "git diff --no-ext-diff --no-color --binary --full-index <prepared-base> <reference tree>",
+  "equals_landing_patch": false,
+  "files": 31,
+  "expected_tree": "728fee9d6c379b55ffded74bd8ea9dd3d5de65cc",
+  "replay": "composed from the model-support reference patch and the closure's cumulative patch (sha256 d4930fcc3ea2c4d8cf5051a433c8db930d3666291e729865a470426361378c25) over the prepared base; re-applied to the base it gives the expected tree, whose engine part is the closure's engine tree.",
+  "applies_to_tree": "7f270f8da80f40edd60f6cc0e9e4c11f474045c4",
+  "source_tree": "7f270f8da80f40edd60f6cc0e9e4c11f474045c4",
+  "expected_engine_tree": "9c0a45036feddd23c83336236fde4830f10692ad"
+ },
+ "model": {
+  "repo": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+  "revision": "e1df551a447157d4658b573f9a695d57658590e9",
+  "files": 32,
+  "bytes": 98253088800,
+  "manifest_sha256": "d913ad682ea6f826678e1beeb6b6f3ec0975d01e1c958012cba3589f645cf500",
+  "note": "figures/* excluded (six PNGs, 482,858 B of documentation art). 32 files and 98,253,088,800 bytes is exactly what an earlier independent inventory recorded for this checkpoint."
+ },
+ "kernel": {
+  "pr": 27654,
+  "sha": "e88bdd60d9a25d985168c9f4a60ab10095236d7c",
+  "parent": "05e034f085b0255b171ff494938a775f2fe80ee1",
+  "patch": "kernel.patch",
+  "sha256": "242871a3c31df220b284d7fc60f06e910cb88aafd68953f1e49ec2d48d66eed2"
+ },
+ "historical_model_patch": {
+  "path": "landing.patch",
+  "sha256": "1c66146891a64cfd0b5fb2767e4fe62ab30642eeb69d675d06f83623add4111c",
+  "base": "1994de99ea0bf8dd84257a19800f4f62526a7edf"
+ },
+ "historical_combined_patch": {
+  "sha256": "a7d06d80f93c4068846e64023f37be427a4476813b34b04253eb49115aade74e",
+  "bytes": 116957,
+  "files": 19,
+  "applies_to_tree": "f02109e92a704dc7d6abe7d49d87662ff4146a24",
+  "base": "d89bba62d459db1df4eb397a938022d7454b1214",
+  "expected_tree": "3dd5c344d3d81ec849eec227caf67a8361598418"
+ },
+ "reference_tree": {
+  "closure": "in order (the landing, #27871, #27905, #28445, adapted #28579, #51565's semantics, the bounded align subset of #30877, adapted #29387, #33706, #34418)",
+  "engine_tree": "9c0a45036feddd23c83336236fde4830f10692ad",
+  "cumulative_patch_sha256": "d4930fcc3ea2c4d8cf5051a433c8db930d3666291e729865a470426361378c25",
+  "note": "Maker-only (tests/ and solution/ never reach the agent). The prefix-state support is a later support expansion, not part of the historical day-zero landing; the composed reference is not called that landing."
+ }
+}

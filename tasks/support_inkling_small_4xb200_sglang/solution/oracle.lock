@@ -1,0 +1,81 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "score_profile": "model_support_inkling_small_v5",
+ "repo": "https://github.com/sgl-project/sglang.git",
+ "upstream_base": "829e9ce9d596cd6dc871319086d0303b30346806",
+ "base": "1183049084a198c8d133edcb843a4e55076ed1ab",
+ "base_eval": {
+  "why": "the prepared base is the upstream base plus one evaluation-materials commit; there is no kernel-preparation commit",
+  "sha": "1183049084a198c8d133edcb843a4e55076ed1ab",
+  "parent": "829e9ce9d596cd6dc871319086d0303b30346806",
+  "tree": "07133a855a355ed75ca1224bf26fbd93ea3f08b0",
+  "path": "eval/inkling_small",
+  "path_tree": "88325b0deecfee8eff7bc93cdd534db6dea6b23a",
+  "files": 33,
+  "commit_recipe": "git add -f eval/inkling_small; commit with GIT_{AUTHOR,COMMITTER}_NAME=Inference-Bench, GIT_{AUTHOR,COMMITTER}_EMAIL=inference-bench@local, GIT_{AUTHOR,COMMITTER}_DATE=2026-07-20T05:40:49+0000 and the message in environment/eval-materials.msg; environment/Dockerfile asserts the resulting sha"
+ },
+ "landing": {
+  "pr": 31681,
+  "sha": "02236fa38cb065660a0b4156aab283a3807a5290",
+  "files": 279,
+  "insertions": 74337,
+  "deletions": 934
+ },
+ "repairs_considered": {
+  "34184": "25b70150646579f1137d6b00ddc3967493d13354",
+  "33417": "ce84df0fa111c992eb8cc3efc03a2941c9ce18fa"
+ },
+ "criticality_results": {
+  "rule_3": "#33417 not admitted",
+  "rule_4": "#34184 not admitted",
+  "reference": "the landing squash alone"
+ },
+ "post_merge_repairs": [],
+ "path_translations": {
+  "33417": {
+   "applied": false,
+   "why": "#33417 is not admitted; its port is recorded for the comparison trees T2 and T3 only",
+   "paths": {
+    "python/sglang/kernels/ops/attention/flash_attn/cute/": "python/sglang/jit_kernel/flash_attn/cute/"
+   },
+   "modules": {
+    "sglang.kernels.ops.attention.flash_attn.cute.batch_invariance": "sglang.jit_kernel.flash_attn.cute.batch_invariance"
+   },
+   "accessors": {
+    "get_exec().deterministic.enable_deterministic_inference": "get_server_args().enable_deterministic_inference"
+   },
+   "accessor_files": [
+    "python/sglang/srt/models/inkling_common/attn.py",
+    "python/sglang/srt/models/inkling_common/kernels/comm.py"
+   ]
+  }
+ },
+ "oracle_adapter": {
+  "path": "/app/inkling_rel_attention.py",
+  "sha256": "83602f6d4e75d07eb2f166700b7e8c11b299d1ba13241d6d0625c616eeaca828",
+  "authored_by": "Inference-Bench (the benchmark-authored adapter; part of solution.patch)",
+  "what": "the public operator contract's relative_attention entry point over the landing backend's own FA4 calls: flash_attn_varlen_func (ragged) and flash_attn_with_kvcache (paged, [pages, 128, 2, 128]) with rel_bias, window (511, 0) on sliding-window layers and (-1, -1) on full layers, num_splits 0 as the backend's production value"
+ },
+ "closure_oracle": "02236fa38cb065660a0b4156aab283a3807a5290",
+ "composed": {
+  "why": "solution.patch applied on the prepared base: the reference tree the verifier snapshots and serves",
+  "tree": "f917e8c899bd605cd29ae984af1932e1192026ba",
+  "base": "1183049084a198c8d133edcb843a4e55076ed1ab",
+  "patch_sha256": "8f8c3b5a7c7d408c79880bc6d39194d6176c0725c06eecac6ac04ded1666a6a1"
+ },
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "8f8c3b5a7c7d408c79880bc6d39194d6176c0725c06eecac6ac04ded1666a6a1",
+  "bytes": 3325496,
+  "files": 280,
+  "content": "the landing squash 02236fa3 against the base (279 files) plus the oracle adapter inkling_rel_attention.py",
+  "adapter_sha256": "83602f6d4e75d07eb2f166700b7e8c11b299d1ba13241d6d0625c616eeaca828"
+ },
+ "model": {
+  "repo": "thinkingmachines/Inkling-Small-NVFP4",
+  "revision": "b6a99534467840620d411e4cd4ad5819b2610d9c",
+  "files": 21,
+  "bytes": 170764923366,
+  "manifest": "../environment/model-manifest.json"
+ }
+}

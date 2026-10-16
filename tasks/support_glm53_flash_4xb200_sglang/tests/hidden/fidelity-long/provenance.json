@@ -1,0 +1,20 @@
+{
+ "transformers": "5.17.0",
+ "accelerate": "1.15.0",
+ "torch": "2.13.0+cu130",
+ "model_class": "Glm5NextForConditionalGeneration",
+ "quant": "FineGrainedFP8Config(quant_method='fp8')",
+ "dtype": "torch.bfloat16",
+ "devices": [
+  "cuda:0",
+  "cuda:1",
+  "cuda:2",
+  "cuda:3"
+ ],
+ "gpu": "NVIDIA B200",
+ "load_seconds": 167.2,
+ "attn_impl": "sdpa",
+ "hub_kernels_cache": [
+  "kernels--kernels-community--sgl-flash-attn3"
+ ]
+}

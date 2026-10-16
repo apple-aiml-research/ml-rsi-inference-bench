@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="220" viewBox="0 0 880 220" role="img" aria-label="lifecycle"><style>text{font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif}@keyframes c0 { 0%, 30.3% { opacity: 1 } 33.3%, 97% { opacity: .4 } 100% { opacity: 1 } }
+@keyframes s0 { 0%, 30.3% { transform: scaleX(1) } 33.3%, 97% { transform: scaleX(0) } 100% { transform: scaleX(1) } }
+@keyframes o0 { 0%, 30.3% { fill: #1d1d1f; transform: scale(1.2) } 33.3%, 97% { fill: #c7c7cc; transform: scale(1) } 100% { fill: #1d1d1f; transform: scale(1.2) } }
+@keyframes d0 { 0%, 100% { fill: #424245 } }
+.c0 { animation: c0 12.6s infinite; } .s0 { animation: s0 12.6s infinite; } .o0 { animation: o0 12.6s infinite; } .d0 { animation: d0 12.6s infinite; }
+@keyframes c1 { 0%, 30.3% { opacity: .4 } 33.3%, 63.7% { opacity: 1 } 66.7%, 100% { opacity: .4 } }
+@keyframes s1 { 0%, 30.3% { transform: scaleX(0) } 33.3%, 63.7% { transform: scaleX(1) } 66.7%, 100% { transform: scaleX(0) } }
+@keyframes o1 { 0%, 30.3% { fill: #c7c7cc; transform: scale(1) } 33.3%, 63.7% { fill: #1d1d1f; transform: scale(1.2) } 66.7%, 100% { fill: #c7c7cc; transform: scale(1) } }
+@keyframes d1 { 0%, 30.3% { fill: #86868b } 33.3%, 97% { fill: #424245 } 100% { fill: #86868b } }
+.c1 { animation: c1 12.6s infinite; } .s1 { animation: s1 12.6s infinite; } .o1 { animation: o1 12.6s infinite; } .d1 { animation: d1 12.6s infinite; }
+@keyframes c2 { 0%, 63.7% { opacity: .4 } 66.7%, 97% { opacity: 1 } 100% { opacity: .4 } }
+@keyframes s2 { 0%, 63.7% { transform: scaleX(0) } 66.7%, 97% { transform: scaleX(1) } 100% { transform: scaleX(0) } }
+@keyframes o2 { 0%, 63.7% { fill: #c7c7cc; transform: scale(1) } 66.7%, 97% { fill: #1d1d1f; transform: scale(1.2) } 100% { fill: #c7c7cc; transform: scale(1) } }
+@keyframes d2 { 0%, 63.7% { fill: #86868b } 66.7%, 97% { fill: #424245 } 100% { fill: #86868b } }
+.c2 { animation: c2 12.6s infinite; } .s2 { animation: s2 12.6s infinite; } .o2 { animation: o2 12.6s infinite; } .d2 { animation: d2 12.6s infinite; }
+@keyframes ar { 0%, 63.7% { fill: #d2d2d7 } 66.7%, 97% { fill: #1d1d1f } 100% { fill: #d2d2d7 } } .ar { animation: ar 12.6s infinite; }
+.seg { transform-box: fill-box; transform-origin: left center; } .dot { transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: reduce) { .card, .seg, .dot, .day, .ar { animation: none !important; } .seg { transform: scaleX(0); } }</style>
+<text x="0" y="40.7" font-size="19" font-weight="700" fill="#1d1d1f" letter-spacing="-0.228">Self-improving</text>
+<text x="0" y="65" font-size="13" fill="#6e6e73">The <tspan font-weight="600">full</tspan> <tspan font-weight="600">lifecycle</tspan> of a new</text>
+<text x="0" y="83.9" font-size="13" fill="#6e6e73">model in an inference</text>
+<text x="0" y="102.7" font-size="13" fill="#6e6e73">system</text>
+<line x1="192" y1="71" x2="876" y2="71" stroke="#d2d2d7" stroke-width="2"/>
+<path d="M872 66.5 L880 71.5 L872 76.5 Z" fill="#d2d2d7" class="ar"/>
+<text x="192" y="34" font-size="10.5" font-weight="600" fill="#424245" letter-spacing="0.63" class="day d0">DAY 0</text>
+<text x="192" y="55.4" font-size="14" fill="#424245">When a new model is released</text>
+<rect x="192" y="69" width="229.3" height="4" rx="2" fill="#1d1d1f" class="seg s0"/>
+<circle cx="198" cy="71" r="9" fill="#ffffff"/>
+<circle cx="198" cy="71" r="6" fill="#1d1d1f" class="dot o0"/>
+<g class="card c0"><rect x="192" y="86" width="217.3" height="112" rx="16" fill="#f5f5f7"/><text x="206" y="113.6" font-size="17" font-weight="600" fill="#1d1d1f" letter-spacing="-0.255">Day-0 Model Support</text><text x="206" y="137.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">GOAL</text><text x="260" y="137" font-size="12.5" fill="#424245">Serve the new model</text><text x="206" y="159.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">SCORED</text><text x="260" y="159" font-size="12.5" fill="#424245">Pass or fail</text><text x="206" y="181.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">TASKS</text><text x="260" y="181" font-size="12.5" fill="#424245">10</text></g>
+<text x="421.3" y="34" font-size="10.5" font-weight="600" fill="#424245" letter-spacing="0.63" class="day d1">IN PRODUCTION</text>
+<text x="421.3" y="55.4" font-size="14" fill="#424245">When the model goes live</text>
+<rect x="421.3" y="69" width="229.3" height="4" rx="2" fill="#1d1d1f" class="seg s1"/>
+<circle cx="427.3" cy="71" r="9" fill="#ffffff"/>
+<circle cx="427.3" cy="71" r="6" fill="#1d1d1f" class="dot o1"/>
+<g class="card c1"><rect x="421.3" y="86" width="217.3" height="112" rx="16" fill="#f5f5f7"/><text x="435.3" y="113.6" font-size="17" font-weight="600" fill="#1d1d1f" letter-spacing="-0.255">Inference Optimization</text><text x="435.3" y="137.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">GOAL</text><text x="489.3" y="137" font-size="12.5" fill="#424245">Make it serve faster</text><text x="435.3" y="159.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">SCORED</text><text x="489.3" y="159" font-size="12.5" fill="#424245">Speed-up</text><text x="435.3" y="181.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">TASKS</text><text x="489.3" y="181" font-size="12.5" fill="#424245">20</text></g>
+<text x="650.7" y="34" font-size="10.5" font-weight="600" fill="#424245" letter-spacing="0.63" class="day d2">IN MAINTENANCE</text>
+<text x="650.7" y="55.4" font-size="14" fill="#424245">When a regression lands</text>
+<rect x="650.7" y="69" width="223.3" height="4" rx="2" fill="#1d1d1f" class="seg s2"/>
+<circle cx="656.7" cy="71" r="9" fill="#ffffff"/>
+<circle cx="656.7" cy="71" r="6" fill="#1d1d1f" class="dot o2"/>
+<g class="card c2"><rect x="650.7" y="86" width="229.3" height="112" rx="16" fill="#f5f5f7"/><text x="664.7" y="113.6" font-size="17" font-weight="600" fill="#1d1d1f" letter-spacing="-0.255">Bug Fix</text><text x="664.7" y="137.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">GOAL</text><text x="718.7" y="137" font-size="12.5" fill="#424245">Find and fix a slowdown</text><text x="664.7" y="159.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">SCORED</text><text x="718.7" y="159" font-size="12.5" fill="#424245">Speed-up</text><text x="664.7" y="181.5" font-size="9.5" font-weight="600" fill="#86868b" letter-spacing="0.57">TASKS</text><text x="718.7" y="181" font-size="12.5" fill="#424245">7</text></g>
+</svg>

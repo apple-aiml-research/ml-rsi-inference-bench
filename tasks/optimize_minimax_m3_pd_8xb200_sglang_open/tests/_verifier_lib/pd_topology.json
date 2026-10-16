@@ -1,0 +1,31 @@
+{
+  "_why": "The verifier cannot read task.toml at run time: it is mounted at /tests, so Path(__file__).parents[1] is / and /task.toml does not exist. This file is the same table, beside the verifier, where _verifier_lib demonstrably reaches every backend.",
+  "_task": "optimize_minimax_m3_pd_8xb200_sglang_open",
+  "pd": {
+    "chunked_prefill_size": 8192,
+    "conversation_turns": 8,
+    "conversations": 16,
+    "decode_gpus": 4,
+    "discovery_port": 30001,
+    "engine": "sglang",
+    "first_turn_prefix_tokens": 8000,
+    "jit_host_compiler": "clang++",
+    "moe_runner_backend": "flashinfer_trtllm_routed",
+    "new_tokens_per_turn": 12000,
+    "prefill_gpus": 4,
+    "reply_tokens": 1024,
+    "router_port": 10001,
+    "transfer_backend": "nixl"
+  },
+  "sections": {
+    "model": {
+      "activated_parameters": "~24B",
+      "architecture": "MiniMaxM3SparseForCausalLM",
+      "context_window": 65536,
+      "dtype": "auto",
+      "hf_model_id": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "tensor_parallel_size": 4,
+      "total_parameters": "~426B"
+    }
+  }
+}

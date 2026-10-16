@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Wed, 27 May 2026 00:00:00 +0000
+Subject: [PATCH] oracle: add inference-bench qwen3_6_27b_pd_2xh100 marker
+
+ORACLE MARKER: adds a new file to vllm/ so the static verifier
+classifies the candidate as `source_edit` (rather than empty),
+proving the oracle path runs end-to-end.
+
+Runtime no-op: nothing imports it. The oracle here is a pipeline
+integration test, so expect a ratio near 1.0 and ~0 reward.
+---
+ vllm/inference_bench_qwen3_6_27b_pd_oracle.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 vllm/inference_bench_qwen3_6_27b_pd_oracle.py
+
+diff --git a/vllm/inference_bench_qwen3_6_27b_pd_oracle.py b/vllm/inference_bench_qwen3_6_27b_pd_oracle.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/vllm/inference_bench_qwen3_6_27b_pd_oracle.py
+@@ -0,0 +1,5 @@
++# inference-bench: qwen3_6_27b_pd_2xh100 oracle marker (no-op)
++# Task: optimize vLLM prefill/decode DISAGGREGATED serving for Qwen3.6-27B on 2xH100 / vLLM 0.24.0+cu129
++# Topology: one kv_producer GPU + one kv_consumer GPU behind a conversation-sticky router, joined by NixlConnector
++# Scored: pd_latency_itl_geomean_ms, lower is better; correctness loose / tokens (atol=0.05 rtol=0.05 min_pass_rate=0.95)
++ORACLE_TASK = "qwen3_6_27b_pd_2xh100"

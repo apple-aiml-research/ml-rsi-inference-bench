@@ -1,0 +1,130 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/optimize_qwen3_8_27b_1xb200_dflash2_open"
+description = "Optimize vLLM throughput for Qwen/Qwen3.8-27B on 1×B200 / vLLM 0.28.0+cu129. Dense 27B multimodal hybrid model (arch Qwen3_5ForConditionalGeneration, model_type qwen3_5 — Qwen3.6 reuses the Qwen3.5 modeling code). 64 decoder layers in a 3:1 hybrid layout: 48 gated-delta-net linear-attention layers (GatedDeltaNetAttention, linear_conv_kernel_dim=4, 16 key / 48 value heads, head_dim=128, mamba_ssm_dtype=fp32 recurrent state) + 16 full-attention layers (GQA 24 q / 4 kv heads, head_dim=256, attn_output_gate, partial_rotary_factor=0.25, interleaved mrope). bf16 weights, hidden_size=5120, intermediate_size=17408, vocab 248320, 256K context (served at 16384). Idle vision tower (Qwen3_VisionTransformer, depth 27) loads at init for the text-only bench. Single-B200 compute-bound regime (no TP all-reduce)."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "throughput-optimization", "qwen3_8", "qwen3_5", "dense", "linear-attention", "gated-delta-net", "hybrid-attention", "multimodal", "b200", "tp1", "v0280"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+timeout_sec = 18000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 524288
+storage_mb = 327680
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 1
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "vllm"
+score_profile = "throughput_optimization_v1"
+speculative_gpu_memory_utilization = 0.80
+
+[metadata.inference_bench.speculative_config]
+method = "dflash"
+model = "z-lab/Qwen3.8-27B-DFlash2"
+num_speculative_tokens = 7
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "v0.28.0"
+workdir = "/app/repo"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.9"
+engine_install = "task_scoped_vllm_0_28_0_cu129_with_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "Qwen/Qwen3.8-27B"
+architecture = "Qwen3_5ForConditionalGeneration"
+total_parameters = "27B"
+activated_parameters = "27B"
+context_window = 16384
+dtype = "auto"
+tensor_parallel_size = 1
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "tokens"
+atol = 0.05
+rtol = 0.05
+min_pass_rate = 0.95
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "mtp_longctx_8k"
+input_len = 8192
+output_len = 4096
+num_prompts = 64
+
+[metadata.inference_bench.commands]
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+INFB_ACCEPT_RTOL = "0.04"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_GEN_JUDGE_J1_EPS = "0.5"
+INFB_GEN_JUDGE_J1_MAX_EXCESS = "0.005"
+INFB_GEN_JUDGE_J1_Z = "4"
+INFB_GEN_JUDGE_J2_Z = "5"
+INFB_OFFICIAL = "1"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[metadata.inference_bench.scoring.num_runs_per_workload]
+mtp_longctx_8k = 3

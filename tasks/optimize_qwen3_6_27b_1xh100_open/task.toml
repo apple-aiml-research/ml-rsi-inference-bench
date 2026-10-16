@@ -1,0 +1,130 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/optimize_qwen3_6_27b_1xh100_open"
+description = "Optimize vLLM throughput for Qwen/Qwen3.6-27B on 1×H100 / vLLM 0.20.1 (+cu129 wheel, libcudart.so.12 / torch 2.11.0+cu128). Dense member of the qwen3_5 architecture family (architectures=Qwen3_5ForConditionalGeneration, model_type=qwen3_5): 64-layer 3:1 linear+full hybrid attention (48 linear + 16 full), GQA-4 with head_dim=256, partial RoPE, multimodal (vision tower idle for text-only inference), native MTP head. Single-H100 dense hybrid-attention target for studying linear-attention / hybrid-KV / scheduler levers in vLLM 0.20.1."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "throughput-optimization", "qwen3_5", "qwen3_6", "linear-attention", "hybrid-attention", "multimodal", "h100", "v0201"]
+
+[agent]
+timeout_sec = 30000  # 8.33h: the outer cap on agent execution for this task.
+
+[verifier]
+timeout_sec = 18000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 16
+memory_mb = 262144
+storage_mb = 163840  # 160 GB: ~56 GB model snapshot + repo overlay + bench scratch + headroom
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 1
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "vllm"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "v0.20.1"
+workdir = "/app/repo"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.9"
+engine_install = "task_scoped_vllm_0_20_1_cu129_with_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "Qwen/Qwen3.6-27B"
+architecture = "Qwen3_5ForConditionalGeneration"
+total_parameters = "27B"
+activated_parameters = "27B"  # dense (non-MoE); all params active per token
+context_window = 262144
+dtype = "bf16"
+tensor_parallel_size = 1
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.05
+rtol = 0.05
+min_pass_rate = 0.95
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "decode_heavy"
+input_len = 1024
+output_len = 8192
+num_prompts = 4
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "prefill_heavy"
+input_len = 8192
+output_len = 1
+num_prompts = 256
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "high_load"
+input_len = 1024
+output_len = 1024
+num_prompts = 256
+
+[metadata.inference_bench.commands]
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_OFFICIAL = "1"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

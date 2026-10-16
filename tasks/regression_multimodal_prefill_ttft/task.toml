@@ -1,0 +1,126 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/regression_multimodal_prefill_ttft"
+description = "Recover a large prefill-latency regression on Qwen3.5-4B under multimodal traffic whose request sizes vary: at the pinned parent, l2norm_fwd_kernel (python/sglang/kernels/ops/attention/fla/l2norm.py) declares the FLATTENED TOKEN COUNT `T` -- and `NB = cdiv(T, 2048)`, derived from it -- as `tl.constexpr`. Triton keys its kernel cache on every constexpr VALUE, so each distinct token count compiles a fresh cubin and the compile blocks the prefill that triggered it. The kernel is on the GDN linear-attention path: TritonGDNKernel.extend -> chunk_gated_delta_rule(use_qk_l2norm_in_kernel=True) -> l2norm_fwd on q and k. Upstream PR #31558 makes `T` a runtime scalar under @triton.jit(do_not_specialize=[\"T\"]) and deletes `NB`, which the kernel body never reads."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "regression", "prefill", "latency", "multimodal", "lite"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+env = { INFB_OFFICIAL = "1", INFB_REAL_ENGINE = "1" }
+timeout_sec = 9000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 16
+memory_mb = 131072
+storage_mb = 81920
+shm_size_mb = 16384
+gpus = 1
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[metadata.inference_bench]
+tier = "lite"
+category = "regression"
+engine = "sglang"
+score_profile = "regression_recovery_v2"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+commit = "01a96720c6f690ac00adeed94b762b193d8472cd"
+baseline_commit = "01a96720c6f690ac00adeed94b762b193d8472cd"
+workdir = "/app/repo"
+baseline_relation = "The single parent of the squash merge that landed upstream PR #31558 ('[Performance] Avoid FLA L2-norm recompilation by token count'), i.e. the last upstream state in which the FLA L2-norm kernel re-specialises on the flattened token count. Verified against a full clone: that commit has exactly one child, the merge 42a058c760c768ce37739109de6a430cce49cc51, whose subject names #31558, and `git diff <parent> <merge> -- python/sglang` is 1 file, +2/-5. PARENT DISAMBIGUATION: a second commit with the same subject (7e5ba99f) exists on an abandoned branch whose parent is not on main; the single-child check is what distinguishes them. THE MECHANISM IS ISOLATED AND THAT IS CHECKED RATHER THAN ASSUMED: `git grep -nE '^\\s+T:\\s*tl\\.constexpr' <parent> -- python/sglang` returns EXACTLY ONE hit, this kernel, so nothing else on the GDN prefill path recompiles per token count and nothing dilutes or confounds the effect. This parent is the EARLIEST of the torch-2.11.0 A/B parents and is a strict ancestor of #31487's and #31468's, so unlike those it does NOT contain their fixes. The staged tree is the FLATTENED python/ subtree, so repo/sglang is the package root. The image bakes the monorepo root as a gzipped ARCHIVE rather than as an extracted tree, so the scored baseline is not writable by the agent; tests/pristine_tree.sha256 is the digest the verifier checks the staged pristine arm against, and it fails closed."
+
+[metadata.inference_bench.model]
+hf_model_family = "Qwen/Qwen3.5-4B"
+hf_model_id = "Qwen/Qwen3.5-4B"
+gated = false
+architecture = "Qwen3_5ForConditionalGeneration"
+model_type = "qwen3_5"
+feature = "A hybrid linear-attention model that is ALSO multimodal, which is why a 4B fits a workload upstream ran on a 35B MoE across two H200s. Both halves are load-bearing and each is checked in-run rather than asserted. (1) LINEAR ATTENTION: its linear layers are Qwen3_5GatedDeltaNet holding a RadixLinearAttention; the extend path is TritonGDNKernel.extend -> chunk_gated_delta_rule(..., use_qk_l2norm_in_kernel=True) -> l2norm_fwd on q and k. text_config.linear_key_head_dim = 128, which is <= 512 and therefore selects the l2norm_fwd_kernel branch -- the one with `T: tl.constexpr`; above 512 the code takes l2norm_fwd_kernel1, which has no T at all and no regression. 24 of its 32 layers are linear_attention. (2) VISION: config.json carries vision_config and image_token_id, so image resolution is what makes the prefill token count vary, which is upstream's own choice of variation source and the reason the symptom report can describe traffic rather than token counts."
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "dependency_closure_in_the_venv__engine_python_unpacked_from_a_baked_archive_of_the_pinned_tree"
+
+
+[metadata.inference_bench.oracle]
+oracle_id = "fla_l2norm_token_count_specialisation"
+source = "task-local_reference_implementation"
+oracle_scope = "The merge-commit diff of upstream PR #31558: 1 file, +2/-5. `@triton.jit` becomes `@triton.jit(do_not_specialize=[\"T\"])`, `NB: tl.constexpr, T: tl.constexpr` becomes `T`, and `NB = triton.cdiv(T, 2048)` and its keyword argument are deleted. NB is not incidental: it is derived from T, so leaving it would re-specialise on its own every 2048 tokens -- removing it is why the repaired arm compiles exactly one cubin rather than one per bucket. The launch grid was already dynamic, so nothing else changes and the numerics are identical."
+
+# THE CONTINUOUS CONTRACT. The verifier scores max(0, ratio - 1) on `metric`, candidate over the
+# freshly benched pristine tree, warmed and rotated, with no pass gate; a run is read as
+# recovery = (ratio - 1) / (oracle_speedup - 1).
+# What the ratio divides: mean time to first token per request, stamped by
+# tests/_mm_ttft_client.py on the first streamed chunk of a served engine. A LOWER number is the
+# better arm, so the ratio is pristine / candidate, and the score is the geometric mean of that
+# ratio over the scored points of [.workloads].
+[metadata.inference_bench.scoring]
+kind = "regression_recovery"
+metric = "ttft"
+measured_key = "latency_ms.ttft.mean"
+higher_is_better = false
+noise_floor = 1.03
+oracle_speedup = 1.620
+oracle_speedup_per_workload = { img1_randres_n120 = 1.919, img2_randres_n120 = 1.701, img4_randres_n80 = 1.301 }
+oracle_measured_on = "1xH100, the served TTFT matrix: geometric mean of the three scored points, warmed rotated rounds. The declared oracle_speedup is that geomean; oracle_speedup_per_workload carries the per-shape values."
+
+[metadata.inference_bench.real_engine_thresholds.latency]
+max_e2e_mean_ms = 600000.0
+
+[metadata.inference_bench.real_engine_thresholds.throughput]
+min_request_per_sec = 0.01
+min_total_tokens_per_sec = 1.0
+
+[metadata.inference_bench.real_engine_thresholds.serve]
+min_request_per_sec = 0.01
+min_total_tokens_per_sec = 1.0
+max_ttft_mean_ms = 60000.0
+
+[metadata.inference_bench.correctness]
+mode = "enforced"
+comparison = "teacher_forced_logprobs"
+atol = 0.05
+rtol = 0.05
+min_pass_rate = 0.95
+num_prompts = 16
+max_tokens = 8
+
+[metadata.inference_bench.workloads]
+img2_randres_n120 = { input_len = 96, output_len = 1, num_prompts = 120, concurrency = 1, image_count = 2 }
+img1_randres_n120 = { input_len = 96, output_len = 1, num_prompts = 120, concurrency = 1, image_count = 1 }
+img4_randres_n80 = { input_len = 96, output_len = 1, num_prompts = 80, concurrency = 1, image_count = 4 }
+repeat_img2_n120 = { input_len = 96, output_len = 1, num_prompts = 120, concurrency = 1, image_count = 2, role = "guard", min_ratio = 0.93 }
+text_fixedlen_n64 = { input_len = 2048, output_len = 1, num_prompts = 64, concurrency = 1, image_count = 0, role = "guard", min_ratio = 0.95 }
+
+[metadata.inference_bench.runtime]
+model = "Qwen/Qwen3.5-4B"
+engine_kwargs = "tp_size=1 mem_fraction_static=0.85 disable_radix_cache=true chunked_prefill_size=8192 cuda_graph_max_bs_decode=4 context_length=8192 log_level=warning"
+
+[metadata.inference_bench.artifacts]
+# None. The image is self-contained: the engine stage builds the dependency closure and clones
+# the pinned tree, and the task layer archives it, so no artifact, no source mount and no
+# staging step is required. A runtime mount is still honoured when one is present -- see
+# environment/scripts/prepare_target_env.sh.
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"

@@ -1,0 +1,47 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: Copyright contributors to the Pier and Harbor projects
+# Vendored from https://github.com/datacurve-ai/pier at 3f688a1.
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Awaitable, Callable
+
+from pydantic import BaseModel, Field
+
+from pier.models.trial.config import TrialConfig
+from pier.models.trial.result import TrialResult
+
+
+class TrialEvent(Enum):
+    """Events in a trial's lifecycle."""
+
+    START = "start"
+    ENVIRONMENT_START = "environment_start"
+    AGENT_START = "agent_start"
+    VERIFICATION_START = "verification_start"
+    END = "end"
+    CANCEL = "cancel"
+
+
+class TrialHookEvent(BaseModel):
+    """
+    Unified event object passed to all trial lifecycle hooks.
+
+    Provides context about the trial at the time of the event.
+    The `result` field is only populated for END events.
+    """
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    event: TrialEvent
+    trial_id: str
+    task_name: str
+    config: TrialConfig
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    result: TrialResult | None = None
+
+
+HookCallback = Callable[["TrialHookEvent"], Awaitable[None]]

@@ -1,0 +1,295 @@
+{
+ "schema": "diffusion-gemma-policy/4",
+ "form": "deterministic compile, v4",
+ "per_read_c": false,
+ "reads": {
+  "reads": {
+   "tp1": {
+    "256": {
+     "T": 0.2754943847049499,
+     "C": 11.824241086853188,
+     "resample": true
+    },
+    "1024": {
+     "T": 0.5375798450133453,
+     "C": 138.4519998756544,
+     "resample": true
+    },
+    "1280": {
+     "T": 0.1624714039935342,
+     "C": 81.7715870675169,
+     "resample": true
+    },
+    "4096": {
+     "T": 0.4055157719002762,
+     "C": 46.52756310119845,
+     "resample": true
+    },
+    "16384": {
+     "T": 0.056303738395901054,
+     "C": 3.379677645593806,
+     "resample": true
+    },
+    "65536": {
+     "T": 0.03907834615240633,
+     "C": 120.21469166288986,
+     "resample": true
+    }
+   },
+   "tp2": {
+    "1024": {
+     "T": 0.395996054479123,
+     "C": 6.206758825765062,
+     "resample": true
+    },
+    "4096": {
+     "T": 0.39650501787325204,
+     "C": 52.18465643198647,
+     "resample": true
+    },
+    "16384": {
+     "T": 0.04086623814485276,
+     "C": 2.016404593213319,
+     "resample": true
+    },
+    "65536": {
+     "T": 0.033760987742890505,
+     "C": 44.767938150685055,
+     "resample": true
+    }
+   }
+  },
+  "image": {
+   "tp1": {
+    "image": {
+     "T": 0.07839429296962247,
+     "C": 23.454537369939672,
+     "resample": true
+    }
+   },
+   "tp2": {
+    "image": {
+     "T": 0.09412762806889838,
+     "C": 4.333708448837493,
+     "resample": true
+    }
+   }
+  },
+  "step1": {
+   "tp1": {
+    "1024": {
+     "T": 0.45353569544638483,
+     "C": 8.874413033504947,
+     "resample": true
+    },
+    "4096": {
+     "T": 0.6496747703281582,
+     "C": 20.779040395496445,
+     "resample": true
+    },
+    "16384": {
+     "T": 0.22146939420746276,
+     "C": 0.9375431590931229,
+     "resample": true
+    }
+   },
+   "tp2": {
+    "1024": {
+     "T": 0.5499400493841919,
+     "C": 37.05679106791558,
+     "resample": true
+    },
+    "4096": {
+     "T": 0.21918573621084753,
+     "C": 32.84246076857239,
+     "resample": true
+    },
+    "16384": {
+     "T": 0.10154143486776847,
+     "C": 14.333590533503402,
+     "resample": true
+    }
+   }
+  },
+  "step1_increment": {
+   "tp1": {
+    "1024": {
+     "T": 1.2857323134441374,
+     "C": 4.1686679196543,
+     "resample": true
+    },
+    "4096": {
+     "T": 0.7894878290061376,
+     "C": 2.1639431033003858,
+     "resample": true
+    },
+    "16384": {
+     "T": 0.5869732164172843,
+     "C": 1.4521842101456859,
+     "resample": true
+    }
+   },
+   "tp2": {
+    "1024": {
+     "T": 1.1879912048225403,
+     "C": 3.7082916383898596,
+     "resample": true
+    },
+    "4096": {
+     "T": 0.7600016460331287,
+     "C": 2.2511797016921995,
+     "resample": true
+    },
+    "16384": {
+     "T": 0.5610860615996571,
+     "C": 1.1387475269326075,
+     "resample": true
+    }
+   }
+  }
+ },
+ "pairs": {
+  "replay": {
+   "tp1": 0.3016919281162975,
+   "tp2": 0.2867789472782069
+  },
+  "branches": {
+   "tp1": 0.005
+  },
+  "mixed": {
+   "tp1": 0.1175453523812289,
+   "tp2": 0.22785396202122316
+  },
+  "leak": {
+   "tp1": 1.0667517795529846,
+   "tp2": 0.9919846191088546
+  }
+ },
+ "engine_agreement": {
+  "tp1": 0.2824373435777966,
+  "tp2": 0.21668149271646553
+ },
+ "gsm8k_floor": 0.8392721758908264,
+ "R_ref": 0.13453477034521244,
+ "preemption": {
+  "W_ref_s": 1574.8947,
+  "limit_s": 6300,
+  "heavier_W_ref_s": 2298.6877,
+  "heavier_limit_s": 9195,
+  "load": {
+   "requests": 4,
+   "prompt_len": [
+    185000,
+    185000,
+    185000,
+    185000
+   ],
+   "max_tokens": 53248
+  },
+  "heavier_load": {
+   "requests": 4,
+   "prompt_len": [
+    185000,
+    185000,
+    185000,
+    185000
+   ],
+   "max_tokens": 69632
+  },
+  "headroom": {
+   "largest_pool": 669594,
+   "heavier_demand": 1018528,
+   "pool_ratio_at_heavier": 1.5211127937227633
+  }
+ },
+ "selections": {
+  "semantic_tp1": [
+   "sem/t/0",
+   "sem/t/1",
+   "sem/t/2",
+   "sem/t/3",
+   "sem/t/4",
+   "sem/t/5",
+   "sem/t/6",
+   "sem/t/7",
+   "sem/t/8",
+   "sem/t/9",
+   "sem/t/10",
+   "sem/t/11",
+   "sem/i/0",
+   "sem/i/1",
+   "sem/i/2",
+   "sem/i/3"
+  ],
+  "semantic_tp2": [
+   "sem/t/0",
+   "sem/t/1",
+   "sem/t/2",
+   "sem/t/3",
+   "sem/t/4",
+   "sem/t/5",
+   "sem/t/6",
+   "sem/t/7",
+   "sem/t/8",
+   "sem/t/9",
+   "sem/t/10",
+   "sem/t/11"
+  ],
+  "first_token": [
+   "Complete with one word: the capital of Japan is",
+   "Answer with one word: what colour is the sky on a clear day?",
+   "Answer with one word: what is frozen water called?",
+   "Answer with one word: which planet is known as the Red Planet?"
+  ],
+  "chat": [
+   [
+    "Name the largest ocean on Earth.",
+    true
+   ],
+   [
+    "What is 12 times 13?",
+    true
+   ],
+   [
+    "Is 91 a prime number?",
+    false
+   ],
+   [
+    "Name the largest ocean on Earth.",
+    false
+   ],
+   [
+    "What is 12 times 13?",
+    false
+   ]
+  ],
+  "tools": {
+   "single": [
+    "nonstream",
+    "stream"
+   ],
+   "two": [
+    "nonstream",
+    "stream"
+   ],
+   "second_turn": [
+    "nonstream",
+    "stream"
+   ],
+   "required": [
+    "nonstream",
+    "stream"
+   ],
+   "named": [
+    "nonstream"
+   ]
+  },
+  "policy_schedule": [
+   "sem/t/12",
+   "sem/t/13",
+   "sem/t/14",
+   "sem/t/15",
+   "sem/t/0p"
+  ]
+ }
+}

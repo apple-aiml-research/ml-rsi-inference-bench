@@ -1,0 +1,97 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/regression_fp8_decode_throughput"
+description = "Recover a decode-throughput regression on an MLA model served with an FP8 KV cache (DeepSeek-R1-0528-NVFP4, 8xB200, data parallelism 8 with expert parallelism). The engine serves correctly and output is unchanged; only the decode path got slower. The loss is spread evenly across the sweep rather than concentrated in a stall or a tail, and it is invisible at small decode batch, which is why the scored workload issues every request at once."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "regression", "mla", "fp8", "decode", "b200", "dp"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+env = { INFB_OFFICIAL = "1", INFB_REAL_ENGINE = "1" }
+timeout_sec = 14400
+
+[environment]
+build_timeout_sec = 7200
+cpus = 64
+memory_mb = 1048576
+storage_mb = 2097152
+shm_size_mb = 16384
+gpus = 8
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[metadata.inference_bench]
+tier = "regular"
+category = "regression"
+engine = "vllm"
+score_profile = "regression_recovery_v2"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "a4047d4ea993fd52038433d87c16e603bee4f214"
+
+[metadata.inference_bench.model]
+architecture = "DeepseekV3ForCausalLM"
+model_type = "deepseek_v3"
+feature = "MLA attention with an FP8 KV cache at high decode batch; any 128-head MLA checkpoint of this shape reproduces, provided the deployment is data-parallel"
+hf_model_family = "nvidia/DeepSeek-R1-0528-NVFP4"
+hf_model_id = "nvidia/DeepSeek-R1-0528-NVFP4"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "task_scoped_vllm_a4047d4e_per_commit_wheel"
+
+[metadata.inference_bench.commands]
+
+[metadata.inference_bench.oracle]
+oracle_id = "custom_op_selective_dynamic_shape_marking"
+source = "upstream_merged_fix"
+oracle_scope = "Upstream's merged shape for this defect: declare which argument dimensions are genuinely dynamic, and stop making every dimension symbolic for the ops that declare them."
+
+[metadata.inference_bench.scoring]
+kind = "regression_recovery"
+metric = "tpot"
+measured_key = "latency_ms.tpot.mean"
+higher_is_better = false
+noise_floor = 1.03
+oracle_speedup = 1.206
+oracle_speedup_per_workload = { in2_out1000_c2048 = 1.168, in2_out1000_c4096 = 1.239, in2_out1000_c8196 = 1.213 }
+oracle_measured_on = "8xB200, the workload matrix: geometric mean over three scored points of pristine/candidate mean TPOT, warmed rotated rounds. The declared oracle_speedup is that geomean; oracle_speedup_per_workload carries the per-shape values."
+
+[metadata.inference_bench.real_engine_thresholds.throughput]
+
+[metadata.inference_bench.real_engine_thresholds.serve]
+
+[metadata.inference_bench.workloads]
+in2_out1000_c8196 = { input_len = 2, output_len = 1000, num_prompts = 8196, max_concurrency = 8196 }
+in2_out1000_c2048 = { input_len = 2, output_len = 1000, num_prompts = 2048, max_concurrency = 2048 }
+in2_out1000_c4096 = { input_len = 2, output_len = 1000, num_prompts = 4096, max_concurrency = 4096 }
+in2_out1000_c64 = { input_len = 2, output_len = 1000, num_prompts = 64, max_concurrency = 64, role = "guard", min_ratio = 0.95 }
+
+[metadata.inference_bench.runtime]
+model = "nvidia/DeepSeek-R1-0528-NVFP4"
+serve_args = '--data-parallel-size 8 --enable-expert-parallel --max-num-seqs 2048 --max-num-batched-tokens 16384 --max-model-len 1280 --max-cudagraph-capture-size 2048 --compilation-config {"cudagraph_mode":"FULL_DECODE_ONLY"} --stream-interval 100'
+warmup_boots = 1
+
+[metadata.inference_bench.artifacts]
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+VLLM_ENGINE_READY_TIMEOUT_S = "3600"
+VLLM_USE_FLASHINFER_MOE_FP4 = "1"

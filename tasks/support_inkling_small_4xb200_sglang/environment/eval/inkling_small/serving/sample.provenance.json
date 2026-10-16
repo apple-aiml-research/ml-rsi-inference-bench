@@ -1,0 +1,1022 @@
+{
+ "set": "sample",
+ "file": "sample.jsonl.xz",
+ "sha256": "e56003aa4ebc046e79043f2a0c89efbd03e31fadf5ed2352e881457519ae513e",
+ "bytes": 1612608,
+ "uncompressed_sha256": "ef3b2b2b77e9efa4baff8c29a290a765f3bc474d07dd54088551326844ae7d41",
+ "documents": 340,
+ "by_family": {
+  "prose": 85,
+  "math": 85,
+  "code": 85,
+  "struct": 85
+ },
+ "min_tokens_by_tokenizer": {
+  "dsv4": 4463,
+  "glm53": 4472,
+  "qwen38": 4524,
+  "gptoss": 4458,
+  "kimi": 4501,
+  "inkling_small": 4458
+ },
+ "min_tokens_required": 4300,
+ "target_chars": {
+  "prose": 21000,
+  "math": 21000,
+  "code": 18500,
+  "struct": 17500
+ },
+ "answer_addresses_screened": {
+  "prs": 222,
+  "shas": 114,
+  "rule": "a document containing any is dropped",
+  "generic_pr_backstop": true
+ },
+ "factbook_commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+ "works": [
+  {
+   "key": "carroll-alice",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+   "sha256": "01b38ea4c710a84bc18d0bd41271a5a1a92b94e97b2812f4dece97d4a694725e",
+   "bytes": 174311,
+   "title": "Alice's Adventures in Wonderland",
+   "author": "Lewis Carroll",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 1,
+   "offsets_chars": [
+    7724
+   ]
+  },
+  {
+   "key": "stevenson-jekyll",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/43/pg43.txt",
+   "sha256": "b43448a88391591f9cf82b25553df00faf47a2752a873185fcdd1156eebdb990",
+   "bytes": 163495,
+   "title": "The strange case of Dr. Jekyll and Mr. Hyde",
+   "author": "Robert Louis Stevenson",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 1,
+   "offsets_chars": [
+    9017
+   ]
+  },
+  {
+   "key": "stevenson-treasure",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/120/pg120.txt",
+   "sha256": "5bc08275eacea8640b1aa185c645283bb8c564d7b23df6b03437d229b4fc6ebd",
+   "bytes": 399873,
+   "title": "Treasure Island",
+   "author": "Robert Louis Stevenson",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 3,
+   "offsets_chars": [
+    19445,
+    175348,
+    332466
+   ]
+  },
+  {
+   "key": "austen-emma",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/158/pg158.txt",
+   "sha256": "532b122b4e6a76cc556d6fdcd729b5892f5c4ce4a1b7060b9f832adfad8680dc",
+   "bytes": 933709,
+   "title": "Emma",
+   "author": "Jane Austen",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    44709,
+    201985,
+    359651,
+    518356,
+    675219,
+    832973
+   ]
+  },
+  {
+   "key": "dumas-montecristo",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1184/pg1184.txt",
+   "sha256": "64f8d5cfa51fcecb904abf7312d395d512a71817e7359b91288beb50517c3836",
+   "bytes": 2787124,
+   "title": "The Count of Monte Cristo",
+   "author": "Alexandre Dumas",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 10,
+   "offsets_chars": [
+    131415,
+    264487,
+    397706,
+    530485,
+    664437,
+    796632,
+    930046,
+    1063785,
+    1195861,
+    1328882
+   ]
+  },
+  {
+   "key": "wells-worlds",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/36/pg36.txt",
+   "sha256": "8417469e3ab664749f7b36ebb85799075818207b0380b54c27d07d592a44117d",
+   "bytes": 366624,
+   "title": "The war of the worlds",
+   "author": "H. G. Wells",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 2,
+   "offsets_chars": [
+    16871,
+    306570
+   ]
+  },
+  {
+   "key": "dostoyevsky-crime",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/2554/pg2554.txt",
+   "sha256": "d139120965c81f10e3f747d891a49babdb49d986b25f7ab25299b1bbf4731146",
+   "bytes": 1201725,
+   "title": "Crime and Punishment",
+   "author": "Fyodor Dostoyevsky",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 8,
+   "offsets_chars": [
+    56790,
+    202935,
+    349719,
+    495350,
+    641669,
+    787827,
+    934572,
+    1080198
+   ]
+  },
+  {
+   "key": "thoreau-walden",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/205/pg205.txt",
+   "sha256": "2d9a76a2e3e8195c69430516ebd33c4d0757a53ad432ff6186b7b794e6fe99f9",
+   "bytes": 667957,
+   "title": "Walden, and On The Duty Of Civil Disobedience",
+   "author": "Henry David Thoreau",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 5,
+   "offsets_chars": [
+    33516,
+    173194,
+    314303,
+    455368,
+    595433
+   ]
+  },
+  {
+   "key": "dubois-souls",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/408/pg408.txt",
+   "sha256": "f5a231cbe6a8eb942369203e0c69c65090d689ce05feeb416cf05e24c5fa4da1",
+   "bytes": 428743,
+   "title": "The Souls of Black Folk",
+   "author": "W. E. B. Du Bois",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 3,
+   "offsets_chars": [
+    20232,
+    193082,
+    368434
+   ]
+  },
+  {
+   "key": "hawthorne-scarlet",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/25344/pg25344.txt",
+   "sha256": "82836a0a74a55163187b1d62e0ee6e6500a9ae2714711dcef28f66780ce5650c",
+   "bytes": 526324,
+   "title": "The Scarlet Letter",
+   "author": "Nathaniel Hawthorne",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 4,
+   "offsets_chars": [
+    24808,
+    169422,
+    312745,
+    456527
+   ]
+  },
+  {
+   "key": "fitzgerald-gatsby",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/64317/pg64317.txt",
+   "sha256": "ce760ec377accd352b41bb8f64504a72d7aa18ab3afb42ded2b56cecacf29e35",
+   "bytes": 306553,
+   "title": "The Great Gatsby",
+   "author": "F. Scott Fitzgerald",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 2,
+   "offsets_chars": [
+    13803,
+    241714
+   ]
+  },
+  {
+   "key": "tocqueville-democracy1",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/815/pg815.txt",
+   "sha256": "734b3b0352dc2ec312a6b2b9e9165aac054439eee2d6e8d83d1fd9a35d1c9e2d",
+   "bytes": 1151189,
+   "title": "Democracy in America — Volume 1",
+   "author": "Alexis de Tocqueville",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 8,
+   "offsets_chars": [
+    55902,
+    199272,
+    341590,
+    484933,
+    626954,
+    769362,
+    911921,
+    1054936
+   ]
+  },
+  {
+   "key": "homer-iliad",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/6130/pg6130.txt",
+   "sha256": "ca4f23115b384b0219427ef208e875f0351820b8f80f28259272997ea581c36b",
+   "bytes": 1161373,
+   "title": "The Iliad",
+   "author": "Homer",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 8,
+   "offsets_chars": [
+    54950,
+    196666,
+    337481,
+    479409,
+    619874,
+    761687,
+    903045,
+    1043308
+   ]
+  },
+  {
+   "key": "austen-sense",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/161/pg161.txt",
+   "sha256": "22272ec4d4da2f50cda51edf34ab8486b325c4a99580120db565fb8917228a22",
+   "bytes": 712842,
+   "title": "Sense and Sensibility",
+   "author": "Jane Austen",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 5,
+   "offsets_chars": [
+    33537,
+    182886,
+    332100,
+    481953,
+    629446
+   ]
+  },
+  {
+   "key": "dickens-oliver",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/730/pg730.txt",
+   "sha256": "c64d62808c163536c815cefdb4837d767670cf5c256c84191e736e4d480c7e49",
+   "bytes": 955855,
+   "title": "Oliver Twist",
+   "author": "Charles Dickens",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 7,
+   "offsets_chars": [
+    44693,
+    178159,
+    311499,
+    444943,
+    578541,
+    711741,
+    845453
+   ]
+  },
+  {
+   "key": "montaigne-essays",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/3600/pg3600.txt",
+   "sha256": "1b4c87312f0890e04cecee48e3a5fa263de65743230b819e16cb1bd72f7aee59",
+   "bytes": 3105655,
+   "title": "Essays of Michel de Montaigne — Complete",
+   "author": "Michel de Montaigne",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 10,
+   "offsets_chars": [
+    151696,
+    281910,
+    412719,
+    543689,
+    674699,
+    807052,
+    937252,
+    1067877,
+    1198707,
+    1331047
+   ]
+  },
+  {
+   "key": "machiavelli-prince",
+   "family": "prose",
+   "url": "https://www.gutenberg.org/cache/epub/1232/pg1232.txt",
+   "sha256": "33496a305f7a4b933784fb5aec95f920fbc3d4687794817e4cc444aa6578d2e4",
+   "bytes": 308019,
+   "title": "The Prince",
+   "author": "Niccolò Machiavelli",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 2,
+   "offsets_chars": [
+    14216,
+    254928
+   ]
+  },
+  {
+   "key": "dudeney-canterbury",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/27635/pg27635.txt",
+   "sha256": "02aa60bc6c3b5982246b0e1ef68428a5b9a7b83980938ceb189df51f26a0762a",
+   "bytes": 357542,
+   "title": "The Canterbury Puzzles, and Other Curious Problems",
+   "author": "Henry Ernest Dudeney",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 12,
+   "offsets_chars": [
+    16513,
+    42150,
+    67648,
+    93578,
+    119051,
+    144669,
+    170867,
+    195919,
+    221501,
+    247207,
+    272851,
+    298459
+   ]
+  },
+  {
+   "key": "abbott-flatland",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/201/pg201.txt",
+   "sha256": "03dd4508636e44ab9b37efda856745545f22ea5ace95e2eb16c3ef50307cd9f7",
+   "bytes": 227452,
+   "title": "Flatland: A Romance of Many Dimensions",
+   "author": "Edwin Abbott Abbott",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 7,
+   "offsets_chars": [
+    10307,
+    38839,
+    66339,
+    93541,
+    121072,
+    148869,
+    177066
+   ]
+  },
+  {
+   "key": "carroll-tangled",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/29042/pg29042.txt",
+   "sha256": "16cb712f4735328ea2d57dec6088b700ae2a469e820c7d5c6874f762814b60e3",
+   "bytes": 184146,
+   "title": "A Tangled Tale",
+   "author": "Lewis Carroll",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 6,
+   "offsets_chars": [
+    8497,
+    33372,
+    58923,
+    84852,
+    109255,
+    134664
+   ]
+  },
+  {
+   "key": "smith-geometry",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/37681/pg37681.txt",
+   "sha256": "df7e021fffbe738f5387d0a28dcc00d05218f993a601f0f9bee410fbb05aea9d",
+   "bytes": 583890,
+   "title": "The Teaching of Geometry",
+   "author": "David Eugene Smith",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 17,
+   "offsets_chars": [
+    27785,
+    54351,
+    80327,
+    105376,
+    130334,
+    156138,
+    181971,
+    208060,
+    233033,
+    259007,
+    284711,
+    310429,
+    335638,
+    361573,
+    387122,
+    412717,
+    438272
+   ]
+  },
+  {
+   "key": "venn-chance",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/57359/pg57359.txt",
+   "sha256": "c149e07cd9525ffeafd1707225405542955c1601e2fd03d51da3172650220cbe",
+   "bytes": 1018822,
+   "title": "The Logic of Chance, 3rd edition",
+   "author": "John Venn",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 17,
+   "offsets_chars": [
+    49886,
+    75109,
+    101123,
+    128193,
+    152767,
+    179516,
+    204378,
+    230583,
+    256414,
+    282254,
+    308006,
+    334255,
+    360195,
+    385656,
+    412186,
+    437483,
+    463950
+   ]
+  },
+  {
+   "key": "phin-follies",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/36547/pg36547.txt",
+   "sha256": "ead9dd2a34d77315582e066acabe7d0466256ed18792d7d514f496385a8e8e28",
+   "bytes": 300700,
+   "title": "The Seven Follies of Science [2nd ed.]",
+   "author": "John Phin",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 10,
+   "offsets_chars": [
+    14975,
+    40632,
+    65811,
+    91759,
+    117148,
+    145793,
+    168657,
+    194612,
+    220185,
+    246252
+   ]
+  },
+  {
+   "key": "demorgan-arithmetic",
+   "family": "math",
+   "url": "https://www.gutenberg.org/cache/epub/68662/pg68662.txt",
+   "sha256": "c7dc1494dc3172531d79f11108c231377a4c17be0dbf9eb1ccce1a163e9ffd2f",
+   "bytes": 525639,
+   "title": "Elements of arithmetic",
+   "author": "Augustus De Morgan",
+   "licence": "public domain in the USA (Project Gutenberg)",
+   "documents": 16,
+   "offsets_chars": [
+    25353,
+    50928,
+    77817,
+    104182,
+    130901,
+    157541,
+    211160,
+    237226,
+    265194,
+    290766,
+    317245,
+    343630,
+    370385,
+    396959,
+    423815,
+    450107
+   ]
+  },
+  {
+   "key": "sqlite3c-b",
+   "family": "code",
+   "url": "https://www.sqlite.org/2024/sqlite-amalgamation-3460000.zip",
+   "sha256": "712a7d09d2a22652fb06a49af516e051979a3984adb067da86760e60ed51a7f5",
+   "bytes": 2763740,
+   "title": "SQLite amalgamation sqlite3.c, characters 60%-100%",
+   "author": "D. Richard Hipp and the SQLite developers",
+   "licence": "public domain (sqlite.org/copyright.html)",
+   "documents": 85,
+   "offsets_chars": [
+    0,
+    33430,
+    66839,
+    100235,
+    133640,
+    167054,
+    200464,
+    233896,
+    267287,
+    300723,
+    334120,
+    367575,
+    434382,
+    467769,
+    501162,
+    534611,
+    567976,
+    601387,
+    634811,
+    701619,
+    735051,
+    768429,
+    801858,
+    835272,
+    868676,
+    902089,
+    935512,
+    968907,
+    1002315,
+    1035731,
+    1069181,
+    1102548,
+    1135972,
+    1169363,
+    1202801,
+    1236183,
+    1269580,
+    1302989,
+    1336409,
+    1369828,
+    1403229,
+    1436633,
+    1470042,
+    1503455,
+    1536919,
+    1570303,
+    1603700,
+    1637119,
+    1670500,
+    1703927,
+    1737328,
+    1770744,
+    1804180,
+    1837605,
+    1870969,
+    1904374,
+    1937815,
+    1971202,
+    2004663,
+    2038011,
+    2071422,
+    2104838,
+    2138305,
+    2171690,
+    2205057,
+    2238487,
+    2271882,
+    2305332,
+    2338696,
+    2372112,
+    2405533,
+    2438932,
+    2472393,
+    2505756,
+    2539178,
+    2572586,
+    2605977,
+    2639388,
+    2672795,
+    2706263,
+    2739628,
+    2773062,
+    2806474,
+    2839854,
+    2873308
+   ]
+  },
+  {
+   "key": "factbook-caribbean",
+   "family": "struct",
+   "files": [
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/aa.json",
+     "sha256": "64d657a7420887ec23b688c58072bc0d377556f010ca880930b0d322c0bfff11",
+     "bytes": 26592
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/ac.json",
+     "sha256": "32522db9182e04580e0198738124f84decdb42445d2acaf4780d366c4cc8ac50",
+     "bytes": 32961
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/av.json",
+     "sha256": "8c82c3e891043b2ffc2232d7a24f3b63c43827a676cc723d9aa3250c8308dacb",
+     "bytes": 19510
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/bb.json",
+     "sha256": "f2e2a5c9cd40fb3bb32fdb1304fb3cd56e692dca95f74ebe37feb24c16a3acb9",
+     "bytes": 37436
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/bf.json",
+     "sha256": "d622a6c30c8785bba75951a8e77e052cca5763483f3859ffb6d0a9670c69da90",
+     "bytes": 36087
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/bh.json",
+     "sha256": "d4da87c04574a6e30e66452f6b45e3cb3d121e2bd02b502ca1500ade0fcd35ae",
+     "bytes": 39767
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/bq.json",
+     "sha256": "0f879a281ef61f9bab5f589fdae5418b9c39be73fa8a311d01d689c2e0dc4e6f",
+     "bytes": 3936
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/cj.json",
+     "sha256": "5755c76c79362ab1bc8f6699ab68e3ee72b7a39fe3aa415847c3d92238095c40",
+     "bytes": 25318
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/cs.json",
+     "sha256": "48db2f4e6656eeda0472225b73cc523d9d01a89276eba5d015b32311f892c916",
+     "bytes": 43708
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/cu.json",
+     "sha256": "917099005e0599d0d555d44333b89399a630068713aa04e5471ee6ec2fcf6305",
+     "bytes": 42756
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/do.json",
+     "sha256": "d84383037ff1654212f5b11961fbbd4fd250aa72385e6084cf631eb74b8aaa6b",
+     "bytes": 32440
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/dr.json",
+     "sha256": "06daa08e9a4cb3fe5a8dc7488a54a0d39d49efb2042e276f448eb47f0cef6c88",
+     "bytes": 44774
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/es.json",
+     "sha256": "9c43421343dcb156b66d225f75e031c045df97a8eba0e52be01d8d6cd03c7c6b",
+     "bytes": 41458
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/gj.json",
+     "sha256": "1dd783e5c87725e8320fbd7ba141508b05b0444d3529c02d557a8ec176183bfd",
+     "bytes": 33558
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/gt.json",
+     "sha256": "d12d0fcaef02c3dff1de3e5e1b424c6e521ffa627bc3413322fcc00cb7fcc2f9",
+     "bytes": 46267
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/ha.json",
+     "sha256": "84f7be798c70520e60d7c6bb0c10d388e24c18850809dd533626f4d5010ba17a",
+     "bytes": 44880
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/ho.json",
+     "sha256": "f4983b8ec1c4756456d6b6fb2de0f237e08d231be642146afd35162391da80a2",
+     "bytes": 42702
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/jm.json",
+     "sha256": "dd819a5819217f6deee7288f59bcbd56b5ab233742dc4b113eb6c953a2436285",
+     "bytes": 39651
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/mh.json",
+     "sha256": "b4de20c9d9cea2a4dda93499f8b006b6b20445416706366bd322580ced4fde6f",
+     "bytes": 22236
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/nn.json",
+     "sha256": "93d12122115c41b8cd9d88f0f7c9c4d28d294520e6751f59be3ef870afeab9c0",
+     "bytes": 23587
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/nu.json",
+     "sha256": "2cdee1a757df57114b9db9314d292352f0bf6c9b1c3b95d0639a99f66f734b0a",
+     "bytes": 41855
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/pm.json",
+     "sha256": "c48e43a4c793bbd6ce70f9da4c3b6d351f3deb1338f4b77252b56684f532415e",
+     "bytes": 41337
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/rn.json",
+     "sha256": "8e66686e2df8e15df5ebe4d29aa4316b544e38f725d166ef24639a62d220c20b",
+     "bytes": 18154
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/rq.json",
+     "sha256": "57ece4e95b31769c055e3ac94966aa7d687624ec248e4e98701f181cc88d6eb3",
+     "bytes": 32242
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/sc.json",
+     "sha256": "a688c52c171f81573a42bf762787260fcffb635c7b6ea7fa01c42bb3170d2dce",
+     "bytes": 32608
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/st.json",
+     "sha256": "3825ca27c8b84bcef3eca9959959ccbf21eb14bf4c611a7e3f7bf9cd5ffa7aa5",
+     "bytes": 35060
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/tb.json",
+     "sha256": "f0197e9fb6de1c3d16f91a27d198eb3b813b6c5786886d012e5ad7045daf3024",
+     "bytes": 15596
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/td.json",
+     "sha256": "d69fb8f952f4164fb9586b0d29f77d3f53d7c0f941840ed2d60b7173524bf211",
+     "bytes": 37637
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/tk.json",
+     "sha256": "18c2be3348d0a0361978bf4e463750b3f11e12fe89f1c1d94278ab2ee266d6fb",
+     "bytes": 23586
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/uc.json",
+     "sha256": "8be5c2bec216092cb3dca1803abd3c451d15f3cf455f4c61e00df09bc781d901",
+     "bytes": 24700
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/vc.json",
+     "sha256": "e97e7e6d22a17e2f4aa97e766930882708c2885a1b6f4942578b6d090afa6216",
+     "bytes": 31869
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/vi.json",
+     "sha256": "e28ab11b1656984b3d4e5810187411f7d0af2f1bcc4adcbd93ea7b7ce5e98a17",
+     "bytes": 21043
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/central-america-n-caribbean/vq.json",
+     "sha256": "c3c64852921ee3b09a0fbc38d3bec865887af3622dbf547dd9121e534393d325",
+     "bytes": 23347
+    }
+   ],
+   "title": "World Factbook country profiles, region central-america-n-caribbean",
+   "author": "US Central Intelligence Agency (factbook/factbook.json)",
+   "licence": "US government work, public domain; repository CC0-1.0",
+   "commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+   "documents": 35,
+   "offsets_chars": [
+    0,
+    18363,
+    36990,
+    55058,
+    73445,
+    91868,
+    110129,
+    128509,
+    146790,
+    165200,
+    183488,
+    201855,
+    220196,
+    238728,
+    256930,
+    275272,
+    293643,
+    312164,
+    330336,
+    348612,
+    366965,
+    385653,
+    403685,
+    422019,
+    440362,
+    458704,
+    477302,
+    495395,
+    513757,
+    533064,
+    550699,
+    568847,
+    587147,
+    605769,
+    623835
+   ]
+  },
+  {
+   "key": "factbook-southamerica",
+   "family": "struct",
+   "files": [
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ar.json",
+     "sha256": "9e960f01e7e612ca18395fcbb99bfe75feec59132638e274a30244def526dcfe",
+     "bytes": 53055
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/bl.json",
+     "sha256": "1703e87daa7aa193c741e6c44972da9fedeb97aa31ca532ab4806fe6cd4400e9",
+     "bytes": 47373
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/br.json",
+     "sha256": "e9ec91597184c938cc4a325a146e31570bec58d74101effd5cec6b0a4d43de1b",
+     "bytes": 55943
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ci.json",
+     "sha256": "e9b75c7c9be2a89b4cda45135bb1d2551761dc3d405d74cce3059b732fdf8653",
+     "bytes": 49964
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/co.json",
+     "sha256": "5094a6162f895146336178626499800f91d63fa893c59d8626b7a8d3a2aba55d",
+     "bytes": 50109
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ec.json",
+     "sha256": "1356ed14e7e108fa0e7b08311166242dede42827d78888f1c6d05abccf40c38d",
+     "bytes": 47946
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/fk.json",
+     "sha256": "8307cc29a7a88da1f041e94dfedde1c41d38a4846e1bfe6209f2a21c4c206d9b",
+     "bytes": 18791
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/gy.json",
+     "sha256": "d407583d0d18ce487dad1c8d0b82607bfa17918f0c13b294e57bd65c756d39c2",
+     "bytes": 38284
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ns.json",
+     "sha256": "bad620a5f2ff98d29f562e6b180ff017c5235039e8f4d7aa3358db173deb83b2",
+     "bytes": 36980
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/pa.json",
+     "sha256": "13b1cedbd334519e76b097e0aa472049b72fc632d22bfe01539a2c0fa7f08e3f",
+     "bytes": 44398
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/pe.json",
+     "sha256": "ff9c33e0fd3484f21446a8d4fca25583b1d96cbf6d07e810f90ec76d89e4881b",
+     "bytes": 50814
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/sx.json",
+     "sha256": "1487b18b95f68dfa8ef731f46820a0f226297f7c5307149f4e7d53fbd578be15",
+     "bytes": 6232
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/uy.json",
+     "sha256": "6e2c0b27193bfb8b8c10399ce6b58ca0548f366e5a773d104932c61bf2cf7e68",
+     "bytes": 44016
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-america/ve.json",
+     "sha256": "47f61b68b1f8f81c674bd0689826404c3b55a1d66662081b483feed1f1726e80",
+     "bytes": 46550
+    }
+   ],
+   "title": "World Factbook country profiles, region south-america",
+   "author": "US Central Intelligence Agency (factbook/factbook.json)",
+   "licence": "US government work, public domain; repository CC0-1.0",
+   "commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+   "documents": 31,
+   "offsets_chars": [
+    0,
+    18554,
+    36997,
+    55509,
+    74399,
+    92491,
+    111061,
+    129472,
+    147977,
+    166483,
+    184955,
+    203642,
+    221979,
+    240544,
+    259128,
+    277612,
+    295984,
+    314466,
+    332963,
+    351445,
+    369910,
+    388419,
+    406924,
+    425424,
+    445183,
+    463014,
+    480887,
+    499380,
+    518115,
+    536374,
+    554871
+   ]
+  },
+  {
+   "key": "factbook-southasia",
+   "family": "struct",
+   "files": [
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/af.json",
+     "sha256": "64a07b85c8a235eaeda6a236f936dd9254a7337b5808761d20a1ca70eef89bfd",
+     "bytes": 41573
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/bg.json",
+     "sha256": "84627367678c0d9cf26e4a22d0fdba95425e26ebdaf001a323d4417d54b74df0",
+     "bytes": 45504
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/bt.json",
+     "sha256": "082dd98dccd7c8a667d81bed3fa48c814e29fe290d37bc42e85d6cf56d6e397e",
+     "bytes": 37176
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/ce.json",
+     "sha256": "30230daa35db145d35ec52530c7825decc0648145d769698ec00dc13ff63daaa",
+     "bytes": 44024
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/in.json",
+     "sha256": "01b7d4c2b5fff2c8ef1cb2b0933a8eecfca5fb94cb9478c783e9b649f44a75dd",
+     "bytes": 57400
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/io.json",
+     "sha256": "dd8b9f1b04e75dffa53c40f07164c2041308e273872b3ddf9f8f0464cc19e4a7",
+     "bytes": 11936
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/mv.json",
+     "sha256": "dd6bfd4e5fb797e5d3383ccab465669b070b7f6af5813c15ba6b56ea3c3b7add",
+     "bytes": 38529
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/np.json",
+     "sha256": "39d14e306232c2799b21e01ec8596eee3c39e86c6dac39b936f4f575f383b6e8",
+     "bytes": 46297
+    },
+    {
+     "url": "https://raw.githubusercontent.com/factbook/factbook.json/144d6977b2b01ac1cbd220de754c0a005616760b/south-asia/pk.json",
+     "sha256": "9ea802080d0168fab004d0fb5f95e092a8e2313c62c9887c17f8c38958a5d341",
+     "bytes": 50826
+    }
+   ],
+   "title": "World Factbook country profiles, region south-asia",
+   "author": "US Central Intelligence Agency (factbook/factbook.json)",
+   "licence": "US government work, public domain; repository CC0-1.0",
+   "commit": "144d6977b2b01ac1cbd220de754c0a005616760b",
+   "documents": 19,
+   "offsets_chars": [
+    0,
+    18416,
+    36242,
+    54340,
+    72475,
+    90573,
+    108880,
+    126798,
+    144916,
+    163000,
+    181119,
+    199313,
+    236242,
+    254030,
+    271682,
+    289780,
+    307880,
+    325991,
+    344117
+   ]
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/regression_mxfp4_moe_decode_throughput"
+description = "Recover decode throughput on an MXFP4 mixture-of-experts model served by SGLang on Hopper. The Triton MoE kernel that runs the expert matmuls picks a launch configuration tuned for a different shape regime, and at the small per-expert row counts a decode step produces it splits work that does not need splitting. Output token throughput runs about a third below what the same kernel delivers once the configuration matches the shape; correctness is unaffected and aggregate GPU utilisation looks normal."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "regression", "mxfp4", "moe", "triton", "decode", "lite"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+env = { INFB_OFFICIAL = "1", INFB_REAL_ENGINE = "1" }
+timeout_sec = 10800
+
+[environment]
+build_timeout_sec = 7200
+cpus = 8
+memory_mb = 65536
+storage_mb = 98304
+gpus = 1
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[metadata.inference_bench]
+tier = "lite"
+category = "regression"
+engine = "sglang"
+score_profile = "regression_recovery_v2"
+
+scored_axis = "throughput"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+baseline_commit = "c8dc4d2d1f1ab32626f43a04accc67917078b22d"
+workdir = "/app/repo"
+baseline_relation = "Pinned SGLang at the parent of the fix to the MXFP4 Triton MoE launch configuration on Hopper. In the regressed state the kernel's autotuner is free to choose a split reduction for the expert GEMMs, and at decode-sized row counts it chooses one; the combine step then costs more than the split saves."
+
+[metadata.inference_bench.model]
+hf_model_family = "openai/gpt-oss-20b"
+hf_model_id = "openai/gpt-oss-20b"
+gated = false
+architecture = "GptOssForCausalLM"
+model_type = "gpt_oss"
+feature = "MXFP4-quantised MoE: 24 layers, hidden 2880, intermediate 2880, 32 experts, top-k 4, alternating sliding(128)/full attention, quantization_config.quant_method = mxfp4. Read off the published config.json rather than assumed. 3 shards, 13,761,264,768 bytes (12.8 GiB); original/ and metal/ are not needed."
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "release_wheel_harvested_for_the_compiled_half_then_evicted_pinned_source_overlaid"
+builds_engine_in_image = true
+
+[metadata.inference_bench.commands]
+public_check = "python public/check_candidate.py"
+real_engine_bench = "python3 public/run_benchmark.py"
+
+[metadata.inference_bench.oracle]
+oracle_id = "expert_gemm_splits_a_reduction_that_does_not_need_splitting"
+source = "upstream_patch_engine_files_only"
+oracle_scope = "The upstream fix in full: 32 lines in one file, python/sglang/srt/layers/quantization/mxfp4.py. There is nothing to exclude -- the upstream commit touches no benchmark and no test."
+
+[metadata.inference_bench.scoring]
+kind = "regression_recovery"
+metric = "throughput"
+measured_key = "throughput.output_tokens_per_sec"
+higher_is_better = true
+noise_floor = 1.03
+oracle_speedup = 1.426
+oracle_speedup_per_workload = { random_in1024_out512_c1 = 1.375, random_in1024_out512_c4 = 1.462, random_in1024_out512_c8 = 1.444 }
+oracle_measured_on = "1xH100, the workload matrix: geometric mean of the three scored points, warmed rotated rounds. The declared oracle_speedup is that geomean; oracle_speedup_per_workload carries the per-shape values."
+
+[metadata.inference_bench.real_engine_thresholds.throughput]
+min_request_per_sec = 0.1
+min_total_tokens_per_sec = 1.0
+
+[metadata.inference_bench.real_engine_thresholds.serve]
+min_request_per_sec = 0.5
+min_total_tokens_per_sec = 1.0
+max_ttft_mean_ms = 60000.0
+
+[metadata.inference_bench.real_engine_thresholds.latency]
+max_e2e_mean_ms = 300000.0
+
+[metadata.inference_bench.workloads]
+random_in1024_out512_c4 = { input_len = 1024, output_len = 512, range_ratio = 1.0, num_prompts = 64, max_concurrency = 4 }
+random_in1024_out512_c1 = { input_len = 1024, output_len = 512, range_ratio = 1.0, num_prompts = 16, max_concurrency = 1 }
+random_in1024_out512_c8 = { input_len = 1024, output_len = 512, range_ratio = 1.0, num_prompts = 128, max_concurrency = 8 }
+random_in1024_out512_c32 = { input_len = 1024, output_len = 512, range_ratio = 1.0, num_prompts = 256, max_concurrency = 32, role = "guard", min_ratio = 0.95 }
+prefill_in4096_out1_c1_ttft = { input_len = 4096, output_len = 1, range_ratio = 1.0, num_prompts = 32, max_concurrency = 1, role = "guard", min_ratio = 0.90, metric_key = "latency_ms.ttft.mean", lower_is_better = true }
+
+[metadata.inference_bench.runtime]
+model = "openai/gpt-oss-20b"
+serve_args = "--tp-size 1"
+
+[metadata.inference_bench.artifacts]
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"

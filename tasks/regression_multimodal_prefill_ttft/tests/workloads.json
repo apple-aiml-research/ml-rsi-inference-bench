@@ -1,0 +1,82 @@
+{
+  "primary_workload": "img2_randres_n120",
+  "scored_workloads": [
+    "img2_randres_n120",
+    "img1_randres_n120",
+    "img4_randres_n80"
+  ],
+  "guard_workloads": [
+    "repeat_img2_n120",
+    "text_fixedlen_n64"
+  ],
+  "metric_key": "latency_ms.ttft.mean",
+  "lower_is_better": true,
+  "workloads": [
+    {
+      "name": "img2_randres_n120",
+      "role": "scored",
+      "input_len": 96,
+      "output_len": 1,
+      "num_prompts": 120,
+      "concurrency": 1,
+      "image_count": 2,
+      "image_format": "jpeg",
+      "image_min_height": 512,
+      "image_min_width": 512,
+      "image_max_height": 768,
+      "image_max_width": 1024
+    },
+    {
+      "name": "img1_randres_n120",
+      "role": "scored",
+      "input_len": 96,
+      "output_len": 1,
+      "num_prompts": 120,
+      "concurrency": 1,
+      "image_count": 1,
+      "image_format": "jpeg",
+      "image_min_height": 512,
+      "image_min_width": 512,
+      "image_max_height": 768,
+      "image_max_width": 1024
+    },
+    {
+      "name": "img4_randres_n80",
+      "role": "scored",
+      "input_len": 96,
+      "output_len": 1,
+      "num_prompts": 80,
+      "concurrency": 1,
+      "image_count": 4,
+      "image_format": "jpeg",
+      "image_min_height": 512,
+      "image_min_width": 512,
+      "image_max_height": 768,
+      "image_max_width": 1024
+    },
+    {
+      "name": "repeat_img2_n120",
+      "role": "guard",
+      "replays": "img2_randres_n120",
+      "input_len": 96,
+      "output_len": 1,
+      "num_prompts": 120,
+      "concurrency": 1,
+      "image_count": 2,
+      "image_format": "jpeg",
+      "image_min_height": 512,
+      "image_min_width": 512,
+      "image_max_height": 768,
+      "image_max_width": 1024
+    },
+    {
+      "name": "text_fixedlen_n64",
+      "role": "guard",
+      "input_len": 2048,
+      "output_len": 1,
+      "num_prompts": 64,
+      "concurrency": 1,
+      "image_count": 0
+    }
+  ]
+}

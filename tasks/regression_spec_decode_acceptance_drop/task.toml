@@ -1,0 +1,107 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/regression_spec_decode_acceptance_drop"
+description = "Recover a speculative-decoding throughput regression on Llama-3.1-8B-Instruct with an external EAGLE3 drafter (1xH100, TP=1, async scheduling, 7 draft tokens, fp8 KV, 8 concurrent streams -- the regime upstream's own defect report measured in). The drafter's tokens are accepted far less often than this configuration used to manage, and throughput has fallen with it."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "regression", "speculative-decoding", "eagle3", "llama", "h100", "tp1", "async-scheduling"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+env = { INFB_OFFICIAL = "1", INFB_REAL_ENGINE = "1" }
+timeout_sec = 10800
+
+[environment]
+build_timeout_sec = 7200
+cpus = 16
+memory_mb = 262144
+storage_mb = 81920
+shm_size_mb = 16384
+gpus = 1
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "regression"
+engine = "vllm"
+score_profile = "regression_recovery_v2"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "95863540538804a48e31ca5806cefbac9d4c5326"
+
+[metadata.inference_bench.model]
+architecture = "LlamaForCausalLM"
+model_type = "llama"
+feature = "8B dense decoder driven with an EXTERNAL EAGLE3 drafter. The drafter is a second artifact rather than a head inside the target checkpoint, which is why this task declares one under [metadata.inference_bench.speculative_config]."
+hf_model_id = "meta-llama/Llama-3.1-8B-Instruct"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "task_scoped_vllm_9586354_percommit_wheel"
+
+[metadata.inference_bench.commands]
+
+[metadata.inference_bench.oracle]
+oracle_id = "drafter_sequence_lengths_exclude_rejected_tokens"
+source = "task-local_reference_implementation"
+oracle_scope = "Upstream's fix, filtered to the three files this target can reach and re-emitted without the fix's own prose. The commit also rewrites four MLA metadata builders from a CPU tensor to a scalar; Llama is not MLA and the engine selects FLASH_ATTN here, whose builder never reads the CPU shadow, so that half is collateral. Verified the remaining three are a closed change before dropping the rest."
+
+[metadata.inference_bench.scoring]
+kind = "regression_recovery"
+metric = "throughput"
+measured_key = "throughput.total_tokens_per_sec"
+higher_is_better = true
+noise_floor = 1.03
+oracle_speedup = 1.156
+oracle_speedup_per_workload = { natural_c1_out512 = 1.165, natural_c8_out512 = 1.175, natural_c32_out512 = 1.128 }
+oracle_measured_on = "1xH100, the workload matrix: geometric mean of the three scored points, warmed rotated rounds. The declared oracle_speedup is that geomean; oracle_speedup_per_workload carries the per-shape values."
+
+[metadata.inference_bench.real_engine_thresholds.latency]
+max_e2e_mean_ms = 600000.0
+
+[metadata.inference_bench.real_engine_thresholds.throughput]
+min_request_per_sec = 0.05
+min_total_tokens_per_sec = 1.0
+
+[metadata.inference_bench.real_engine_thresholds.serve]
+min_request_per_sec = 0.05
+min_total_tokens_per_sec = 1.0
+max_ttft_mean_ms = 30000.0
+
+[metadata.inference_bench.workloads]
+natural_c8_out512 = { input_len = 0, output_len = 512, num_prompts = 64, max_concurrency = 8, max_model_len = 2048 }
+natural_c1_out512 = { input_len = 0, output_len = 512, num_prompts = 16, max_concurrency = 1, max_model_len = 2048 }
+natural_c32_out512 = { input_len = 0, output_len = 512, num_prompts = 128, max_concurrency = 32, max_model_len = 2048 }
+ttft_c8 = { input_len = 0, output_len = 512, num_prompts = 64, max_concurrency = 8, max_model_len = 2048, role = "guard", min_ratio = 0.95, from = "natural_c8_out512", metric_key = "latency_ms.ttft.mean", lower_is_better = true }
+
+[metadata.inference_bench.speculative_config]
+method = "eagle3"
+model = "yuhuili/EAGLE3-LLaMA3.1-Instruct-8B"
+num_speculative_tokens = 7
+
+[metadata.inference_bench.runtime]
+model = "meta-llama/Llama-3.1-8B-Instruct"
+serve_args = "--tensor-parallel-size 1 --max-model-len 2048 --gpu-memory-utilization 0.85 --async-scheduling --no-enable-prefix-caching --disable-custom-all-reduce --kv-cache-dtype fp8 --max-num-seqs 8 --max-num-batched-tokens 8192 --stream-interval 20 --compilation-config {\"max_cudagraph_capture_size\":2048} --speculative-config {\"method\":\"eagle3\",\"model\":\"yuhuili/EAGLE3-LLaMA3.1-Instruct-8B\",\"num_speculative_tokens\":7}"
+sampling_args = ""
+
+[metadata.inference_bench.artifacts]

@@ -1,0 +1,58 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/vllm-project/vllm.git",
+ "upstream_base": "a3195fab7b1227e75403fef83891e961e69228a6",
+ "prepared_base": {
+  "commit": "138747893727914cd4f499376e82c3b4bf5f0bba",
+  "kernel_commit": "5c1e3b901b554c2b4d44414cf51a7b2c84c1c54c",
+  "kernel_tree": "aab922a3d533cbec6cbe449b1a1b320e81217a58",
+  "patch": "../environment/prepared-base/000-supplied-kernels.patch",
+  "sha256": "efb23a139bf34c8ee73e578fbe82addc876754f35220e55bc129364a3178707e",
+  "bytes": 43212,
+  "manifest": "../environment/kernel-materials.json",
+  "reproduced_by": "environment/Dockerfile: the upstream base, the supplied-kernels patch committed at 1781541473 +0000, then eval/minimax_m3 at 1781541474 +0000, pinned identity Inference-Bench <inference-bench@local>, neutral messages"
+ },
+ "base": "138747893727914cd4f499376e82c3b4bf5f0bba",
+ "landing": {
+  "pr": 45381,
+  "sha": "0a1c5034f5e4fe736db672010cda33d9d850f87e"
+ },
+ "post_merge_repairs": [
+  45744
+ ],
+ "post_merge_repairs_sha": [
+  "4c626633159887b0f2c962058c17c78f1434556d"
+ ],
+ "not_admitted": {
+  "45718": "no served check separates the landing from landing + #45718"
+ },
+ "packaging_adaptations": [
+  {
+   "id": "msa-offline-source",
+   "files": [
+    "third_party/msa-544eee5/ (python/fmha_sm100/__init__.py, sparse.py, cute/, LICENSE at vllm-project/MSA 544eee5e09ae2dfa774d5b06739013f9b7402c57)",
+    "cmake/external_projects/fmha_sm100.cmake"
+   ],
+   "change": "the MSA files the landing (and #45744) install, vendored with the repository layout; the cmake file defaults FMHA_SM100_SRC_DIR to the vendored copy when neither the CMake variable nor the environment variable is set, so the verifier's offline builds need no FetchContent from GitHub",
+   "executed_code": "no executed-code change"
+  }
+ ],
+ "oracle_adapter": {
+  "path": "minimax_m3_msa.py",
+  "sha256": "9bbbd1941c329fca9d180ad829928a9e93a4fb8f2b4dec0ec383c91ee5365292",
+  "is": "benchmark-authored, a thin wrapper over the landing's served paths"
+ },
+ "model": {
+  "repo": "MiniMaxAI/MiniMax-M3-MXFP8",
+  "revision": "1c4e6a69f3278df8dd6c9693fcca241efe439b7d",
+  "manifest": "../environment/model-manifest.json",
+  "manifest_sha256": "c8f6207e8b893f3ca2de5f1837ed41c7d90ff2a245b2222ea627ab6865c3ac08"
+ },
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "47507e0cd446f48e84902998e1ccfdfa26d1f16aa885967d46e8da0a5bd568ca",
+  "bytes": 2070910
+ },
+ "closure_oracle_tree": "19e4566db2aebcdb50b6587f8149b827a326479b",
+ "closure_engine_tree": "5173b54f9f5ff4b7a9c13c777a049a25ca413e37"
+}

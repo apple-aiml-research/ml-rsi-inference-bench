@@ -1,0 +1,1918 @@
+{
+  "base_commit": "acb5b28091e784d9f6f0a0d61338aa31b5f4b86f",
+  "f2p_node_ids": [
+    "infb_verify.test_l0.test_registry_resolves_native_class",
+    "infb_verify.test_l0.test_config_parses",
+    "tests.models.test_initialization.test_can_initialize_large_subset[KimiLinearForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[KimiLinearForCausalLM]",
+    "infb_verify.test_hidden.test_gsm8k_accuracy",
+    "infb_verify.test_hidden.test_api_probes",
+    "infb_verify.test_fidelity.test_fidelity_against_model_author",
+    "infb_verify.test_hidden.test_0_efficiency_decode_c1",
+    "infb_verify.test_hidden.test_0_efficiency_throughput",
+    "infb_verify.test_hidden.test_recipe_conformance",
+    "infb_verify.test_fidelity.test_decode_agrees_with_prefill",
+    "infb_verify.test_fidelity.test_long_context_decode",
+    "infb_verify.test_hidden.test_concurrent_state_isolation",
+    "infb_verify.test_fidelity.test_router_probe",
+    "infb_verify.test_hidden.test_kda_mathematics",
+    "infb_verify.test_hidden.test_kda_prefill_efficiency",
+    "infb_verify.test_hidden.test_kda_decode_efficiency",
+    "infb_verify.test_binding.test_kda_serving_binding",
+    "infb_verify.test_state_lifecycle.test_native_state_metadata_and_replay",
+    "infb_verify.test_state_lifecycle.test_fresh_request_state_lifecycle",
+    "infb_verify.test_state_lifecycle.test_dp2_correctness_under_load",
+    "infb_verify.test_state_lifecycle.test_prefix_reuse_and_continuations",
+    "infb_verify.test_state_lifecycle.test_prefix_branch_state_and_binding",
+    "infb_verify.test_state_lifecycle.test_prefix_turnover_and_resume"
+  ],
+  "p2p_node_ids": [
+    "infb_verify.test_l0.test_build_editable_install",
+    "infb_verify.test_l0.test_sibling_hybrid_config_unchanged",
+    "tests.models.test_registry.test_hf_registry_coverage",
+    "tests.models.test_registry.test_registry_imports[ApertusForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[AquilaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[AquilaModel]",
+    "tests.models.test_registry.test_registry_imports[ArceeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[ArcticForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[AriaForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[AyaVisionForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[BaiChuanForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[BaichuanForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[BailingMoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[BailingMoeV2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[BambaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[BeeForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[BertForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[BertForTokenClassification]",
+    "tests.models.test_registry.test_registry_imports[BertModel]",
+    "tests.models.test_registry.test_registry_imports[BertSpladeSparseEmbeddingModel]",
+    "tests.models.test_registry.test_registry_imports[Blip2ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[BloomForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[CLIPModel]",
+    "tests.models.test_registry.test_registry_imports[ChameleonForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[ChatGLMForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Cohere2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Cohere2VisionForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[CohereForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DbrxForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DeciLMForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DeepSeekMTPModel]",
+    "tests.models.test_registry.test_registry_imports[DeepseekForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DeepseekOCRForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DeepseekV2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DeepseekV32ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DeepseekV3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Dots1ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[DotsOCRForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Eagle3LlamaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Eagle3Qwen2_5vlForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[EagleDeepSeekMTPModel]",
+    "tests.models.test_registry.test_registry_imports[EagleLlama4ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[EagleLlamaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[EagleMiniCPMForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Emu3ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Ernie4_5ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Ernie4_5_MoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Ernie4_5_VLMoeForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[ErnieMTPModel]",
+    "tests.models.test_registry.test_registry_imports[Exaone4ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[ExaoneForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Fairseq2LlamaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[FalconForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[FalconH1ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[FalconMambaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[FlexOlmoForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[FuyuForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GLM4VForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GPT2ForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[GPT2LMHeadModel]",
+    "tests.models.test_registry.test_registry_imports[GPTBigCodeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GPTJForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GPTNeoXForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Gemma2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Gemma2Model]",
+    "tests.models.test_registry.test_registry_imports[Gemma3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Gemma3ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Gemma3TextModel]",
+    "tests.models.test_registry.test_registry_imports[Gemma3nForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Gemma3nForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[GemmaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Glm4ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Glm4MoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Glm4MoeMTPModel]",
+    "tests.models.test_registry.test_registry_imports[Glm4vForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Glm4vMoeForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[GlmForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GptOssForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GraniteForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GraniteMoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GraniteMoeHybridForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GraniteMoeSharedForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GraniteSpeechForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[GritLM]",
+    "tests.models.test_registry.test_registry_imports[Grok1ModelForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[GteModel]",
+    "tests.models.test_registry.test_registry_imports[GteNewForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[GteNewModel]",
+    "tests.models.test_registry.test_registry_imports[HunYuanDenseV1ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[HunYuanMoEV1ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Idefics3ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[InternLM2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[InternLM2ForRewardModel]",
+    "tests.models.test_registry.test_registry_imports[InternLM2VEForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[InternLM3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[InternLMForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[InternS1ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[InternVLChatModel]",
+    "tests.models.test_registry.test_registry_imports[InternVLForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[JAISLMHeadModel]",
+    "tests.models.test_registry.test_registry_imports[JambaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[JambaForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[JinaVLForRanking]",
+    "tests.models.test_registry.test_registry_imports[KeyeForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[KeyeVL1_5ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[LLaMAForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Lfm2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[LightOnOCRForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Llama4ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Llama4ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[LlamaForCausalLMEagle3]",
+    "tests.models.test_registry.test_registry_imports[LlamaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[LlamaModel]",
+    "tests.models.test_registry.test_registry_imports[Llama_Nemotron_Nano_VL]",
+    "tests.models.test_registry.test_registry_imports[LlavaForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[LlavaNextForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[LlavaNextVideoForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[LlavaOnevisionForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[LongCatFlashMTPModel]",
+    "tests.models.test_registry.test_registry_imports[LongcatFlashForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MPTForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Mamba2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MambaForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MedusaModel]",
+    "tests.models.test_registry.test_registry_imports[MiDashengLMModel]",
+    "tests.models.test_registry.test_registry_imports[MiMoForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiMoMTPModel]",
+    "tests.models.test_registry.test_registry_imports[MiniCPM3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiniCPMForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiniCPMO]",
+    "tests.models.test_registry.test_registry_imports[MiniCPMV]",
+    "tests.models.test_registry.test_registry_imports[MiniMaxForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiniMaxM1ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiniMaxM2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiniMaxText01ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MiniMaxVL01ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Mistral3ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[MistralForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[MistralModel]",
+    "tests.models.test_registry.test_registry_imports[MixtralForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[ModernBertForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[ModernBertForTokenClassification]",
+    "tests.models.test_registry.test_registry_imports[ModernBertModel]",
+    "tests.models.test_registry.test_registry_imports[MptForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[NVLM_D]",
+    "tests.models.test_registry.test_registry_imports[NemotronForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[NemotronHForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[NemotronH_Nano_VL_V2]",
+    "tests.models.test_registry.test_registry_imports[NomicBertModel]",
+    "tests.models.test_registry.test_registry_imports[OPTForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Olmo2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Olmo3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[OlmoForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[OlmoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[OrionForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Ovis2_5]",
+    "tests.models.test_registry.test_registry_imports[PaliGemmaForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[PersimmonForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Phi3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Phi4MMForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Phi4MultimodalForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[PhiForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[PhiMoEForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[PixtralForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen2AudioForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Qwen2Model]",
+    "tests.models.test_registry.test_registry_imports[Qwen2MoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Qwen2VLForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen2_5OmniForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen2_5OmniModel]",
+    "tests.models.test_registry.test_registry_imports[Qwen2_5_VLForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Qwen3MoeForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Qwen3NextForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Qwen3NextMTP]",
+    "tests.models.test_registry.test_registry_imports[Qwen3OmniMoeForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen3VLForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Qwen3VLMoeForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[RForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[RWForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[RobertaForMaskedLM]",
+    "tests.models.test_registry.test_registry_imports[RobertaForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[RobertaModel]",
+    "tests.models.test_registry.test_registry_imports[SeedOssForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[SiglipModel]",
+    "tests.models.test_registry.test_registry_imports[SkyworkR1VChatModel]",
+    "tests.models.test_registry.test_registry_imports[SmolLM3ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[SmolVLMForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[SolarForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[StableLMEpochForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[StableLmForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Starcoder2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Step3TextForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Step3VLForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[Tarsier2ForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[TarsierForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[TeleChat2ForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[TeleFLMForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[TransformersEmbeddingModel]",
+    "tests.models.test_registry.test_registry_imports[TransformersForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[TransformersForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[TransformersMoEEmbeddingModel]",
+    "tests.models.test_registry.test_registry_imports[TransformersMoEForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[TransformersMoEForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[TransformersMultiModalEmbeddingModel]",
+    "tests.models.test_registry.test_registry_imports[TransformersMultiModalForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[TransformersMultiModalForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[TransformersMultiModalMoEForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[UltravoxModel]",
+    "tests.models.test_registry.test_registry_imports[VoxtralForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[WhisperForConditionalGeneration]",
+    "tests.models.test_registry.test_registry_imports[XLMRobertaForSequenceClassification]",
+    "tests.models.test_registry.test_registry_imports[XLMRobertaModel]",
+    "tests.models.test_registry.test_registry_imports[XverseForCausalLM]",
+    "tests.models.test_registry.test_registry_imports[Zamba2ForCausalLM]",
+    "tests.models.test_registry.test_registry_is_pp[DeepseekV2ForCausalLM-True-False]",
+    "tests.models.test_registry.test_registry_is_pp[Qwen2VLForConditionalGeneration-True-True]",
+    "tests.models.test_registry.test_registry_model_property[BertForSequenceClassification-False-False-True]",
+    "tests.models.test_registry.test_registry_model_property[LlamaForCausalLM-False-False-False]",
+    "tests.models.test_registry.test_registry_model_property[LlavaForConditionalGeneration-True-True-False]",
+    "tests.models.test_registry.test_registry_model_property[RobertaForSequenceClassification-False-False-True]",
+    "tests.models.test_registry.test_registry_model_property[XLMRobertaForSequenceClassification-False-False-True]",
+    "tests.test_config.test_compile_config_repr_succeeds",
+    "tests.test_config.test_get_field",
+    "tests.test_config.test_load_config_pt_load_map_location[cuda]",
+    "tests.test_config.test_load_config_pt_load_map_location[pt_load_map_location1]",
+    "tests.test_config.test_s3_url_different_models_create_different_directories",
+    "tests.test_config.test_update_config",
+    "tests.v1.core.test_kv_cache_utils.test_allocate_with_lookahead",
+    "tests.v1.core.test_kv_cache_utils.test_free_kv_cache_block_queue_append_n",
+    "tests.v1.core.test_kv_cache_utils.test_free_kv_cache_block_queue_get_all_free_blocks",
+    "tests.v1.core.test_kv_cache_utils.test_free_kv_cache_block_queue_initialization",
+    "tests.v1.core.test_kv_cache_utils.test_free_kv_cache_block_queue_operations",
+    "tests.v1.core.test_kv_cache_utils.test_free_kv_cache_block_queue_popleft_n",
+    "tests.v1.core.test_kv_cache_utils.test_generate_block_hash_extra_keys",
+    "tests.v1.core.test_kv_cache_utils.test_generate_block_hash_extra_keys_cache_salt",
+    "tests.v1.core.test_kv_cache_utils.test_generate_block_hash_extra_keys_different_prompt_embeds",
+    "tests.v1.core.test_kv_cache_utils.test_generate_block_hash_extra_keys_lora",
+    "tests.v1.core.test_kv_cache_utils.test_generate_block_hash_extra_keys_no_mm_inputs",
+    "tests.v1.core.test_kv_cache_utils.test_generate_block_hash_extra_keys_prompt_embeds",
+    "tests.v1.core.test_kv_cache_utils.test_generate_scheduler_kv_cache_config",
+    "tests.v1.core.test_kv_cache_utils.test_generate_uniform_type_kv_cache_specs",
+    "tests.v1.core.test_kv_cache_utils.test_hash_block_tokens[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_hash_block_tokens[sha256_cbor]",
+    "tests.v1.core.test_kv_cache_utils.test_hash_request_tokens_no_mm_inputs[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_hash_request_tokens_no_mm_inputs[sha256_cbor]",
+    "tests.v1.core.test_kv_cache_utils.test_hash_tokens_different_mm_input[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_hash_tokens_different_mm_input[sha256_cbor]",
+    "tests.v1.core.test_kv_cache_utils.test_is_kv_cache_spec_uniform",
+    "tests.v1.core.test_kv_cache_utils.test_kv_cache_block",
+    "tests.v1.core.test_kv_cache_utils.test_merge_kv_cache_spec",
+    "tests.v1.core.test_kv_cache_utils.test_merge_mla_spec",
+    "tests.v1.core.test_kv_cache_utils.test_metrics",
+    "tests.v1.core.test_kv_cache_utils.test_metrics_empty_stats",
+    "tests.v1.core.test_kv_cache_utils.test_none_hash[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_none_hash[sha256_cbor]",
+    "tests.v1.core.test_kv_cache_utils.test_request_block_hasher[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_request_block_hasher[sha256_cbor]",
+    "tests.v1.core.test_kv_cache_utils.test_request_block_hasher_with_prompt_embeds[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_request_block_hasher_with_prompt_embeds[sha256_cbor]",
+    "tests.v1.core.test_kv_cache_utils.test_request_with_prompt_embeds_and_mm_inputs[sha256]",
+    "tests.v1.core.test_kv_cache_utils.test_request_with_prompt_embeds_and_mm_inputs[sha256_cbor]",
+    "tests.v1.worker.test_gpu_model_runner.test_hybrid_block_table_initialization",
+    "tests.v1.worker.test_gpu_model_runner.test_init_kv_cache_with_kv_sharing_invalid_target_layer_order",
+    "tests.v1.worker.test_gpu_model_runner.test_init_kv_cache_with_kv_sharing_target_layer_not_exist",
+    "tests.v1.worker.test_gpu_model_runner.test_init_kv_cache_with_kv_sharing_target_same_as_current",
+    "tests.v1.worker.test_gpu_model_runner.test_input_batch_with_kernel_block_sizes",
+    "infb_verify.test_fidelity.test_fidelity_band_is_populated[short]",
+    "infb_verify.test_fidelity.test_fidelity_band_is_populated[long]",
+    "infb_verify.test_gdn.test_gdn_output_and_state",
+    "infb_verify.test_state_lifecycle_preservation.test_existing_cache_ownership",
+    "infb_verify.test_state_lifecycle_preservation.test_existing_scheduler_continuation_and_release"
+  ],
+  "grade": {
+    "format": "junit",
+    "tool_label": "pytest",
+    "reports": [
+      "/logs/verifier/junit-l0.xml",
+      "/logs/verifier/junit-l2upstream.xml",
+      "/logs/verifier/junit-l3-registry.xml",
+      "/logs/verifier/junit-l3-kv-cache.xml",
+      "/logs/verifier/junit-l3-config.xml",
+      "/logs/verifier/junit-l3-model-runner.xml",
+      "/logs/verifier/junit-hidden.xml",
+      "/logs/verifier/junit-gdn.xml",
+      "/logs/verifier/junit-binding.xml",
+      "/logs/verifier/junit-l3-state-lifecycle.xml",
+      "/logs/verifier/junit-state-lifecycle.xml"
+    ]
+  },
+  "infb": {
+    "task": "support_kimi_linear_48b_4xh100_vllm",
+    "verifier_version": "V4r6",
+    "base_commit": "acb5b28091e784d9f6f0a0d61338aa31b5f4b86f",
+    "base_tree": "7f270f8da80f40edd60f6cc0e9e4c11f474045c4",
+    "reference_commit": "4e68cc9b6aa2b9cfe8d799c2b1cd156a01bca438",
+    "model_repo": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+    "model_revision": "e1df551a447157d4658b573f9a695d57658590e9",
+    "model_id": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+    "served_model_name": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+    "model_dir": "/hf/hub/models--moonshotai--Kimi-Linear-48B-A3B-Instruct/snapshots/e1df551a447157d4658b573f9a695d57658590e9",
+    "model_record": "/hf/hub/.infb/manifest.json",
+    "model_files": 32,
+    "model_bytes": 98253088800,
+    "model_type": "kimi_linear",
+    "architectures": [
+      "KimiLinearForCausalLM"
+    ],
+    "config_sha256": "a6ac3c2c4b5aa72370f9727f49ffa4432715d20061889acdb37c688be853096e",
+    "num_hidden_layers": 27,
+    "full_attn_layers": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      27
+    ],
+    "kda_layer_count": 20,
+    "num_experts": 256,
+    "num_experts_per_token": 8,
+    "num_shared_experts": 1,
+    "max_model_len": 1048576,
+    "gsm8k": {
+      "num_questions": 1319,
+      "num_shots": 5,
+      "max_tokens": 256,
+      "seed": 42,
+      "floor": 0.88,
+      "max_invalid_rate": 0.05,
+      "floor_origin": "inherited: SGLang's registered gsm8k_score_threshold for THIS checkpoint. Upstream's own lm-eval reports for the reference implementation are 0.8741 strict and 0.8908 flexible. A single score under this floor is a finding about the task and is resolved by the five-run floor rule recorded in floor_measurement; no bar is moved to make a run pass.",
+      "protocol_origin": "upstream's own evaluator, tests/evals/gsm8k/gsm8k_eval.py at the reference, vendored byte-identically. ADAPTED in one respect only: it runs against a server launched at THIS TASK'S recipe rather than under its own pytest wrapper, which forces --enforce-eager --max-model-len 4096.",
+      "floor_measurement": "Kept by the five-run floor rule, on five reference runs, one fresh server each: 0.898408, 0.900682, 0.903715, 0.901440, 0.899166; SE = sample SD 0.002076 (floored at one question); min 0.898408 clears 0.88 by 0.018408 = 2.96 x 3 SE. Binomial SE 0.008235 reported alongside."
+    },
+    "verifier_notes": [
+      "The scored set covers L0, the upstream initialization node, the L3 differential, the hidden margins, the criticality verdicts, the fidelity gate and the paired efficiency nodes.",
+      "test_build_editable_install is PASS-TO-PASS: the unsolved base builds too. Every other node is fail-to-pass and the base fails it -- the registry and config nodes on a pydantic ValidationError for the unknown model type, the upstream initialization node on the same, and the served nodes because the server cannot start.",
+      "The upstream L0 node's id is PARAMETRIZED BY THE REGISTRY: test.patch carries the reference's three-line tests/models/registry.py entry, which is what makes test_can_initialize_large_subset[KimiLinearForCausalLM] exist as a parametrization at all. It passes the inferability rule because it names only public-contract symbols -- the architecture string, the repository id and trust_remote_code."
+    ],
+    "gpus": 8,
+    "gpu_name": "H100",
+    "gpu_min_total_gib": 78,
+    "gpu_min_free_fraction": 0.9,
+    "gpu_floor_note": "78 GiB. MEASURED on the declared hardware: torch reports total_memory 85,017,493,504 B = 79.18 GiB on these H100 80GB HBM3 cards, so a 79 GiB floor would leave only 0.18 GiB of margin. A preflight failure writes the -1 sentinel, so a floor a legitimate H100 can fall under voids trials instead of scoring them; the floor's job is to separate an 80 GB H100 from the 40 GB and 94 GB NVL parts, which 78 does with real margin.",
+    "transformers_version": "4.57.1",
+    "importable": [
+      "torch",
+      "triton"
+    ],
+    "importable_note": "Third-party libraries ONLY, and deliberately not the engine: `import vllm` runs the candidate's own code, so a submission that breaks it would write the -1 sentinel -- 'the environment is not the declared one' -- when the truth is that the candidate does not import. Importing the supplied kernels is L0's job, and L0 is scored.",
+    "shared_libraries": [
+      "libcuda.so.1"
+    ],
+    "supplied_kernel_paths": [
+      "vllm/model_executor/layers/fla/__init__.py",
+      "vllm/model_executor/layers/fla/ops/__init__.py",
+      "vllm/model_executor/layers/fla/ops/chunk.py",
+      "vllm/model_executor/layers/fla/ops/chunk_delta_h.py",
+      "vllm/model_executor/layers/fla/ops/chunk_o.py",
+      "vllm/model_executor/layers/fla/ops/chunk_scaled_dot_kkt.py",
+      "vllm/model_executor/layers/fla/ops/cumsum.py",
+      "vllm/model_executor/layers/fla/ops/fused_recurrent.py",
+      "vllm/model_executor/layers/fla/ops/index.py",
+      "vllm/model_executor/layers/fla/ops/l2norm.py",
+      "vllm/model_executor/layers/fla/ops/layernorm_guard.py",
+      "vllm/model_executor/layers/fla/ops/op.py",
+      "vllm/model_executor/layers/fla/ops/solve_tril.py",
+      "vllm/model_executor/layers/fla/ops/utils.py",
+      "vllm/model_executor/layers/fla/ops/wy_fast.py"
+    ],
+    "supplied_kernel_note": "Generic FLA/GDN operations from the constructed base. KDA operations are withheld and are candidate work. Preflight checks base blobs, not candidate imports or file layout.",
+    "dataset_root": "/app/eval/kimi_linear/datasets/gsm8k",
+    "dataset_digests": {
+      "train.jsonl": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+      "test.jsonl": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14"
+    },
+    "ports_free": [],
+    "ports_free_note": "Empty on purpose: the recipe takes no --port and the server is launched through upstream's own RemoteOpenAIServer, which picks a free one. Nothing in this task depends on a fixed port being available, which is also what lets the paired reference live in the same container. The stale-server scan is what covers the real risk.",
+    "shm_min_gib": 8,
+    "fidelity": {
+      "T": null,
+      "thresholds": {
+        "short": 0.06218622858226197,
+        "long": 0.05
+      },
+      "T_rule": "per band b, T_b = max(floor_b, k x f_b), f_b the oracle's band median over its own draws, floor_b 0.05 (the task's own design choice, as the public README states: vLLM registers no KL bar at this commit), k 3 (no measured omission passes at 3x and fails at 2x on either band); the verdict is the conjunction, every band below its own T_b",
+      "T_runs": "five fresh servers on the reference tree: four complete runs scored 0.020655086 each (bit-identical); the fifth OOMed at a gpu-memory-utilization of 0.83, since withdrawn.",
+      "serve_argument": "--long-prefill-token-threshold 2048",
+      "sequences_sha256": "b28371cedc3061c39f017f3a90a5f408c51cc086765e6ae86c2a6e3a9edf6316",
+      "reference_sha256": "ac9864490228a996c1d8aba803229773440845a8b9409d3d62979103b6c66f0e",
+      "public_examples_sha256": "c2660049fefba95a99f5c6770b6550ceccbe830f679c4a99312dae6dc4a61f61",
+      "public_examples_note": "the public illustration file is eval/kimi_linear/fidelity/examples.json: ten examples, eight in the short band and two in the long one, each naming its band. The digest is of that file, byte-identical in environment/ and tests/. It carries no bar and no calibration text; the graded per-band bars are in fidelity.thresholds. Its sequences and their reference values are the graded ones.",
+      "decode": {
+        "T": 0.05,
+        "T_arithmetic": "max(0.05, 3 x 0.00399) = max(0.05, 0.01197) = 0.05: the oracle's scored value on these eight prompts and seeds (short 0.00399, long 0.00018); the floor sets T, not a round-up; re-measured on the final image",
+        "max_tokens": 1024,
+        "temperature": 1.0,
+        "T_rule": "over the decode check's regimes: T_b = max(0.05, 3 x f_b), f_b the oracle's regime median over its 7 draws, every one 0.0039897567731942262 short and 0.00018422765207184392 long: 3 x f_b is 0.01197 and 0.00055, so the floor sets both bars, 0.05; the oracle's worst draw is 0.080 and 0.0037 of its bar. The verdict is the conjunction over regimes, under the re-measurement rule.",
+        "prompts_sha256": "ec31c026b0b3382f7f953c584095405bdd1e11ca3ecd1c449a2d11ce82dbb419",
+        "measured": "measured on the reference implementation and re-measured on the final image",
+        "T_per_band": {
+          "short": 0.05,
+          "long": 0.05
+        }
+      },
+      "per_band": {
+        "short": {
+          "f_b": 0.02072874286075399,
+          "draws": {
+            "total": 13
+          },
+          "draw_spread": 0.0,
+          "worst_draw": 0.02072874286075399,
+          "worst_over_T": 0.3333333333333333,
+          "floor_b": 0.05,
+          "k": 3,
+          "T_b": 0.06218622858226197
+        },
+        "long": {
+          "f_b": 0.002300870620445184,
+          "draws": {
+            "total": 13
+          },
+          "draw_spread": 0.0,
+          "worst_draw": 0.002300870620445184,
+          "worst_over_T": 0.046017412408903675,
+          "floor_b": 0.05,
+          "k": 3,
+          "T_b": 0.05
+        }
+      },
+      "per_band_draws": "the oracle's 13 draws on the fixed hidden set, every one 0.02072874286075399 short and 0.0023008706204451839 long.",
+      "remeasure": "a sequence whose reading is over its cap (a non-finite log-probability or an overflowing term, scored infinite) is re-sent once at once and fails only if both readings are over; a band whose median is not below its T_b is re-drawn once whole and fails only if both draws fail; both readings printed",
+      "false_fail": "the oracle's draw spread is zero over 13 draws (bit-identical), so its false-fail rate at these bars is zero; its worst draw is 0.333 T_short and 0.046 T_long, inside the three-quarter margin the design requires; stated in the public README",
+      "long_context": {
+        "n_prompts": 4,
+        "prompt_tokens": 64000,
+        "max_tokens": 512,
+        "temperature": 1.0,
+        "T_per_band": {
+          "cross": 0.05,
+          "self": 0.05
+        },
+        "T_rule": "over the two bands: T_b = max(0.05, 3 x f_b), f_b the oracle's band median over its draws; 3 x f_b is about 0.0027 in both, so the floor sets both bars. The verdict is the conjunction, under the re-measurement rule.",
+        "bands": {
+          "cross": "k3(the reference's recorded decode-time log-probabilities, the candidate's prefill of prompt + that recorded continuation), over the 512 continuation positions",
+          "self": "k3(the candidate's prefill, its decode-time log-probabilities), over its own 512-token continuation at the prompt's seed: the decode check's reading at 64,000 tokens"
+        },
+        "per_band": {
+          "cross": {
+            "f_b": 0.0009099159791710506,
+            "draws": {
+              "containers": 5
+            },
+            "draw_spread": 0.0,
+            "worst_draw": 0.0009099159791710506,
+            "worst_over_T": 0.01819831958342101,
+            "floor_b": 0.05,
+            "k": 3,
+            "T_b": 0.05
+          },
+          "self": {
+            "f_b": 0.0009116877486532488,
+            "draws": {
+              "containers": 5
+            },
+            "draw_spread": 0.0,
+            "worst_draw": 0.0009116877486532488,
+            "worst_over_T": 0.018233754973064974,
+            "floor_b": 0.05,
+            "k": 3,
+            "T_b": 0.05
+          }
+        },
+        "prompts_sha256": "d84428b058cc78790fce700418ae3e15332f7bcd42b6963095196cda36e68fd4",
+        "reproducibility": "the reference recording reproduces bit for bit from the same seed: on every oracle draw after the recording, all four continuations and all 2,048 decode values equal it (the decode check's own measurement is 48 of 48 prompts)",
+        "controls": "registered before any candidate ran: of six designated fault controls, two fail the cross band (579x and 12.0x over its bar) and pass self, two fail the self band (13.9x and 5.9x) and pass cross, one never starts (a fail), and one passes both bands"
+      },
+      "router_probe": {
+        "n_sequences": 46,
+        "sequence_tokens": 2048,
+        "k_positions": 512,
+        "T_per_band": {
+          "whole": 0.02417096332619722,
+          "selected": 0.18636949348159482
+        },
+        "T_rule": "T_b = max(floor_b, 3 x f_b). f_b is the oracle's band median over its draws, 0, since the reference is the reference implementation's own recording and the oracle reproduces it bit for bit. floor_b is 3 x the uncompiled reference's reading in that band (the reference without @support_torch_compile, its own cross-configuration reading), so the floor sets both bars",
+        "bands": {
+          "whole": "each sequence's k3 against the reference over all 2,047 positions; the median over the 46",
+          "selected": "each sequence's k3 over its share of the 512 selected positions; the median over the 35 sequences that carry one"
+        },
+        "per_band": {
+          "whole": {
+            "f_b": 0.0,
+            "uncompiled_reference": 0.008056987775399073,
+            "floor_b": 0.02417096332619722,
+            "k": 3,
+            "T_b": 0.02417096332619722,
+            "oracle_worst_over_T": 0.0
+          },
+          "selected": {
+            "f_b": 0.0,
+            "uncompiled_reference": 0.06212316449386494,
+            "floor_b": 0.18636949348159482,
+            "k": 3,
+            "T_b": 0.18636949348159482,
+            "oracle_worst_over_T": 0.0
+          }
+        },
+        "regression_read": {
+          "run-1": {
+            "whole_over_T": 0.3309959469756329,
+            "selected_over_T": 0.3686950114964145
+          },
+          "run-2": {
+            "whole_over_T": 0.3309959469756329,
+            "selected_over_T": 0.3686950114964145
+          },
+          "run-3": {
+            "whole_over_T": 0.3309959469756329,
+            "selected_over_T": 0.3686950114964145
+          },
+          "run-4": {
+            "whole_over_T": 0.32460707601485017,
+            "selected_over_T": 0.30624905880090436
+          },
+          "run-5": {
+            "whole_over_T": 0.32467471288744926,
+            "selected_over_T": 0.4527254145908929
+          }
+        },
+        "control": {
+          "designated_control": {
+            "whole": {
+              "reading": 0.13630907649200036,
+              "over_T": 5.639372939028229
+            },
+            "selected": {
+              "reading": 63.288387318218135,
+              "over_T": 339.5855519909339
+            }
+          },
+          "registered": "the designated control fails both bands (5.6 x whole, 340 x selected); registered before any candidate ran"
+        },
+        "reference": "the reference implementation served at the recipe, by image digest; two draws on disjoint card sets, bit-identical",
+        "selection": "the 512 (sequence, position) pairs with the largest k3 term of the designated control against the reference, over all 46 x 2,047 positions",
+        "remeasure": "the fidelity node's: a sequence read non-finite re-sent once at once; a failing band re-drawn once whole",
+        "probe_sha256": "09b488cf7c213ecd0763e1516350adcb4780e3eaff0c7c0a00439174fd4b2d77"
+      }
+    },
+    "efficiency": {
+      "kit": "Task-owned whole-model and KDA verification, derived from the shared Day-0 efficiency kit. Task-local changes are owned and qualified here.",
+      "engine": "vllm",
+      "rho": "0.8",
+      "rho_decided": "not a task's to choose.",
+      "c1_attempts": 3,
+      "c1_attempts_note": "the candidate's single-request node takes the best of up to 3 attempts with an early exit; throughput and the reference stay one draw. Biased upward by construction, so the record's first_attempt_ratios is the value to publish. This recipe does not speculate: the loop should essentially never fire.",
+      "score_profile": "model_support_upstream_acceptance_v61",
+      "tokenizer": "/model",
+      "tokenizer_note": "the checkpoint directory: Kimi-Linear ships no tokenizer.json (tiktoken.model and tokenization_kimi.py), so the client loads the model author's tokenizer through Transformers with trust_remote_code -- the path the kit provides for exactly this case",
+      "seed_file": "/tests/hidden/efficiency_seed.json",
+      "python": "/opt/vllm/bin/python",
+      "model_name": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+      "reference": {
+        "root": "/opt/infb-reference",
+        "app": "/app",
+        "base": "acb5b28091e784d9f6f0a0d61338aa31b5f4b86f",
+        "patch": "/tests/reference/solution.patch",
+        "patch_sha256": "ab5d48c1475c66d8c521ad7f5a3a65b70f011d4f5cdacf20f517f4b0a6b8fbb6",
+        "target_tree": "728fee9d6c379b55ffded74bd8ea9dd3d5de65cc",
+        "target_tree_is": "the prepared base plus the composed reference patch (the model-support change, the KDA kernels and the prefix-state support), whose engine part is exactly engine tree 9c0a45036f. The efficiency reference is the same tree as the oracle, so every oracle run is also a null sample of the efficiency ratios.",
+        "pythonpath": [
+          ".",
+          "/tests/infb_kda_private",
+          "/tests/eval/kimi_linear/kda"
+        ],
+        "pythonpath_note": "the private worker extension (tests/infb_kda_private/worker.py) precedes the trusted copy of the supplied kda/, as the candidate's served launch has it through launch.environment(kda_dir=...), so the recipe's worker.KDAWorker is the same private extension on both sides",
+        "engine_module": "vllm",
+        "build_product_roots": [
+          "vllm"
+        ],
+        "port": 31000,
+        "health_path": "/health",
+        "launch_env": {
+          "VLLM_SERVER_DEV_MODE": "1",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "VLLM_WORKER_MULTIPROC_METHOD": "spawn"
+        }
+      },
+      "recipes": {
+        "test_hidden": {
+          "C": 64,
+          "C_rule_row": "an unlabelled recipe with a concurrent acceptance run: that run's concurrency, capped at 64. Upstream's GSM8K evaluator keeps 100 in flight (aiohttp's default connector limit), so C = 64.",
+          "key_is": "the module holding the scoring nodes: this task's upstream acceptance has no class to mix EfficiencyMixin into, so the nodes are module-level functions in infb_verify/test_hidden.py",
+          "launch": {
+            "argv": [
+              "vllm",
+              "serve",
+              "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+              "--tensor-parallel-size",
+              "4",
+              "--max-model-len",
+              "1048576",
+              "--trust-remote-code",
+              "--long-prefill-token-threshold",
+              "2048",
+              "--worker-extension-cls",
+              "worker.KDAWorker",
+              "--no-enable-prefix-caching",
+              "--port",
+              "31000",
+              "--seed",
+              "0"
+            ],
+            "why_static": "the served recipe is launched through tests/utils.py's RemoteOpenAIServer inside the session fixture, not by a registered class's setUpClass",
+            "guarded_by": "infb_verify/test_hidden.py asserts at import that this argv is the evaluation tree's launch.py recipe (the model, SERVER_ARGS in order) plus the kit's port and seed"
+          },
+          "host_checks": []
+        }
+      },
+      "deadlines": {
+        "launch_s": 600,
+        "teardown_s": 180,
+        "node_default_s": 360,
+        "reference_decode_c1_s": 1800,
+        "reference_throughput_s": 1800,
+        "nodes": {
+          "test_0_efficiency_decode_c1": 1860,
+          "test_0_efficiency_throughput": 1860,
+          "test_api_probes": 960,
+          "test_concurrent_state_isolation": 1920,
+          "test_decode_agrees_with_prefill": 1920,
+          "test_fidelity_against_model_author": 1920,
+          "test_fidelity_band_is_populated": 360,
+          "test_gsm8k_accuracy": 960,
+          "test_kda_decode_efficiency": 1860,
+          "test_kda_mathematics": 1860,
+          "test_kda_prefill_efficiency": 1860,
+          "test_kda_serving_binding": 1860,
+          "test_long_context_decode": 3720,
+          "test_recipe_conformance": 360,
+          "test_router_probe": 1920
+        },
+        "session_budget_s": 24660,
+        "group_bounds_s": {
+          "reference": 12120,
+          "l0": 9100,
+          "l2upstream": 1800,
+          "l3-registry": 1800,
+          "l3-kv-cache": 1800,
+          "l3-config": 1800,
+          "l3-model-runner": 1800,
+          "l3-state-lifecycle": 1800,
+          "gdn": 1860,
+          "served": 24840,
+          "binding": 2820,
+          "lifecycle-tp4": 7020,
+          "lifecycle-dp2": 10860,
+          "lifecycle-apc": 11880,
+          "lifecycle-pressure": 5160,
+          "lifecycle-reference": 2280,
+          "state-lifecycle": 2220
+        },
+        "node_launch_s": 660,
+        "node_teardown_s": 240,
+        "operation_s": {
+          "test_0_efficiency_decode_c1": 1800,
+          "test_0_efficiency_throughput": 1800
+        },
+        "composition": {
+          "rule": "operation limits come from eval/kimi_linear/operation-limits.json and are enforced per operation; node bound B = max(3 x R, Cmax + 60 s) with one extra B per permitted whole-node redraw; serial sections sum their children plus 60 s; a one-operation step is bounded by its operation's limit. nodes[*] are the deadline plugin's alarms (B), operation_s the efficiency nodes' measurement limit, launch_s/teardown_s the startup and teardown limits, node_launch_s/node_teardown_s their node bounds. The state-lifecycle steps are serial sections of family nodes, one per permitted coverage wave. The per-node basis is in `basis`.",
+          "root_s": 102970,
+          "verifier_timeout_s": 105370,
+          "job_lifetime_s": 151970,
+          "r_sources": [
+            "reference-oracle",
+            "reference-p2p",
+            "reference-qualification"
+          ],
+          "basis": [
+            {
+              "where": "root",
+              "node": "prepare",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "root",
+              "node": "restore",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "root",
+              "node": "preflight",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 30,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "reference",
+              "node": "reference_gdn",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 121.9,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "reference",
+              "node": "reference_launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 130.1,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "reference",
+              "node": "reference_decode_c1",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 178.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "reference",
+              "node": "reference_throughput",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 202.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "reference",
+              "node": "reference_kda_math",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 2.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "reference",
+              "node": "reference_kda_prefill",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 49.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "reference",
+              "node": "reference_kda_decode",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 35.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "reference",
+              "node": "reference_teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 10,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "l0",
+              "node": "test_build_editable_install",
+              "operation": "rebuild",
+              "limit_s": 7900,
+              "r_s": 20,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 7960
+            },
+            {
+              "where": "l0",
+              "node": "test_registry_resolves_native_class",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 15,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "l0",
+              "node": "test_config_parses",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 10,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "l0",
+              "node": "test_sibling_hybrid_config_unchanged",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "l2upstream",
+              "node": "l2upstream",
+              "operation": "engine_test_file",
+              "limit_s": 1800,
+              "r_s": 52.8,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1800
+            },
+            {
+              "where": "l3-registry",
+              "node": "l3-registry",
+              "operation": "engine_test_file",
+              "limit_s": 1800,
+              "r_s": 150.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1800
+            },
+            {
+              "where": "l3-kv-cache",
+              "node": "l3-kv-cache",
+              "operation": "engine_test_file",
+              "limit_s": 1800,
+              "r_s": 150.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1800
+            },
+            {
+              "where": "l3-config",
+              "node": "l3-config",
+              "operation": "engine_test_file",
+              "limit_s": 1800,
+              "r_s": 150.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1800
+            },
+            {
+              "where": "l3-model-runner",
+              "node": "l3-model-runner",
+              "operation": "engine_test_file",
+              "limit_s": 1800,
+              "r_s": 150.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1800
+            },
+            {
+              "where": "l3-state-lifecycle",
+              "node": "l3-state-lifecycle",
+              "operation": "engine_test_file",
+              "limit_s": 1800,
+              "r_s": 14.3,
+              "r_from": "reference-p2p",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1800
+            },
+            {
+              "where": "gdn",
+              "node": "test_gdn_output_and_state",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 125.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "served",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 117.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "served",
+              "node": "test_0_efficiency_decode_c1",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 103.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "served",
+              "node": "test_0_efficiency_throughput",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 214.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "served",
+              "node": "test_kda_mathematics",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 2.2,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "served",
+              "node": "test_kda_prefill_efficiency",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 48.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "served",
+              "node": "test_kda_decode_efficiency",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 34.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "served",
+              "node": "test_gsm8k_accuracy",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 80.5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "served",
+              "node": "test_api_probes",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 5.4,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "served",
+              "node": "test_recipe_conformance",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.1,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "served",
+              "node": "test_concurrent_state_isolation",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 28.6,
+              "r_from": "reference-oracle",
+              "redraws": 1,
+              "count": 1,
+              "bound_s": 1920
+            },
+            {
+              "where": "served",
+              "node": "test_fidelity_against_model_author",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 5.9,
+              "r_from": "reference-oracle",
+              "redraws": 1,
+              "count": 1,
+              "bound_s": 1920
+            },
+            {
+              "where": "served",
+              "node": "test_decode_agrees_with_prefill",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 48.4,
+              "r_from": "reference-oracle",
+              "redraws": 1,
+              "count": 1,
+              "bound_s": 1920
+            },
+            {
+              "where": "served",
+              "node": "test_long_context_decode",
+              "operation": "http_workload_long",
+              "limit_s": 1800,
+              "r_s": 54.8,
+              "r_from": "reference-oracle",
+              "redraws": 1,
+              "count": 1,
+              "bound_s": 3720
+            },
+            {
+              "where": "served",
+              "node": "test_router_probe",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 5.3,
+              "r_from": "reference-oracle",
+              "redraws": 1,
+              "count": 1,
+              "bound_s": 1920
+            },
+            {
+              "where": "served",
+              "node": "test_fidelity_band_is_populated",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.1,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 2,
+              "bound_s": 360
+            },
+            {
+              "where": "served",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 5.7,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "binding",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 117.0,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "binding",
+              "node": "test_kda_serving_binding",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 192.8,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "binding",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 10,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 178.5,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "metadata",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 86.2,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "d99",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 206.5,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "continued",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 0.4,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "fresh_during_decode",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 4.8,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "self_consistency",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 21.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "recipe",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.0,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "lifecycle-tp4",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 6.0,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 97.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "metadata",
+              "operation": "component_invocation",
+              "limit_s": 1800,
+              "r_s": 4.3,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 1860
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "d99",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 277.0,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "continued",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 0.4,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "fresh_during_decode",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 5.3,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "dp_idle",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 1.2,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "dp_load",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 12.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "dp_quality",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 121.6,
+              "r_from": "reference-qualification",
+              "redraws": 1,
+              "count": 1,
+              "bound_s": 1920
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "self_consistency",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 44.7,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "recipe",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "lifecycle-dp2",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 7.4,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 83.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "d99",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 224.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "continued",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 0.4,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "fresh_during_decode",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 4.8,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "a1",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 7.2,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "a6",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 4.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "a2",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 5.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "a3",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 1.3,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "a4",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 4.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "a5",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 6.7,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "binding",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 5.5,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "self_consistency",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 31.9,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "recipe",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "lifecycle-apc",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 5.8,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 75.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "p1",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 45.8,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "p2",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 40.5,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "p4",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 4.5,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "self_consistency",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 40.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "recipe",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "lifecycle-pressure",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 5.0,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "lifecycle-reference",
+              "node": "snapshot",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 8.0,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "lifecycle-reference",
+              "node": "launch",
+              "operation": "startup",
+              "limit_s": 600,
+              "r_s": 135.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 660
+            },
+            {
+              "where": "lifecycle-reference",
+              "node": "teacher_forcing",
+              "operation": "http_workload",
+              "limit_s": 900,
+              "r_s": 184.4,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 960
+            },
+            {
+              "where": "lifecycle-reference",
+              "node": "teardown",
+              "operation": "teardown",
+              "limit_s": 180,
+              "r_s": 10.9,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 240
+            },
+            {
+              "where": "state-lifecycle",
+              "node": "test_native_state_metadata_and_replay",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "state-lifecycle",
+              "node": "test_fresh_request_state_lifecycle",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 7.3,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "state-lifecycle",
+              "node": "test_dp2_correctness_under_load",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 4.9,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "state-lifecycle",
+              "node": "test_prefix_reuse_and_continuations",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.6,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "state-lifecycle",
+              "node": "test_prefix_branch_state_and_binding",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 0.2,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "state-lifecycle",
+              "node": "test_prefix_turnover_and_resume",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 1.1,
+              "r_from": "reference-qualification",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            },
+            {
+              "where": "root",
+              "node": "attribution_and_grade",
+              "operation": "action",
+              "limit_s": 300,
+              "r_s": 5,
+              "r_from": "reference-oracle",
+              "redraws": 0,
+              "count": 1,
+              "bound_s": 360
+            }
+          ]
+        },
+        "group_bounds_note": "the seven state-lifecycle groups' bounds are composed from the measured reference walls by B = max(3R, Cmax + 60 s)."
+      },
+      "reference_draws": 3,
+      "candidate_throughput_draws": 3,
+      "draws_note": "the reference is measured three times per axis on its serving server and the median draw kept whole, and the candidate's throughput drawn three times with the median draw deciding; decode_c1's best-of-three attempts are unchanged. Each reference draw runs under its own deadline, so the reference phase's bound is launch 600 + 3 x (500 + 310) + teardown 120 = 3,150 s; the candidate's throughput draws share the node's 310 s, and a draw that would not fit stops the node at the draws taken (their median, the lower middle of an even count)",
+      "decode_c1_statistic_note": "ratio_of_medians, the kit's default (the key is left unset): over 11 null draws (oracle = reference) the kit's S1 reproduces from the request sidecar on all 11, with sd 0.0205 (min 0.9844); the paired median_of_ratios has sd 0.0204 (min 0.9859). This task's timed c1 prompts do not split into speed clusters, so nothing argues for the paired form.",
+      "canary": {
+        "tolerance": 0.1
+      },
+      "canary_note": "every draw on both sides is bracketed by the kit's fixed GPU and CPU reading; a draw whose bracket reads more than 10% below the trial's first reading is re-drawn once, and a second invalid draw requests a verifier-only re-run; it never decides a verdict. vLLM needs no flush_between_draws: every request carries its own cache_salt"
+    },
+    "concurrency": {
+      "n_prompts": 16,
+      "max_tokens": 256,
+      "top_k": 20,
+      "T_per_band": {
+        "inside": 2.0,
+        "crossing": 2.0
+      },
+      "reading": "per prompt, the probes' gap (test_api_probes step 5) at the first position where its answer served alone and its answer served with the other fifteen at once differ, read from the top-20 log-probabilities (vLLM's max_logprobs at 1994de99): the larger of how far each answer's token is from the other's top-1; 0 when the answers are equal, infinity when a token is outside the other's top-20",
+      "bands": {
+        "inside": "cc-00..cc-07, 1,024-2,000 tokens, each inside one 2,048-token prefill chunk",
+        "crossing": "cc-08..cc-15, 3,000-12,000 tokens, each crossing chunk boundaries"
+      },
+      "T_rule": "the fidelity gate's form applied to the probes' gap: T_b = max(2.0, 3 x f_b), f_b the oracle's band median over its draws; 2.0 is the probes' near-tie bar (3 x the largest gap over 81 divergences on the reference, 0.625 nats, rounded up); each band's median below its T_b",
+      "remeasure": "a band whose median is not below its T_b is re-drawn once: the whole batch is sent at once again, and the band fails only if both draws fail; both draws printed",
+      "per_band": {
+        "inside": {
+          "f_b": 0.25,
+          "draw_medians": [
+            0.25,
+            0.25,
+            0.25,
+            0.125,
+            0.125
+          ],
+          "draws": {
+            "containers": 5
+          },
+          "worst_draw": 0.25,
+          "worst_over_T": 0.125,
+          "floor_b": 2.0,
+          "k": 3,
+          "T_b": 2.0
+        },
+        "crossing": {
+          "f_b": 0.125,
+          "draw_medians": [
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.09375
+          ],
+          "draws": {
+            "containers": 5
+          },
+          "worst_draw": 0.125,
+          "worst_over_T": 0.0625,
+          "floor_b": 2.0,
+          "k": 3,
+          "T_b": 2.0
+        }
+      },
+      "finding": "cc-05 (1,850 tokens) leaves its solo answer at token 13 on four of five oracle draws: its solo token, at -2.05, falls outside the at-once top-5, and on some draws outside the top-20. Two identical copies of cc-05 served at once reproduce it with every earlier position within 0.14 nats, and alone it repeats bit for bit: batched MoE routing at a near-tie, a property of the engine and not a fault, and the reason the probes' per-divergence rule is too tight for an MoE model under concurrency.",
+      "prompts_sha256": "213e4a95b58de2c5699f300b18b04b92a2699fe301589971f9bc663e9197fa7e",
+      "controls": "registered before any candidate ran: of six designated fault controls, three fail both bands (inf and inf; 5.03 and inf; inf and 2.56 at top-5, where the graded read is top-20), one never starts, and two pass"
+    },
+    "kda": {
+      "qualification": "qualified",
+      "seed": 519731,
+      "gdn_seed": 281597,
+      "rpc_timeout_s": 1800,
+      "client_timeout_s": 1800,
+      "binding_timeout_s": 1800,
+      "timeouts_note": "every KDA invocation (a correctness, sample or timing RPC, one GDN run, the binding workload) is one component invocation, bounded by the published 1,800 s limit (eval/kimi_linear/operation-limits.json component_invocation); the RPC's own timeout equals it",
+      "note": "Frozen numerical and component criteria are in infb.kda.acceptance; the measurement parameters are the supplied eval/kimi_linear/kda/protocol.json. Group and node bounds have measured bases in efficiency.deadlines.composition.basis.",
+      "acceptance": {
+        "qualification": "qualified",
+        "note": "Qualified on four H100s at TP4/BF16 before any agent ran. Core attention, standalone operator output and all state retain the upstream 0.005 relative-RMSE rule. The complete native layer includes BF16 normalization, output projection and TP reduction: its 0.008 bar was preregistered from a measured 0.005881 reference error, then checked on independent reference repeats, renamed/fused positives and fault controls. Every measurement must be finite; 1e-6 maximum absolute error is the absolute escape. All eight component families separately require a 0.8 paired ratio over five draws of ten repeats. The draws and repeats are protocol parameters, supplied in eval/kimi_linear/kda/protocol.json.",
+        "kda": {
+          "attention": {
+            "absolute_escape": 1e-06,
+            "relative_rmse": 0.005
+          },
+          "output": {
+            "absolute_escape": 1e-06,
+            "relative_rmse": 0.008
+          },
+          "state": {
+            "absolute_escape": 1e-06,
+            "relative_rmse": 0.005
+          }
+        },
+        "gdn": {
+          "output": {
+            "absolute_escape": 1e-06,
+            "relative_rmse": 0.005
+          },
+          "state": {
+            "absolute_escape": 1e-06,
+            "relative_rmse": 0.005
+          }
+        },
+        "timing": {
+          "floor": 0.8
+        },
+        "binding": {
+          "noise_multiplier": 10.0,
+          "absolute_floor": 0.01
+        }
+      }
+    },
+    "api_probes": {
+      "near_tie_nats": 2.0,
+      "top_k": 5,
+      "note": "test_api_probes' batch-invariance rule: 3x the largest divergence gap measured on the reference over 81 divergences (0.625 nats), rounded up, read from the top-5. The concurrency node's own constants are infb.concurrency (top_k 20, T_per_band 2.0 per band)."
+    },
+    "attribution": {
+      "note": "tests/attribution.py's groups. A scored id belongs to the first group whose prefix it starts with; a group that is one operation has that operation's limit as its bound, so its expiry is the candidate's resource failure, while a multi-operation group's expiry censors the ids it had not reported.",
+      "groups": {
+        "l0": {
+          "prefixes": [
+            "infb_verify.test_l0."
+          ],
+          "single_operation": false
+        },
+        "l2upstream": {
+          "prefixes": [
+            "tests.models.test_initialization."
+          ],
+          "single_operation": true
+        },
+        "l3-registry": {
+          "prefixes": [
+            "tests.models.test_registry."
+          ],
+          "single_operation": true
+        },
+        "l3-kv-cache": {
+          "prefixes": [
+            "tests.v1.core.test_kv_cache_utils."
+          ],
+          "single_operation": true
+        },
+        "l3-config": {
+          "prefixes": [
+            "tests.test_config."
+          ],
+          "single_operation": true
+        },
+        "l3-model-runner": {
+          "prefixes": [
+            "tests.v1.worker.test_gpu_model_runner."
+          ],
+          "single_operation": true
+        },
+        "gdn": {
+          "prefixes": [
+            "infb_verify.test_gdn."
+          ],
+          "single_operation": false
+        },
+        "served": {
+          "prefixes": [
+            "infb_verify.test_hidden.",
+            "infb_verify.test_fidelity."
+          ],
+          "single_operation": false
+        },
+        "binding": {
+          "prefixes": [
+            "infb_verify.test_binding."
+          ],
+          "single_operation": false
+        },
+        "l3-state-lifecycle": {
+          "prefixes": [
+            "infb_verify.test_state_lifecycle_preservation."
+          ],
+          "single_operation": true
+        },
+        "state-lifecycle": {
+          "prefixes": [
+            "infb_verify.test_state_lifecycle."
+          ],
+          "single_operation": false
+        }
+      }
+    },
+    "gpu_count_note": "the environment provides eight H100s; the tp4 recipe and the apc variants serve on the first four, dp2 on all eight (eval/kimi_linear/launch.py), so preflight requires all eight"
+  }
+}

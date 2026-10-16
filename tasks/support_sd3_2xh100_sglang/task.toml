@@ -1,0 +1,132 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+# SD3 core49: 47 fail-to-pass checks and 2 shared-model regressions.
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch", "/logs/artifacts/sd3_images", "/logs/artifacts/sd3_goldens_inrun",
+             "/logs/artifacts/agent_surface_scrub.receipt.json"]
+
+[task]
+name = "inference-bench/support_sd3_2xh100_sglang"
+description = """\
+Add Stable Diffusion 3 (MMDiT text-to-image) support to SGLang's \
+multimodal_gen diffusion engine. SD3 is a multimodal diffusion transformer \
+(MMDiT) image generator with three text encoders (CLIP-L, CLIP-G, T5) and a \
+16-channel VAE. The pinned SGLang has no SD3 in multimodal_gen's registry; \
+the task is to add native generation across the required precision and \
+single-/two-GPU serving profiles, preserving request behavior and matching \
+independent Diffusers references with fixed generation settings.\
+"""
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "model-support", "diffusion", "image-generation", "sd3", "multimodal-gen"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+timeout_sec = 3600
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+# Two single-GPU queues join before TP2/SP2; all 49 checks remain required.
+# Active image bars are precision-specific in tests/image_thresholds.json.
+SD3_VERIFIER_SCHEDULE = "two_queues"
+SD3_BATCH_TP_SIZE = "1"
+SD3_GOLDEN_AGREE_MIN_PSNR = "40.0"
+SD3_PROMPT_COND_FACTOR = "2"
+SD3_PC_SAME_PSNR = "16.5"
+SD3_PC_SAME_SSIM = "0.70"
+SD3_PC_SAME_CLIP_IMG = "0.95"
+SD3_STEP_COUNT_TOLERANCE = "0"
+SD3_ALIGN_REL_L2_COEF = "1.5"
+SD3_ALIGN_LEGAL_CLIP_L_HIDDEN = "0.002815689575877673"
+SD3_ALIGN_LEGAL_CLIP_L_POOLED = "0.008176863242576545"
+SD3_ALIGN_LEGAL_CLIP_G_HIDDEN = "0.01757848938436147"
+SD3_ALIGN_LEGAL_CLIP_G_POOLED = "0.009419541681727173"
+SD3_ALIGN_LEGAL_T5_HIDDEN = "0.02554605933650533"
+SD3_ALIGN_ORACLE_DIT = "0.011771794107186083"
+SD3_ALIGN_LEGAL_VAE_DECODE = "0.0061937210184702645"
+SD3_VAE_TILED_SIZE = "1152"
+SD3_VAE_TILED_STEPS = "12"
+SD3_VAE_TILED_FIXTURE = "mountain"
+SD3_OFFLOAD_FIXTURE = "astronaut"
+SD3_GOLDEN_BOOTSTRAP = ""
+
+[environment]
+build_timeout_sec = 7200
+cpus = 8
+memory_mb = 65536
+shm_size_mb = 8192
+storage_mb = 262144
+gpus = 2
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[metadata]
+display_title = "Add Stable Diffusion 3 (MMDiT) support to SGLang multimodal_gen"
+display_description = "Add native SD3 support to SGLang's multimodal_gen diffusion engine (CLIP-L + CLIP-G + T5 text encoders, 16-channel VAE, joint-attention MMDiT) so DiffGenerator.from_pretrained(...).generate() produces correct images with the required precision and single-/two-GPU serving behavior, checked against independent matched Diffusers references."
+category = "model_support"
+language = "python"
+base_commit_hash = "9e6d1c066ec3445b534eef6ccdcd752f1bddae1f"
+
+[metadata.inference_bench]
+tier = "lite"
+category = "model_support"
+engine = "sglang"
+score_profile = "t_sd3_diffusion_core49_precision_bars_20261008"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+baseline_commit = "9e6d1c066ec3445b534eef6ccdcd752f1bddae1f"
+workdir = "/app/repo"
+baseline_relation = """\
+Pinned SGLang just before SD3 support — multimodal_gen's registry has no SD3 \
+entry and configs/runtime SD3 files do not exist. DiffGenerator.from_pretrained\
+("stabilityai/stable-diffusion-3-medium-diffusers") fails to resolve a pipeline \
+config. The task is to add native multimodal_gen SD3 support.\
+"""
+
+[metadata.inference_bench.model]
+hf_model_family = "stabilityai/stable-diffusion-3-medium-diffusers"
+hf_model_id = "stabilityai/stable-diffusion-3-medium-diffusers"
+gated = true
+clip_scorer_hf_model_id = "openai/clip-vit-large-patch14"
+architecture = "SD3Transformer2DModel"
+model_type = "stable-diffusion-3"
+feature = "MMDiT text-to-image diffusion. 3 text encoders (CLIP-L + CLIP-G + T5), 16-ch VAE, joint-attention DiT blocks. Output is an image (num_frames=1). Determinism via fixed seed + num_inference_steps + guidance_scale."
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "git_editable_sglang_9e6d1c066_diffusion_with_pinned_dependencies"
+
+[metadata.inference_bench.commands]
+public_check = "python public/check_candidate.py"
+
+
+[metadata.inference_bench.score]
+correctness_gate = "All four finite image metrics must meet explicit per-fixture, per-precision bars in tests/image_thresholds.json. Every core49 check remains required. References are independent in-run Diffusers with fixed matching settings; serving topologies retain their precision-matched reference and bars. Binary reward requires 47 F2P and 2 P2P; partial counts all 49."
+
+[environment.env]
+PATH = "/app/.infb_bin:/usr/local/bin:/opt/venv/bin:/usr/local/cuda-12.8/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
+PYTHONPATH = "/app/repo/python"
+INFB_PYTHON_BIN_DIR = "/usr/local/bin"
+INFB_AGENT_TIMEOUT_SEC = "30000"
+
+[metadata.inference_bench.image_threshold_policy]
+revision = "sd3-core49-precision-bars-20261008-v2"
+path = "tests/image_thresholds.json"
+sha256 = "8d0346660a5f6d21e7fc20b3092f323eda7e7b0be985f84a8a6444a85734333b"
+
+[metadata.inference_bench.oracle]
+manifest = "solution/oracle.lock"

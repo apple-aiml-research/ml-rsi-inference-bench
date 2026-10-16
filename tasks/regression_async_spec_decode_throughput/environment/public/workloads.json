@@ -1,0 +1,49 @@
+{
+  "primary_workload": "in1024_out1024_c512",
+  "scored_workloads": [
+    "in1024_out1024_c256",
+    "in1024_out1024_c384",
+    "in1024_out1024_c512"
+  ],
+  "guard_workloads": [
+    "in1024_out1024_c128"
+  ],
+  "workloads": [
+    {
+      "name": "in1024_out1024_c512",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 1024,
+      "max_concurrency": 512,
+      "max_model_len": 2560
+    },
+    {
+      "name": "in1024_out1024_c256",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 512,
+      "max_concurrency": 256,
+      "max_model_len": 2560
+    },
+    {
+      "name": "in1024_out1024_c384",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 768,
+      "max_concurrency": 384,
+      "max_model_len": 2560
+    },
+    {
+      "name": "in1024_out1024_c128",
+      "role": "guard",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 256,
+      "max_concurrency": 128,
+      "max_model_len": 2560
+    }
+  ]
+}

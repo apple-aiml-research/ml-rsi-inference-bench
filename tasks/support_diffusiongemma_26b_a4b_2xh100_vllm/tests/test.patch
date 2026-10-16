@@ -1,0 +1,25 @@
+diff --git a/tests/models/registry.py b/tests/models/registry.py
+--- a/tests/models/registry.py
++++ b/tests/models/registry.py
+@@ -898,6 +898,10 @@ _MULTIMODAL_EXAMPLE_MODELS = {
+     ),
+     "FuyuForCausalLM": _HfExamplesInfo("adept/fuyu-8b"),
+     "Gemma3ForConditionalGeneration": _HfExamplesInfo("google/gemma-3-4b-it"),
++    "DiffusionGemmaForBlockDiffusion": _HfExamplesInfo(
++        "google/diffusiongemma-26B-A4B-it",
++        trust_remote_code=True,
++    ),
+     "Gemma4ForConditionalGeneration": _HfExamplesInfo(
+         "google/gemma-4-E2B-it",
+         min_transformers_version="5.5.0",
+diff --git a/tests/models/utils.py b/tests/models/utils.py
+--- a/tests/models/utils.py
++++ b/tests/models/utils.py
+@@ -486,6 +486,7 @@ def dummy_hf_overrides(
+                 "Gemma3nForConditionalGeneration",
+                 "Gemma4ForCausalLM",
+                 "Gemma4ForConditionalGeneration",
++                "DiffusionGemmaForBlockDiffusion",
+             )
+             else 1
+         )

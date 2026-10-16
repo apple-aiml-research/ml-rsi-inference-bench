@@ -1,0 +1,44 @@
+diff --git a/vllm/v1/core/sched/scheduler.py b/vllm/v1/core/sched/scheduler.py
+--- a/vllm/v1/core/sched/scheduler.py
++++ b/vllm/v1/core/sched/scheduler.py
+@@ -234,31 +234,29 @@
+         # First, schedule the RUNNING requests.
+         req_index = 0
+         while req_index < len(self.running) and token_budget > 0:
+             request = self.running[req_index]
+ 
++            if (
++                request.num_output_placeholders > 0
++                and request.num_computed_tokens + 2 - request.num_output_placeholders
++                >= request.num_prompt_tokens + request.max_tokens
++            ):
++                req_index += 1
++                continue
++
+             num_new_tokens = (
+                 request.num_tokens_with_spec
+                 + request.num_output_placeholders
+                 - request.num_computed_tokens
+             )
+             if 0 < self.scheduler_config.long_prefill_token_threshold < num_new_tokens:
+                 num_new_tokens = self.scheduler_config.long_prefill_token_threshold
+             num_new_tokens = min(num_new_tokens, token_budget)
+ 
+-            num_spec_placeholders = max(0, request.num_output_placeholders - 1)
+-            max_total_tokens = min(
+-                # Avoid scheduling tokens that we're sure won't will be needed based on
+-                # request.max_tokens. For this calculation we assume placeholder
+-                # speculated output tokens are rejected.
+-                request.num_prompt_tokens + request.max_tokens + num_spec_placeholders,
+-                # Make sure the input position does not exceed the max model len.
+-                # This is necessary when using spec decoding.
+-                self.max_model_len,
+-            )
+             num_new_tokens = min(
+-                num_new_tokens, max_total_tokens - 1 - request.num_computed_tokens
++                num_new_tokens, self.max_model_len - 1 - request.num_computed_tokens
+             )
+ 
+             # Schedule encoder inputs.
+             encoder_inputs_to_schedule = None
+             external_load_encoder_input: list[int] = []

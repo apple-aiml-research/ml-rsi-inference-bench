@@ -1,0 +1,135 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/optimize_minimax_m3_4xb200_open"
+description = "Optimize vLLM throughput for MiniMaxAI/MiniMax-M3 on 4×B200 / vLLM 0.24.0. Sparse MoE: ~426B total / ~24B active parameters, 128 experts (top-4 routing) + 1 shared expert with sigmoid+routing-bias scoring, routed_scaling_factor=2.0; 60 decoder layers (3 dense + 57 MoE); HYBRID attention — dense full softmax attn layers 0-2, block-sparse GQA layers 3-59 via lightning indexer (sparse_block_size=128, sparse_topk_blocks=16, sparse_index_dim=128); GQA 64 q / 4 kv heads, head_dim=128, partial-rope (rotary_dim=64, theta=5e6); 1M context (max_position_embeddings=1048576); MXFP8-quantized weights (E4M3 + E8M0 128×128 block scales), bf16 activations, fp32 router; native MTP module (num_mtp_modules=1) but baseline runs dense decode (spec decode is ZERO headline credit). Architecture registered natively in vLLM 0.24.0 (vllm/models/minimax_m3/, MiniMaxM3SparseForCausalLM)."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "throughput-optimization", "minimax_m3", "moe", "mxfp8", "sparse-attention", "b200", "v0240", "tp4"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+timeout_sec = 21600
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 1048576
+storage_mb = 786432
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the engine
+# creates per worker, plus the torch/NCCL shared-memory transports. Docker's default is
+# 64 MiB, which the verifier preflight voids as `dev_shm_too_small` (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 4
+# B200-only: the baseline was produced on B200 (sm_100). Running on H100 (sm_90) would
+# invalidate that baseline, because attention-backend and GEMM kernel selection differ
+# (FA3/FA4 + nvjet on sm_100 against cutlass_sm90).
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "vllm"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "v0.24.0"
+workdir = "/app/repo"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.9"
+engine_install = "task_scoped_vllm_0_24_0_cu129_with_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "MiniMaxAI/MiniMax-M3-MXFP8"
+architecture = "MiniMaxM3SparseForCausalLM"   # text-backbone decoder actually served/scored (model_type=minimax_m3); registered natively in vLLM 0.24.0
+total_parameters = "~426B"          # from config: text 60L (3 dense + 57 MoE), 128 experts × 3072 intermediate, vocab 200064 (+ vision tower)
+activated_parameters = "~24B"       # per-token: 3 dense + 57 MoE × top-4/128 + 1 shared
+context_window = 16384              # serve max_model_len — MATCHES _run_benchmark_serve.py + verifier (both --max-model-len 16384); covers workloads' 9216. Model max is 1048576 (1M).
+dtype = "auto"                      # MXFP8 weights (quant_method=mxfp8, weight_block_size=[1,32], dynamic act)
+tensor_parallel_size = 4
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 1
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 1.00
+rtol = 0.10
+min_pass_rate = 0.95
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "decode_heavy"
+input_len = 1024
+output_len = 8192
+num_prompts = 4
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "prefill_heavy"
+input_len = 8192
+output_len = 1
+num_prompts = 256
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "high_load"
+input_len = 1024
+output_len = 1024
+num_prompts = 256
+
+[metadata.inference_bench.commands]
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_BENCH_SEED = "20260618"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+INFB_BENCH_SEED = "20260618"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_OFFICIAL = "1"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_BOOTS_DECODE_HEAVY = "2"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

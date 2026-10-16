@@ -1,0 +1,29 @@
+{
+ "about": "The digests of the model-author conversion (inference/convert.py --model-parallel 4 --expert-dtype fp4, unmodified, from the checkpoint at revision dba1be0a40aa45a94ad051997016db3960a90277). write_manifest.py asserts them at image build.",
+ "converter": {
+  "path": "inference/convert.py",
+  "sha256": "035028340479145594a81d6084a8424e57363adf83c0d5983914783d95614d76"
+ },
+ "shards": [
+  {
+   "file": "model0-mp4.safetensors",
+   "bytes": 130673094032,
+   "sha256": "fb7a665d94672e4c252dad32f510a2cb47faf30a3130abad874061207a5c1b55"
+  },
+  {
+   "file": "model1-mp4.safetensors",
+   "bytes": 130673118696,
+   "sha256": "3f9280ff29164bbda6b82cc08558bea0548a395f1d89b7077d8ce93137411dd5"
+  },
+  {
+   "file": "model2-mp4.safetensors",
+   "bytes": 130673119656,
+   "sha256": "8b010d19533357d4dbfc70293e74d3de8360dcc8f2f28ae8bfd5e8147ee874c0"
+  },
+  {
+   "file": "model3-mp4.safetensors",
+   "bytes": 130673120160,
+   "sha256": "3c3cf38453b90f61159f7fe2c7c829c8fcc1fa7bb46c846143091b9c7669e59d"
+  }
+ ]
+}

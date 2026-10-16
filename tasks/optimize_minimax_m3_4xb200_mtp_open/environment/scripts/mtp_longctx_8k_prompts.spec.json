@@ -1,0 +1,24 @@
+{
+  "bank_sha256": "e92c20ec4c16705ed631bee01dd584139f236ed5be0817ed74fea4b7110fa988",
+  "census": {
+    "high_entropy": 454,
+    "low_entropy": 32,
+    "mixed": 0
+  },
+  "config": "throughput_8k",
+  "dataset": "nvidia/SPEED-Bench",
+  "expected_rows": 454,
+  "field": "turns[0], verbatim -- no truncation, no splicing",
+  "revision": "487aa718444e816458d1a0a52bfce7a454285cf4",
+  "rule": {
+    "category": "high_entropy",
+    "ceiling_tokenizers": [
+      "deepseek-ai/DeepSeek-V4-Flash",
+      "Qwen/Qwen3.6-27B"
+    ],
+    "max_identical_line_run": 20,
+    "max_tokens": 11888,
+    "min_chars": 200,
+    "multiturn": false
+  }
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "record"
+      ]
+    },
+    "payloads": [
+      {
+        "record": "maple"
+      },
+      {
+        "record": "orbit"
+      }
+    ]
+  },
+  {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "record"
+      ]
+    },
+    "payloads": [
+      {
+        "record": "raven"
+      },
+      {
+        "record": "coral"
+      }
+    ]
+  }
+]

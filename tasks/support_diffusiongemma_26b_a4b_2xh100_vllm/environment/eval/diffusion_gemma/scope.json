@@ -1,0 +1,12 @@
+{
+ "schema": "diffusion-gemma-scope/1",
+ "checkpoint": {"repository": "google/diffusiongemma-26B-A4B-it", "revision": "0f28bc42f588fbd8f71e08102b1c3960298a1358"},
+ "hardware": "2 x NVIDIA H100 80GB",
+ "deployments": ["tp1", "tp2"],
+ "modalities": ["text", "image"],
+ "kv_cache_dtype": "bfloat16",
+ "context_tokens": 262144,
+ "out_of_scope": ["video", "other checkpoints and precisions", "speculative decoding", "expert, pipeline and data parallelism",
+                  "disaggregated serving", "KV connectors", "CPU offload", "request-level sampling parameters other than temperature and seed",
+                  "prompt log-probabilities", "contexts beyond 262,144 tokens", "other hardware"]
+}

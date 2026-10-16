@@ -1,0 +1,36 @@
+{
+  "_comment": "MTP scoring profile. Score = geomean of output_throughput ratios over the SCORED profiles of mtp_longctx_8k -- c1/c8/c32, at input_len 8192 / output_len 4096, n=2c so every point runs the same number of batch steps. This is the only workload the task declares. prefill_heavy is absent by construction: output_len=1 never executes a draft/verify round, so it scores identically 1.",
+  "workloads": [
+    {
+      "_comment": "SCORED. `mtp_longctx_8k` is the workload the reward comes from, and the only workload this task declares: the score is the geomean of its per-point output_throughput ratios over the profiles marked scored. Input is nvidia/SPEED-Bench `throughput_8k` turn-1 via the `custom` loader: `sharegpt` CANNOT carry it, because ShareGPTDataset.sample() calls is_valid_sequence() unconditionally and that function's max_prompt_len=1024 is a default argument no caller and no CLI flag overrides -- every ~8.4k-token prompt would be dropped SILENTLY, since ShareGPT oversamples the survivors instead of erroring. `custom` reads its file with pd.read_json, so pandas must be present in the engine environment. 32 rows, balanced 16/16 and INTERLEAVED across the two entropy categories the published parquet leaves usable (high_entropy/open_books and low_entropy/code_completion; the whole `mixed` bucket is masked) -- interleaved because c1 takes only the first four rows and a category-ordered bank would make the concurrency curve report a content change.",
+      "name": "mtp_longctx_8k",
+      "dataset": "custom",
+      "prompt_bank": "mtp_longctx_8k_prompts.jsonl",
+      "ignore_eos": true,
+      "save_detailed": true,
+      "input_len": 8192,
+      "output_len": 4096,
+      "num_prompts": 64,
+      "profiles": [
+        {
+          "name": "c1",
+          "pattern": "closed_loop",
+          "concurrency": 1,
+          "num_prompts": 2
+        },
+        {
+          "name": "c8",
+          "pattern": "closed_loop",
+          "concurrency": 8,
+          "num_prompts": 16
+        },
+        {
+          "name": "c32",
+          "pattern": "closed_loop",
+          "concurrency": 32,
+          "num_prompts": 64
+        }
+      ]
+    }
+  ]
+}

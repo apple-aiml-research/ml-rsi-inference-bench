@@ -1,0 +1,120 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/vllm-project/vllm.git",
+ "upstream_base": "1ce3cdc5c14f656f81f91e264d557e0b6e6fea54",
+ "prepared_base": {
+  "commit": "928e87391806edec70f4d81a0fadab20593dce48",
+  "tree": "20b4610b5f8680176cdec237fc31646fa3614ae0",
+  "vendor_commit": "e21e4b8f5010a1dd3c4b95c34c348f88f906f686",
+  "vendor_tree": "cf1462e6bf3e085ce70a21d103fde6c18e558738",
+  "evaluation_files": 44,
+  "reproduced_by": "environment/Dockerfile: the fork vendored as source at 1781241375 +0000 (prepare_fa_vendor.py, fa-materials.json), then eval/diffusion_gemma (44 files) at 1781241376 +0000; neutral committed messages and pinned identity."
+ },
+ "base": "928e87391806edec70f4d81a0fadab20593dce48",
+ "landing": {
+  "pr": 45163,
+  "sha": "eb28452b10a1376d143b2847a78b31726db346dd",
+  "note": "squash eb28452b of vllm-project/vllm #45163"
+ },
+ "closure": {
+  "commits": [
+   {
+    "sha": "b2b3622960fa3da11bb5fcdf4a2f08eb1ca14764",
+    "subject": "closure: landing #45163 (squash eb28452b)"
+   },
+   {
+    "sha": "a06b9faa0fb48e41a1382367fb29d120f41629be",
+    "subject": "closure: repair #45468 (521b88c2)"
+   },
+   {
+    "sha": "bc56889cb84dc0f8cb5664917ac00a651fe5d017",
+    "subject": "closure: repair #46177 (701a23d9), without its CI yaml"
+   },
+   {
+    "sha": "c2c418f8bf332053cda44c3c55fe9feb491afd5f",
+    "subject": "closure: repair #46659 (8fc1b2d0)"
+   },
+   {
+    "sha": "b5ebf7a25c18cc6e459b9274a50aeaa986e44923",
+    "subject": "closure: packaging adaptation fa-vendored-source (the landing's fork bump as content: 803020a8)"
+   },
+   {
+    "sha": "480bc83dd9f59d002d9b8bcf334455f91e7fe2d4",
+    "subject": "closure: repair FA #154 (1c726f3c mask.py hunk, cherry-picked without #150)"
+   },
+   {
+    "sha": "65a72d03f41cc80b446005857c8e217ae8031aed",
+    "subject": "closure: benchmark-authored canvas-window repair (the canvas window W-1 shared by a denoise sequence's rows, no right bound, key-block range restricted to it on producer and consumer)"
+   },
+   {
+    "sha": "12b6104976bea44a90967488c5fc1dbdd950ef89",
+    "subject": "closure: benchmark-authored image-span repair: the top-level diffusion_gemma type gets the Gemma4 arch convertor its text config has, so is_mm_prefix_lm follows use_bidirectional_attention and no image span is sp"
+   },
+   {
+    "sha": "b63ab5c5c84a7306225d864fd4a8e84d53df0ef3",
+    "subject": "closure: amendment #57414 ported (hand out stashed logprobs only on the committing step; upstream 2c88fb13)"
+   },
+   {
+    "sha": "bd4e78686f458c11ff4fde8d3f594b7cf7daa154",
+    "subject": "closure: benchmark-authored read-mode repair (#57250 with #57417 ported and adapted: one-canvas reads from comma-separated vllm_xargs fields, every position held at the seed, a step cap with no adaptive stop, step-1 "
+   },
+   {
+    "sha": "230ab712e7019b2355eedc79adc1e3a332442877",
+    "subject": "closure: benchmark-authored image-span repair, part 2: the scheduler's no-chunked-mm-input rule also holds for an item whose encoder output is already cached, so a repeated image is not split across chunks either"
+   },
+   {
+    "sha": "5e6fbfdb1763b502254408a545d15acfe922c255",
+    "subject": "closure: benchmark-authored image-span repair, part 3: image spans under per-sequence phases on FA4 (a DiffusionGemma mask over the phase, the committed length and the spans; only batches carrying image spans tak"
+   },
+   {
+    "sha": "b0fdcd23454227592ceb7f6b2557373065f62f5c",
+    "subject": "closure: the oracle adapter /app/diffusion_gemma_attend.py (benchmark-authored; the served FA4 call)"
+   },
+   {
+    "sha": "1aef26bc89ee48394f00185567a9aa2a0c51a9a6",
+    "subject": "closure: image-span repair part 3 follow-up: the image mask builder in its own import-light module (the operator imports it without the attention backend's transformers checks)"
+   },
+   {
+    "sha": "eb3d0b037f3e55351503e63c81e99f50d5789eab",
+    "subject": "closure: benchmark-authored reasoning-parser repair: a streamed Gemma4 reasoning delta that carries the start token without the end token (a whole block-diffusion canvas) keeps only the text after "
+   },
+   {
+    "sha": "c016411c27658cf227b5e93cf263ba9f1cd0f92a",
+    "subject": "closure: benchmark-authored self-conditioning repair: a slot in its commit step keeps the plain token embeddings -- the self-conditioning MLP (and its weightless post-norm) is for denoising st"
+   },
+   {
+    "sha": "b62f96737a347a92ffd26628de7e1d59aaeef697",
+    "subject": "closure: benchmark-authored read-only-canvas repair: a read-only request's emitted canvas is never counted as computed -- it has no commit forward, so the KV at those positions is its denoise pass"
+   },
+   {
+    "sha": "4d7b1c601bb059b7c271268a2a45dcbb21006423",
+    "subject": "closure: amendment #51994 ported (open; head 283637a6535d7cfe4b49f32cfe368d9e9fd5602a, its own commits f3b7ad44 dbbfc6d0 27397df6 8c67d686 9d3ed9c9 with their net diff): the per-request causal flag bu"
+   },
+   {
+    "sha": "140309148ccab381f5b03f64133c274c5768d159",
+    "subject": "closure: repair #45417 (6c5872ef)"
+   },
+   {
+    "sha": "041f03a7160eebf1e33065a6c4f295d37a301c2c",
+    "subject": "closure: benchmark-authored tool-call repair: a tool call inside a Gemma4 thought block that never closes ends the reasoning -- from <|tool_call> on the output is content for the tool parser, in the non-stream"
+   }
+  ],
+  "note": "the landing, the admitted repairs (#45468, #46177, #46659, #45417), fa-vendored-source with FA #154's hunk, the benchmark-authored repairs (canvas window, image spans parts 1-3, read mode, reasoning parser, self-conditioning, read-only canvas, tool call), #57414's port, the amendment #51994 (open upstream, head 283637a6), the oracle adapter, and #45588's semantics (upstream 76a373eff4, four days after the landing) in the legacy reasoning parser, a disclosed closure amendment; #45965 was left out of the closure as not required for this task (#45417 re-admitted on the fixed-configuration nodes' evidence); withheld from the agent image"
+ },
+ "closure_oracle_tree": "c1bbccd7f208d7ad093607f25d1772965fe653d1",
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "afa94f2282d3c3b8ad565a25c8f48959953696f8ad459eb4972186a4d43c7a82",
+  "bytes": 260476,
+  "applies_to": "928e87391806edec70f4d81a0fadab20593dce48",
+  "result_tree": "c1bbccd7f208d7ad093607f25d1772965fe653d1",
+  "produced_by": "git diff --no-ext-diff --binary --full-index <the closure's base> <closure HEAD>; it touches nothing under eval/, so it applies to the prepared base above unchanged"
+ },
+ "model": {
+  "repo": "google/diffusiongemma-26B-A4B-it",
+  "revision": "0f28bc42f588fbd8f71e08102b1c3960298a1358",
+  "files": 20,
+  "bytes": 51680022402
+ },
+ "status": "DRAFT until the seal"
+}

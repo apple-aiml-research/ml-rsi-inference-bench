@@ -1,0 +1,62 @@
+{
+  "_note": "Workload matrix. THE LOSS IS A PER-SERVER TAX: the pristine kernel compiles once per batch shape it has not seen, so the first bench a fresh server runs pays for every shape it visits and every later bench on that server pays nothing. EVERY SCORED POINT THEREFORE GETS ITS OWN SERVER, on a cold compile cache, as upstream's own reproduction wipes it before each server: 2048 in / 1024 out at 128 (n 500), 192 (n 750) and 256 (n 1000, the anchor, upstream's shape) concurrent requests, each visiting its own range of batch shapes. The guards ride the anchor's server after its bench, warm: c64 (n 250) is the steady-state throughput a repair must not cost, floor 0.95; c8 (n 64) is the small-batch shape, floor 0.90. NO JITTER POINT: the pinned `vllm bench serve` jitters BOTH lengths, so any nonzero vLLM range ratio is rejected.",
+  "primary_workload": "in2048_out1024_s256",
+  "scored_workloads": [
+    "in2048_out1024_s256",
+    "in2048_out1024_c192_n750",
+    "in2048_out1024_c128_n500"
+  ],
+  "guard_workloads": [
+    "in2048_out1024_c64_n250",
+    "in2048_out1024_c8_n64"
+  ],
+  "workloads": [
+    {
+      "name": "in2048_out1024_s256",
+      "role": "scored",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 1000,
+      "max_concurrency": 256,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c192_n750",
+      "role": "scored",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 750,
+      "max_concurrency": 192,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c128_n500",
+      "role": "scored",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 500,
+      "max_concurrency": 128,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c64_n250",
+      "role": "guard",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 250,
+      "max_concurrency": 64,
+      "max_model_len": 4096,
+      "min_ratio": 0.95
+    },
+    {
+      "name": "in2048_out1024_c8_n64",
+      "role": "guard",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 64,
+      "max_concurrency": 8,
+      "max_model_len": 4096,
+      "min_ratio": 0.9
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: Copyright contributors to the Pier and Harbor projects
+# Vendored from https://github.com/datacurve-ai/pier at 3f688a1.
+version = "1.0"
+
+[task]
+name = "pier/hello-world-no-internet"
+authors = []
+keywords = []
+
+[metadata]
+author_name = "Pier"
+author_email = "devnull@example.com"
+difficulty = "easy"
+category = "programming"
+tags = ["trivial", "network-isolation"]
+
+[verifier]
+timeout_sec = 120.0
+
+[agent]
+timeout_sec = 180.0
+
+[environment]
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
+gpus = 0
+allow_internet = false
+mcp_servers = []
+
+[verifier.env]
+
+[solution.env]

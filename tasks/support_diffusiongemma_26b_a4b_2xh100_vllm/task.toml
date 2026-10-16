@@ -1,0 +1,70 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_diffusiongemma_26b_a4b_2xh100_vllm"
+description = "Native DiffusionGemma-26B-A4B support on 2xH100: Hopper paged attention for batches mixing causal encoding and bidirectional denoising sequences through a public operator contract, and native block-diffusion serving at TP1 and TP2 with text, images, reads, chat, tools and preemption, with model quality, agreement with model-author recordings and engine regressions preserved."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "vllm", "h100", "moe", "block-diffusion", "attention", "flash-attention", "cute-dsl", "multimodal", "prefix-caching", "long-context"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+build_timeout_sec = 12000
+cpus = 64
+memory_mb = 524288
+storage_mb = 1048576
+shm_size_mb = 65536
+gpus = 2
+gpu_types = ["H100"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/vllm/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "git -C /app status >/dev/null 2>&1 || { rm -f /app/.git/index && git -C /app read-tree HEAD; }; bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 117185
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/vllm/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+build_timeout_sec = 3900
+cpus = 64
+memory_mb = 524288
+storage_mb = 1048576
+shm_size_mb = 65536
+gpus = 2
+gpu_types = ["H100"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/vllm-project/vllm"
+base_commit_hash = "928e87391806edec70f4d81a0fadab20593dce48"
+reference_commit_hash = "eb28452b10a1376d143b2847a78b31726db346dd"
+model_repository = "google/diffusiongemma-26B-A4B-it"
+model_revision = "0f28bc42f588fbd8f71e08102b1c3960298a1358"
+
+[metadata.inference_bench]
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "vllm"
+score_profile = "model_support_diffusiongemma_v5"
+
+[metadata.inference_bench.edit_policy]
+csrc = true

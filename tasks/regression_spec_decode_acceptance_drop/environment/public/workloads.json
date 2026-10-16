@@ -1,0 +1,53 @@
+{
+  "_note": "The scored shapes and the guard shape, fixed. Every point serves the same natural-text prompts with the same drafter; the points differ in how many streams the server admits at once. The score is the geometric mean, over the scored points, of candidate over pristine total token throughput; the guard is a second reading of the first scored point, its mean time to first token, which must not read slower on the candidate. The verifier runs its own copy of this file.",
+  "primary_workload": "natural_c8_out512",
+  "scored_workloads": [
+    "natural_c1_out512",
+    "natural_c8_out512",
+    "natural_c32_out512"
+  ],
+  "guard_workloads": [
+    "ttft_c8"
+  ],
+  "workloads": [
+    {
+      "name": "natural_c8_out512",
+      "role": "scored",
+      "input_len": 0,
+      "output_len": 512,
+      "num_prompts": 64,
+      "max_concurrency": 8,
+      "max_model_len": 2048
+    },
+    {
+      "name": "natural_c1_out512",
+      "role": "scored",
+      "input_len": 0,
+      "output_len": 512,
+      "num_prompts": 16,
+      "max_concurrency": 1,
+      "max_model_len": 2048
+    },
+    {
+      "name": "natural_c32_out512",
+      "role": "scored",
+      "input_len": 0,
+      "output_len": 512,
+      "num_prompts": 128,
+      "max_concurrency": 32,
+      "max_model_len": 2048
+    },
+    {
+      "name": "ttft_c8",
+      "role": "guard",
+      "from": "natural_c8_out512",
+      "metric_key": "latency_ms.ttft.mean",
+      "lower_is_better": true,
+      "input_len": 0,
+      "output_len": 512,
+      "num_prompts": 64,
+      "max_concurrency": 8,
+      "max_model_len": 2048
+    }
+  ]
+}

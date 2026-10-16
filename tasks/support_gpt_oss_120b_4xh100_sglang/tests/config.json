@@ -1,0 +1,1031 @@
+{
+ "base_commit": "b525f9e2acb1af15ecf986c0f7539fcbf229c0e9",
+ "f2p_node_ids": [
+  "infb_verify.test_hidden.TestHiddenAcceptance.test_0_efficiency_throughput",
+  "infb_verify.test_hidden.TestHiddenAcceptance.test_0_efficiency_decode_c1",
+  "infb_verify.test_l0.test_registry_resolves_native_class",
+  "srt.test_gpt_oss_4gpu.TestGptOss4Gpu.test_mxfp4_120b",
+  "infb_verify.test_fidelity.TestFidelity.test_fidelity_kl_median",
+  "infb_verify.test_fidelity.TestFidelity.test_fidelity_abs_r_median",
+  "infb_verify.test_served.TestServed.test_recipe_conformance",
+  "infb_verify.test_served.TestServed.test_reasoning_effort_orders_length",
+  "infb_verify.test_served.TestServed.test_decode_agrees_with_prefill",
+  "infb_verify.test_served.TestServed.test_final_channel_is_the_content",
+  "infb_verify.test_served.TestServed.test_tool_calls_are_returned",
+  "infb_verify.test_served.TestServed.test_decode_at_the_largest_graph",
+  "infb_components.test_contract.TestContract.test_expert_math",
+  "infb_components.test_contract.TestContract.test_attention_math",
+  "infb_components.test_contract.TestContract.test_complete_expert_performance",
+  "infb_components.test_contract.TestContract.test_harmony_protocol",
+  "infb_components.test_contract.TestContract.test_harmony_roundtrip",
+  "infb_components.test_contract.TestContract.test_native_production_binding"
+ ],
+ "p2p_node_ids": [
+  "infb_verify.test_l0.test_build_editable_install",
+  "python.sglang.test.test_activation.TestGeluAndMul.test_gelu_and_mul",
+  "python.sglang.test.test_activation.TestQuickGELU.test_quick_gelu",
+  "test.srt.test_fused_moe.TestFusedMOE.test_various_configurations",
+  "test.srt.test_triton_attention_kernels.TestTritonAttention.test_context_attention",
+  "test.srt.test_triton_attention_kernels.TestTritonAttention.test_decode_attention",
+  "test.srt.test_triton_attention_kernels.TestTritonAttention.test_extend_attention",
+  "test.srt.test_triton_attention_kernels.TestTritonAttention.test_grouped_decode_attention",
+  "infb_verify.test_l0.test_supplied_kernel_topk_survives_preparation"
+ ],
+ "grade": {
+  "format": "junit",
+  "tool_label": "pytest",
+  "reports": [
+   "/logs/verifier/junit-efficiency.xml",
+   "/logs/verifier/junit-l0.xml",
+   "/logs/verifier/junit-l3-fused-moe.xml",
+   "/logs/verifier/junit-l3-triton-attention.xml",
+   "/logs/verifier/junit-l3-activation.xml",
+   "/logs/verifier/junit-l2.xml",
+   "/logs/verifier/junit-fidelity.xml",
+   "/logs/verifier/junit-served.xml",
+   "/logs/verifier/components/junit-components.xml"
+  ]
+ },
+ "infb": {
+  "task": "support_gpt_oss_120b_4xh100_sglang",
+  "verifier_version": "prepared native MXFP4 and complete ordinary Harmony; the Docker/Modal/Daytona backends and offline-provider isolation are unverified",
+  "reference_commit": "7b5bcb6e84f949362ed1b2b1e5f5a6f722f649e1",
+  "registered_test_commit": "442534aa44b1269b4fcbd014e3912147d5fde195",
+  "model_repo": "openai/gpt-oss-120b",
+  "model_revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+  "model_dir": "/model",
+  "model_record": "/opt/infb/checkpoint.json",
+  "model_files": 26,
+  "model_type": "gpt_oss",
+  "architectures": [
+   "GptOssForCausalLM"
+  ],
+  "gpus": 4,
+  "gpu_name": "H100",
+  "gpu_min_total_gib": 79,
+  "gpu_min_free_fraction": 0.95,
+  "shm_min_gib": 16,
+  "ports_free": [
+   8000,
+   28290,
+   31000
+  ],
+  "transformers_version": "4.55.0",
+  "importable": [
+   "sgl_kernel",
+   "triton_kernels.matmul_ogs",
+   "flashinfer"
+  ],
+  "shared_libraries": [
+   "libibverbs.so.1"
+  ],
+  "kit_paths_reset_to_base": [
+   "python/sglang/test",
+   "test"
+  ],
+  "bars": {
+   "gpqa_low_floor": 0.5353535353535354,
+   "rule": "Upstream's own floor is 0.61, asserted by the registered test itself. It is re-derived once, on five fresh reference runs, and the ADAPTED floor above is published instead -- see gpqa_low_floor_provenance.",
+   "gpqa_low_floor_as_questions": "106/198",
+   "gpqa_low_floor_provenance": {
+    "status": "ADAPTED: measured on the reference at LOW reasoning effort with the answer read from the final channel -- the condition the instruction names -- and not upstream's inherited 0.61",
+    "rule": "keep upstream's floor iff the minimum of five fresh reference runs clears it by three standard errors, with the run-to-run sample sd floored at one question and the binomial sd reported alongside; otherwise publish floor(mean - 3 sd).",
+    "runs": [
+     0.6414141414141414,
+     0.6717171717171717,
+     0.5909090909090909,
+     0.6717171717171717,
+     0.6262626262626263
+    ],
+    "runs_as_questions": [
+     127,
+     133,
+     117,
+     133,
+     124
+    ],
+    "measured_on": "hidden permutation seed 517093, the reference implementation on 4xH100, the registered node srt/test_gpt_oss_4gpu.py -k test_mxfp4_120b staged exactly as test.sh stages it, five fresh server launches. Mean answer length 501-525 characters: the final channel, as a candidate that implements the instruction's third item returns it.",
+    "mean": 0.6404040404040404,
+    "run_to_run_sample_sd": 0.03395502285650829,
+    "one_question": 0.005050505050505051,
+    "sigma_used": 0.03395502285650829,
+    "binomial_sd_at_the_mean": 0.03410372661278972,
+    "minimum_clears_0_61_by": "it does not: the minimum is 117/198 and upstream's 0.61 is 120.78/198, so the first branch fails and the second applies",
+    "arithmetic": "mean - 3*sigma = 0.640404 - 0.101865 = 0.538539; floored to a whole question, int(0.538539*198) = 106, so the published floor is 106/198 = 0.535354",
+    "enforced_where": "the registered test itself: test.patch sets expected_score_of_reasoning_effort {'low': 106 / 198}, and the public copy of the check asserts the same value. A floor recorded only here would be decorative, because the f2p node is the test and the test asserts its own bar.",
+    "never": "not moved after a run to make a run pass; the rule was fixed before the five runs and applied once to them."
+   },
+   "fidelity_kl_median_T": 1.543258,
+   "fidelity_kl_median_provenance": {
+    "statistic": "per sequence mean_t[(exp(r_t) - 1) - r_t] with r_t = lp_candidate - lp_reference (the k3 estimator), median over the 32 hidden sequences, positions 32 onward.",
+    "reference": "openai/gpt-oss v0.0.1 gpt_oss.torch.model.Transformer on the model author's original/ checkpoint layout, recorded once under torchrun --nproc-per-node=8 with the reference UNMODIFIED. Independent of the engine: it expands MXFP4 through the FP4_VALUES table into bf16 and multiplies in a general matrix routine, sharing no Triton kernel with SGLang.",
+    "rule": "T = 3 x the supplied reference's own cross-world discrepancy against the recording -- the model author's implementation, unmodified, run at this task's world size (torchrun --nproc-per-node=4, the recorder's --mlp-chunk 64, the only way it fits on four GPUs), scored against the world-8 recording exactly as a candidate is. The largest median over five fresh runs.",
+    "reference_runs": [
+     0.5144193824018003,
+     0.5144193824018003,
+     0.5144193824018003,
+     0.5144193824018003,
+     0.5144193824018003
+    ],
+    "reference_runs_note": "one value and four determinism checks: the five fresh runs are bit-identical to each other and to a sixth run, per sequence and per position. The teacher-forced reference is deterministic at a fixed world size and chunking, so the five-run maximum equals the single value.",
+    "T": 1.543258,
+    "three_T": 4.629774,
+    "positions_skipped": 32,
+    "coverage_gap": "the hidden set tops out at 1,536 tokens, so nothing crosses the 4,096-token initial context and the fidelity gate does NOT cover the YaRN region. The reason is measured and recorded in tests/hidden/fidelity/corpus.py: the reference's per-token expert gathers cost 24.9 MB per token at world=8, and a 4,608-token forward asks for 71.19 GiB. L2's own generations reach about 4,400 tokens and are the only thing that exercises that region.",
+    "why_the_reference_is_the_floor": "measured: the supplied reference itself scores 0.514419 against its own world-8 recording, and any change of arithmetic moves this mixture-of-experts model's per-sequence statistic by 0.3-0.6 (the same engine under a changed batch composition: 0.31-0.59). So the recording's floor is the reference's own cross-world discrepancy, not a passing implementation's reading: an earlier rule that took 3 x a passing implementation's own value (0.793143) was measured too loose, and left a real numerical defect inside the bar. The defect: an MXFP4 matmul that mis-reduces odd-block shards on two of four ranks (triton_kernels' Hopper layout, K % 64 = 32), at 1.626 and 1.976 against T 2.379. Zero-padding those shards and nothing else moves them to 0.494 and 0.441.",
+    "separation": "the reference's own cross-world discrepancy, 0.514419, is the noise floor the bar is built on; the designated fault controls read 1.63-2.52, above T."
+   },
+   "fidelity_abs_r_median_T": 0.236824,
+   "fidelity_abs_r_median_provenance": {
+    "statistic": "per sequence the MEDIAN over positions 32 onward of |r_t|, r_t = lp_candidate - lp_reference (clamped to +-30 as in k3), then the median over the 32 hidden sequences.",
+    "why_a_second_statistic": "k3's mean over positions is carried by the few tokens where the router's top-4 choice flips under any change of arithmetic, which is why healthy readings range 0.44-0.79 on it. A defect that shifts every position a little is visible to the per-position median and hidden by those flips: the designated fault controls sit at 0.302-0.341 on it against a healthy maximum of 0.195.",
+    "rule": "T_r = 1.5 x the supplied reference's own per-position |r| median against the recording, over the same five fresh reference runs as T.",
+    "reference_runs": [
+     0.1578824520111084,
+     0.1578824520111084,
+     0.1578824520111084,
+     0.1578824520111084,
+     0.1578824520111084
+    ],
+    "T_r": 0.236824,
+    "why_1_5_and_not_3": "this statistic's healthy band is bounded below by exact determinism and measured narrow: 0.157882 for the reference itself, 0.168-0.195 for every healthy reading measured, and 0.150-0.183 for one engine against itself under a changed batch composition. A healthy tree does not drift towards 0.24 without a defect, and 3x (0.474) would sit above the designated fault controls. 1.5x lies near the geometric midpoint of the healthy maximum 0.195 and the controls' minimum 0.302.",
+    "condition": "the bar lies below every designated fault control's value -- 64 expert columns never loaded, and an unpadded odd-block split -- both measured.",
+    "separation": "the reference's own cross-world per-position |r| median is 0.157882 and healthy readings reach 0.195; the designated fault controls read 0.301633-0.32965, above T_r."
+   },
+   "reasoning_effort_step_ratio": 1.1,
+   "reasoning_effort_step_ratio_provenance": {
+    "statistic": "the mean completion tokens over the sixteen fixed questions at one level divided by the mean at the level below; asserted for low->medium and medium->high, each at or above the bar",
+    "rule": "k = the geometric mean of the reference implementation's least step ratio over five or more launches and the designated fault control's greatest, over the graded questions, rounded down to one decimal in the candidate's favour: sqrt(1.2122 x 1.0351) = 1.120 -> 1.1. The bar lies below every reference launch's value (eleven) and above every control launch's (two).",
+    "reference_launches": {
+     "what": "the reference at the recipe on 4xH100: eleven launches in all, one through the verifier's own staging and five with the final node code",
+     "graded_questions_step_ratios": {
+      "low->medium": [
+       1.3337,
+       1.2238,
+       1.2245,
+       1.2231,
+       1.2122,
+       1.2314,
+       1.2958,
+       1.2665,
+       1.2236,
+       1.263,
+       1.3099
+      ],
+      "medium->high": [
+       1.4715,
+       1.6833,
+       1.8099,
+       1.8779,
+       1.9034,
+       1.6169,
+       1.7082,
+       1.5731,
+       1.6044,
+       1.8181,
+       1.4997
+      ]
+     },
+     "least": 1.2122,
+     "completions_at_max_tokens": 0
+    },
+    "fault_control": {
+     "what": "a designated fault control: a reference that does not render the requested level; two launches",
+     "graded_questions_step_ratios": {
+      "low->medium": [
+       0.9873,
+       0.9934
+      ],
+      "medium->high": [
+       1.0351,
+       1.0
+      ]
+     },
+     "greatest": 1.0351,
+     "why_not_exactly_1": "the three levels are asked as three batches of sixteen concurrent requests; the first batch meets a cold prefix cache, so a few greedy completions differ between batches even when the rendered prompts are identical"
+    },
+    "second_check": {
+     "what": "sixteen harder questions at max_tokens 4,096, not graded: the reference's least step ratio over five launches is 1.2143 (low->medium) and 1.6183 (medium->high); the control's 1.0235 and 0.9965",
+     "passes_the_bar": {
+      "reference": true,
+      "control": false
+     }
+    },
+    "why_the_mean_and_not_the_median": "over the same six reference launches the ratio of medians from low to medium spread over 1.2116-1.6787 and fell to 1.1063 on the harder set, against 1.2122-1.3337 and 1.2143 for the ratio of means; an earlier draft that required a strict rise of medians was passed by the control once (249.5 < 256.0 < 256.5)"
+   },
+   "decode_prefill_abs_median_T": 0.0273802,
+   "decode_prefill_abs_median_provenance": {
+    "statistic": "for each of eight held-out prefixes (the four broad fidelity sequences cut at 256 and 512 tokens), 64 greedy tokens decoded with their log-probabilities, then prefix + continuation prefilled from scratch; per prefix the median over its 64 tokens of |decode - prefill|; graded: the median over the eight prefixes",
+    "rule": "T = 3 x the largest value of the reference implementation over five launches, so every reference launch passes at a threefold margin; the designated fault control must lie above T",
+    "reference_launches": {
+     "what": "the reference through the verifier's own staging on 4xH100",
+     "values": [
+      0.00912674,
+      0.00912674,
+      0.00912674,
+      0.00912674,
+      0.00912674
+     ],
+     "note": "bitwise identical over the five launches: this node's requests are sequential, so no batch composition varies between them",
+     "largest": 0.00912674,
+     "three_T": 0.0273802
+    },
+    "fault_control": {
+     "what": "a designated fault control: the reference with a numerical defect in the decode path alone",
+     "value": 0.66451,
+     "over_T": 24.3
+    },
+    "earlier_probe": "on the four shipped public examples at 256 and 512 tokens the reference scored 0.0089 and the control 0.2178; the graded prefixes are held out, so the bar comes from them"
+   },
+   "largest_graph_decode_worst_request_T": 0.192957,
+   "largest_graph_decode_provenance": {
+    "statistic": "the largest captured CUDA-graph batch size n, read from rank 0's 'Capture cuda graph bs [...]' launch-log line; after a flush of the prefix cache (/flush_cache), n held-out 256-token natural-text prompts (the broad, plain and long fidelity bands, windows in file order) sent as one batched /generate request, each decoding 192 greedy tokens; then each prompt + continuation prefilled from scratch, one at a time; per request the median over its 192 tokens of |decode - prefill|; graded: the worst request's",
+    "rule": "T = 3 x the largest value of the upstream implementation over five launches of two draws each, every one a draw that counts, so every reference draw passes at a threefold margin; the designated fault control must lie above T",
+    "reference_launches": {
+     "what": "a flush, one batched request, the batch held: the reference staged as test.sh stages a candidate, through this node's own client and prompts, on 4xH100; n = 192 on every launch",
+     "values": [
+      0.046371,
+      0.064319,
+      0.040341,
+      0.051593,
+      0.064319,
+      0.046268,
+      0.05124,
+      0.05662,
+      0.05124,
+      0.05124
+     ],
+     "valid_draws": "10 of 10: every flush answered 200 at its first attempt, and every draw logged exactly the 4 decode lines of its 191 steps (decode_log_interval 40), each at 192 running requests on the CUDA graph"
+    },
+    "why_the_worst_request": "a defect in this regime corrupts one request of the batch (measured: one request in 192 at a median of 0.78-1.87 nats, the others at about 0.004), so a median over requests cannot see it"
+   },
+   "fidelity_kl_median_T_superseded": "fidelity_kl_median_T and fidelity_abs_r_median_T above are whole-set bars; the graded bars are the per-band T and T_r in fidelity_bands, which is what the node reads",
+   "fidelity_bands": {
+    "harmony": {
+     "sequences": 16,
+     "tokens": "300-513",
+     "skip": 32,
+     "f_k3": 0.715015,
+     "k": 3.0,
+     "T": 2.14504,
+     "f_r": 0.223189,
+     "k_r": 1.5,
+     "T_r": 0.334784
+    },
+    "plain": {
+     "sequences": 12,
+     "tokens": "512-1,536",
+     "skip": 32,
+     "f_k3": 0.305155,
+     "k": 3.0,
+     "T": 0.915466,
+     "f_r": 0.0898018,
+     "k_r": 1.783,
+     "T_r": 0.160117
+    },
+    "broad": {
+     "sequences": 4,
+     "tokens": "1,536",
+     "skip": 32,
+     "f_k3": 0.713674,
+     "k": 3.0,
+     "T": 2.14102,
+     "f_r": 0.131794,
+     "k_r": 1.649,
+     "T_r": 0.217328
+    },
+    "long": {
+     "sequences": 3,
+     "tokens": "8,192-16,384",
+     "skip": 4096,
+     "f_k3": 0.00370456,
+     "k": 3.0,
+     "T": 0.0111137,
+     "f_r": 0.00270992,
+     "k_r": 3.366,
+     "T_r": 0.00912159
+    }
+   },
+   "fidelity_bands_provenance": {
+    "rule": "per band b and statistic: T_b = max(floor_b, k x f_b), f_b the supplied reference's cross-world discrepancy on the band's sequences (the model author's implementation at world 4, --mlp-chunk 64, against the world-8 recording: the median over the band of the per-sequence statistic). k = 3 for k3 and 1.5 for |r|, each raised on a band to the smallest value, rounded up to three decimals, at which the reference implementation's worst reading over its stated draws is at most 0.75 x T_b (the margin). The verdict is the conjunction over bands.",
+    "floor": "floor_b = 0 on every band: the reference is bit-deterministic (five world-4 runs identical; one world-4 run against another is exactly 0), so its cross-world discrepancy is itself the noise floor and no additive floor is needed above it.",
+    "reference_implementation_readings": "the upstream implementation at the recipe, bitwise identical on every launch: harmony k3 1.16299 (0.542 T), |r| 0.203155 (0.607 T_r); plain 0.363895 (0.398 T), 0.120059 (0.750 T_r); broad 1.24845 (0.583 T), 0.162916 (0.750 T_r); long 0.0081158 (0.730 T), 0.00683975 (0.750 T_r), the node's own windowed reading (an earlier gapped fetch had read 0.00810163 and 0.00632561). So k stays 3 on every band, and k_r rises on plain (1.783), broad (1.649) and long (3.366).",
+    "long_band": "three sequences of natural text from the public efficiency sample (8,192, 8,192 and 16,384 tokens at undisclosed offsets), scored from list index 4,096 on (the YaRN-extended region, past the checkpoint's initial 4,096-token context), fetched 1,024 positions per request. The reference is the task recorder at world 8 with sdpa in 1,024-row query chunks (bit-identical to the unchunked sdpa on both 8k sequences); f_long is its world-4 run against it. The band's bars are set by the margin rule so the upstream implementation passes: its YaRN correction range is rounded (it drops the checkpoint's truncate: false; upstream fixed it in #14270, four months later), which moves its long-band readings to about twice the reference's, and a bar at 3 x f would fail the upstream implementation itself. So the band catches YaRN switched off and the window removed at length, and leaves the rounding ungraded.",
+    "re_measurement": "a sequence reading at or over its band's bar is fetched once more and counts as over only if both readings are; a band median at or over its bar is drawn once more, whole, and fails only if both draws do; every reading is printed. False-fail rate on the reference implementation: 0, since its readings are bitwise identical on every launch."
+   }
+  },
+  "deadlines_sec": {
+   "rule": "Operation caps stay as published and are enforced per operation; B(node) = (1 + repetitions) * max(3 * R(node), Cmax(node) + 60 s) with R the reference's measured wall for the node's complete prescribed procedure (maximum over the named reference runs) and Cmax the largest cap among its operations; serial = sum(B) + 60 s; verifier = serial + 600 s; job lifetime = agent + builds + verifier + 600 s. A composite step or node wall expiring while every operation stayed within its cap is censored (verifier_fault).",
+   "preflight": 420,
+   "reference": 9051,
+   "fidelity": 4140,
+   "served": 5460,
+   "components": 12331,
+   "efficiency": 12420
+  },
+  "ci_retry": {
+   "disabled": true,
+   "how": "SGLANG_IS_IN_CI is left unset and SGLANG_TEST_MAX_RETRY=0 is set explicitly in test.sh. CustomTestCase._callTestMethod retries SGLANG_TEST_MAX_RETRY times, defaulting to 1 when SGLANG_IS_IN_CI is set; 'never retried to green' is a property of the verifier, not of an environment variable's default."
+  },
+  "l3": {
+   "what": "pass-to-pass regression on the subsystems the solution rewrites, at their BASE versions.",
+   "chosen_by": "a differential, not a reading: each candidate file is run at the base tree and at the reference tree on four H100s inside the task image, keeping only ids that pass on BOTH. 8 ids were collected and 7 pass on both.",
+   "files": [
+    "test/srt/test_fused_moe.py",
+    "test/srt/test_triton_attention_kernels.py",
+    "python/sglang/test/test_activation.py"
+   ],
+   "excluded": {
+    "test/srt/test_swa_unittest.py": "errors identically on both trees: ImportError: cannot import name 'SWARadixCache' from 'sglang.srt.mem_cache.radix_cache'. The file exists at the base; the class it imports arrived later. Excluded by the differential itself, not by judgement."
+   },
+   "weights": "none of the three files touches weights or a served model -- zero references to from_pretrained, snapshot_download, popen_launch_server or a model path at the base -- so nothing is dropped for needing a weights layer.",
+   "coverage": "the fused-MoE kernels and all three Triton attention kernels, the subsystems the designated fault controls perturb, so a control fails pass-to-pass as well as the quality node."
+  },
+  "efficiency": {
+   "engine": "sglang",
+   "rho": "0.8",
+   "score_profile": "model_support_upstream_acceptance_v60",
+   "tokenizer": "/model/tokenizer.json",
+   "tokenizer_note": "this task ships the checkpoint in the HUB CACHE layout with /model a symlink to the snapshot, so the tokenizer sits at /model/tokenizer.json rather than one level below it.",
+   "seed_file": "/tests/hidden/efficiency_seed.json",
+   "reference": {
+    "root": "/opt/infb-reference",
+    "app": "/app",
+    "base": "b525f9e2acb1af15ecf986c0f7539fcbf229c0e9",
+    "patch": "/tests/reference/solution.patch",
+    "patch_sha256": "51176e3d811d2702bea05f3945d5f2c148c73ac4d954779ec89304bdcd041c8f",
+    "target_tree": "d40e080282dc17e90a548a2605f97d78802b7ec6",
+    "pythonpath": [
+     "python",
+     "third_party/triton_kernels",
+     "eval"
+    ],
+    "engine_module": "sglang",
+    "build_product_roots": [
+     "python/sglang"
+    ],
+    "port": 31000,
+    "health_path": "/health_generate"
+   },
+   "recipes": {
+    "TestHiddenAcceptance": {
+     "C": 64,
+     "label": "unlabelled: the registered acceptance run, capped at 64",
+     "C_rule": "this task's registered acceptance is one unlabelled recipe -- a single method at one launch, neither low-latency nor high-throughput -- so its concurrent acceptance run is capped at 64.",
+     "launch": {
+      "argv": [
+       "python3",
+       "-m",
+       "sglang.launch_server",
+       "--model-path",
+       "openai/gpt-oss-120b",
+       "--tp",
+       "4",
+       "--cuda-graph-max-bs",
+       "200",
+       "--mem-fraction-static",
+       "0.93"
+      ],
+      "argv_rule": "a STATIC argv, the documented fallback for a harness with no class to run. This task's registered class launches inside its test METHOD (BaseTestGptOss.run_test calls popen_launch_server), not in setUpClass, so the argv cannot be captured by running setUpClass with process creation intercepted. tests/infb_verify/test_hidden.py guards it: setUpClass reads the registered module with ast -- no import, no execution -- and refuses to launch unless the model id and every word of test_mxfp4_120b's other_args appear here in order."
+     },
+     "host_checks": []
+    }
+   },
+   "deadlines": {
+    "launch_s": 900,
+    "teardown_s": 180,
+    "node_default_s": 1800,
+    "nodes": {
+     "TestHiddenAcceptance.test_0_efficiency_decode_c1": 7440,
+     "TestHiddenAcceptance.test_0_efficiency_throughput": 3720
+    },
+    "invocation_s": 1800,
+    "rule": "every measurement invocation -- one reference or candidate draw or attempt -- receives invocation_s = 1,800 s, the published component/measurement invocation limit; launch_s = 900 s spawn-to-ready; teardown_s = 180 s. The node bounds are composed from the reference's measured node walls (see infb.deadline_dag); no forecast of remaining time stops attempts early. The derivation, measured on 4xH100: the reference's decode_c1 took 24.441 s and its throughput 70.951 s, so 5x is 122.2 s and 354.8 s and the node deadlines were 150 s and 360 s; the same two bound the reference's own measurement, which does the same work. launch_s 900 is 3x a 300 s cold launch against a 600 s floor -- the reference's own launch here was 86.042 s warm -- and it keeps the verifier inside its cap: the worst case is the reference phase (900+150+360 = 1410) plus the efficiency group (1410) plus L2 (1800) plus fidelity (1800) plus L0 and L3 (about 200), about 6,620 s against [verifier] timeout_sec = 7200. Once the canary brackets every draw, each deadline rises by 10 s per draw (one reading took 7.4-7.5 s on four idle GPUs, three readings): the reference's decode_c1 and throughput steps to 160 and 370, the candidate's decode_c1 node (up to three attempts) to 180 and its throughput node to 370. The worst case rises by 60 s and the verifier stays inside its 7,200 s cap."
+   },
+   "reference_measured": {
+    "s1_tok_s": 262.9999006511816,
+    "s_c_tok_s": 2504.586846354601,
+    "C": 64,
+    "launch_s": 86.042,
+    "decode_c1_duration_s": 24.441242341999896,
+    "throughput_duration_s": 70.95050192100462,
+    "teardown_s": 4.762,
+    "workload_digest": "sha256:1af6212ec3f5d55a3e4f969aae37f1e26f729f8ab9ea0a6831791c3f1f802ca2",
+    "where": "the reference phase's own dry run on 4xH100; the numbers are the REFERENCE's, and rho = 0.8 of them is what a candidate must reach: 210.4 tok/s at c=1 and 2003.7 tok/s at C=64."
+   },
+   "c1_attempts": 3,
+   "c1_attempts_rule": "the candidate's single-request node takes the best of up to three attempts, with an early exit on the first pass. A retry happens only after a COMPLETED attempt below rho, and only when the node's remaining deadline holds 1.2x that attempt's duration_s + 40 s. The prompts are the same every attempt; every attempt is recorded, and the FIRST attempt's ratio is kept separately as the unbiased value. Throughput and the reference stay one draw. This task's deadline holds three attempts with room: decode_c1 is bounded at 150 s against a measured reference duration of 24.441 s. On this recipe the loop will never fire -- speculative_algorithm is None and four same-tree S1 nulls span 0.0023 (0.9997 / 0.9979 / 0.9992 / 1.0002); the rule exists for recipes whose single-request axis is noisy, where a correct tree can miss rho once in five nulls. The retry cannot help a designated fault control either: such a control fails decode_c1 by CENSORING, not by missing rho -- an S1 of 14.2274 tok/s against 262.9999 means one attempt already exceeds the budget -- and only a completed attempt is retried, so it is expected to show exactly one.",
+   "canary": {
+    "tolerance": 0.2
+   },
+   "canary_rule": "every efficiency draw, on both sides, is bracketed by the GPU and CPU canary, and a draw whose bracketing reading reads more than 0.20 below the trial's first reading is re-drawn once. The canary never decides a verdict; it decides only which draw decides. The tolerance is 0.20 rather than the default 0.10 because, measured over twenty readings taken on four idle GPUs, the GPU readings spanned about 1% and the CPU loop's best of five about 20%, and three of the twenty read more than 10% below the first: at 0.10 the canary fires on idle noise. The starvation it is for reads the CPU at 0.24-0.39 of idle, which 0.20 still catches.",
+   "flush_between_draws": true
+  },
+  "served": {
+   "recipe_conformance": {
+    "what": "the graded launch's served configuration equals the recipe the instruction states, read from the engine's own /get_server_info (its server arguments after the defaults ServerArgs applies itself, and each scheduler's own state) and from the launch log",
+    "asserted": {
+     "tp_size": 4,
+     "dp_size": 1,
+     "ep_size": 1,
+     "enable_dp_attention": false,
+     "enable_ep_moe": false,
+     "enable_deepep_moe": false,
+     "disable_cuda_graph": false,
+     "cuda_graph_max_bs": 200,
+     "mem_fraction_static": 0.93,
+     "model_path": "openai/gpt-oss-120b",
+     "speculative_algorithm": null,
+     "quantization": "None or 'mxfp4' -- the checkpoint's own declared method, not overridden",
+     "launch_log": "all four tensor-parallel ranks report their KV cache, and rank 0 its captured CUDA graphs",
+     "attention_backend_built": "['triton', 'triton'] for every scheduler: its prefill_attention_backend and decode_attention_backend in /get_server_info's internal_states, which the model runner records as it constructs the backend, after every model-specific adjustment"
+    },
+    "recorded_not_asserted": [
+     "attention_backend (the server arguments' own field, and the launch log's server_args line)",
+     "enable_triton_kernel_moe",
+     "max_total_tokens",
+     "reasoning_parser"
+    ],
+    "why_those": "the instruction leaves the experts' execution and the KV pool to the candidate (\"The MoE runner and the KV pool are yours\"), so the node prints them and asserts only what the recipe and the out-of-scope list fix. The attention backend is Triton: the recipe passes none, so the engine must select it for this architecture itself, and the node grades it where each scheduler builds it. The server arguments' own field and the launch log's server_args line are printed beside it: both are written before the model runner runs, and a tree may instead select the backend there, in which case those two read None while the engine still serves Triton.",
+    "fault_control": "designated fault controls that break the recipe's served configuration fail this node by construction."
+   },
+   "reasoning_effort": {
+    "what": "the instruction's third item: /v1/chat/completions renders the requested Harmony reasoning level. Sixteen fixed questions at low, medium and high, greedy, max_tokens 2,048; the mean completion length at medium must be at least bars.reasoning_effort_step_ratio times the mean at low, and at high at least that times the mean at medium.",
+    "fault_control": "a designated fault control that does not render the requested level: its step ratios are 0.99-1.04 against the bar of 1.1"
+   },
+   "decode_agrees_with_prefill": {
+    "what": "the instruction's second item: on continuations the server generates, the log-probabilities it reports while decoding agree with the ones it gives the same sequence when prefilled. Eight held-out prefixes, 64 greedy tokens each; the median over prefixes of the per-prefix median |decode - prefill| must be below bars.decode_prefill_abs_median_T",
+    "why": "the fidelity nodes read teacher-forced log-probabilities, which only the prefill path computes, so a decode-only defect passes them",
+    "fault_control": "a designated fault control: the reference with a numerical defect in the decode path alone"
+   },
+   "final_channel": {
+    "what": "the instruction's third item: the assistant content of /v1/chat/completions is the model's final-channel text alone, the analysis dropped or returned as reasoning_content. The sixteen served-node questions at low effort, greedily, max_tokens 2048; every answer's content must be clean of Harmony channel tokens and of the channel names a tokenizer leaves when it skips special tokens",
+    "client": "/app/eval/gpt_oss/final_channel/probe.py; byte-identical private mirror in /tests/public_eval/gpt_oss/final_channel/probe.py",
+    "why": "the scorer reads the content, and nothing else graded the split: a designated fault control that returns the whole Harmony text as content still passed every other node then defined",
+    "fault_control": "a designated fault control that returns the analysis channel as the assistant content"
+   },
+   "tool_calls": {
+    "what": "the instruction's third item: a /v1/chat/completions request carrying tools gets the model's commentary-channel function calls back as OpenAI tool_calls, under the recipe's launch unchanged (no tool-call parser flag). Twelve fixed questions, each needing one of three tools, tool_choice auto, low effort, greedily, max_tokens 1024, each asked plain and streamed; every one of the 24 answers must have finish_reason tool_calls, a tool call naming the tool the question needs, arguments that parse as a JSON object carrying that tool's required parameters, and content clean of Harmony text",
+    "client": "/app/eval/gpt_oss/basic_tool_calls/probe.py; byte-identical private mirror in /tests/public_eval/gpt_oss/basic_tool_calls/probe.py",
+    "why": "native tool calls for this model arrived in later upstream work and nothing graded them. The launch is stated, since the recipe passes no --tool-call-parser, and streaming is graded because the upstream path passed every streamed draw",
+    "rate": "all 24 answers must be tool calls; the upstream implementation's measured failure rate is 0 in 252 askings",
+    "fault_control": "a designated fault control with no tool-call path",
+    "second_control": "a second designated fault control, the reference carrying an earlier reasoning parser: 12 of 12 plain but 0 of every streamed draw (each ends stop with no tool call), and 0/16 on the final-channel node"
+   },
+   "largest_graph_decode": {
+    "what": "the instruction's second item: the decode path's agreement with prefill holds at every batch size the recipe's CUDA graphs capture, with long sequences in flight. The node reads the captured sizes from the launch log, flushes the prefix cache, decodes n held-out prompts past the 128-token window as one batched request at the largest, n, re-scores each by prefill, and requires the worst request's median |decode - prefill| below bars.largest_graph_decode_worst_request_T. A draw the server does not answer (an HTTP error, or no answer, to the batched request or a prefill) fails the node with the server's error. A draw counts only if the batch held: the flush succeeded and the launch log shows exactly the decode lines a 191-step generation logs at the server's decode_log_interval (4 at 40), each at n running requests on the CUDA graph, so every request decoded at least 183 of its 191 steps in the full batch; a reading at or over T, or a draw that does not count, is drawn once more; the node fails if every draw that counts is at or over T, and as not evaluated if none counts",
+    "client": "/app/eval/gpt_oss/decode_batch/probe.py; byte-identical private mirror in /tests/public_eval/gpt_oss/decode_batch/probe.py",
+    "why": "no other node fills the largest captured CUDA graph, so a defect that appears only in a full decode batch past the attention window goes ungraded without this node",
+    "fault_control": "a designated fault control that mis-sizes the decode window at this batch size"
+   }
+  },
+  "components": {
+   "seed": 471828,
+   "rho": 0.8,
+   "canary_tolerance": 0.2,
+   "block_storage_bytes": 603979776,
+   "ordinary_allowance_bytes": 4294967296,
+   "workspace_ranges": [
+    [
+     1,
+     64,
+     67108864
+    ],
+    [
+     65,
+     256,
+     134217728
+    ],
+    [
+     257,
+     1024,
+     268435456
+    ],
+    [
+     1025,
+     4096,
+     805306368
+    ]
+   ],
+   "workspace_ranges_rule": "the public component contract's total count-to-budget function over complete invocations of 1-4,096 tokens, per rank. Values fixed by the design.",
+   "expert_cases": [
+    {
+     "id": "generated",
+     "weight_family": "generated",
+     "counts": [
+      1,
+      7,
+      64,
+      200,
+      257
+     ],
+     "families": [
+      "balanced",
+      "concentrated",
+      "skewed"
+     ]
+    },
+    {
+     "id": "negative_gate",
+     "weight_family": "negative_gate",
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "concentrated"
+     ]
+    },
+    {
+     "id": "positive_clamps",
+     "weight_family": "positive_clamps",
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "concentrated"
+     ]
+    },
+    {
+     "id": "plus_one",
+     "weight_family": "plus_one",
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "concentrated"
+     ]
+    },
+    {
+     "id": "tp_blocks",
+     "weight_family": "tp_blocks",
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "concentrated"
+     ]
+    },
+    {
+     "id": "bias",
+     "weight_family": "bias",
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "concentrated"
+     ]
+    },
+    {
+     "id": "checkpoint-0",
+     "checkpoint_layer": 0,
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "balanced",
+      "concentrated"
+     ]
+    },
+    {
+     "id": "checkpoint-9",
+     "checkpoint_layer": 9,
+     "counts": [
+      7,
+      257
+     ],
+     "families": [
+      "balanced",
+      "concentrated"
+     ]
+    }
+   ],
+   "operation_limits_sec": {
+    "component_invocation": 1800,
+    "launch": 900,
+    "http": 900,
+    "action": 300,
+    "teardown": 180,
+    "unit_test_file": 1800
+   },
+   "operation_limits_rule": "one component correctness/timing, binding or instrumented invocation 1,800 s (dispatch through all ranks' records); every candidate/reference server startup 900 s spawn-to-ready; one HTTP correctness request or submitted batch 900 s; a non-inference parser/fixture/identity action 300 s; teardown 180 s (TERM, KILL after 10 s).",
+   "calibration_note": "measured native BF16 rounding on the constant negative-gate diagnostic is 0.0053343, inside the expert RMS limit. One expert policy (0.08/0.008) and one attention policy (0.02/0.004) from numerical-policy.json apply throughout.",
+   "numerical_policy": {
+    "path": "/tests/public_eval/gpt_oss/numerical-policy.json",
+    "rule": "every expert comparison -- checkpoint and generated weights, isolated semantics and the timed cells' checked slots -- uses the published expert policy (max 0.08, RMS 0.008); attention uses the published attention policy (0.02, 0.004). No per-case override exists."
+   }
+  },
+  "prepared_source": {
+   "commit": "b525f9e2acb1af15ecf986c0f7539fcbf229c0e9",
+   "tree": "bd0c158688cdd163aabdfeb575d8eae49fd962c9",
+   "historical_upstream_base": "556e4143f0ba8e480a73fc0e08f05d7ea83880cc"
+  },
+  "deadline_dag": {
+   "schema": "gpt-oss-deadline-dag/1",
+   "rule": "Operation caps stay as published and are enforced per operation; B(node) = (1 + repetitions) * max(3 * R(node), Cmax(node) + 60 s) with R the reference's measured wall for the node's complete prescribed procedure (maximum over the named reference runs) and Cmax the largest cap among its operations; serial = sum(B) + 60 s; verifier = serial + 600 s; job lifetime = agent + builds + verifier + 600 s. A composite step or node wall expiring while every operation stayed within its cap is censored (verifier_fault).",
+   "margin": 3,
+   "dispatch_s": 60,
+   "kill_grace_s": 30,
+   "final_handling_s": 600,
+   "final_cleanup_s": 600,
+   "agent_s": 30000,
+   "environment_build_s": 21600,
+   "verifier_build_s": 2700,
+   "caps_sec": {
+    "startup": 900,
+    "http": 900,
+    "component_invocation": 1800,
+    "unit_test_file": 1800,
+    "action": 300,
+    "teardown": 180
+   },
+   "steps": [
+    {
+     "id": "prepare",
+     "kind": "nodes",
+     "nodes": [
+      {
+       "id": "grader_prepare",
+       "ops": [
+        "action"
+       ],
+       "R_s": 33.6,
+       "R_source": "five reference runs, maximum over the five: verifier start → preflight start (enclosing, upper bound)",
+       "repetitions": 0
+      },
+      {
+       "id": "protect_source",
+       "ops": [
+        "action"
+       ],
+       "R_s": 33.6,
+       "R_source": "five reference runs, maximum over the five: verifier start → preflight start (enclosing, upper bound)",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "preflight",
+     "kind": "nodes",
+     "bound_key": "preflight",
+     "nodes": [
+      {
+       "id": "preflight",
+       "ops": [
+        "action"
+       ],
+       "R_s": 13.0,
+       "R_source": "five reference runs, maximum over the five: step wall",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "reference",
+     "kind": "nodes",
+     "bound_key": "reference",
+     "nodes": [
+      {
+       "id": "reference_launch",
+       "ops": [
+        "startup"
+       ],
+       "R_s": 197.0,
+       "R_source": "five reference runs, maximum over the five: reference step wall (enclosing, upper bound)",
+       "repetitions": 0
+      },
+      {
+       "id": "reference_decode_c1",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 197.0,
+       "R_source": "five reference runs, maximum over the five: reference step wall (enclosing, upper bound)",
+       "repetitions": 1,
+       "repetitions_note": "the canary's one re-draw"
+      },
+      {
+       "id": "reference_throughput",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 197.0,
+       "R_source": "five reference runs, maximum over the five: reference step wall (enclosing, upper bound)",
+       "repetitions": 1,
+       "repetitions_note": "the canary's one re-draw"
+      },
+      {
+       "id": "reference_teardown",
+       "ops": [
+        "teardown"
+       ],
+       "R_s": 197.0,
+       "R_source": "five reference runs, maximum over the five: reference step wall (enclosing, upper bound)",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "l0",
+     "kind": "operations",
+     "ops": [
+      "unit_test_file"
+     ]
+    },
+    {
+     "id": "pass_to_pass",
+     "kind": "operations",
+     "ops": [
+      "unit_test_file",
+      "unit_test_file",
+      "unit_test_file"
+     ]
+    },
+    {
+     "id": "l2",
+     "kind": "operations",
+     "ops": [
+      "unit_test_file"
+     ]
+    },
+    {
+     "id": "fidelity",
+     "kind": "nodes",
+     "bound_key": "fidelity",
+     "nodes": [
+      {
+       "id": "test_fidelity_abs_r_median",
+       "ops": [
+        "startup",
+        "http"
+       ],
+       "R_s": 81.1,
+       "R_source": "five reference runs, maximum over the five: junit-fidelity.xml case time (setup included)",
+       "repetitions": 1,
+       "repetitions_note": "a band's whole re-draw"
+      },
+      {
+       "id": "test_fidelity_kl_median",
+       "ops": [
+        "http"
+       ],
+       "R_s": 1.8,
+       "R_source": "five reference runs, maximum over the five: junit-fidelity.xml case time (setup included)",
+       "repetitions": 1,
+       "repetitions_note": "a band's whole re-draw"
+      },
+      {
+       "id": "fidelity_teardown",
+       "ops": [
+        "teardown"
+       ],
+       "R_s": 2.5,
+       "R_source": "five reference runs, maximum over the five: fidelity group wall minus its case times (enclosing, upper bound)",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "served",
+     "kind": "nodes",
+     "bound_key": "served",
+     "nodes": [
+      {
+       "id": "test_decode_agrees_with_prefill",
+       "ops": [
+        "startup",
+        "http"
+       ],
+       "R_s": 58.2,
+       "R_source": "five reference runs, maximum over the five: junit-served.xml case time (setup included)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_decode_at_the_largest_graph",
+       "ops": [
+        "http"
+       ],
+       "R_s": 74.8,
+       "R_source": "five reference runs, maximum over the five: junit-served.xml case time (setup included)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_final_channel_is_the_content",
+       "ops": [
+        "http"
+       ],
+       "R_s": 3.6,
+       "R_source": "five reference runs, maximum over the five: junit-served.xml case time (setup included)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_reasoning_effort_orders_length",
+       "ops": [
+        "http"
+       ],
+       "R_s": 8.7,
+       "R_source": "five reference runs, maximum over the five: junit-served.xml case time (setup included)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_recipe_conformance",
+       "ops": [
+        "action"
+       ],
+       "R_s": 0.1,
+       "R_source": "five reference runs, maximum over the five: junit-served.xml case time (setup included)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_tool_calls_are_returned",
+       "ops": [
+        "http"
+       ],
+       "R_s": 2.3,
+       "R_source": "five reference runs, maximum over the five: junit-served.xml case time (setup included)",
+       "repetitions": 0
+      },
+      {
+       "id": "served_teardown",
+       "ops": [
+        "teardown"
+       ],
+       "R_s": 1.9,
+       "R_source": "five reference runs, maximum over the five: served group wall minus its case times (enclosing, upper bound)",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "components",
+     "kind": "nodes",
+     "bound_key": "components",
+     "nodes": [
+      {
+       "id": "test_expert_math",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 216.2,
+       "R_source": "five reference runs, maximum over the five: components/checks.json",
+       "repetitions": 0
+      },
+      {
+       "id": "test_attention_math",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 7.9,
+       "R_source": "five reference runs, maximum over the five: components/checks.json",
+       "repetitions": 0
+      },
+      {
+       "id": "test_complete_expert_performance",
+       "ops": [
+        "component_invocation",
+        "action"
+       ],
+       "R_s": 739.8,
+       "R_source": "five reference runs, maximum over the five: components/checks.json",
+       "repetitions": 0
+      },
+      {
+       "id": "test_harmony_protocol",
+       "ops": [
+        "action"
+       ],
+       "R_s": 17.6,
+       "R_source": "five reference runs, maximum over the five: components/checks.json",
+       "repetitions": 0
+      },
+      {
+       "id": "production_launch",
+       "ops": [
+        "startup"
+       ],
+       "R_s": 75.1,
+       "R_source": "five reference runs, maximum over the five: components/production-normal/ready.json (spawn → ready)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_harmony_roundtrip",
+       "ops": [
+        "http"
+       ],
+       "R_s": 7.2,
+       "R_source": "five reference runs, maximum over the five: components/checks.json",
+       "repetitions": 0
+      },
+      {
+       "id": "production_coverage",
+       "ops": [
+        "http"
+       ],
+       "R_s": 90.2,
+       "R_source": "five reference runs, maximum over the five: components step wall minus its checks and launch (enclosing, upper bound)",
+       "repetitions": 0
+      },
+      {
+       "id": "production_teardown",
+       "ops": [
+        "teardown"
+       ],
+       "R_s": 90.2,
+       "R_source": "five reference runs, maximum over the five: components step wall minus its checks and launch (enclosing, upper bound)",
+       "repetitions": 0
+      },
+      {
+       "id": "identity_only",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 44.5,
+       "R_source": "the one identity-only invocation timed on the reference",
+       "repetitions": 0,
+       "repetitions_note": "run only when timing evidence is incomplete; counted once"
+      },
+      {
+       "id": "test_native_production_binding",
+       "ops": [
+        "startup",
+        "http",
+        "teardown"
+       ],
+       "R_s": 80.4,
+       "R_source": "five reference runs, maximum over the five: components/checks.json",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "efficiency",
+     "kind": "nodes",
+     "bound_key": "efficiency",
+     "nodes": [
+      {
+       "id": "efficiency_launch",
+       "ops": [
+        "startup"
+       ],
+       "R_s": 119.7,
+       "R_source": "five reference runs, maximum over the five: test_0_efficiency_decode_c1 case time, which includes the launch (upper bound)",
+       "repetitions": 0
+      },
+      {
+       "id": "test_0_efficiency_decode_c1",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 119.7,
+       "R_source": "five reference runs, maximum over the five: junit-efficiency.xml case time (setup included)",
+       "repetitions": 3,
+       "repetitions_note": "two further best-of-three attempts and the canary's one re-draw"
+      },
+      {
+       "id": "test_0_efficiency_throughput",
+       "ops": [
+        "component_invocation"
+       ],
+       "R_s": 66.1,
+       "R_source": "five reference runs, maximum over the five: junit-efficiency.xml case time (setup included)",
+       "repetitions": 1,
+       "repetitions_note": "the canary's one re-draw"
+      },
+      {
+       "id": "efficiency_teardown",
+       "ops": [
+        "teardown"
+       ],
+       "R_s": 3.1,
+       "R_source": "five reference runs, maximum over the five: efficiency group wall minus its case times (enclosing, upper bound)",
+       "repetitions": 0
+      }
+     ]
+    },
+    {
+     "id": "grade",
+     "kind": "nodes",
+     "nodes": [
+      {
+       "id": "grade",
+       "ops": [
+        "action"
+       ],
+       "R_s": 12.4,
+       "R_source": "five reference runs, maximum over the five: efficiency step end → verifier finish (enclosing, upper bound)",
+       "repetitions": 0
+      }
+     ]
+    }
+   ]
+  },
+  "not_scored": {
+   "test_bf16_120b": "the sibling method in the same registered file. It serves lmsys/gpt-oss-120b-bf16, a repacked checkpoint that is out of this task's scope and not in the image, so it is deselected rather than allowed to error."
+  }
+ }
+}

@@ -1,0 +1,5 @@
+# FlashInfer's pre-compiled JIT modules, the same release as flashinfer-python in requirements.lock.
+# Added by hand with the hash the public index (https://flashinfer.ai/whl/cu130) publishes, not by
+# resolve.sh: re-resolving the whole set would move unrelated pins. See RESOLVED.md.
+flashinfer-jit-cache==0.6.18+cu130 \
+    --hash=sha256:428a47a554ade93c30a818e142b781df58582bf056bab94611fb4c906cc366bf

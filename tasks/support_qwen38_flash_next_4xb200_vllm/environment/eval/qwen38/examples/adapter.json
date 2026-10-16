@@ -1,0 +1,27 @@
+{
+ "schema": "qwen38-native-regions/1",
+ "regions": [
+  {
+   "component": "qsa",
+   "module": "*.layers.*.self_attn",
+   "method": "forward",
+   "hidden_input": "hidden_states",
+   "output": "return",
+   "checkpoint_layer": "\\.layers\\.(\\d+)\\.",
+   "encloses": [
+    "qsa"
+   ]
+  },
+  {
+   "component": "ple",
+   "module": "*.layers.*.ple",
+   "method": "forward",
+   "hidden_input": 0,
+   "output": "return",
+   "checkpoint_layer": "\\.layers\\.(\\d+)\\.",
+   "encloses": [
+    "ple"
+   ]
+  }
+ ]
+}

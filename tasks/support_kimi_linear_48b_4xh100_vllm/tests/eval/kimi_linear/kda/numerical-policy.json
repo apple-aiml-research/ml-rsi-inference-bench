@@ -1,0 +1,5 @@
+{
+  "attention": {"relative_rmse": 0.005, "absolute_escape": 0.000001},
+  "output": {"relative_rmse": 0.008, "absolute_escape": 0.000001},
+  "state": {"relative_rmse": 0.005, "absolute_escape": 0.000001}
+}

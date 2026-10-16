@@ -1,0 +1,1 @@
+Vendor the FlashAttention fork at the engine's pin so its sources build offline and are editable in the tree

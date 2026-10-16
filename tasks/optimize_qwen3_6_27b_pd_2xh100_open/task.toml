@@ -1,0 +1,137 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/optimize_qwen3_6_27b_pd_2xh100_open"
+description = "Optimize vLLM prefill/decode DISAGGREGATED serving for Qwen3.6-27B on 2xH100 / vLLM 0.24.0+cu129, scored on the geometric mean of continuation-turn tail latency AND tail inter-token latency (pooled P99 ITL) in a multi-turn agent workload. Two pools behind a conversation-sticky router: ONE GPU of kv_producer and ONE of kv_consumer, joined by NixlConnector -- the SupportsHMA connector this hybrid-attention model requires, since vLLM disables the hybrid KV cache manager whenever --kv-transfer-config is set unless the connector subclasses it. The dense 27B member of the qwen3_5 family: 64 layers of 3:1 hybrid linear+full attention, 24 attention heads and 4 kv heads. Hardware sized to the model is the point: a TP=1 pool holds the whole model on one 80 GB device and the KV budget is a real constraint, which is the regime the split exists for."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "pd-disaggregation", "prefill-decode", "latency-optimization", "multi-turn", "qwen3", "dense", "hybrid-attention", "gqa", "b200", "8xb200", "v0201"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+timeout_sec = 18000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 524288
+storage_mb = 327680
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 2
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "vllm"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.pd]
+prefill_gpus = 1
+decode_gpus = 1
+connector = "NixlConnector"
+router_port = 10001
+discovery_port = 30001
+conversation_turns = 8          # 4 user turns and their replies
+first_turn_prefix_tokens = 8000
+new_tokens_per_turn = 12000
+reply_tokens = 512
+conversations = 16
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "v0.24.0"
+workdir = "/app/repo"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.9"
+engine_install = "task_scoped_vllm_0_24_0_cu129_with_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "Qwen/Qwen3.6-27B"
+architecture = "Qwen3_5ForConditionalGeneration"
+total_parameters = "27B"
+activated_parameters = "27B"
+context_window = 65536
+dtype = "auto"
+tensor_parallel_size = 1  # per pool, not per machine
+
+[metadata.inference_bench.scoring]
+primary_metric = "pd_latency_itl_geomean_ms"
+num_runs = 5
+warmup_runs = 1
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "tokens"
+atol = 0.05
+rtol = 0.05
+min_pass_rate = 0.95
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "pd_multiturn"
+input_len = 12000
+output_len = 512
+num_prompts = 64
+max_concurrency = 16
+
+[metadata.inference_bench.commands]
+
+[metadata.inference_bench.artifacts]
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_SSM_CONV_STATE_LAYOUT = "DS"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_OFFICIAL = "1"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_SSM_CONV_STATE_LAYOUT = "DS"
+VLLM_USE_AOT_COMPILE = "0"
+
+[metadata.inference_bench.scoring.num_runs_per_workload]
+pd_multiturn = 3

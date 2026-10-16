@@ -1,0 +1,132 @@
+{
+ "repo_id": "openai/gpt-oss-120b",
+ "revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+ "source": "https://huggingface.co/api/models/openai/gpt-oss-120b/revision/b5c939de?blobs=true, read 2026-09-23; gated false, private false",
+ "layer_groups": 16,
+ "excluded": {
+  "metal/": "Apple-Silicon Metal format, 1 file, 65,238,253,568 bytes; never read by SGLang and not in model.safetensors.index.json",
+  "original/": "the model-author checkpoint layout, 10 files, 65,248,927,631 bytes; used when recording the fidelity reference, never in the image"
+ },
+ "files": [
+  {
+   "path": ".gitattributes",
+   "size": 1570
+  },
+  {
+   "path": "LICENSE",
+   "size": 11357
+  },
+  {
+   "path": "README.md",
+   "size": 7111
+  },
+  {
+   "path": "USAGE_POLICY",
+   "size": 201
+  },
+  {
+   "path": "chat_template.jinja",
+   "size": 16738
+  },
+  {
+   "path": "config.json",
+   "size": 2089
+  },
+  {
+   "path": "generation_config.json",
+   "size": 177
+  },
+  {
+   "path": "model-00000-of-00014.safetensors",
+   "size": 4625017896,
+   "sha256": "695218884684c611fe08a74751ee443f971e9bd9bc062edba822da3fe45969b7"
+  },
+  {
+   "path": "model-00001-of-00014.safetensors",
+   "size": 4115586736,
+   "sha256": "a881aa5f561b26a22b14a8262aa61849ace349ffd73d74769e030ac90a1fcf8a"
+  },
+  {
+   "path": "model-00002-of-00014.safetensors",
+   "size": 4625017888,
+   "sha256": "022478dd04398c5bdb545a5be0a6437ecc2eb53d1dbd29edafcfff4b3ddf0a41"
+  },
+  {
+   "path": "model-00003-of-00014.safetensors",
+   "size": 4115586752,
+   "sha256": "47aee9e7b9d5bedb215042c01ccededd9bd9c30b0dddea862dc2506b9d6c74de"
+  },
+  {
+   "path": "model-00004-of-00014.safetensors",
+   "size": 4625017896,
+   "sha256": "f6c2752acda607b1d5ca52df9e75c1b9b2761e6875ff10c9bd6ddac473c0262e"
+  },
+  {
+   "path": "model-00005-of-00014.safetensors",
+   "size": 4115586696,
+   "sha256": "0c8dd401544c31cb93b8459eee7da20ea2a07626a59455d7d92b85257df9b46c"
+  },
+  {
+   "path": "model-00006-of-00014.safetensors",
+   "size": 4625017856,
+   "sha256": "28d839f2e027985a8b14e45f2323798862eddb7770ee9800ea6b7c803abee489"
+  },
+  {
+   "path": "model-00007-of-00014.safetensors",
+   "size": 4060267176,
+   "sha256": "c8958c5f183c04f6ea959cfd90562b5128124154b2bbf979b8a22b9405b30ed8"
+  },
+  {
+   "path": "model-00008-of-00014.safetensors",
+   "size": 4625017896,
+   "sha256": "bf1f2a88868ffc37d520dcf77d26f0e823710b5e682d473ff10f6974fa3b7517"
+  },
+  {
+   "path": "model-00009-of-00014.safetensors",
+   "size": 4170906304,
+   "sha256": "f72d34a4004241b45c332b61f8ffa124e9a913bc1ab442b66e717d3e94e741ce"
+  },
+  {
+   "path": "model-00010-of-00014.safetensors",
+   "size": 4625017896,
+   "sha256": "f48c867c2cb0a44bfc2f8768cb98e4aec9a350946fceacfebdcad5d32ad4a471"
+  },
+  {
+   "path": "model-00011-of-00014.safetensors",
+   "size": 4115586752,
+   "sha256": "a06851b2cfd35f48722f823bc1ab8f7bcb4a878a5b8e975f4d3544f230454eeb"
+  },
+  {
+   "path": "model-00012-of-00014.safetensors",
+   "size": 4064660808,
+   "sha256": "3af33667c307e20ae2a7648ea52653de46dd0171601ec5c696e47a2f5d5bf1e4"
+  },
+  {
+   "path": "model-00013-of-00014.safetensors",
+   "size": 4625017896,
+   "sha256": "bcbcb74b043e071d1e05471d500d74dcf661175e00878ed302ccdf1801a75aef"
+  },
+  {
+   "path": "model-00014-of-00014.safetensors",
+   "size": 4115586736,
+   "sha256": "54b1be1609696c307cc5ca117b1fa54feaddebffa04e9c2db117652a01964230"
+  },
+  {
+   "path": "model.safetensors.index.json",
+   "size": 54511
+  },
+  {
+   "path": "special_tokens_map.json",
+   "size": 98
+  },
+  {
+   "path": "tokenizer.json",
+   "size": 27868174,
+   "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+  },
+  {
+   "path": "tokenizer_config.json",
+   "size": 4200
+  }
+ ]
+}

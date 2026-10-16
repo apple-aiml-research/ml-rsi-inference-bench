@@ -1,0 +1,62 @@
+{
+  "_note": "The scored shapes and the guard shapes, fixed. The score is the geometric mean, over the scored points, of candidate over pristine output token throughput measured on both trees in the same run; a guard point is measured the same way and must not read slower on the candidate. The verifier runs its own copy of this file, so editing it changes what you see and not what you score.",
+  "primary_workload": "random_in1024_out512_c4",
+  "scored_workloads": [
+    "random_in1024_out512_c1",
+    "random_in1024_out512_c4",
+    "random_in1024_out512_c8"
+  ],
+  "guard_workloads": [
+    "random_in1024_out512_c32",
+    "prefill_in4096_out1_c1_ttft"
+  ],
+  "workloads": [
+    {
+      "name": "random_in1024_out512_c4",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 512,
+      "range_ratio": 1.0,
+      "num_prompts": 64,
+      "max_concurrency": 4
+    },
+    {
+      "name": "random_in1024_out512_c1",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 512,
+      "range_ratio": 1.0,
+      "num_prompts": 16,
+      "max_concurrency": 1
+    },
+    {
+      "name": "random_in1024_out512_c8",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 512,
+      "range_ratio": 1.0,
+      "num_prompts": 128,
+      "max_concurrency": 8
+    },
+    {
+      "name": "random_in1024_out512_c32",
+      "role": "guard",
+      "input_len": 1024,
+      "output_len": 512,
+      "range_ratio": 1.0,
+      "num_prompts": 256,
+      "max_concurrency": 32
+    },
+    {
+      "name": "prefill_in4096_out1_c1_ttft",
+      "role": "guard",
+      "metric_key": "latency_ms.ttft.mean",
+      "lower_is_better": true,
+      "input_len": 4096,
+      "output_len": 1,
+      "range_ratio": 1.0,
+      "num_prompts": 32,
+      "max_concurrency": 1
+    }
+  ]
+}

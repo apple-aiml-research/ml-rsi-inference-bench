@@ -1,0 +1,41 @@
+{
+ "schema": "infb-sparse-indexer-sources/1",
+ "note": "The pinned dependency source of the task's sparse-indexer preparation. prepare.py fetches exactly these commits, one commit each, and checks that DeepGEMM's gitlinks name the CUTLASS and DeepJIT commits below.",
+ "deepgemm": {
+  "url": "https://github.com/deepseek-ai/DeepGEMM.git",
+  "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+  "version": "2.8.0",
+  "gitlinks": {
+   "cutlass": "f3fde58372d33e9a5650ba7b80fc48b3b49d40c8",
+   "deep_jit": "e5bdee2bc4ca519eba00cfc5f0c6e950e6a96a16"
+  }
+ },
+ "cutlass": {
+  "url": "https://github.com/NVIDIA/cutlass.git"
+ },
+ "deep_jit": {
+  "url": "https://github.com/deepseek-ai/DeepJIT.git"
+ },
+ "deepselect": {
+  "url": "https://github.com/vllm-project/DeepSelect.git",
+  "commit": "d96d33afe1fab0d6066da49cdc91e64c2bee65ea",
+  "gitlinks": {
+   "csrc/3rdparty/cutlass": "ae6bccf341fb4410241f696ba06873023d5ce4ed"
+  },
+  "note": "Fetched by the engine's own cmake/external_projects/deepselect.cmake (engine.patch) into /app/.deps during the image build's editable install, which then serves offline rebuilds."
+ },
+ "removed": [
+  "csrc/jit_kernels/impls/sm100_sparse_mqa_logits.hpp",
+  "deep_gemm/include/deep_gemm/impls/sm100_sparse_mqa_logits.cuh",
+  "deep_gemm/include/deep_gemm/layout/sparse_mqa_logits.cuh",
+  "deep_gemm/include/deep_gemm/scheduler/sm100_sparse_mqa_logits_metadata.cuh"
+ ],
+ "python_utilities": [
+  "deep_gemm/utils/math.py"
+ ],
+ "engine_files": {
+  "deep_gemm_v41_sparse_init.py": "vllm/third_party/deep_gemm_v41_sparse/__init__.py",
+  "build_deepgemm_v41_sparse.py": "tools/build_deepgemm_v41_sparse.py",
+  "sparse_indexer_eval.py": "vllm/model_executor/layers/sparse_indexer_eval.py"
+ }
+}

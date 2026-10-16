@@ -1,0 +1,162 @@
+{
+ "repo_id": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+ "revision": "e1df551a447157d4658b573f9a695d57658590e9",
+ "ignore_patterns": [
+  "figures/*"
+ ],
+ "file_count": 32,
+ "total_bytes": 98253088800,
+ "lfs_sha256_count": 21,
+ "note": "Sizes and LFS sha256 digests as the Hub reports them at this revision (models API, ?blobs=true, read 2026-09-23). figures/* is excluded: six PNGs of 482,858 bytes that are documentation art, not model data. Excluding them gives exactly the 32 files and 98,253,088,800 bytes recorded for this checkpoint in `tests/config.json` (`infb.model_files`, `infb.model_bytes`), which is the cross-check that this manifest and that record describe the same artifact.",
+ "files": [
+  {
+   "path": ".gitattributes",
+   "size": 1631
+  },
+  {
+   "path": "README.md",
+   "size": 6540
+  },
+  {
+   "path": "chat_template.jinja",
+   "size": 1850
+  },
+  {
+   "path": "config.json",
+   "size": 1751
+  },
+  {
+   "path": "configuration_kimi.py",
+   "size": 4948
+  },
+  {
+   "path": "generation_config.json",
+   "size": 147
+  },
+  {
+   "path": "model-00001-of-00020.safetensors",
+   "size": 4999482712,
+   "sha256": "9c5c908aa3b86b6486080b577cb7aa8dbe9ca7cb18789653768017e602b61a7f"
+  },
+  {
+   "path": "model-00002-of-00020.safetensors",
+   "size": 4999923264,
+   "sha256": "6fcb34e9ebe2434f32761c06ef17a465157308e6e583eb7eb70cc25e57cd2cb0"
+  },
+  {
+   "path": "model-00003-of-00020.safetensors",
+   "size": 4997138040,
+   "sha256": "f35d2a95dd1e3170fd642d0db4d0d07933985ef59041494652092cc27893e231"
+  },
+  {
+   "path": "model-00004-of-00020.safetensors",
+   "size": 4997148016,
+   "sha256": "eda18b6226777bb9a07584dfa64986ac4f28a26cee3203f16ffb14deef9ef48b"
+  },
+  {
+   "path": "model-00005-of-00020.safetensors",
+   "size": 4999923296,
+   "sha256": "652e8a43d493105176807d256af0a5c56e45c6d783e6c8221832918f3425c0a0"
+  },
+  {
+   "path": "model-00006-of-00020.safetensors",
+   "size": 4997138040,
+   "sha256": "77f5dc551436c934f0991eee0c319e0f33689ea3c10cb8cb8f48acc32238526f"
+  },
+  {
+   "path": "model-00007-of-00020.safetensors",
+   "size": 4997148128,
+   "sha256": "3980c7efccdc6a27633eb8909afc381cb780cccaa7be0347d1645496ea3eb5a2"
+  },
+  {
+   "path": "model-00008-of-00020.safetensors",
+   "size": 4999924384,
+   "sha256": "dab91b8eaed9874c75de99a4a08669f520fa3e2c8977175333db552504a1c5d3"
+  },
+  {
+   "path": "model-00009-of-00020.safetensors",
+   "size": 4997139104,
+   "sha256": "13f6ae84d557682ec4a0fc8b6090d4f89cdd26e5e216445cc9d77a65c7f4c90b"
+  },
+  {
+   "path": "model-00010-of-00020.safetensors",
+   "size": 4997149016,
+   "sha256": "d58ab0a201e26ff429b9d18678a76f3a3284ad977719e055f94d892133ee247b"
+  },
+  {
+   "path": "model-00011-of-00020.safetensors",
+   "size": 4999924408,
+   "sha256": "142aa90317af104b2d9f5a6ae4dc661f4a7f7c152f83d6c2477de8037be92201"
+  },
+  {
+   "path": "model-00012-of-00020.safetensors",
+   "size": 4997139104,
+   "sha256": "cb1d4fe2d94a04898eb8300b5144923e5540a75091ee5f4c8b67936a69d91780"
+  },
+  {
+   "path": "model-00013-of-00020.safetensors",
+   "size": 4997148992,
+   "sha256": "12fb6f2dea889d460f33f7fbb55f76d7beb468698cf56707f4d77a9ab69461d3"
+  },
+  {
+   "path": "model-00014-of-00020.safetensors",
+   "size": 4999924440,
+   "sha256": "cf178169e0dfdc721492f1a98a5be2ef5f66fd8569039f5a77819641a5a1b32d"
+  },
+  {
+   "path": "model-00015-of-00020.safetensors",
+   "size": 4997139104,
+   "sha256": "9e65460934e8794faeadd6d8cbeffd23fcdbf07d9c61ca92ef97afc95d0ccdaa"
+  },
+  {
+   "path": "model-00016-of-00020.safetensors",
+   "size": 4997148960,
+   "sha256": "05cc77846f94d50dc09180f5844f01aee38e489b1fd833d8c7aec6a62214ef03"
+  },
+  {
+   "path": "model-00017-of-00020.safetensors",
+   "size": 4999924472,
+   "sha256": "eaf238a2f1a971ef311c445309de323992da59287d55759cf2a4a3a85ca6a1cc"
+  },
+  {
+   "path": "model-00018-of-00020.safetensors",
+   "size": 4997139104,
+   "sha256": "315cdb6964a975522cdb755cf5eb76b46478346b015113e241f81127ad9e6fd4"
+  },
+  {
+   "path": "model-00019-of-00020.safetensors",
+   "size": 4999934384,
+   "sha256": "cbdc2c77e41baa76a2c2b3ced0a59fe7587e95ca3d1acc75247b88a80dee3041"
+  },
+  {
+   "path": "model-00020-of-00020.safetensors",
+   "size": 3280687152,
+   "sha256": "4f1e4a9194d045e01c90ed2697939bcedd533b6aa1f1b97b0ae0a5932e5a4bc7"
+  },
+  {
+   "path": "model.safetensors.index.json",
+   "size": 1987740
+  },
+  {
+   "path": "modeling_kimi.py",
+   "size": 42975
+  },
+  {
+   "path": "special_tokens_map.json",
+   "size": 5583
+  },
+  {
+   "path": "tiktoken.model",
+   "size": 2795286,
+   "sha256": "b6c497a7469b33ced9c38afb1ad6e47f03f5e5dc05f15930799210ec050c5103"
+  },
+  {
+   "path": "tokenization_kimi.py",
+   "size": 12534
+  },
+  {
+   "path": "tokenizer_config.json",
+   "size": 3695
+  }
+ ]
+}

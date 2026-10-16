@@ -1,0 +1,1 @@
+Add MiniMax-M3 evaluation protocols

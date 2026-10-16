@@ -1,0 +1,167 @@
+---
+title: Critique Jobs
+description: Running agentic critiques over completed trials
+---
+
+A critique job runs a judge agent over the artifacts from an existing Pier job. It does not solve the task and it does not run the verifier as the source trial. Instead, Pier starts a fresh sandbox for each selected source trial, loads both the task and that trial's result artifacts into the sandbox, gives the critique agent an external prompt, and collects the critique result.
+
+Use critique jobs to answer questions such as:
+
+- Why did this trial pass or fail?
+- Did the solving agent misunderstand the task, run out of time, hit an API failure, or make a wrong implementation?
+- Does the task prompt, repository setup, hidden test, verifier, or environment look unfair or broken?
+- Is the source trial itself evaluable, or was it dominated by run orchestration such as a shortened timeout?
+
+Critique jobs are intentionally prompt-agnostic. Pier provides the execution substrate and artifact contract; you provide the judge prompt.
+
+## Run a critique job
+
+Run critiques against an existing job directory:
+
+```bash
+pier critique run jobs/2026-05-04__08-41-11 \
+  --prompt ./critique-prompt.md \
+  --agent codex \
+  --model gpt-5.3-codex \
+  --env docker
+```
+
+You can also reuse agent and environment defaults from a Pier job config:
+
+```bash
+pier critique run jobs/2026-05-04__08-41-11 \
+  --prompt ./critique-prompt.md \
+  --config ./agents.yaml \
+  --agent-index 0 \
+  --env modal
+```
+
+Common filters:
+
+```bash
+# Critique one source trial
+pier critique run jobs/example --prompt ./prompt.md --trial-name task__abc123
+
+# Critique only failed source trials
+pier critique run jobs/example --prompt ./prompt.md --failing
+
+# Run a small sample first
+pier critique run jobs/example --prompt ./prompt.md --limit 5
+
+# Run a deterministic random sample from selected source models
+pier critique run jobs/example --prompt ./prompt.md \
+  --source-model gpt-5.5 \
+  --source-model claude-opus-4-7 \
+  --sample-seed 13 \
+  --limit 10
+```
+
+By default, critique jobs select source trials in the source job's planned order from `lock.json` (attempt, then task, then agent), so `--limit` follows the same prefix a regular job would launch. Use `--sample-seed` to deterministically shuffle the selected source trials before `--limit`. If no usable lock file exists, Pier falls back to stable trial-directory name order.
+
+Most agent and environment flags mirror `pier run`, including `--agent`, `--model`, `--agent-kwarg`, `--agent-env`, `--env`, `--force-build`, `--delete`, resource overrides, timeout multipliers, `--n-concurrent`, `--env-file`, and `--yes`. `--source-agent` and `--source-model` filter the completed trials being critiqued, not the judge agent used to run the critique.
+
+## What Pier provides to the judge
+
+Each critique item gets a normal task sandbox. Before the judge agent runs, Pier uploads:
+
+```
+/critique/input/
+|-- task/    # the source task directory
+`-- trial/   # the completed source trial directory
+```
+
+The critique prompt can use these template variables:
+
+| Variable | Meaning |
+|----------|---------|
+| `{task_dir}` | Sandbox path to the uploaded task directory |
+| `{trial_dir}` | Sandbox path to the uploaded source trial directory |
+| `{source_trial_name}` | Name of the source trial directory |
+| `{task_name}` | Task name from `task.toml` |
+| `{critique_result_path}` | Required JSON output path |
+| `{critique_markdown_path}` | Optional Markdown notes output path |
+
+Pier appends a runtime contract to the prompt with the concrete task, trial, and output paths.
+
+## Output contract
+
+The judge agent must write a valid JSON object with first-party top-level fields to:
+
+```bash
+/logs/artifacts/critique-result.json
+```
+
+Pier requires:
+
+- `rating`: either `good` or `bad`, with the meaning defined by the critique prompt or script.
+- `tag` or `tags`: one or more compact, machine-readable classifications. Use `tag` for a single string, or `tags` for multiple strings. If both are present, Pier merges them for display.
+- `feedback`: a human-readable explanation of the outcome.
+
+Additional keys are allowed and remain prompt-defined. The viewer treats
+top-level scalar keys, and nested scalar paths such as `details.primary_category`,
+as critique values that can be surfaced in tables and future aggregate views.
+
+It may also write human-readable notes to:
+
+```bash
+/logs/artifacts/critique-result.md
+```
+
+Pier collects those files like normal artifacts and stores the parsed JSON object on the critique item result.
+
+## Result layout
+
+A critique run is stored under the source job:
+
+```
+<job_dir>/
+|-- result.json
+|-- <source_trial>/
+|   `-- result.json
+`-- .critiques/
+    `-- <critique_run_name>/
+        |-- config.json
+        |-- result.json
+        `-- <source_trial>/
+            |-- critique-config.json
+            |-- critique-metadata.json
+            |-- critique.log
+            |-- agent/
+            `-- artifacts/
+                |-- critique-result.json
+                |-- critique-result.md
+                `-- manifest.json
+```
+
+`.critiques/<run>/result.json` is the critique job result summary. It intentionally does not embed per-item results. Each per-trial `critique-metadata.json` records the critique agent metadata, timings, source trial URI, critique trial URI, and any critique-run exception.
+
+The single source of truth for the critique payload is `artifacts/critique-result.json`. Viewer columns and trial critique tabs read `rating`, `tag`/`tags`, `feedback`, and any other critique fields from that artifact.
+
+Critique trial directories intentionally do not contain `trial.log` or source-trial `result.json` names at their root. This keeps them distinct from normal Pier trial directories.
+
+## Prompt Ownership
+
+Pier does not copy or persist the judge prompt contents into the critique run directory. The prompt remains an external input supplied with `--prompt`.
+
+On resume, Pier reads the prompt from the path provided in the current command. Completed critique items are reused from their cached `critique-metadata.json`; items that need to run or rerun use the current prompt file.
+
+Use `--overwrite` to replace a critique run. Without `--overwrite`, Pier resumes matching critique runs and rejects a run name if the stored config does not match the requested config.
+
+## Recommended critique shape
+
+Pier accepts any JSON object, but a useful critique result usually separates these concepts:
+
+- **Trial outcome:** what happened in this particular source trial.
+- **Trial validity:** whether the source trial produced a meaningfully evaluable final attempt.
+- **Agent assessment:** what the solving agent did wrong, when the run gave it a meaningful chance.
+- **Orchestration assessment:** whether runner settings, timeouts, endpoint failures, retries, or intentionally shortened budgets influenced the outcome.
+- **Task fairness:** whether the task prompt, repo setup, hidden tests, verifier, or expected behavior are fair independent of this trial's orchestration.
+- **Environment assessment:** whether sandbox or verifier behavior blocked a fair result.
+
+## Relation to verifier rewards
+
+A normal Pier trial asks an agent to solve a task and asks the verifier to write reward artifacts.
+
+A critique job asks a judge agent to inspect a completed trial and write critique artifacts.
+
+The critique result is not a replacement for the verifier reward. It is extra evidence for understanding trial outcomes and task quality.

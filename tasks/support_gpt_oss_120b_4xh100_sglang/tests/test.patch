@@ -1,0 +1,317 @@
+diff --git a/python/sglang/test/run_eval.py b/python/sglang/test/run_eval.py
+--- a/python/sglang/test/run_eval.py
++++ b/python/sglang/test/run_eval.py
+@@ -1,126 +1,15 @@
+-"""
+-Usage:
+-python3 -m sglang.test.run_eval --port 30000 --eval-name mmlu --num-examples 10
+-"""
+-
+-import argparse
+-import json
+-import os
+-import time
+-
+-from sglang.test.simple_eval_common import (
+-    ChatCompletionSampler,
+-    make_report,
+-    set_ulimit,
+-)
++"""Registered GPQA check using the protected public protocol implementation."""
++from gpt_oss.acceptance.run_eval import evaluate
+ 
+ 
+ def run_eval(args):
+-    set_ulimit()
+-
+-    if "OPENAI_API_KEY" not in os.environ:
+-        os.environ["OPENAI_API_KEY"] = "EMPTY"
+-
+-    base_url = (
+-        f"{args.base_url}/v1" if args.base_url else f"http://{args.host}:{args.port}/v1"
+-    )
+-
+-    if args.eval_name == "mmlu":
+-        from sglang.test.simple_eval_mmlu import MMLUEval
+-
+-        filename = "https://openaipublic.blob.core.windows.net/simple-evals/mmlu.csv"
+-        eval_obj = MMLUEval(filename, args.num_examples, args.num_threads)
+-    elif args.eval_name == "math":
+-        from sglang.test.simple_eval_math import MathEval
+-
+-        equality_checker = ChatCompletionSampler(model="gpt-4-turbo")
+-
+-        filename = (
+-            "https://openaipublic.blob.core.windows.net/simple-evals/math_test.csv"
+-        )
+-        eval_obj = MathEval(
+-            filename, equality_checker, args.num_examples, args.num_threads
+-        )
+-    elif args.eval_name == "mgsm":
+-        from sglang.test.simple_eval_mgsm import MGSMEval
+-
+-        eval_obj = MGSMEval(args.num_examples, args.num_threads)
+-    elif args.eval_name == "mgsm_en":
+-        from sglang.test.simple_eval_mgsm import MGSMEval
+-
+-        eval_obj = MGSMEval(args.num_examples, args.num_threads, languages=["en"])
+-    elif args.eval_name == "gpqa":
+-        from sglang.test.simple_eval_gpqa import GPQAEval
+-
+-        filename = (
+-            "https://openaipublic.blob.core.windows.net/simple-evals/gpqa_diamond.csv"
+-        )
+-        eval_obj = GPQAEval(filename, args.num_examples, args.num_threads)
+-    elif args.eval_name == "humaneval":
+-        from sglang.test.simple_eval_humaneval import HumanEval
+-
+-        eval_obj = HumanEval(args.num_examples, args.num_threads)
+-    else:
+-        raise ValueError(f"Invalid eval name: {args.eval_name}")
+-
+-    sampler = ChatCompletionSampler(
+-        model=args.model,
+-        max_tokens=2048,
+-        base_url=base_url,
+-        temperature=getattr(args, "temperature", 0.0),
+-    )
+-
+-    # Run eval
+-    tic = time.perf_counter()
+-    result = eval_obj(sampler)
+-    latency = time.perf_counter() - tic
+-
+-    # Dump reports
+-    metrics = result.metrics | {"score": result.score}
+-    file_stem = f"{args.eval_name}_{sampler.model.replace('/', '_')}"
+-    report_filename = f"/tmp/{file_stem}.html"
+-    print(f"Writing report to {report_filename}")
+-    with open(report_filename, "w") as fh:
+-        fh.write(make_report(result))
+-    metrics = result.metrics | {"score": result.score}
+-    print(metrics)
+-    result_filename = f"/tmp/{file_stem}.json"
+-    with open(result_filename, "w") as f:
+-        f.write(json.dumps(metrics, indent=2))
+-    print(f"Writing results to {result_filename}")
+-
+-    # Print results
+-    print(f"Total latency: {latency:.3f} s")
+-    print(f"Score: {metrics['score']:.3f}")
+-
+-    return metrics
+-
+-
+-if __name__ == "__main__":
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument(
+-        "--base-url",
+-        type=str,
+-        default=None,
+-        help="Server or API base url if not using http host and port.",
+-    )
+-    parser.add_argument(
+-        "--host", type=str, default="0.0.0.0", help="Default host is 0.0.0.0."
+-    )
+-    parser.add_argument(
+-        "--port",
+-        type=int,
+-        help="If not set, the default port is configured according to its default value for different LLM Inference Engines.",
+-    )
+-    parser.add_argument(
+-        "--model",
+-        type=str,
+-        help="Name or path of the model. If not set, the default model will request /v1/models for conf.",
+-    )
+-    parser.add_argument("--eval-name", type=str, default="mmlu")
+-    parser.add_argument("--num-examples", type=int)
+-    parser.add_argument("--num-threads", type=int, default=512)
+-    parser.add_argument("--temperature", type=float, default=0.0)
+-    args = parser.parse_args()
+-
+-    run_eval(args)
++    if args.eval_name != "gpqa":
++        raise ValueError("this task's registered acceptance evaluates GPQA")
++    base_url = args.base_url if args.base_url else f"http://{args.host}:{args.port}"
++    return evaluate(filename="/tests/_upstream/gpqa_diamond.csv", base_url=base_url,
++                    model=args.model, num_examples=args.num_examples,
++                    num_threads=args.num_threads,
++                    max_tokens=getattr(args, "max_tokens", 2048),
++                    temperature=getattr(args, "temperature", 0.0),
++                    reasoning_effort=getattr(args, "reasoning_effort", None),
++                    seed=517093, output="/logs/verifier/gpqa")
+diff --git a/python/sglang/test/test_utils.py b/python/sglang/test/test_utils.py
+index 9002bd0e5ff0d8def811ab8495f710e7e5159191..e49d81cb4df4f093b4a1746ac0e5e7ea361cf93e 100644
+--- a/python/sglang/test/test_utils.py
++++ b/python/sglang/test/test_utils.py
+@@ -91,7 +91,8 @@ DEFAULT_SMALL_VLM_MODEL_NAME_FOR_TEST = "Qwen/Qwen2.5-VL-3B-Instruct"
+ DEFAULT_IMAGE_URL = "https://github.com/sgl-project/sglang/blob/main/test/lang/example_image.png?raw=true"
+ DEFAULT_VIDEO_URL = "https://raw.githubusercontent.com/EvolvingLMMs-Lab/sglang/dev/onevision_local/assets/jobs.mp4"
+ 
+-DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH = 600
++# Inference-Bench: every candidate/reference server launch has one published 900 s startup limit.
++DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH = 900
+ 
+ 
+ def is_in_ci():
+diff --git a/test/srt/test_gpt_oss_4gpu.py b/test/srt/test_gpt_oss_4gpu.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..b5f2fa40365aa9233821d94b21e6dfb1ca2e3bc5
+--- /dev/null
++++ b/test/srt/test_gpt_oss_4gpu.py
+@@ -0,0 +1,50 @@
++import unittest
++
++from test_gpt_oss_common import BaseTestGptOss
++
++
++class TestGptOss4Gpu(BaseTestGptOss):
++    def test_bf16_120b(self):
++        self.run_test(
++            model_variant="120b",
++            quantization="bf16",
++            expected_score_of_reasoning_effort={
++                "low": 0.61,
++                # remove to speed up
++                # "medium": 0.61,
++                # "high": 0.61,
++            },
++            other_args=["--tp", "4", "--cuda-graph-max-bs", "200"],
++        )
++
++    def test_mxfp4_120b(self):
++        self.run_test(
++            model_variant="120b",
++            quantization="mxfp4",
++            expected_score_of_reasoning_effort={
++                # The ADAPTED floor, re-measured on a reference whose chat endpoint renders the
++                # reasoning effort and returns the final channel (an earlier reference dropped the
++                # field, so an earlier floor of 112/198 had been measured at medium effort on the
++                # whole text). Five fresh runs on this verifier's own permutation seed at low effort
++                # scored 127, 133, 117, 133 and 124 of 198 (mean 0.640404, run-to-run sample sd
++                # 0.033955, binomial sd 0.034104); the minimum does not clear 0.61, so the rule's second
++                # branch applies: floor(mean - 3 sd) = 0.538537, floored to a whole question, is 106/198.
++                # Measured 2026-09-24; the scores and arithmetic are in tests/config.json infb.bars.
++                "low": 106 / 198,
++                # remove to speed up
++                # "medium": 0.61,
++                # "high": 0.61,
++            },
++            other_args=[
++                "--tp",
++                "4",
++                "--cuda-graph-max-bs",
++                "200",
++                "--mem-fraction-static",
++                "0.93",
++            ],
++        )
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/test/srt/test_gpt_oss_common.py b/test/srt/test_gpt_oss_common.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..74b26071bc39603cc81b8e139e440c031a202614
+--- /dev/null
++++ b/test/srt/test_gpt_oss_common.py
+@@ -0,0 +1,99 @@
++from concurrent.futures import ThreadPoolExecutor
++from types import SimpleNamespace
++from typing import Dict, List, Literal, Optional
++
++from sglang.srt.utils import kill_process_tree
++from sglang.test.run_eval import run_eval
++from sglang.test.test_utils import (
++    DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
++    DEFAULT_URL_FOR_TEST,
++    CustomTestCase,
++    popen_launch_server,
++)
++
++_base_url = DEFAULT_URL_FOR_TEST
++
++
++class BaseTestGptOss(CustomTestCase):
++    def run_test(
++        self,
++        model_variant: Literal["20b", "120b"],
++        quantization: Literal["mxfp4", "bf16"],
++        expected_score_of_reasoning_effort: Dict[str, float],
++        other_args: Optional[List[str]] = None,
++    ):
++        if other_args is None:
++            other_args = []
++
++        model = {
++            ("20b", "bf16"): "lmsys/gpt-oss-20b-bf16",
++            ("120b", "bf16"): "lmsys/gpt-oss-120b-bf16",
++            ("20b", "mxfp4"): "openai/gpt-oss-20b",
++            ("120b", "mxfp4"): "openai/gpt-oss-120b",
++        }[(model_variant, quantization)]
++
++        if model_variant == "20b":
++            other_args += ["--cuda-graph-max-bs", "600"]
++
++        self._run_test_raw(
++            model=model,
++            expected_score_of_reasoning_effort=expected_score_of_reasoning_effort,
++            other_args=other_args,
++        )
++
++    def _run_test_raw(
++        self,
++        model: str,
++        expected_score_of_reasoning_effort: Dict[str, float],
++        other_args: List[str],
++    ):
++        process = popen_launch_server(
++            model,
++            _base_url,
++            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
++            other_args=other_args,
++        )
++
++        try:
++            # run multiple tests in parallel since we are mostly bound by the longest generate sequence
++            # instead of the number of questions
++            with ThreadPoolExecutor(max_workers=4) as executor:
++                list(
++                    executor.map(
++                        lambda d: self._run_one_eval(**d),
++                        [
++                            dict(
++                                model=model,
++                                reasoning_effort=reasoning_effort,
++                                expected_score=expected_score,
++                            )
++                            for reasoning_effort, expected_score in expected_score_of_reasoning_effort.items()
++                        ],
++                    )
++                )
++        finally:
++            kill_process_tree(process.pid)
++
++    def _run_one_eval(self, model, reasoning_effort, expected_score):
++        args = SimpleNamespace(
++            base_url=_base_url,
++            model=model,
++            eval_name="gpqa",
++            num_examples=198,
++            # use enough threads to allow parallelism
++            num_threads=198,
++            # TODO 4k is still not enough, we need e.g. 64k token, but that is super slow
++            # otherwise a lot of questions are not answered
++            max_tokens=4096,
++            # simple-evals by default use 0.5 and is better than 0.0 temperature
++            # but here for reproducibility, we use 0.1
++            temperature=0.1,
++            reasoning_effort=reasoning_effort,
++        )
++
++        print(f"Evaluation start: {model=} {reasoning_effort=} {expected_score=}")
++        metrics = run_eval(args)
++        print(
++            f"Evaluation end: {model=} {reasoning_effort=} {expected_score=} {metrics=}"
++        )
++        self.assertGreaterEqual(metrics["score"], expected_score)

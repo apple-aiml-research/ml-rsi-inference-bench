@@ -1,0 +1,389 @@
+{
+  "sequence_id": "sd3m-lora-lifecycle-v4",
+  "status": "specified",
+  "setting": "ONE engine instance, built once by DiffGenerator.from_pretrained(model_path=<the staged SD3-medium>, num_gpus=1). After each op the SAME fixtures are generated in the same order (their prompt, seed, steps, guidance and size from tests/sd3_golden.json), so two requests may differ only by the adapter state they were served under.",
+  "fixtures": [
+    "astronaut_cfg1",
+    "astronaut"
+  ],
+  "api": {
+    "set": "DiffGenerator.set_lora(<adapter nickname>, lora_path=<its safetensors file>, strength=<scale>)",
+    "disable": "DiffGenerator.unmerge_lora_weights()  -- the pinned engine documents it as 'unmerge LoRA weights from the base model; this also disables LoRA'",
+    "scale": "DiffGenerator.set_lora(<the active adapter>, lora_path=<its file>, strength=<scale>)",
+    "base": "no call",
+    "why_these": "Exercise set_lora for adapter selection and strength, and unmerge_lora_weights for disabling adapters. merge_lora_weights(strength=...) is outside this request sequence.",
+    "multi": "DiffGenerator.set_lora([<nick>, ...], lora_path=[<file>, ...], strength=[<scale>, ...]) -- several adapters active at once, each at its own scale",
+    "refuse": "an op marked refused must raise before any weight changes; the previous state stays active"
+  },
+  "adapters": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+  ],
+  "ops": [
+    {
+      "op": "base",
+      "why": "r0: the base model, before any adapter is ever loaded"
+    },
+    {
+      "op": "base",
+      "why": "r1: the same again -- the engine's own repeat noise, the level the equal pairs are judged at"
+    },
+    {
+      "op": "set",
+      "adapter": "A",
+      "scale": 1.0,
+      "why": "r2: A at full scale"
+    },
+    {
+      "op": "set",
+      "adapter": "B",
+      "scale": 1.0,
+      "why": "r3: B REPLACES A; A\\B modules must be back to base, B\\A modules gain B"
+    },
+    {
+      "op": "disable",
+      "why": "r4: disabled after two different adapters: must be the base model again"
+    },
+    {
+      "op": "set",
+      "adapter": "A",
+      "scale": 1.0,
+      "why": "r5: A again: must reproduce r2 (no residue from B or from the disable)"
+    },
+    {
+      "op": "scale",
+      "scale": 0.0,
+      "why": "r6: A at scale 0 is the base model"
+    },
+    {
+      "op": "scale",
+      "scale": 0.5,
+      "why": "r7: A at half scale, judged against the merged reference at scale 0.5 (the delta is linear in scale, the output is not)"
+    },
+    {
+      "op": "set",
+      "adapter": "C",
+      "scale": 1.0,
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "neighbours": {
+        "rslora_ignored": {
+          "adapter": "C",
+          "scale": 1.0,
+          "variant": "rslora_ignored"
+        }
+      },
+      "why": "r8: rsLoRA C (r 16, alpha 16): scale * alpha / sqrt(r) = 4 * B @ A; an engine reading alpha / r serves a quarter (the rslora_ignored neighbour)"
+    },
+    {
+      "op": "set",
+      "adapter": "D",
+      "scale": 1.0,
+      "refused": true,
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "neighbours": {
+        "rslora_ignored": {
+          "adapter": "C",
+          "scale": 1.0,
+          "variant": "rslora_ignored"
+        }
+      },
+      "why": "r9: a DoRA file: set_lora must raise before any weight changes; C stays active, so r9 equals r8"
+    },
+    {
+      "op": "set",
+      "adapter": "F",
+      "scale": 1.0,
+      "refused": true,
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "neighbours": {
+        "rslora_ignored": {
+          "adapter": "C",
+          "scale": 1.0,
+          "variant": "rslora_ignored"
+        }
+      },
+      "why": "r10: a LoRA-bias file, refused likewise; after two refusals C is still served exactly (r10 equals r8)"
+    },
+    {
+      "op": "set",
+      "adapter": "E",
+      "scale": 1.0,
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "neighbours": {
+        "pattern_ignored": {
+          "adapter": "E",
+          "scale": 1.0,
+          "variant": "pattern_ignored"
+        }
+      },
+      "why": "r11: alpha_pattern E: to_q / to_k / to_v at alpha 32, the rest at 8 (r 8); dropping the pattern serves those modules at a quarter (the pattern_ignored neighbour)"
+    },
+    {
+      "adapter": [
+        "A",
+        "C"
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ],
+      "op": "set",
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "neighbours": {
+        "first_only": {
+          "adapter": "A",
+          "scale": 1.0
+        },
+        "last_only": {
+          "adapter": "C",
+          "scale": 0.5
+        },
+        "first_at_last_scale": {
+          "adapter": [
+            "A",
+            "C"
+          ],
+          "scale": [
+            1.0,
+            0.5
+          ],
+          "variant": "first_at_last_scale"
+        }
+      },
+      "why": "r12: A at 1 and C at 0.5 at once: every linear computes W + 1 * (16/8) * B_A @ A_A + 0.5 * (16/sqrt(16)) * B_C @ A_C, each adapter with its own scaling. first_at_last_scale and last_only are incorrect alternatives."
+    },
+    {
+      "adapter": [
+        "A",
+        "C"
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ],
+      "op": "set",
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "neighbours": {
+        "first_only": {
+          "adapter": "A",
+          "scale": 1.0
+        },
+        "last_only": {
+          "adapter": "C",
+          "scale": 0.5
+        },
+        "first_at_last_scale": {
+          "adapter": [
+            "A",
+            "C"
+          ],
+          "scale": [
+            1.0,
+            0.5
+          ],
+          "variant": "first_at_last_scale"
+        }
+      },
+      "why": "r13: the same request again must equal r12; setting the same adapter configuration twice must not accumulate duplicate entries."
+    },
+    {
+      "op": "disable",
+      "fixtures": [
+        "astronaut_cfg1"
+      ],
+      "why": "r14: disabled after all of that: the base model again (equals r4)"
+    }
+  ],
+  "expected_states": [
+    {
+      "adapter": null,
+      "scale": 0.0
+    },
+    {
+      "adapter": null,
+      "scale": 0.0
+    },
+    {
+      "adapter": "A",
+      "scale": 1.0
+    },
+    {
+      "adapter": "B",
+      "scale": 1.0
+    },
+    {
+      "adapter": null,
+      "scale": 0.0
+    },
+    {
+      "adapter": "A",
+      "scale": 1.0
+    },
+    {
+      "adapter": null,
+      "scale": 0.0
+    },
+    {
+      "adapter": "A",
+      "scale": 0.5
+    },
+    {
+      "adapter": "C",
+      "scale": 1.0
+    },
+    {
+      "adapter": "C",
+      "scale": 1.0
+    },
+    {
+      "adapter": "C",
+      "scale": 1.0
+    },
+    {
+      "adapter": "E",
+      "scale": 1.0
+    },
+    {
+      "adapter": [
+        "A",
+        "C"
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ]
+    },
+    {
+      "adapter": [
+        "A",
+        "C"
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ]
+    },
+    {
+      "adapter": null,
+      "scale": 0.0
+    }
+  ],
+  "repeat_pair": [
+    0,
+    1
+  ],
+  "equal_pairs": [
+    [
+      2,
+      5
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      8,
+      9
+    ],
+    [
+      8,
+      10
+    ],
+    [
+      4,
+      14
+    ]
+  ],
+  "cross_regime_pairs": [
+    [
+      0,
+      4
+    ]
+  ],
+  "reading_points": {
+    "what": "the served DiT's forward at the n-th DISTINCT timestep of a request (step index, 0-based), every pass at that step (a CFG request may run its two branches as separate passes or as one batch; both are read)",
+    "scored": [
+      [
+        "astronaut",
+        0
+      ],
+      [
+        "astronaut",
+        13
+      ],
+      [
+        "astronaut_cfg1",
+        13
+      ]
+    ],
+    "diagnostic": [
+      [
+        "astronaut",
+        27
+      ],
+      [
+        "astronaut_cfg1",
+        0
+      ]
+    ],
+    "why": "Sample early and middle denoising steps against the independent reference. Step 27 is diagnostic because late-step numerical variation can obscure the adapter effect."
+  },
+  "judgement": {
+    "reference_agreement": "lora_reference_verdict pools each request's reading points against diffusers' SD3Transformer2DModel in float32 on the candidate's captured inputs. Weights W + scale * (alpha / r) * B @ A are merged in float64 for base, X@s/2, X@s and X@2s. The nearest grid state is the served state. Margin compares the intended-state distance with the nearest distinguishable neighbour; C normalizes by a bf16 replay with the same merged weights rounded once. Pass requires the intended state, margin <= margin_max, and C <= floor_ratio_max x max(1, C of the first base request). Policy constants are in day0_policy.py; this LoRA analysis is experimental and excluded from the task score.",
+    "discriminates": "A grid neighbour enters the margin only where the bf16 legal port distinguishes it within power_margin; the argmin uses the whole grid. Per-point normalization by the candidate's own base-request error is diagnostic only because it can confound numerical error with the adapter effect.",
+    "state_isolation": "each equal pair's final images, and its DiT outputs at step 0, must be as close as the repeat pair: bit-identical if the repeat pair is. Equal pairs are served on the same forward path (both after an adapter was first loaded); a cross-regime pair (the base model before any adapter vs after unmerge) is recorded with its rel_l2 and judged only by reference agreement, because an engine's LoRA wrapper may legally compute the base model with a different rounding (e.g. an unfused bias add)",
+    "signature": "the served grid state per request (base / half / state / double) is the strength signature: alpha/r dropped serves half for A and double for B, a scale ignored serves double on A@0.5, a no-op serves base. beta is recorded per reading point as a diagnostic only -- a projection, not a strength estimate",
+    "v4": "r8-r11 use lora_reference_agreement on the grid base / X@s/2 / X@s / X@2s plus each op's neighbours; a refused op that does not raise fails it. r12-r13 use lora_multi_adapter_composition on the grid base / state / first_only / last_only / first_at_last_scale, plus the equal pair [12, 13]. These LoRA analyses are experimental and excluded from the task score."
+  },
+  "targeted_negatives": {
+    "lora_api_unavailable": "the pipeline accepts no adapter: every set_lora answers an error ('Lora is not enabled' at the pinned engine)",
+    "keys_unmapped": "set_lora is accepted but no adapter key reaches a layer: every request is the base model",
+    "alpha_over_r_ignored": "delta = scale * B@A: A at half its strength (r2, r5, r7), B at double (r3)",
+    "switch_leaks": "setting B leaves A merged on the modules B does not target (r3), and the disable cannot remove it (r4 != r0)",
+    "transposed_delta / scale_ignored / context_stream_unmapped / restore_by_subtraction": "Reject a transposed low-rank delta through the independent component reference; detect ignored scale with the zero and half-scale requests, omitted context targets with the adapter reference, and lossy weight restoration with the repeated base requests.",
+    "v4": {
+      "rslora_ignored": "C served at alpha / r: r8-r10 read the rslora_ignored neighbour",
+      "variant_served": "a DoRA or LoRA-bias file served as plain LoRA: r9 / r10 do not raise and read off C@1",
+      "alpha_pattern_ignored": "r11 reads pattern_ignored",
+      "multi_last_scale": "r12 reads first_at_last_scale on the merge path",
+      "multi_resend_doubles": "r13 differs from r12"
+    }
+  },
+  "legal_variants": [
+    "merged at set time with an exact snapshot restore (the pinned engine's default merged mode)",
+    "unmerged: base GEMM plus scale*(alpha/r)*(x@A^T)@B^T at run time",
+    "fused QKV with the q/k/v deltas stacked in the fused layout",
+    "LoRA arithmetic in bf16 or fp32"
+  ],
+  "multi_equal_pairs": [
+    [
+      12,
+      13
+    ]
+  ],
+  "refused_ops": [
+    9,
+    10
+  ],
+  "multi_adapter_requests": [
+    12,
+    13
+  ],
+  "pairs_note": "a pair is compared on the fixtures BOTH of its requests generate (v4's r8-r14 run astronaut_cfg1 only): [4, 14] on astronaut_cfg1; equal_pairs feed lora_state_isolation, multi_equal_pairs lora_multi_adapter_composition"
+}

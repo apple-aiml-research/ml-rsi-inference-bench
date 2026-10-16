@@ -1,0 +1,310 @@
+{
+ "reasoning": [
+  {
+   "prompt": "What is 12 times 13?",
+   "thinking": true
+  },
+  {
+   "prompt": "Name the largest ocean on Earth.",
+   "thinking": true
+  },
+  {
+   "prompt": "What is 12 times 13?",
+   "thinking": false
+  },
+  {
+   "prompt": "Name the largest ocean on Earth.",
+   "thinking": false
+  },
+  {
+   "prompt": "Is 91 a prime number?",
+   "thinking": false
+  }
+ ],
+ "tools": [
+  {
+   "id": "single",
+   "expected_calls": 1,
+   "messages": [
+    {
+     "role": "user",
+     "content": "What is the weather in Paris for the next 3 days, in metric units?"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Weather forecast for a city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "options": {
+         "type": "object",
+         "properties": {
+          "units": {
+           "type": "string"
+          },
+          "alerts": {
+           "type": "boolean"
+          }
+         }
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "location",
+        "days"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "two",
+   "expected_calls": 2,
+   "messages": [
+    {
+     "role": "user",
+     "content": "Get the weather for Paris and for Tokyo, 2 days each, metric."
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Weather forecast for a city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "options": {
+         "type": "object",
+         "properties": {
+          "units": {
+           "type": "string"
+          },
+          "alerts": {
+           "type": "boolean"
+          }
+         }
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "location",
+        "days"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "second_turn",
+   "expected_calls": 0,
+   "messages": [
+    {
+     "role": "user",
+     "content": "What is the weather in Rome for 1 day?"
+    },
+    {
+     "role": "assistant",
+     "content": "",
+     "tool_calls": [
+      {
+       "id": "call_0",
+       "type": "function",
+       "function": {
+        "name": "get_weather",
+        "arguments": "{\"location\": \"Rome\", \"days\": 1, \"options\": {\"units\": \"metric\", \"alerts\": false}, \"fields\": [\"temp\"]}"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "tool_call_id": "call_0",
+     "content": "{\"temp\": 21}"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Weather forecast for a city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "options": {
+         "type": "object",
+         "properties": {
+          "units": {
+           "type": "string"
+          },
+          "alerts": {
+           "type": "boolean"
+          }
+         }
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "location",
+        "days"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "required",
+   "expected_calls": 1,
+   "tool_choice": "required",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Look up the weather in Berlin."
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Weather forecast for a city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "options": {
+         "type": "object",
+         "properties": {
+          "units": {
+           "type": "string"
+          },
+          "alerts": {
+           "type": "boolean"
+          }
+         }
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "location",
+        "days"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "named",
+   "expected_calls": 1,
+   "tool_choice": {
+    "type": "function",
+    "function": {
+     "name": "get_weather"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "content": "Weather in Madrid please."
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Weather forecast for a city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "location": {
+         "type": "string"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "options": {
+         "type": "object",
+         "properties": {
+          "units": {
+           "type": "string"
+          },
+          "alerts": {
+           "type": "boolean"
+          }
+         }
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "location",
+        "days"
+       ]
+      }
+     }
+    }
+   ],
+   "graded": [
+    "nonstream"
+   ]
+  }
+ ]
+}

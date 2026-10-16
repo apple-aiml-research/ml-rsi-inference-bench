@@ -1,0 +1,151 @@
+{
+  "schema": "infb-kimi-state-lifecycle-fixtures/1",
+  "note": "The held-out state-lifecycle workloads, fixed before any candidate runs: sessions, families, lengths, counts, orders, salts, coverage rules and which requests are numerically scored targets. Prompts are contiguous spans of the hidden natural-text pool (infb_efficiency/pool.jsonl.xz, never shipped to the agent), tokenized with the checkpoint's tokenizer; each span's offset is a deterministic function of the seed, the family and the request's name, so a draw does not depend on how many requests ran before it. Turnover requests are setup traffic: their completion length, finiteness and engine health are checked, and they are not teacher-forced. Every other generated request is a scored target unless marked otherwise.",
+  "pool": {
+    "path": "infb_efficiency/pool.jsonl.xz",
+    "sha256": "fc9428a776ecc030c4b0eeb6b5aea3c7425052913acb3d880b4b0cb4190cd472",
+    "tokenizer": "/model",
+    "seed": 55017
+  },
+  "block_tokens": 512,
+  "coverage_waves": 3,
+  "probe_words": ["The", "In", "It", "This", "We", "When", "There", "For"],
+  "probe_token_ids": [1008, 767, 1744, 2512, 2201, 5579, 5472, 2816],
+  "probe_note": "eight different non-special token ids (each word one token, below the first special id 163584), none the public example's one-token prompt ('Hello', 19180); resolved with the checkpoint's tokenizer on 2026-10-01",
+  "sessions": {
+    "tp4": {"deployment": "tp4", "families": ["metadata", "d99", "continued", "fresh_during_decode"]},
+    "dp2": {"deployment": "dp2", "families": ["metadata", "d99", "continued", "fresh_during_decode", "dp_idle", "dp_load", "dp_quality"]},
+    "apc": {"deployment": "apc", "families": ["d99", "continued", "fresh_during_decode", "a1", "a6", "a2", "a3", "a4", "a5", "binding"]},
+    "pressure": {"deployment": "apc-pressure", "families": ["p1", "p2", "p4"]}
+  },
+  "families": {
+    "metadata": {
+      "tp4": {"families": "all", "ranks": "(0, 0..3)"},
+      "dp2": {"families": "replay", "ranks": "(0..1, 0..3)"},
+      "rule": "the private RPC infb_kda_metadata on every worker; each worker writes its own record (infb_kda_private/specification.json metadata)"
+    },
+    "d99": {
+      "turnover": {"input_tokens": 7680, "output_tokens": 8, "concurrency": 32, "round_requests": 64,
+                   "max_rounds": {"tp4": 16, "apc": 16, "dp2": 32}},
+      "repeats": 16,
+      "max_tokens": 32,
+      "rule": "turnover rounds until the ownership stream shows a reused state block on every replica (at most max_rounds); then each probe token id alone, 16 repeats, in repeat-major order. A probe whose state rows were never used before by another request is still scored; one more round runs (within the cap) and the same (token, repeat) is submitted next, at most coverage_waves times. Coverage: every (token, repeat) has a scored target on reused state storage."
+    },
+    "continued": {
+      "lengths": [2, 3],
+      "per_length": 8,
+      "max_tokens": 32,
+      "rule": "16 short prompts submitted together, then continued: fresh prefill of 2-3 tokens and valid one-token continuation rows, all scored"
+    },
+    "fresh_during_decode": {
+      "decode_requests": 16,
+      "prompt_tokens": 512,
+      "max_tokens": 128,
+      "probe_max_tokens": 32,
+      "rule": "16 streamed requests; after their first streamed output, one fresh one-token probe per probe token id, submitted together. Coverage: a step that schedules a fresh one-token probe beside running requests; up to coverage_waves waves."
+    },
+    "dp_idle": {
+      "lengths": [1, 63, 512, 2049],
+      "max_tokens": 32,
+      "rule": "sequential requests, one at a time"
+    },
+    "dp_load": {
+      "bursts": [1, 3, 17, 31, 7, 2],
+      "lengths": [1, 63, 512, 2049, 8193, 12000],
+      "max_tokens": 128,
+      "waves": [17, 3],
+      "rule": "each burst submitted together and drained; prompt lengths cycle across the bursts; then 17 streamed requests and, after their first output, 3 more, with the same length cycle"
+    },
+    "dp_coverage": {
+      "rule": "over the dp2 session's d99, continued, fresh, idle and load workloads: both replicas schedule real requests; at least one dummy/idle forward; at least one replayed graph extent above the replica's own padded live count; FULL graph replays observed on both replicas' ordinary decode; all eight workers' files"
+    },
+    "dp_quality": {
+      "gsm8k": "config.json infb.gsm8k (all 1,319 questions, the published floor)",
+      "fidelity": "test_fidelity_against_model_author's protocol and bars on the hidden 36 sequences",
+      "concurrency": "test_concurrent_state_isolation's protocol and bars"
+    },
+    "a1": {
+      "lengths": [511, 512, 513, 1023, 1024, 1025, 2049, 2111],
+      "max_tokens": 64,
+      "hit_prefixes": [512, 1024, 2048],
+      "rule": "cold prompts at each length, each with its own salt; for each hit prefix P, warm P + one suffix token, then P + another, sharing the case salt; the second must consume the completed prefix at len(P)"
+    },
+    "a6": {
+      "warm_prefixes": [512, 1024, 2048],
+      "hits": 8,
+      "fresh_lengths": [1, 63, 513, 2049],
+      "fresh": 8,
+      "max_tokens": 128,
+      "rule": "warm the three prefixes as in a1 (case salt), then one wave of 8 hits cycling the prefixes with new suffixes (case salt) and 8 fresh prompts cycling the fresh lengths (own salts)"
+    },
+    "a2": {
+      "prefix": 2048,
+      "warm_max_tokens": 16,
+      "suffixes": [1, 63, 65, 513],
+      "order": [0, 1, 0, 2, 3, 1],
+      "max_tokens": 128,
+      "rule": "warm prefix + one suffix token; then the branches prefix + suffix_i executed in order, all in the case salt; each must restore the retained prefix state equal to the producer's"
+    },
+    "a3": {
+      "prefix": 2048,
+      "siblings": 8,
+      "suffix": 63,
+      "max_tokens": 64,
+      "blocker": 512,
+      "blocker_max_tokens": 1024,
+      "rule": "a blocker prompt (blocker tokens, its first token unlike the prefix's, greedy, ignore_eos, scored by nothing) is streamed first; once its first token arrives the engine is in steady decode, and the eight cold siblings go as ONE /v1/completions carrying eight token-ID prompts (case salt), so they are admitted at one step boundary rather than by arrival jitter; the blocker is cancelled once the eight complete; then one more sibling after they complete; no restore of a state not completed in an earlier step, and the follow-up must reuse the prefix"
+    },
+    "a4": {
+      "prompts": [4161, 6145],
+      "max_tokens": 64,
+      "siblings": {"4161": [2048, 3072, 4096], "6145": [2048, 5120, 6144]},
+      "sibling_suffix": 63,
+      "sibling_max_tokens": 64,
+      "rule": "each long prompt alone (case salt), its prefill chunks recorded; then siblings sharing its first k tokens plus a new suffix; each sibling must restore the largest completed boundary at or below k that the native trace records as produced and retained"
+    },
+    "a5": {
+      "prompt": 2049,
+      "max_tokens": 576,
+      "history_prefixes": [2559, 2560, 2561],
+      "suffix": 63,
+      "follow_max_tokens": 128,
+      "rule": "prompt of 4B+1 generating 576; later prompts are the prompt plus the first (k - 2049) generated tokens plus a new suffix (case salt); each must restore the largest completed boundary at or below k, and at k >= 2560 that boundary lies in generated history"
+    },
+    "binding": {
+      "prefix": 1024,
+      "layers": [0, 19],
+      "views": [["recurrent"], ["conv_q", "conv_k", "conv_v"]],
+      "add": 8.0,
+      "max_tokens": 32,
+      "rule": "per (layer, views) pass, its own salt: warm prefix + s0; control prefix + s1 (no intervention); then in a second salt warm prefix + s0, target prefix + s1 with the intervention at its restore, then sibling prefix + s2. The target's continuation must differ from the control's; the sibling must restore the producer's state bitwise. The perturbed target is not a scored target."
+    },
+    "p1": {
+      "warm_prefix": 2048,
+      "warm_max_tokens": 16,
+      "fill_count": 32,
+      "fill_prompt_tokens": 4097,
+      "fill_max_tokens": 64,
+      "rule": "warm prefix + s0; prefix + s1 must hit; 32 distinct fill prompts submitted together; turnover: a block of the warm prefix freshly allocated to another request; then prefix + s0 again (a miss is valid after eviction); then prefix + s2 must hit. Up to coverage_waves fills to observe the turnover."
+    },
+    "p2": {
+      "requests": 16,
+      "prompt_tokens": 512,
+      "max_tokens": 576,
+      "branch_suffix": 7,
+      "branch_max_tokens": 32,
+      "rule": "16 unique prompts submitted together (case salt), up to coverage_waves waves; case 2: a resumed request with prior output > 0 and history % 512 != 0; case 3: among qualifying resumed requests whose completed boundary is retained at wave end, the earliest by (step, batch row); its largest retained completed boundary strictly below its final computed count; a branch of that history prefix plus a new suffix must restore it"
+    },
+    "p4": {
+      "requests": 16,
+      "prompt_tokens": 1025,
+      "max_tokens": 128,
+      "cancel": [0, 5, 10, 15],
+      "fresh_max_tokens": 32,
+      "branches": 2,
+      "branch_prefix": 1024,
+      "branch_suffix": 7,
+      "branch_max_tokens": 32,
+      "rule": "16 streamed requests (case salt); the four named are cancelled through the client disconnect after their first output; after the rest complete, four fresh one-token requests (probe ids 0..3) and two branches from the earliest-finished unaffected request whose 1,024-token boundary is retained; cancelled requests must finish and leave scheduling; their partial outputs are scored"
+    }
+  }
+}

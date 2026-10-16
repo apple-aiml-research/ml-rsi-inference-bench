@@ -1,0 +1,281 @@
+{
+  "schema": "infb-kda-private/1",
+  "note": "The verifier's protected KDA specification: the loaded-layer correctness schedule, the timing validity and pairing policy, the binding observation and the GDN preservation cases. Moved unchanged from the evaluation tree's protocol.json; the seeds are config.json's (infb.kda.seed, infb.kda.gdn_seed). Never shipped to the agent. The mathematics schedule carries a case manifest (ids, rows, history, steps, seed offsets, layers, ranks) and the fresh length-one case; metadata names the native-metadata schedules.",
+  "mathematics": {
+    "single_sequence_lengths": [1, 63, 64, 65, 127, 128, 129, 512, 2048],
+    "initial_state": "zero and valid nonzero history for every length, one included; a valid row continues history_tokens earlier tokens, a fresh row has none",
+    "history_tokens": 128,
+    "packed_sequences": [[63, 65, 129], [1, 127, 64]],
+    "repeated_decode": {"batch": 3, "steps": 8},
+    "split_prefill": [[63, 64, 1, 1], [127, 128, 257, 1, 1], [1024, 1024, 1, 1]],
+    "case_to_layer": "case i runs on loaded KDA layer i modulo 20; split case i on layer i",
+    "manifest_note": "the cases keep their order, seeds (seed + 73 i) and layers; the fresh length-one case is appended as case 20, for 21 cases plus three splits. Every case runs on all four TP ranks.",
+    "manifest": [
+      {
+        "id": "single-1-valid",
+        "lengths": [1],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 0,
+        "layer": 0,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-63-fresh",
+        "lengths": [63],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 73,
+        "layer": 1,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-63-valid",
+        "lengths": [63],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 146,
+        "layer": 2,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-64-fresh",
+        "lengths": [64],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 219,
+        "layer": 3,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-64-valid",
+        "lengths": [64],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 292,
+        "layer": 4,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-65-fresh",
+        "lengths": [65],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 365,
+        "layer": 5,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-65-valid",
+        "lengths": [65],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 438,
+        "layer": 6,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-127-fresh",
+        "lengths": [127],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 511,
+        "layer": 7,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-127-valid",
+        "lengths": [127],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 584,
+        "layer": 8,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-128-fresh",
+        "lengths": [128],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 657,
+        "layer": 9,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-128-valid",
+        "lengths": [128],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 730,
+        "layer": 10,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-129-fresh",
+        "lengths": [129],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 803,
+        "layer": 11,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-129-valid",
+        "lengths": [129],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 876,
+        "layer": 12,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-512-fresh",
+        "lengths": [512],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 949,
+        "layer": 13,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-512-valid",
+        "lengths": [512],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 1022,
+        "layer": 14,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-2048-fresh",
+        "lengths": [2048],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 1095,
+        "layer": 15,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-2048-valid",
+        "lengths": [2048],
+        "valid": true,
+        "computed": [128],
+        "steps": 1,
+        "seed_offset": 1168,
+        "layer": 16,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "packed-63-65-129-valid",
+        "lengths": [63, 65, 129],
+        "valid": true,
+        "computed": [128, 128, 128],
+        "steps": 1,
+        "seed_offset": 1241,
+        "layer": 17,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "packed-1-127-64-valid",
+        "lengths": [1, 127, 64],
+        "valid": true,
+        "computed": [128, 128, 128],
+        "steps": 1,
+        "seed_offset": 1314,
+        "layer": 18,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "decode-3x8-valid",
+        "lengths": [1, 1, 1],
+        "valid": true,
+        "computed": [128, 128, 128],
+        "steps": 8,
+        "seed_offset": 1387,
+        "layer": 19,
+        "ranks": [0, 1, 2, 3]
+      },
+      {
+        "id": "single-1-fresh",
+        "lengths": [1],
+        "valid": false,
+        "computed": [0],
+        "steps": 1,
+        "seed_offset": 1460,
+        "layer": 0,
+        "ranks": [0, 1, 2, 3]
+      }
+    ]
+  },
+  "timing": {
+    "paired_comparison": "median reference time / median candidate time, per family, on the same host",
+    "host_canary": {
+      "tolerance": 0.1,
+      "rule": "each family is bracketed by host canary readings; a bracket more than the tolerance below the baseline reading is invalid; an invalid family is measured once more, and a second invalid bracket asks for a rerun and never decides a verdict"
+    },
+    "stop_rule": "a candidate axis stops after a fully measured family whose paired verdict fails; families not reached are recorded as not measured, blocked by that failure"
+  },
+  "binding": {
+    "launch": "a separate fresh server that the private serve wrapper launches at the recipe with the binding instrumentation installed through its worker extension; never timed",
+    "workload": "16 decode tokens after a 512-token prompt, then eight 64-token streams overlapping three 2,048-token prefills of eight tokens each, injected after real decode tokens arrive",
+    "baseline": "two matched repetitions of a 129-token prompt generating 16 tokens",
+    "interventions": "for each of the 20 layers: output scaled by 0, and 8.0 added to the recurrent state written after the call",
+    "traces": "one complete profiler trace from every rank, with native prefill and mixed markers on every layer and graph replay"
+  },
+  "gdn": {
+    "packed_prefill_lengths": [[63], [64], [65], [127], [128], [129], [512], [63, 65, 129]],
+    "initial_state": "zero and nonzero for every packed case; ordinary batch-two prefill with nonzero state for the single lengths",
+    "decode_batches": [1, 3, 16, 64],
+    "decode_steps": 8,
+    "decode_slots": "sparse odd-numbered slots; every unused slot must stay bit-identical",
+    "cases": 55
+  },
+  "metadata": {
+    "note": "The native-metadata schedules of test_native_state_metadata_and_replay, run by metadata.py through the private RPC infb_kda_metadata. Lengths, counts, populations and extents are fixed; seeds are the component seeds; each case seed is the component seed plus SHA256 of its name (metadata.case_seed), which also orders its slot permutation and validity draws.",
+    "seeds": [1729, 2027],
+    "history_tokens": 128,
+    "mixed_validity": [
+      {"lengths": [1, 1, 1], "computed": [0, 128, 0]},
+      {"lengths": [1, 1, 63, 65], "computed": [0, 512, 0, 128]},
+      {"lengths": [1, 1, 1, 127], "computed": [64, 0, 1024, 0]}
+    ],
+    "mixed_validity_slots": "distinct odd (nonadjacent) slots in a seeded order; every slot of the region holds finite nonzero stale state",
+    "mixed_validity_steps": 2,
+    "turnover": {
+      "first": {"lengths": [9, 1, 33, 1], "computed": [64, 150, 32, 300], "slots": [1, 5, 9, 3]},
+      "second": {"lengths": [1, 1, 1, 1], "computed": [0, 301, 0, 0], "slots": [9, 3, 1, 5]},
+      "rule": "valid history in slots 1, 5 and 9 beside a request in slot 3; the owners of 1, 5 and 9 are released and fresh one-token requests take 9, 1 and 5 in that order, interleaved with the still-live request continuing in slot 3; then every row continues once more"
+    },
+    "branch": {
+      "prefix": {"length": 96, "slot": 2},
+      "branches": [{"suffix": 33, "slot": 7}, {"suffix": 5, "slot": 13}],
+      "rule": "a fresh 96-token prefix in slot 2, its four state views copied into slots 7 and 13; branch 7 then branch 13 with different suffixes, then each branch revisited for one token; slot 2 must stay unchanged"
+    },
+    "replay": {
+      "capture": [8, 32],
+      "populations": [3, 17, 1, 31, 2, 0, 7],
+      "fresh_fraction": 0.4,
+      "region": 76,
+      "rule": "per population: one-token rows in seeded slots of 1..72 with seeded validity; every builder staged as the runner stages a step; the population layer's graph of the smallest captured extent at least the population replayed; population 0 is the runner's dummy forward (capture-entry staging, every row on the null block)"
+    },
+    "checkpoint_split": [[511, 1, 1], [512, 1, 63], [513, 511, 1]],
+    "layers": "mixed validity, turnover and branch on all 20 loaded layers for both seeds; replay populations then checkpoint splits on one cyclic layer counter, seed-major, covering every layer once",
+    "deployments": {"tp4": "all families, TP ranks 0..3", "dp2": "replay on each replica, (dp, tp) ranks (0..1, 0..3)"}
+  }
+}

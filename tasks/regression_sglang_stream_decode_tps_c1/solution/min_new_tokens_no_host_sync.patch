@@ -1,0 +1,74 @@
+--- a/python/sglang/srt/sampling/penaltylib/min_new_tokens.py
++++ b/python/sglang/srt/sampling/penaltylib/min_new_tokens.py
+@@ -8,6 +8,8 @@
+     Min new tokens penalizer penalizes tokens based on the length of the output.
+     """
+ 
++    uses_output_ids = False
++
+     def _is_required(self) -> bool:
+         return any(
+             req.sampling_params.min_new_tokens > 0 for req in self.orchestrator.reqs()
+@@ -67,8 +69,8 @@
+         self.len_output_tokens += 1
+ 
+     def _apply(self, logits: torch.Tensor):
+-        mask = (self.len_output_tokens < self.min_new_tokens).expand_as(logits)
+-        logits[mask] += self.stop_token_penalties[mask]
++        needs_penalty = self.len_output_tokens < self.min_new_tokens
++        logits.masked_fill_(needs_penalty & (self.stop_token_penalties < 0), float("-inf"))
+ 
+     def _filter(self, keep_indices: torch.Tensor):
+         self.min_new_tokens = self.min_new_tokens[keep_indices]
+--- a/python/sglang/srt/sampling/penaltylib/orchestrator.py
++++ b/python/sglang/srt/sampling/penaltylib/orchestrator.py
+@@ -52,6 +52,12 @@
+         for penalizer in self.penalizers.values():
+             penalizer.cumulate_output_tokens(output_ids=output_ids)
+ 
++    def needs_output_ids(self) -> bool:
++        return any(
++            penalizer._is_prepared and penalizer.uses_output_ids
++            for penalizer in self.penalizers.values()
++        )
++
+     def apply(self, logits: torch.Tensor, repeat: Optional[int] = None):
+         """
+         Apply all penalizers to the logits in-place.
+@@ -170,6 +176,7 @@
+     """
+ 
+     is_multiplicative: bool = False
++    uses_output_ids: bool = True
+ 
+     def __init__(self, orchestrator: BatchedPenalizerOrchestrator):
+         self._orchestrator_ref: weakref.ReferenceType[BatchedPenalizerOrchestrator] = (
+--- a/python/sglang/srt/managers/schedule_batch.py
++++ b/python/sglang/srt/managers/schedule_batch.py
+@@ -2421,8 +2421,8 @@
+             return
+ 
+         if self.sampling_info.penalizer_orchestrator.is_required:
+-            if self.enable_overlap:
+-                # TODO: this can be slow, optimize this.
++            orchestrator = self.sampling_info.penalizer_orchestrator
++            if self.enable_overlap and orchestrator.needs_output_ids():
+                 delayed_output_ids = torch.tensor(
+                     [
+                         (
+@@ -2435,13 +2435,9 @@
+                     dtype=torch.int64,
+                     device=self.device,
+                 )
+-                self.sampling_info.penalizer_orchestrator.cumulate_output_tokens(
+-                    delayed_output_ids
+-                )
++                orchestrator.cumulate_output_tokens(delayed_output_ids)
+             else:
+-                self.sampling_info.penalizer_orchestrator.cumulate_output_tokens(
+-                    self.input_ids
+-                )
++                orchestrator.cumulate_output_tokens(self.input_ids)
+ 
+         # input_ids is set at end of previous run_batch (placeholder for
+         # overlap; next_token_ids cast for non-overlap).

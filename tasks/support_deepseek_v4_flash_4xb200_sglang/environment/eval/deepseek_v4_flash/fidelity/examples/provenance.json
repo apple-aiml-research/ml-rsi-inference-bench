@@ -1,0 +1,75 @@
+{
+ "what": "The supplied examples in the grading schema, materialized once: four model-author numerical records (512 to 8,192 tokens), two 262,144-token engine-reference records and two prefix-reuse items. Every record keeps its original bytes; each entry names its comparison authority; and two generated-history replay examples cut from the public records.",
+ "sources": {
+  "examples.jsonl": "ec72e48390d4e6eaa2f9793e57a21e02add2c9da1f1015c667f8fb711365df74",
+  "long_reach_examples.jsonl": "87693c837b533cd1bf79936c5c22e440c62e6ad5f56edff7a4c04e2617412bda",
+  "prefix_examples.jsonl": "2c092cad3230a562ca294b9cb682109683df56ca3d8d3d7749a01685a8b67233"
+ },
+ "records": {
+  "examples/long_reach/reach-code-262144-public.json": {
+   "sha256": "047086df39c72c858969a83fcc6a2db558dcf0ab0a1b4c3562f26abfbdb86f4c",
+   "from": "long_reach_examples.jsonl",
+   "published_as": "public-reach-code-L262144",
+   "authority": "identified engine-reference recording (one launch of an SGLang server at the release recipe, values rounded to 6 decimals): engine agreement, not independent model-author truth; the model-author implementation does not fit this length on four B200s"
+  },
+  "examples/long_reach/reach-prose-262144-public.json": {
+   "sha256": "77501be8b8b4d2a6475e3c016187a79b20a5e89bfea5b2826ba584a18a234275",
+   "from": "long_reach_examples.jsonl",
+   "published_as": "public-reach-prose-L262144",
+   "authority": "identified engine-reference recording (one launch of an SGLang server at the release recipe, values rounded to 6 decimals): engine agreement, not independent model-author truth; the model-author implementation does not fit this length on four B200s"
+  },
+  "examples/prefix/prefix-code-public.json": {
+   "sha256": "7ba7fd23b5075f737a05dffd1aea448d8f57eb403ecafb6c58745a38bcfcb8d3",
+   "from": "prefix_examples.jsonl",
+   "published_as": "public-prefix-code",
+   "authority": "no recorded values: the continuation's cold (flushed) log-probabilities are compared with its warm (cached-prefix) ones, a self-consistency comparison"
+  },
+  "examples/prefix/prefix-prose-public.json": {
+   "sha256": "74470d005eec801cc52d6fdb3cc1bf0b4e2987d500a546fe29b34a400e1d33c2",
+   "from": "prefix_examples.jsonl",
+   "published_as": "public-prefix-prose",
+   "authority": "no recorded values: the continuation's cold (flushed) log-probabilities are compared with its warm (cached-prefix) ones, a self-consistency comparison"
+  },
+  "examples/short/code-4416-public.json": {
+   "sha256": "132e452ed7bdbebf63c92089256f2206380c43f62c05a8f6b815d62402e61d98",
+   "from": "examples.jsonl",
+   "published_as": "public-code-L4416",
+   "authority": "model-author implementation (the checkpoint's inference/model.py) at exactly the record's length: independent model-author fidelity"
+  },
+  "examples/short/math-2304-public.json": {
+   "sha256": "727145927405c8085a0de2784eaf3908dc21885d28c9720095eca349de7fe83a",
+   "from": "examples.jsonl",
+   "published_as": "public-math-L2304",
+   "authority": "model-author implementation (the checkpoint's inference/model.py) at exactly the record's length: independent model-author fidelity"
+  },
+  "examples/short/prose-8192-public.json": {
+   "sha256": "02a8f59222315fa29ec49007c04018ae05102df807030bc14bfb570a0a845f2c",
+   "from": "examples.jsonl",
+   "published_as": "public-prose-L8192",
+   "authority": "model-author implementation (the checkpoint's inference/model.py) at exactly the record's length: independent model-author fidelity"
+  },
+  "examples/short/structured-512-public.json": {
+   "sha256": "e3689b34aa7ba87ef3b95b13b9d97de9bc1bcaa5ada8237bb208b1c438587e20",
+   "from": "examples.jsonl",
+   "published_as": "public-struct-L512",
+   "authority": "model-author implementation (the checkpoint's inference/model.py) at exactly the record's length: independent model-author fidelity"
+  },
+  "examples/replay/fresh.json": {
+   "sha256": "99a33df8b31bd3e8b5ececbda63a07a8b94d6101bacfeb6d5bd8160e99802df8",
+   "from": [
+    "examples/short/code-4416-public.json"
+   ],
+   "published_as": "replay-fresh-public",
+   "authority": "no recorded values; token slices of the public records named, each with its input digest; generated_replay.py compares the served generation's own log-probabilities with a cold teacher-forced replay of the same history, a self-consistency comparison"
+  },
+  "examples/replay/prefix.json": {
+   "sha256": "7c1205d6c1b0bd0e82fe38a5ccf63793001ac8efc896478c233a75fd321c45ba",
+   "from": [
+    "examples/short/math-2304-public.json",
+    "examples/short/prose-8192-public.json"
+   ],
+   "published_as": "replay-prefix-public",
+   "authority": "no recorded values; token slices of the public records named, each with its input digest; generated_replay.py compares the served generation's own log-probabilities with a cold teacher-forced replay of the same history, a self-consistency comparison"
+  }
+ }
+}

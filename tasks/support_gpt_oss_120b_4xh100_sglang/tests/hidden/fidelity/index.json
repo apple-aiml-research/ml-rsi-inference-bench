@@ -1,0 +1,203 @@
+{
+ "hidden": 35,
+ "public": 4,
+ "sequences": [
+  {
+   "id": "plain_01",
+   "kind": "hidden",
+   "n_tokens": 512
+  },
+  {
+   "id": "plain_02",
+   "kind": "hidden",
+   "n_tokens": 512
+  },
+  {
+   "id": "plain_03",
+   "kind": "hidden",
+   "n_tokens": 768
+  },
+  {
+   "id": "plain_04",
+   "kind": "hidden",
+   "n_tokens": 768
+  },
+  {
+   "id": "plain_05",
+   "kind": "hidden",
+   "n_tokens": 1024
+  },
+  {
+   "id": "plain_06",
+   "kind": "hidden",
+   "n_tokens": 1024
+  },
+  {
+   "id": "plain_07",
+   "kind": "hidden",
+   "n_tokens": 1280
+  },
+  {
+   "id": "plain_08",
+   "kind": "hidden",
+   "n_tokens": 1280
+  },
+  {
+   "id": "plain_09",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "plain_10",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "plain_11",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "plain_12",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "broad_01",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "broad_02",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "broad_03",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "broad_04",
+   "kind": "hidden",
+   "n_tokens": 1536
+  },
+  {
+   "id": "public_01",
+   "kind": "public",
+   "n_tokens": 512
+  },
+  {
+   "id": "public_02",
+   "kind": "public",
+   "n_tokens": 768
+  },
+  {
+   "id": "public_03",
+   "kind": "public",
+   "n_tokens": 1024
+  },
+  {
+   "id": "public_04",
+   "kind": "public",
+   "n_tokens": 1536
+  },
+  {
+   "id": "harmony_01",
+   "kind": "hidden",
+   "n_tokens": 501
+  },
+  {
+   "id": "harmony_02",
+   "kind": "hidden",
+   "n_tokens": 466
+  },
+  {
+   "id": "harmony_03",
+   "kind": "hidden",
+   "n_tokens": 482
+  },
+  {
+   "id": "harmony_04",
+   "kind": "hidden",
+   "n_tokens": 454
+  },
+  {
+   "id": "harmony_05",
+   "kind": "hidden",
+   "n_tokens": 465
+  },
+  {
+   "id": "harmony_06",
+   "kind": "hidden",
+   "n_tokens": 484
+  },
+  {
+   "id": "harmony_07",
+   "kind": "hidden",
+   "n_tokens": 436
+  },
+  {
+   "id": "harmony_08",
+   "kind": "hidden",
+   "n_tokens": 303
+  },
+  {
+   "id": "harmony_09",
+   "kind": "hidden",
+   "n_tokens": 513
+  },
+  {
+   "id": "harmony_10",
+   "kind": "hidden",
+   "n_tokens": 422
+  },
+  {
+   "id": "harmony_11",
+   "kind": "hidden",
+   "n_tokens": 486
+  },
+  {
+   "id": "harmony_12",
+   "kind": "hidden",
+   "n_tokens": 415
+  },
+  {
+   "id": "harmony_13",
+   "kind": "hidden",
+   "n_tokens": 396
+  },
+  {
+   "id": "harmony_14",
+   "kind": "hidden",
+   "n_tokens": 421
+  },
+  {
+   "id": "harmony_15",
+   "kind": "hidden",
+   "n_tokens": 511
+  },
+  {
+   "id": "harmony_16",
+   "kind": "hidden",
+   "n_tokens": 300
+  },
+  {
+   "id": "long_01",
+   "kind": "hidden",
+   "n_tokens": 8192
+  },
+  {
+   "id": "long_02",
+   "kind": "hidden",
+   "n_tokens": 8192
+  },
+  {
+   "id": "long_03",
+   "kind": "hidden",
+   "n_tokens": 16384
+  }
+ ],
+ "corpus_sha256": "af9e366e0b2e05e96c9a9135ebd38562dec1d76326f0eaf4027cfcc697adc41d",
+ "builder_sha256": "6b48e27a1afd62016533db05e1cb0728850a46e1e1b688a83cba31a3bc47281a"
+}

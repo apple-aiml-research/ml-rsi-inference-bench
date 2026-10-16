@@ -1,0 +1,18 @@
+diff --git a/vllm/model_executor/layers/fused_moe/fused_moe.py b/vllm/model_executor/layers/fused_moe/fused_moe.py
+index dc619b2b12d27d2955f38a656e7c524fd6042887..1d7010d43a656b4d863c5d5fea422244e28715a0 100644
+--- a/vllm/model_executor/layers/fused_moe/fused_moe.py
++++ b/vllm/model_executor/layers/fused_moe/fused_moe.py
+@@ -1342,6 +1342,13 @@ def get_default_config(
+         else:
+             block_n = block_shape[0]
+             num_stages = 3
++        if (
++            current_platform.is_cuda()
++            and current_platform.is_device_capability(100)
++            and block_shape == [32, 32]
++            and M > 64
++        ):
++            num_stages = 1
+         config = {
+             "BLOCK_SIZE_M": 16 if M <= 64 else 64,
+             "BLOCK_SIZE_N": block_n,

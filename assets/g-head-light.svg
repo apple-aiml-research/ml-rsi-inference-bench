@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="186" viewBox="0 0 880 186" role="img" aria-label="head"><style>text{font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif}</style>
+<svg x="0" y="7" width="25.2" height="31" viewBox="0 0 125.7188 154.375">
+<defs>
+<clipPath id="clip-0">
+<path clip-rule="nonzero" d="M 0.113281 37 L 125.3125 37 L 125.3125 153.753906 L 0.113281 153.753906 Z M 0.113281 37 "/>
+</clipPath>
+</defs>
+<g clip-path="url(#clip-0)">
+<path fill-rule="nonzero" fill="#1d1d1f" fill-opacity="1" d="M 93.128906 37.148438 C 80.46875 36.210938 69.730469 44.214844 63.738281 44.214844 C 57.65625 44.214844 48.285156 37.351562 38.347656 37.539062 C 25.300781 37.726562 13.277344 45.132812 6.546875 56.8125 C -7.007812 80.339844 3.085938 115.195312 16.285156 134.289062 C 22.742188 143.613281 30.445312 154.125 40.5625 153.742188 C 50.300781 153.363281 53.980469 147.445312 65.753906 147.445312 C 77.515625 147.445312 80.835938 153.742188 91.128906 153.558594 C 101.609375 153.363281 108.253906 144.03125 114.664062 134.652344 C 122.078125 123.824219 125.128906 113.34375 125.3125 112.789062 C 125.082031 112.703125 104.882812 104.953125 104.679688 81.683594 C 104.496094 62.222656 120.5625 52.875 121.289062 52.425781 C 112.171875 38.996094 98.085938 37.515625 93.128906 37.148438 "/>
+</g>
+<path fill-rule="nonzero" fill="#1d1d1f" fill-opacity="1" d="M 85.316406 24.546875 C 90.691406 18.050781 94.3125 9 93.3125 0 C 85.574219 0.308594 76.21875 5.152344 70.667969 11.648438 C 65.695312 17.398438 61.335938 26.613281 62.519531 35.429688 C 71.140625 36.09375 79.945312 31.046875 85.316406 24.546875 "/>
+</svg>
+<text x="33" y="35" font-size="36" font-weight="700" fill="#1d1d1f" letter-spacing="-0.54">RSI-Inference Bench</text>
+<text x="0" y="70.5" font-size="18.5" fill="#424245">A Long-Horizon Benchmark for Self-Improving Inference Systems</text>
+<circle cx="12" cy="104" r="12" fill="#e8e8ed"/><text x="12" y="107.4" font-size="9.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">JL</text>
+<text x="32" y="109.3" font-size="15" fill="#1d1d1f">Junteng Liu</text>
+<circle cx="145.7" cy="104" r="12" fill="#e8e8ed"/><text x="145.7" y="107.4" font-size="9.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">RB</text>
+<text x="165.7" y="109.3" font-size="15" fill="#1d1d1f">Richard He Bai</text>
+<circle cx="300.4" cy="104" r="12" fill="#e8e8ed"/><text x="300.4" y="107.4" font-size="9.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">HZ</text>
+<text x="320.4" y="109.3" font-size="15" fill="#1d1d1f">Huangjie Zheng</text>
+<circle cx="462.6" cy="104" r="12" fill="#e8e8ed"/><text x="462.6" y="107.4" font-size="9.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">YZ</text>
+<text x="482.6" y="109.3" font-size="15" fill="#1d1d1f">Yizhe Zhang</text>
+<circle cx="601.8" cy="104" r="12" fill="#e8e8ed"/><text x="601.8" y="107.4" font-size="9.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">RZ</text>
+<text x="621.8" y="109.3" font-size="15" fill="#1d1d1f">Ruixiang Zhang</text>
+<text x="0" y="148.7" font-size="10.5" font-weight="600" fill="#86868b" letter-spacing="0.63">CORE CONTRIBUTORS</text>
+<circle cx="160" cy="145" r="10" fill="#e8e8ed"/><text x="160" y="148.1" font-size="8.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">JL</text>
+<text x="177" y="149.7" font-size="13.5" fill="#424245">jliu999356@apple.com</text>
+<circle cx="359.3" cy="145" r="10" fill="#e8e8ed"/><text x="359.3" y="148.1" font-size="8.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">RB</text>
+<text x="376.3" y="149.7" font-size="13.5" fill="#424245">richardbai@apple.com</text>
+<circle cx="553.4" cy="145" r="10" fill="#e8e8ed"/><text x="553.4" y="148.1" font-size="8.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">HZ</text>
+<text x="570.4" y="149.7" font-size="13.5" fill="#424245">huangjie.zheng@apple.com</text>
+<text x="0" y="176.7" font-size="10.5" font-weight="600" fill="#86868b" letter-spacing="0.63">PROJECT LEAD</text>
+<circle cx="160" cy="173" r="10" fill="#e8e8ed"/><text x="160" y="176.1" font-size="8.5" font-weight="600" fill="#6e6e73" text-anchor="middle" letter-spacing="0.2">RZ</text>
+<text x="177" y="177.7" font-size="13.5" fill="#424245">ruixiangz@apple.com</text>
+</svg>

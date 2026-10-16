@@ -1,0 +1,15 @@
+diff --git a/vllm/model_executor/layers/fla/ops/fused_recurrent.py b/vllm/model_executor/layers/fla/ops/fused_recurrent.py
+index b278e3741..98437340f 100644
+--- a/vllm/model_executor/layers/fla/ops/fused_recurrent.py
++++ b/vllm/model_executor/layers/fla/ops/fused_recurrent.py
+@@ -40,8 +40,8 @@ def fused_recurrent_gated_delta_rule_fwd_kernel(
+     ssm_state_indices,
+     num_accepted_tokens,
+     scale,
+-    N: tl.constexpr,  # num of sequences
+-    T: tl.constexpr,  # num of tokens
++    N: tl.int64,  # num of sequences
++    T: tl.int64,  # num of tokens
+     B: tl.constexpr,
+     H: tl.constexpr,
+     HV: tl.constexpr,

@@ -1,0 +1,145 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+
+[task]
+name = "inference-bench/optimize_llada2_mini_1xh100_sglang_open"
+description = "Optimize SGLang serving throughput for LLaDA2.0-mini-preview (block-diffusion MoE, 256 routed experts top-8) on 1×H100 / SGLang v0.5.18 while preserving the decode schedule. The first non-autoregressive execution mode in the optimize family: generation proceeds by unmasking positions inside a 32-token block under LowConfidence remasking, so forward passes per block are content-dependent and the levers are the diffusion loop's kernels, not an AR decode path."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "throughput-optimization", "block-diffusion", "dllm", "moe", "llada2", "h100", "srt"]
+
+[agent]
+timeout_sec = 30000  # 8.33h
+
+[verifier]
+timeout_sec = 21600
+
+[environment]
+build_timeout_sec = 7200
+cpus = 16
+memory_mb = 262144
+storage_mb = 81920
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 1
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "sglang"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+commit = "v0.5.18"
+workdir = "/app/repo"
+edit_policies = ["python", "csrc:jit_kernel", "csrc:sgl-kernel"]
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.8"
+engine_install = "task_scoped_sglang_0_5_18_editable_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "inclusionAI/LLaDA2.0-mini-preview"
+architecture = "LLaDA2MoeModelLM"
+model_type = "llada2_moe"
+total_parameters = "16.1B"
+activated_parameters = "1.4B"
+context_window = 8192
+dtype = "bf16"
+tensor_parallel_size = 1
+
+[metadata.inference_bench.diffusion_config]
+algorithm = "LowConfidence"
+block_size = 32
+
+measured_tps_with_cuda_graph = "415.0"
+measured_tps_without_cuda_graph = "91.0"
+measured_cuda_graph_speedup = "4.56"
+measured_tps_random_ids = "662.2"
+measured_tps_real_prompts = "415.0"
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.scoring.num_runs_per_workload]
+dllm_concurrency_sweep = 5
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.05
+rtol = 0.05
+min_pass_rate = 0.95
+num_prompts = 0
+max_tokens = 100
+prompt_exact_floor = 0.95
+
+concurrency_floor_c1 = 1.0
+concurrency_floor_multi = 0.75
+
+[[metadata.inference_bench.workloads]]
+name = "dllm_concurrency_sweep"
+input_len = 866
+output_len = 448
+num_prompts = 192
+max_concurrency = 64
+
+[metadata.inference_bench.commands]
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose: preparation copies overlays and relinks a venv -- minutes, not
+# seconds -- and a timeout here is NOT retried.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_ENGINE = "sglang"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+INFB_WORKLOAD_WARMUP_NUM_PROMPTS_PREFILL_HEAVY = "full"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_SGLANG_PINNED_COMMIT = "v0.5.18"
+INFB_BUILD_SGL_KERNEL_SH = "/app/scripts/build_sgl_kernel.sh"
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+INFB_SGLKERNEL_BUILD_TIMEOUT_SEC = "14400"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_LIVE_REF_TIMEOUT_SEC = "7200"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_ENGINE = "sglang"
+INFB_OFFICIAL = "1"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+INFB_WORKLOAD_WARMUP_NUM_PROMPTS_PREFILL_HEAVY = "full"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

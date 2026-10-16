@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "infb-efficiency/1",
+  "title": "The Day-0 efficiency core record",
+  "description": "One per scored recipe class, written by the efficiency client and reference step to /logs/verifier/efficiency/<recipe>/efficiency.json, atomically after every phase, so a later timeout or crash keeps what was measured. The workload is empty only while no measurement has drawn it (a reference that failed before its first request). Every verdict can be recomputed at any rho from what is stored: the exact axis values are kept as rationals, and the per-request timings are in the sidecar named by `sidecar.requests`.",
+  "type": "object",
+  "required": ["schema", "kit", "status", "created_at", "updated_at", "provenance", "workload", "environment", "phases", "axes", "summary", "sidecar"],
+  "properties": {
+    "schema": {"const": "infb-efficiency/1"},
+    "kit": {"type": "string", "pattern": "^infb-day0-efficiency-kit/[0-9]+$"},
+    "status": {"enum": ["in_progress", "complete", "censored", "failed"]},
+    "created_at": {"$ref": "#/$defs/timestamp"},
+    "updated_at": {"$ref": "#/$defs/timestamp"},
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "task": {"type": "string"},
+        "score_profile": {"type": "string"},
+        "verifier_version": {"type": "string"},
+        "kit_sha256": {"type": "string"},
+        "config_sha256": {"type": ["string", "null"]},
+        "reference_patch_sha256": {"type": ["string", "null"]},
+        "model_patch_sha256": {"type": ["string", "null"]},
+        "base_commit": {"type": ["string", "null"]},
+        "engine_image": {"type": ["string", "null"]},
+        "verifier_image": {"type": ["string", "null"]},
+        "trial": {"type": ["string", "null"]},
+        "host": {"type": "string"},
+        "route": {"type": "string"},
+        "recipe": {"type": "string"},
+        "C": {"type": "integer", "minimum": 1},
+        "started_at": {"$ref": "#/$defs/timestamp"}
+      }
+    },
+    "workload": {
+      "type": "object",
+      "if": {"required": ["digest"]},
+      "then": {"required": ["texts", "seed_commitment", "isl", "osl", "sampling", "k", "c1_warmups", "C", "N", "cC_warmup_waves", "phase_order", "tokenizer", "engine", "prompts", "digest"]},
+      "properties": {
+        "texts": {
+          "type": "object",
+          "required": ["path", "sha256", "documents"],
+          "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}, "documents": {"type": "integer", "minimum": 1}}
+        },
+        "seed_commitment": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "isl": {"type": "integer", "minimum": 1},
+        "osl": {"type": "integer", "minimum": 2},
+        "sampling": {
+          "type": "object",
+          "required": ["temperature", "ignore_eos", "skip_special_tokens", "max_tokens"],
+          "properties": {
+            "temperature": {"const": 0},
+            "ignore_eos": {"const": true},
+            "skip_special_tokens": {"const": false},
+            "max_tokens": {"type": "integer"}
+          }
+        },
+        "k": {"type": "integer", "minimum": 1},
+        "c1_warmups": {"type": "integer", "minimum": 0},
+        "C": {"type": "integer", "minimum": 1},
+        "N": {"type": "integer", "minimum": 1},
+        "cC_warmup_waves": {"type": "integer", "minimum": 0},
+        "phase_order": {"type": "array", "items": {"enum": ["c1_warmup", "c1_timed", "cC_warmup", "cC_timed"]}},
+        "tokenizer": {"type": "object", "required": ["path", "sha256", "special_prefix"]},
+        "engine": {"enum": ["sglang", "vllm"]},
+        "skipped_documents": {"type": "array"},
+        "prompts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "phase", "doc", "offset", "isl", "ids_sha256"],
+            "properties": {
+              "id": {"type": "string"},
+              "phase": {"enum": ["c1_warmup", "c1_timed", "cC_warmup", "cC_timed"]},
+              "doc": {"type": "string"},
+              "family": {"type": "string"},
+              "offset": {"type": "integer", "minimum": 0},
+              "isl": {"type": "integer", "minimum": 1},
+              "ids_sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        },
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "environment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "captured_at"],
+        "properties": {
+          "label": {"type": "string"},
+          "captured_at": {"$ref": "#/$defs/timestamp"},
+          "gpus": {"type": "array", "items": {"type": "object", "required": ["index", "name", "uuid"]}},
+          "gpus_unreadable": {"type": "string"},
+          "libraries": {"type": "object"}
+        }
+      }
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["side"],
+        "properties": {
+          "side": {"enum": ["reference", "candidate"]},
+          "recipe": {"type": "string"},
+          "launch": {"type": "object"},
+          "teardown": {"type": "object"},
+          "status": {"type": "string"},
+          "relaunch": {"type": "object", "description": "Present on the reference's second launch, which the relaunch node ran for these axes.",
+                       "required": ["launch", "axes"],
+                       "properties": {"launch": {"const": 2}, "axes": {"type": "array", "minItems": 1, "items": {"enum": ["decode_c1", "throughput"]}}}},
+          "before_launch": {"$ref": "#/$defs/host_read", "description": "On the reference's second launch, the host the candidate's stopped server left, read as the teardown reads it, before the launch."}
+        }
+      }
+    },
+    "axes": {
+      "type": "object",
+      "required": ["reference", "candidate"],
+      "properties": {
+        "reference": {"$ref": "#/$defs/side_axes"},
+        "candidate": {"$ref": "#/$defs/side_axes"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["rho", "verdicts", "ratios", "flags", "deadlines_hit"],
+      "properties": {
+        "rho": {"type": ["string", "null"], "pattern": "^[0-9]*\\.?[0-9]+$"},
+        "verdicts": {"type": "object", "additionalProperties": {"enum": ["pass", "fail"]}},
+        "ratios": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+        "flags": {"type": "array", "items": {"type": "object", "required": ["flag"]}},
+        "deadlines_hit": {"type": "array"},
+        "reference": {"type": "object"},
+        "candidate": {"type": "object"},
+        "closed_by": {"type": "object", "required": ["runner", "group", "unmeasured_axes"]},
+        "first_attempt_ratios": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+        "attempts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+        "retry_stopped": {"type": "object", "additionalProperties":
+          {"enum": ["pass", "exhausted", "deadline", "not_complete", "disabled"]}},
+        "verdict_from": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^(best_of_[1-9]|single_draw|median_of_[1-9])$"}},
+        "reference_draws": {"type": "object", "additionalProperties": {"enum": [1, 3, 5]}},
+        "candidate_draws": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+        "draws_stopped": {"type": "object", "additionalProperties": {"enum": ["drawn", "deadline", "not_complete"]}},
+        "decode_c1_statistic": {"enum": ["ratio_of_medians", "median_of_ratios"]},
+        "task_bars": {"type": "object", "additionalProperties": false,
+                      "properties": {"decode_c1": {"type": "string", "pattern": "^[0-9]*\\.?[0-9]+$"},
+                                     "throughput": {"type": "string", "pattern": "^[0-9]*\\.?[0-9]+$"}}},
+        "environment_invalid": {"type": "array", "description": "Each draw whose canary brackets read more than the tolerance below the trial's first reading on the draw and on its re-draw, or once with no time left for the re-draw. The trial asks for a verifier-only re-run (rerun-request.json beside the record); no verdict is changed.",
+                                "items": {"type": "object", "required": ["side", "axis", "draw", "why"],
+                                          "properties": {"side": {"enum": ["reference", "candidate"]}, "axis": {"enum": ["decode_c1", "throughput"]},
+                                                         "draw": {"type": "integer", "minimum": 1}, "why": {"type": "string"}}}},
+        "rerun_requested": {"type": "boolean"},
+        "relaunch": {"type": "object", "description": "The relaunch node's decision and, for each axis it relaunched, why, each launch's figures, and the launch each side kept (the full account is the record's top-level relaunch).",
+                     "required": ["decision"],
+                     "properties": {"decision": {"$ref": "#/$defs/relaunch_decision"}, "flags": {"$ref": "#/$defs/relaunch_flags"},
+                                    "axes": {"type": "object"}}}
+      }
+    },
+    "sidecar": {"type": "object", "required": ["requests"], "properties": {"requests": {"type": "string"}}},
+    "cache_flushes": {"type": "array", "description": "The engine's prefix-cache flush before each draw when infb.efficiency.flush_between_draws is true (SGLang's POST /flush_cache; vLLM needs none, its requests carry a cache_salt), with the HTTP status or why none was sent.",
+                      "items": {"type": "object", "required": ["side", "axis", "draw", "status"],
+                                "properties": {"side": {"enum": ["reference", "candidate"]}, "axis": {"enum": ["decode_c1", "throughput"]},
+                                               "draw": {"type": "integer", "minimum": 1}}}},
+    "canary": {"type": "object", "description": "The environment canary's readings around every draw on both sides (canary.py), the index of the trial's first available reading, and each draw's judgement against it. Absent when infb.efficiency.canary is off.",
+               "required": ["tolerance", "first", "readings", "draws"],
+               "properties": {"tolerance": {"type": "number", "exclusiveMinimum": 0},
+                              "cpu_tolerance": {"type": "number", "exclusiveMinimum": 0, "description": "The CPU's own tolerance; the GPUs keep tolerance."},
+                              "baseline": {"enum": ["running_median"], "description": "Each reading is judged against the median of the trial's readings up to it; absent, against the trial's first reading."},
+                              "first": {"type": ["integer", "null"], "minimum": 0},
+                              "readings": {"type": "array", "items": {"type": "object", "required": ["ok", "side", "axis", "label"],
+                                                                      "properties": {"ok": {"type": "boolean"}, "side": {"enum": ["reference", "candidate"]},
+                                                                                     "axis": {"enum": ["decode_c1", "throughput"]}, "label": {"type": "string"},
+                                                                                     "gpus_skipped": {"type": "array", "description": "The GPUs this reading did not probe, each with its free MiB against the probe's need (torch's, and nvidia-smi's where it answers), or the error, and its holders.",
+                                                                                                      "items": {"type": "object", "required": ["device", "need_mib"],
+                                                                                                                "properties": {"device": {"type": "integer", "minimum": 0}, "need_mib": {"type": "integer"},
+                                                                                                                               "free_mib": {"type": "integer"}, "smi_free_mib": {"type": "integer"}, "error": {"type": "string"},
+                                                                                                                               "uuid": {"type": ["string", "null"]}, "holders": {"type": ["array", "string"]},
+                                                                                                                               "holders_of": {"type": "string"}}}}}}},
+                              "draws": {"type": "array", "items": {"type": "object", "required": ["side", "axis", "draw", "redraw", "before", "after", "valid"],
+                                                                   "properties": {"side": {"enum": ["reference", "candidate"]}, "axis": {"enum": ["decode_c1", "throughput"]},
+                                                                                  "draw": {"type": "integer", "minimum": 1}, "redraw": {"type": "boolean"},
+                                                                                  "before": {"type": "integer", "minimum": 0}, "after": {"type": "integer", "minimum": 0},
+                                                                                  "valid": {"type": ["boolean", "null"]},
+                                                                                  "before_vs_baseline": {"type": "object"}, "after_vs_baseline": {"type": "object"},
+                                                                                  "before_vs_first": {"type": "object"}, "after_vs_first": {"type": "object"}}}},
+                              "counts": {"type": "object", "description": "Per side, then per axis, the draws judged (judged_in_part of them with a bracket not read whole, or a bracket or a quantity of one not judged) and the draws not judged at all.",
+                                         "additionalProperties": {"type": "object", "additionalProperties": {"type": "object", "required": ["judged", "judged_in_part", "unjudged"],
+                                                                                                           "properties": {"judged": {"type": "integer", "minimum": 0},
+                                                                                                                          "judged_in_part": {"type": "integer", "minimum": 0},
+                                                                                                                          "unjudged": {"type": "integer", "minimum": 0}}}}}}},
+    "verifier_clock": {"type": "object", "description": "The clock the candidate's session ran on, which the group runner writes when test.sh gives it --end-by: the clock's source (file: config.json's infb.verifier_clock, which assumes the verifier environment builds within before_s), test.sh's T0, END_BY (when the runner must be done), the session's end (END_BY less what the runner spends after a kill), the clock's figures, the later groups' bounds END_BY implies, and the session's bounds and how it ended.",
+                       "required": ["clock", "end_by", "session_end_by", "session"],
+                       "properties": {"clock": {"enum": ["file"]}, "t0": {"type": ["integer", "null"]},
+                                      "end_by": {"type": "number"}, "session_end_by": {"type": "number"},
+                                      "runner_after_kill_s": {"type": "number"},
+                                      "cap_s": {"type": ["number", "null"]}, "before_s": {"type": ["number", "null"]},
+                                      "tail_s": {"type": ["number", "null"]}, "after_s": {"type": ["number", "null"]},
+                                      "session": {"type": "object", "required": ["group", "started", "budget_s", "wait_s", "bound"],
+                                                  "properties": {"bound": {"enum": ["budget", "end_by"]},
+                                                                 "ended_by": {"enum": ["exit", "budget", "end_by"]}}}}},
+    "relaunch": {"type": "object", "description": "The relaunch, when infb.efficiency.relaunch is set. launches[0] is the first launch (its entries, its per-axis summary, and each axis's outcome as the measurement node recorded it); launches[1], when there is one, the second (the reference's entries, then the candidate's).",
+                 "required": ["decision"],
+                 "properties": {"decision": {"$ref": "#/$defs/relaunch_decision"},
+                                "triggers": {"type": "object", "additionalProperties": {"type": "array", "items": {"enum": ["zone", "band", "force"]}}},
+                                "axes": {"type": "array", "items": {"enum": ["decode_c1", "throughput"]}},
+                                "flags": {"$ref": "#/$defs/relaunch_flags"},
+                                "hazards": {"type": "array", "items": {"type": "string"}},
+                                "clock": {"$ref": "#/$defs/session_clock"},
+                                "host": {"$ref": "#/$defs/host_read"},
+                                "launches": {"type": "array", "items": {"type": "object", "required": ["index"],
+                                                                        "properties": {"index": {"type": "integer", "minimum": 1},
+                                                                                       "check": {"type": "object", "required": ["ok"],
+                                                                                                 "properties": {"ok": {"type": "boolean"}}},
+                                                                                       "host_after_start": {"$ref": "#/$defs/host_read"},
+                                                                                       "candidate_stop": {"type": "object"}}}}}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"enum": ["complete", "censored"]}}},
+      "then": {"properties": {"workload": {"required": ["digest"]}}}
+    }
+  ],
+  "$defs": {
+    "timestamp": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$|^bytes$"},
+    "relaunch_decision": {"enum": ["pending", "not_measured", "not_triggered", "skipped_reward_zero", "skipped_reap_hazard",
+                                   "skipped_deadline", "skipped_verifier_time", "skipped_no_verifier_clock", "running",
+                                   "host_not_ready", "reference_failed", "interrupted", "relaunched"]},
+    "session_clock": {"type": ["object", "null"], "description": "The session's clock as the relaunch node read it at a decision -- the session's end (session_end_by, epoch s, from INFB_SESSION_END_BY), what it reserves for the nodes after it (reserve_s, itemised in reserve), what was left of the clock and of the node's own deadline, the lesser (working_s) and the relaunch's estimate -- or null where the session had no end.",
+                      "properties": {"session_end_by": {"type": "number"}, "reserve_s": {"type": "number"},
+                                     "reserve": {"type": "object"}, "clock_left_s": {"type": "number"},
+                                     "node_left_s": {"type": "number"}, "working_s": {"type": "number"},
+                                     "estimate_s": {"type": "number"}, "alarm_left_before_s": {"type": ["number", "null"]},
+                                     "working_left_at_finish_s": {"type": "number"},
+                                     "cap_s": {"type": ["number", "null"]}, "before_s": {"type": ["number", "null"]},
+                                     "tail_s": {"type": ["number", "null"]}, "order_from": {"type": "string"}}},
+    "relaunch_flags": {"type": "array", "uniqueItems": true,
+                       "items": {"enum": ["environment", "candidate_start_failed", "candidate_configuration_differs"]}},
+    "host_read": {"type": "object", "description": "The host as the teardown reads it -- the IPC reap, /dev/shm's room and leftover segments, the GPUs free within teardown_s -- or why it was not read.",
+                  "properties": {"ok": {"type": ["boolean", "null"]}, "gpu_free": {"type": ["boolean", "null"]},
+                                 "devices": {"type": "string"}, "dev_shm": {"type": "object"},
+                                 "dev_shm_before_reap": {"type": "array", "items": {"type": "string"}},
+                                 "ipc": {"type": ["object", "null"]}, "seconds": {"type": "number"},
+                                 "gpu_holders": {"type": "object", "description": "On a host not ready: each device's memory in use and the compute processes on it, with their command lines where visible."}}},
+    "side_axes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "decode_c1": {"$ref": "#/$defs/axis"},
+        "throughput": {"$ref": "#/$defs/axis"}
+      }
+    },
+    "axis": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["running", "complete", "failed", "censored"]},
+        "axis": {"enum": ["decode_c1", "throughput"]},
+        "side": {"enum": ["reference", "candidate"]},
+        "concurrency": {"type": "integer", "minimum": 1},
+        "started_at": {"$ref": "#/$defs/timestamp"},
+        "finished_at": {"$ref": "#/$defs/timestamp"},
+        "duration_s": {"type": "number", "minimum": 0},
+        "deadline_s": {"type": ["number", "null"]},
+        "censored": {"type": "boolean"},
+        "timed": {"type": "integer", "minimum": 0},
+        "warmups": {"type": "integer", "minimum": 0},
+        "invalid": {"type": "array"},
+        "value": {"type": ["number", "null"]},
+        "value_exact": {"type": ["string", "null"], "pattern": "^[0-9]+/[0-9]+$"},
+        "per_request_tok_s": {"type": "object"},
+        "window": {"type": "object"},
+        "ttft_s": {"type": "object"},
+        "tpot_s": {"type": "object"},
+        "per_prompt": {"type": "object"},
+        "flags": {"type": "array", "items": {"type": "object", "required": ["flag"]}},
+        "attempt_index": {"type": "integer", "minimum": 1},
+        "draw_index": {"type": "integer", "minimum": 1},
+        "launch": {"type": "integer", "minimum": 1, "description": "After a relaunch, the launch this side kept."},
+        "draws": {"type": "array", "minItems": 1, "items": {"type": "object",
+          "required": ["duration_s", "value", "value_exact", "status"],
+          "properties": {"duration_s": {"type": ["number", "null"]}, "value": {"type": ["number", "null"]},
+                         "value_exact": {"type": ["string", "null"]}, "status": {"type": ["string", "null"]},
+                         "started_at": {"type": ["string", "null"]}, "finished_at": {"type": ["string", "null"]}}}},
+        "attempts": {"type": "array", "minItems": 1, "items": {"type": "object",
+          "required": ["index", "duration_s", "value", "value_exact", "ratio", "verdict", "status", "client_exit", "sidecar_rows"],
+          "properties": {"index": {"type": "integer", "minimum": 1}, "duration_s": {"type": ["number", "null"]},
+                         "value": {"type": ["number", "null"]}, "value_exact": {"type": ["string", "null"]},
+                         "ratio": {"type": ["number", "null"]}, "verdict": {"enum": ["pass", "fail", null]},
+                         "status": {"type": ["string", "null"]}, "client_exit": {"type": "integer"},
+                         "killed": {"type": "boolean"}, "sidecar_rows": {"type": "array", "minItems": 2},
+                         "started_at": {"type": ["string", "null"]}, "finished_at": {"type": ["string", "null"]}}}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "complete"}}},
+          "then": {"required": ["value", "value_exact", "timed", "censored", "flags"],
+                   "properties": {"value": {"type": "number", "exclusiveMinimum": 0}, "value_exact": {"type": "string"}}}
+        }
+      ]
+    }
+  }
+}

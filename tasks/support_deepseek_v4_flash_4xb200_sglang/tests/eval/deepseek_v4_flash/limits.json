@@ -1,0 +1,51 @@
+{
+ "what": "The wall-clock limits of this task's evaluation operations (README, Resource limits). Evaluation and the supplied scripts apply these values; an operation that exceeds its limit fails.",
+ "hardware": "the task's four NVIDIA B200 GPUs at the release recipe (tests/test_deepseek_v4_flash_fp4_b200.py)",
+ "long_input_tokens": 64000,
+ "operations": {
+  "startup": {
+   "limit_s": 1360,
+   "clock": "process spawn through the first ready health response, including model load and startup compilation"
+  },
+  "http_request": {
+   "limit_s": 900,
+   "applies": "one HTTP request, or one explicitly submitted concurrent batch, with every input below long_input_tokens",
+   "clock": "client dispatch through the complete response(s), including queueing and first-use compilation"
+  },
+  "http_request_long": {
+   "limit_s": 1800,
+   "applies": "the same, with any input of at least long_input_tokens",
+   "clock": "client dispatch through the complete response(s), including queueing and first-use compilation"
+  },
+  "invocation": {
+   "limit_s": 1800,
+   "applies": "one measurement or instrumented runtime invocation, including one complete component family measurement (kernels/README.md)",
+   "clock": "dispatch through all ranks' records, including setup, warmup, compilation, the prescribed repetitions, synchronization and readback"
+  },
+  "unit_test_file": {
+   "limit_s": 1800,
+   "applies": "one existing-engine unit-test file",
+   "clock": "collection and all selected cases of that file, including compilation"
+  },
+  "kernel_build": {
+   "limit_s": 3600,
+   "applies": "one offline build of the engine tree: the editable SGLang install and the vendored FlashMLA (kernels/build.py), for the candidate and the reference alike",
+   "clock": "build dispatch through usable imports"
+  },
+  "component_check": {
+   "limit_s": 1800,
+   "applies": "one component correctness check of the kernel interfaces (kernels/README.md), all of its cases",
+   "clock": "process start through the last case's outputs, including setup, compilation and readback; the evaluation's own comparison of those outputs runs after it, outside the limit"
+  },
+  "action": {
+   "limit_s": 300,
+   "applies": "a non-inference action, for example a cache flush or a server-information read",
+   "clock": "dispatch through the complete answer"
+  },
+  "teardown": {
+   "limit_s": 180,
+   "applies": "stopping a server or worker group",
+   "clock": "TERM, then KILL after 10 s if needed, including reaping"
+  }
+ }
+}

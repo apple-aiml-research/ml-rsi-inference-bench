@@ -1,0 +1,307 @@
+{
+  "recipe_id": "sd3m-dit-synthetic-lora-v4",
+  "status": "specified",
+  "purpose": "Reproducible, non-zero, norm-controlled low-rank deltas whose effect W' = W + scale * (lora_alpha / r) * B @ A is computed independently by lora_reference.py.",
+  "generator": "sd3_lora_synth.py (numpy only; no torch, no engine code)",
+  "module_shapes": "sd3m_dit_linear_shapes.json (read from the pinned checkpoint's header)",
+  "values": {
+    "rng": "splitmix64 over a per-(namespace, adapter, module, matrix) 64-bit key = the first 8 bytes of sha256('<rng_namespace>|<adapter>|<module>|<A or B>|<seed>'), counter = element index in row-major order; rng_namespace fixes the random stream independently of adapter strength",
+    "integer": "v = (u >> 32) mod 255 - 127, an integer in [-127, 127]",
+    "A": "A[i, j] = v * 2^-a_exp (a_exp fixed per adapter)",
+    "B": "B[i, j] = v * 2^-b_exp(module), b_exp the integer that brings the module's RMS of (lora_alpha / r) * B @ A closest to 2^delta_rms_log2 in log2 -- so the achieved RMS is within a factor sqrt(2) of the target, by construction",
+    "exactness": "every A and B entry is a 7-bit integer times a power of two: exactly representable in bfloat16, float16 and float32, so the file's BF16 storage loses nothing and every consumer reads the same numbers"
+  },
+  "format": {
+    "file": "<adapter>/pytorch_lora_weights.safetensors (the diffusers SD3 LoRA layout)",
+    "keys": "transformer.<module>.lora_A.weight [r, in_features] and transformer.<module>.lora_B.weight [out_features, r], BF16",
+    "metadata": "{\"format\": \"pt\", \"lora_adapter_metadata\": JSON of {transformer.r, transformer.lora_alpha, transformer.target_modules, transformer.rank_pattern, transformer.alpha_pattern, transformer.use_dora, transformer.lora_bias}} -- the key diffusers' write_lora_layers / _load_sft_state_dict_metadata use, and the keys its get_peft_kwargs emits (diffusers 0.37 _create_lora_config reads rank_pattern unconditionally when metadata is present)",
+    "semantics": "delta(module) = scale * (lora_alpha / r) * (B @ A), added to the module's weight [out, in]; scale = 0 or disabled means exactly the base weight",
+    "target_rules": "each rule names an inclusive block range and module kinds; the module is transformer_blocks.<i>.<kind>. absent=skip: a module the checkpoint does not have is left out (to_add_out in block 23, which is context_pre_only); absent=error: the generator refuses",
+    "v4_fields": "use_rslora (the delta is scale * lora_alpha / sqrt(r) * B @ A, and metadata transformer.use_rslora true), alpha_pattern (peft's per-module lora_alpha, metadata transformer.alpha_pattern), variant dora / lora_bias (files the engine must refuse)"
+  },
+  "adapters": {
+    "A": {
+      "seed": 20260929,
+      "r": 8,
+      "lora_alpha": 16,
+      "a_exp": 7,
+      "delta_rms_log2": -6,
+      "targets": [
+        {
+          "blocks": [
+            0,
+            23
+          ],
+          "kinds": [
+            "attn.to_q",
+            "attn.to_k",
+            "attn.to_v",
+            "attn.to_out.0",
+            "attn.add_q_proj",
+            "attn.add_k_proj",
+            "attn.add_v_proj",
+            "attn.to_add_out"
+          ],
+          "absent": "skip"
+        },
+        {
+          "blocks": [
+            0,
+            11
+          ],
+          "kinds": [
+            "ff.net.0.proj",
+            "ff.net.2"
+          ],
+          "absent": "error"
+        }
+      ]
+    },
+    "B": {
+      "seed": 20260930,
+      "r": 16,
+      "lora_alpha": 8,
+      "a_exp": 7,
+      "delta_rms_log2": -6,
+      "targets": [
+        {
+          "blocks": [
+            0,
+            23
+          ],
+          "kinds": [
+            "attn.to_q",
+            "attn.to_v",
+            "attn.add_k_proj",
+            "attn.to_add_out"
+          ],
+          "absent": "skip"
+        },
+        {
+          "blocks": [
+            12,
+            22
+          ],
+          "kinds": [
+            "ff_context.net.0.proj",
+            "ff_context.net.2"
+          ],
+          "absent": "error"
+        }
+      ]
+    },
+    "C": {
+      "seed": 20261001,
+      "r": 16,
+      "lora_alpha": 16,
+      "a_exp": 7,
+      "delta_rms_log2": -6,
+      "use_rslora": true,
+      "targets": [
+        {
+          "blocks": [
+            0,
+            23
+          ],
+          "kinds": [
+            "attn.to_q",
+            "attn.to_k",
+            "attn.to_v",
+            "attn.to_out.0"
+          ],
+          "absent": "skip"
+        },
+        {
+          "blocks": [
+            12,
+            22
+          ],
+          "kinds": [
+            "ff_context.net.0.proj",
+            "ff_context.net.2"
+          ],
+          "absent": "error"
+        }
+      ]
+    },
+    "D": {
+      "seed": 20261002,
+      "r": 8,
+      "lora_alpha": 16,
+      "a_exp": 7,
+      "delta_rms_log2": -6,
+      "variant": "dora",
+      "targets": [
+        {
+          "blocks": [
+            0,
+            23
+          ],
+          "kinds": [
+            "attn.to_q",
+            "attn.to_k",
+            "attn.to_v",
+            "attn.to_out.0",
+            "attn.add_q_proj",
+            "attn.add_k_proj",
+            "attn.add_v_proj",
+            "attn.to_add_out"
+          ],
+          "absent": "skip"
+        }
+      ]
+    },
+    "E": {
+      "seed": 20261004,
+      "r": 8,
+      "lora_alpha": 8,
+      "a_exp": 7,
+      "delta_rms_log2": -6,
+      "alpha_pattern": {
+        "attn.to_q": 32,
+        "attn.to_k": 32,
+        "attn.to_v": 32
+      },
+      "targets": [
+        {
+          "blocks": [
+            0,
+            23
+          ],
+          "kinds": [
+            "attn.to_q",
+            "attn.to_k",
+            "attn.to_v",
+            "attn.to_out.0"
+          ],
+          "absent": "skip"
+        },
+        {
+          "blocks": [
+            12,
+            23
+          ],
+          "kinds": [
+            "ff.net.0.proj",
+            "ff.net.2"
+          ],
+          "absent": "error"
+        }
+      ]
+    },
+    "F": {
+      "seed": 20261003,
+      "r": 8,
+      "lora_alpha": 8,
+      "a_exp": 7,
+      "delta_rms_log2": -6,
+      "variant": "lora_bias",
+      "targets": [
+        {
+          "blocks": [
+            0,
+            23
+          ],
+          "kinds": [
+            "attn.to_q"
+          ],
+          "absent": "skip"
+        }
+      ]
+    }
+  },
+  "design_notes": {
+    "alpha_over_r": "A: 16/8 = 2, B: 8/16 = 0.5 -- both != 1, so an implementation that drops alpha/r is off by 2x or 0.5x, and one that inverts it is off by 4x on both",
+    "target_sets": "A covers image-stream AND context-stream attention in every block plus the image FFN in blocks 0-11; B covers a subset of both streams' attention plus the context FFN in blocks 12-22 (block 23 has no ff_context: context_pre_only). A\\B (to_k, to_out.0, add_q_proj, add_v_proj, ff.* 0-11) must return to base when switching A -> B; B\\A (ff_context.* 12-22) must appear only under B: that is what makes adapter state leaking across requests visible",
+    "norm": "Each adapter targets RMS(delta) = 2^delta_rms_log2 per module; the achieved per-module RMS is written to the manifest",
+    "v4": {
+      "C": "rsLoRA (peft use_rslora): r 16, lora_alpha 16, so alpha / sqrt(r) = 4 where alpha / r = 1 -- an engine that ignores the flag serves C at a quarter. Image-stream attention in every block (shared with A) plus the context FFN in blocks 12-22 (C only, like B), so A + C has shared layers and layers only C touches",
+      "D": "a DoRA file (a lora_magnitude_vector per module, use_dora in the metadata) on A's attention set: the engine must refuse it before any weight changes",
+      "E": "alpha_pattern: lora_alpha 8 = r (scaling 1) with to_q / to_k / to_v overridden to 32 (scaling 4); B is sized for each module's own alpha, so dropping the pattern serves those modules at a quarter",
+      "F": "a LoRA with a bias on B (lora_B.bias per module, lora_bias in the metadata): refused like D",
+      "strength": "Every adapter targets delta_rms_log2 -6 per module, with its own scaling convention"
+    }
+  },
+  "expected": {
+    "A": {
+      "file_sha256": "b1daf72130ea75da47319d6340cb9e33026fd3b2ac03f6de8ac2d69174d29672",
+      "file_size": 12402984,
+      "tensor_set_sha256": "356fbf277bcd8d6e9c9566219d0f6d6904c74b3125af16acef9fb392964a89fd",
+      "n_modules": 215,
+      "n_params": 6168576,
+      "r": 8,
+      "lora_alpha": 16,
+      "delta_rms_over_target": {
+        "min": 0.922051036528613,
+        "max": 0.9525757824493915
+      }
+    },
+    "B": {
+      "file_sha256": "4a6fb99ec01ce656ccb0bef145747342c5200eea7a732626d18688c5e09055ea",
+      "file_size": 14782264,
+      "tensor_set_sha256": "63a80a7e43ed3ea4ee9969e96318531aaf8237fefbbb446972d9c2950307956d",
+      "n_modules": 117,
+      "n_params": 7372800,
+      "r": 16,
+      "lora_alpha": 8,
+      "delta_rms_over_target": {
+        "min": 1.3035720996824713,
+        "max": 1.340405816969868
+      }
+    },
+    "C": {
+      "file_sha256": "f42c62c99a7e7dec489478e62af3d721f172f551b90116ded72077b70ccc90a8",
+      "file_size": 14880352,
+      "tensor_set_sha256": "fbf3707072f7605037e91ebc8da86547378196f0bbeebba35ac9a51666e0640a",
+      "n_modules": 118,
+      "n_params": 7421952,
+      "r": 16,
+      "lora_alpha": 16,
+      "delta_rms_over_target": {
+        "min": 1.30811690406649,
+        "max": 1.3340453873302525
+      }
+    },
+    "D": {
+      "file_sha256": "0aa233d7b6d62abb06fba10b8c1c30c86292cbd710e19406071f08451d956377",
+      "file_size": 10059264,
+      "tensor_set_sha256": "50a1c01d28671709a3ee00e78daabe48f7d065b2223d155ac256c75bbb899321",
+      "n_modules": 191,
+      "n_params": 4987392,
+      "r": 8,
+      "lora_alpha": 16,
+      "delta_rms_over_target": {
+        "min": 0.92034561334068,
+        "max": 0.9457366134047436
+      }
+    },
+    "E": {
+      "file_sha256": "6d3c58e5e2c1664ae180780418f064161b9f78a9c0e1d83297e75bd5907ec697",
+      "file_size": 7703816,
+      "tensor_set_sha256": "9b4ce2f220edf6ad3481988c782b52844d38e86eab2e339cde40c884c16ed1fe",
+      "n_modules": 120,
+      "n_params": 3833856,
+      "r": 8,
+      "lora_alpha": 8,
+      "delta_rms_over_target": {
+        "min": 0.9252806914289613,
+        "max": 0.9472172515857497
+      }
+    },
+    "F": {
+      "file_sha256": "98af003ada1bb97cc694a357dd4221abccadff2e2fcc3a79cb18baca4638d259",
+      "file_size": 1263584,
+      "tensor_set_sha256": "8ef59c77aa81586c06eca622194d157e18f80175cd1982abfa76199475379e8f",
+      "n_modules": 24,
+      "n_params": 626688,
+      "r": 8,
+      "lora_alpha": 8,
+      "delta_rms_over_target": {
+        "min": 0.9205406946534569,
+        "max": 0.9430282913514975
+      }
+    },
+    "measured": "Expected deterministic file and tensor-set hashes for this recipe and the pinned checkpoint shapes"
+  },
+  "rng_namespace": "sd3m-dit-synthetic-lora-v1"
+}

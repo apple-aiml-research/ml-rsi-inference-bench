@@ -1,0 +1,88 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_deepseek_v4_flash_4xb200_sglang"
+description = "Day-0 model support: land reliable, numerically faithful and efficient native DeepSeek-V4-Flash serving in SGLang on four B200 GPUs at the LowLatency deployment, preserving relevant existing engine behavior"
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "sglang", "b200", "moe", "sparse-attention", "compressed-attention", "fp4", "fp8", "speculative"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+# No docker_image: environment/Dockerfile is self-contained and publicly buildable.
+# With no build argument the engine stage builds from public sources.
+build_timeout_sec = 18000
+cpus = 32
+memory_mb = 524288
+# 3 TiB: [verifier] environment_mode = "separate" means tests/Dockerfile is built as a second,
+# complete image that does not reuse the task image's layers, so the same ~190 GB is written twice,
+# and the peak is reached after the agent phase, under the agent's own writes. The planner takes
+# the max over both tables.
+storage_mb = 3145728
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/sglang/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+# Generated, not chosen: tests/infb_verify/deadline_dag.py computes this from config.json
+# infb.deadline_dag and checks this value and every other caller.
+timeout_sec = 61360
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/sglang/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+build_timeout_sec = 3600
+cpus = 32
+memory_mb = 524288
+# 3 TiB: [verifier] environment_mode = "separate" means tests/Dockerfile is built as a second,
+# complete image that does not reuse the task image's layers, so the same ~190 GB is written twice,
+# and the peak is reached after the agent phase, under the agent's own writes. The planner takes
+# the max over both tables.
+storage_mb = 3145728
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/sgl-project/sglang"
+base_commit_hash = "eac98398e7adc70dd10d8db3ff77226b026000ce"
+reference_commit_hash = "35870d55aca7c6912aa4c785f583da4acac04938"
+model_repository = "deepseek-ai/DeepSeek-V4-Flash"
+model_revision = "60d8d70770c6776ff598c94bb586a859a38244f1"
+
+[metadata.inference_bench]
+# THE CANDIDATE IS CAPTURED BY pre_artifacts.sh, NOT BY CANDIDATE FINALIZATION. This form has no
+# `repo/`: the recipe is `git clone ... .` under `WORKDIR /app`, so the repository IS the workspace.
+# Without this key the trial dies AFTER the agent has run, with
+#   CandidateFinalizationError: ISOLATION-FAILED: repo /app/repo does not exist
+#
+# Nothing is lost by opting out. Finalization also folds the agent's UNCOMMITTED tree into the
+# candidate; this task deliberately does not want that. `pre_artifacts.sh` captures
+# `git diff --binary <base> HEAD`, commit to commit, and instruction.md says so to the agent's face:
+# "Commit your changes in /app. Only the committed tree is graded."
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "sglang"
+score_profile = "model_support_upstream_acceptance_v54"

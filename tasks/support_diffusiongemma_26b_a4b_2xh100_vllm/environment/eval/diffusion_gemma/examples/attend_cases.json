@@ -1,0 +1,678 @@
+{
+"schema": "dgemma-attend-cases/1",
+"note": "Public examples; the graded cases are private.",
+"cases": [
+{
+"id": "encode-4096",
+"geometry": "encode-4096",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 7142721930626372596,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "encode-4096/sliding/tp1/probe",
+"geometry": "encode-4096",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 8956963189755498802,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+1024,
+4096
+],
+[
+0,
+1024,
+4097
+],
+[
+0,
+1024,
+5121
+]
+]
+},
+{
+"id": "encode-4096/full/tp1/rand",
+"geometry": "encode-4096",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 394705849152387425,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "encode-4096/full/tp1/probe",
+"geometry": "encode-4096",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 141433397226352795,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+1024,
+5121
+]
+]
+},
+{
+"id": "denoise-1030",
+"geometry": "denoise-1030",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 68017124457003712,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+}
+]
+},
+{
+"id": "denoise-1030/sliding/tp1/probe",
+"geometry": "denoise-1030",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 3070120941660659758,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+5
+],
+[
+0,
+0,
+6
+],
+[
+0,
+0,
+7
+],
+[
+0,
+0,
+1029
+],
+[
+0,
+255,
+7
+],
+[
+0,
+255,
+261
+],
+[
+0,
+255,
+262
+],
+[
+0,
+128,
+1285
+],
+[
+0,
+128,
+7
+]
+]
+},
+{
+"id": "denoise-1030/full/tp1/rand",
+"geometry": "denoise-1030",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1500745105474211464,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+}
+]
+},
+{
+"id": "denoise-1030/full/tp1/probe",
+"geometry": "denoise-1030",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 8467110476545139687,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "denoise-4100",
+"geometry": "denoise-4100",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 4918332285148615015,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4100,
+"m": 256
+}
+]
+},
+{
+"id": "denoise-4100/sliding/tp1/probe",
+"geometry": "denoise-4100",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 9004494881536693886,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4100,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+3075
+],
+[
+0,
+0,
+3076
+],
+[
+0,
+0,
+3077
+],
+[
+0,
+0,
+4099
+],
+[
+0,
+255,
+3077
+],
+[
+0,
+255,
+3331
+],
+[
+0,
+255,
+3332
+],
+[
+0,
+128,
+4355
+],
+[
+0,
+128,
+3077
+]
+]
+},
+{
+"id": "denoise-4100/full/tp1/rand",
+"geometry": "denoise-4100",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 7871587966353472404,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4100,
+"m": 256
+}
+]
+},
+{
+"id": "denoise-4100/full/tp1/probe",
+"geometry": "denoise-4100",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 8338714179753717273,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4100,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "mixed-example",
+"geometry": "mixed-example",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 1736697235981511821,
+"sequences": [
+{
+"kind": "encode",
+"start": 1200,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 2000,
+"m": 256
+}
+]
+},
+{
+"id": "mixed-example/sliding/tp1/probe",
+"geometry": "mixed-example",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 4060048056566432418,
+"sequences": [
+{
+"kind": "encode",
+"start": 1200,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 2000,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+150,
+326
+],
+[
+0,
+150,
+327
+],
+[
+0,
+150,
+1351
+],
+[
+1,
+0,
+5
+],
+[
+1,
+0,
+6
+],
+[
+1,
+0,
+7
+],
+[
+1,
+0,
+1029
+],
+[
+1,
+255,
+7
+],
+[
+1,
+255,
+261
+],
+[
+1,
+255,
+262
+],
+[
+1,
+128,
+1285
+],
+[
+1,
+128,
+7
+],
+[
+2,
+0,
+975
+],
+[
+2,
+0,
+976
+],
+[
+2,
+0,
+977
+],
+[
+2,
+0,
+1999
+],
+[
+2,
+255,
+977
+],
+[
+2,
+255,
+1231
+],
+[
+2,
+255,
+1232
+],
+[
+2,
+128,
+2255
+],
+[
+2,
+128,
+977
+]
+]
+},
+{
+"id": "mixed-example/full/tp1/rand",
+"geometry": "mixed-example",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 7739333332316546833,
+"sequences": [
+{
+"kind": "encode",
+"start": 1200,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 2000,
+"m": 256
+}
+]
+},
+{
+"id": "mixed-example/full/tp1/probe",
+"geometry": "mixed-example",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 4503641995542914219,
+"sequences": [
+{
+"kind": "encode",
+"start": 1200,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1030,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 2000,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+150,
+1351
+],
+[
+1,
+255,
+0
+],
+[
+2,
+255,
+0
+]
+]
+},
+{
+"id": "image-span",
+"geometry": "image-span",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 8822348356402169720,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1300,
+"spans": [
+[
+40,
+320
+]
+]
+}
+]
+},
+{
+"id": "image-span/sliding/tp1/probe",
+"geometry": "image-span",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 5122902358184852487,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1300,
+"spans": [
+[
+40,
+320
+]
+]
+}
+],
+"probes": [
+[
+0,
+650,
+651
+],
+[
+0,
+319,
+319
+],
+[
+0,
+320,
+40
+],
+[
+0,
+39,
+40
+]
+]
+},
+{
+"id": "image-span/full/tp1/rand",
+"geometry": "image-span",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 9060097685472741103,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1300,
+"spans": [
+[
+40,
+320
+]
+]
+}
+]
+},
+{
+"id": "image-span/full/tp1/probe",
+"geometry": "image-span",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 1616058547927391399,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1300,
+"spans": [
+[
+40,
+320
+]
+]
+}
+],
+"probes": [
+[
+0,
+650,
+651
+],
+[
+0,
+319,
+319
+],
+[
+0,
+320,
+40
+],
+[
+0,
+39,
+40
+]
+]
+}
+]
+}

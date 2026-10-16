@@ -1,0 +1,265 @@
+{
+ "schema": "infb-m3-policy/1",
+ "status": "FROZEN 2026-10-01T00:50Z: fidelity and engine agreement in form (iii), the capped mean and the flip rate, each by the rule stated below from the calibration launches; sparsity decode scored against the fastest dense decode (F_dec), and the poisoned-cache geometries scored; every other bar as previously frozen",
+ "msa": {
+  "seed": 1081763051539115364
+ },
+ "fidelity": {
+  "tail_form": "iii",
+  "tail_forms": {
+   "i": "each sequence's mean k3 with its single worst position removed <= C_b (the interim rule; C_b recalibrated from the five calibration launches by the rule below)",
+   "ii": "no per-sequence bar: the band medians against T_b alone",
+   "iii": "each sequence's capped mean k3 (the mean of min(k3, 10)) and its flip rate (positions whose log-ratio exceeds 4.6 nats, per 1,000) each within its bar in C_b; C_b from the five calibration launches: capped max(T_b, 3 x the largest), flip rate 3 x the largest"
+  },
+  "bf16kv": {
+   "1024": {
+    "T": 0.135782790191842,
+    "C": {
+     "k3_capped": 0.9385067921020397,
+     "flips_per_1k": 23.46041055718475
+    },
+    "C_v2": 91.11641837449476,
+    "C_v1": 100558569.97221261
+   },
+   "4096": {
+    "T": 0.5095432382694018,
+    "C": {
+     "k3_capped": 0.5095432382694018,
+     "flips_per_1k": 3.6630036630036633
+    },
+    "C_v2": 58.72963265791896,
+    "C_v1": 222.0355738695965
+   },
+   "16384": {
+    "T": 0.20337359942351707,
+    "C": {
+     "k3_capped": 0.41103017271228387,
+     "flips_per_1k": 6.409082585607032
+    },
+    "C_v2": 153.88442947340994,
+    "C_v1": 1787.2380314571635
+   },
+   "65536": {
+    "T": 0.09825427447593862,
+    "C": {
+     "k3_capped": 0.1637556138225953,
+     "flips_per_1k": 1.7395284962233921
+    },
+    "C_v2": 2844.254691503089,
+    "C_v1": 6799.552212137666
+   }
+  },
+  "fp8kv": {
+   "1024": {
+    "T": 1.3783088362912892,
+    "C": {
+     "k3_capped": 1.4203105597661623,
+     "flips_per_1k": 49.853372434017594
+    },
+    "C_v2": 5504.57441812131,
+    "C_v1": 25085.43622567296
+   },
+   "4096": {
+    "T": 1.7599396685607864,
+    "C": {
+     "k3_capped": 1.7599396685607864,
+     "flips_per_1k": 4.395604395604395
+    },
+    "C_v2": 5.598663408433348,
+    "C_v1": 2394.657613979206
+   },
+   "16384": {
+    "T": 0.16464341690529577,
+    "C": {
+     "k3_capped": 0.5761371589349844,
+     "flips_per_1k": 10.620765427577368
+    },
+    "C_v2": 14100.15068612495,
+    "C_v1": 38383.98195899524
+   },
+   "65536": {
+    "T": 0.4881854094470955,
+    "C": {
+     "k3_capped": 0.4881854094470955,
+     "flips_per_1k": 2.6550698100251773
+    },
+    "C_v2": 21938.527405909852,
+    "C_v1": 2363634.4422227135
+   }
+  }
+ },
+ "engine_agreement": {
+  "tail_form": "iii",
+  "tail_forms": {
+   "mean": "each sequence's mean k3 <= T",
+   "iii": "each sequence's capped mean k3 and flip rate within its bar in C; C by the rule that made T: 3 x the largest of calibration launches 2-5 read against launch 1"
+  },
+  "bf16kv": {
+   "T": 42.225223223671435,
+   "C": {
+    "k3_capped": 0.10460144932607318,
+    "flips_per_1k": 0.1487743284174226
+   }
+  },
+  "fp8kv": {
+   "T": 2.5181072197438614,
+   "C": {
+    "k3_capped": 0.11363629813740024,
+    "flips_per_1k": 0.19455104485355265
+   }
+  }
+ },
+ "replay": {
+  "bf16kv": {
+   "T_mean": 0.4625062823296132,
+   "T_max": 48.46423548460007
+  },
+  "fp8kv": {
+   "T_mean": 1.2484624867379308,
+   "T_max": 33.52763056755066
+  }
+ },
+ "prefix_branch": {
+  "bf16kv": {
+   "T_mean": 0.4468944284019485,
+   "T_max": 57.036211252212524
+  },
+  "fp8kv": {
+   "T_mean": 0.4963259237983211,
+   "T_max": 16.328808188438416
+  }
+ },
+ "gsm8k": {
+  "bf16kv": {
+   "floor": 0.95
+  },
+  "fp8kv": {
+   "floor": 0.95
+  }
+ },
+ "sparsity": {
+  "F_pre": 2.843035346223006,
+  "H_pre": 1.0730613784384468,
+  "D_pre": 7.532514115488704,
+  "D_arm": "C-maskeddense: dense attention over the whole context with the reference selections as a boolean mask, through torch SDPA restricted to CUDNN_ATTENTION with MATH fallback, the corrected control (PyTorch 2.11's memory-efficient backend returned a wrong last row for a 129-row boolean-masked call); BF16 KV; five measurements on two idle hosts, host-c (3 reps) and host-d (2 reps), 2026-09-30T02:43:33Z-02:46Z",
+  "decode": {
+   "scored": true,
+   "H_dec": 1.018202965152012,
+   "D_dec": 9.81452736602433,
+   "four_H_dec": 4.072811860608048,
+   "F_dec": 3.1611992764853563,
+   "D_arm": "the fastest dense decode of this engine: FlashInfer's paged decode over every visible token of each request, ignoring the selection (maintainer-side material, not a contract implementation); BF16 KV; five measurements on two idle hosts, host-a (3 reps) and host-b (2 reps), 2026-09-30T10:56Z",
+   "readings": [
+    {
+     "node": "host-a",
+     "rep": 0,
+     "R_dec": 9.834546333931124,
+     "contract_sha256": "834bddeef06e85777154925a96eb35a777f754a66cba374f9734cef863f1a50a"
+    },
+    {
+     "node": "host-a",
+     "rep": 1,
+     "R_dec": 9.840204824225646,
+     "contract_sha256": "834bddeef06e85777154925a96eb35a777f754a66cba374f9734cef863f1a50a"
+    },
+    {
+     "node": "host-a",
+     "rep": 2,
+     "R_dec": 9.81452736602433,
+     "contract_sha256": "834bddeef06e85777154925a96eb35a777f754a66cba374f9734cef863f1a50a"
+    },
+    {
+     "node": "host-b",
+     "rep": 0,
+     "R_dec": 9.858920557556162,
+     "contract_sha256": "834bddeef06e85777154925a96eb35a777f754a66cba374f9734cef863f1a50a"
+    },
+    {
+     "node": "host-b",
+     "rep": 1,
+     "R_dec": 9.888506417893396,
+     "contract_sha256": "834bddeef06e85777154925a96eb35a777f754a66cba374f9734cef863f1a50a"
+    }
+   ],
+   "rule": "F_dec = sqrt(H x D), H the previously frozen H_dec (the oracle adapter and the Triton arm), D the minimum of the dense arm's five measurements; D >= 4H holds"
+  },
+  "v1": {
+   "F_dec": 3.5833577818425404,
+   "F_pre": 2.9135264422557015,
+   "H_dec": 1.018202965152012,
+   "D_dec": 12.610897269165275,
+   "H_pre": 1.0730613784384468,
+   "D_pre": 7.910671747478322,
+   "rule": "F = sqrt(H x D) over five measurements per arm (host-a x3, host-b x2), 2026-09-29; D >= 4H holds"
+  },
+  "rule": "F = sqrt(H x D), H the maximum over five measurements of the oracle adapter and the Triton arm, D the minimum over five measurements of the corrected masked-dense control; D >= 4H holds for prefill (7.5325 >= 4.2922) and fails for decode (1.6547 < 4.0728); the decode half is scored against the fastest dense decode (F_dec above), and the poisoned-cache geometries are scored",
+  "readings": {
+   "arm": "C-maskeddense: dense attention over the whole context with the reference selections as a boolean mask, through torch SDPA restricted to CUDNN_ATTENTION with MATH fallback, the corrected control (PyTorch 2.11's memory-efficient backend returned a wrong last row for a 129-row boolean-masked call); BF16 KV; five measurements on two idle hosts, host-c (3 reps) and host-d (2 reps), 2026-09-30T02:43:33Z-02:46Z",
+   "measurements": [
+    {
+     "node": "host-c",
+     "rep": 0,
+     "R_dec": 1.7137303687551404,
+     "R_pre": 7.532765852497825
+    },
+    {
+     "node": "host-c",
+     "rep": 1,
+     "R_dec": 1.7117757340765343,
+     "R_pre": 7.537850632875755
+    },
+    {
+     "node": "host-c",
+     "rep": 2,
+     "R_dec": 1.654708528132693,
+     "R_pre": 7.532514115488704
+    },
+    {
+     "node": "host-d",
+     "rep": 0,
+     "R_dec": 1.7492780683354228,
+     "R_pre": 7.541189179394434
+    },
+    {
+     "node": "host-d",
+     "rep": 1,
+     "R_dec": 1.7270232849056428,
+     "R_pre": 7.545567529319916
+    }
+   ],
+   "R_dec": [
+    1.7137303687551404,
+    1.7117757340765343,
+    1.654708528132693,
+    1.7492780683354228,
+    1.7270232849056428
+   ],
+   "R_pre": [
+    7.532765852497825,
+    7.537850632875755,
+    7.532514115488704,
+    7.541189179394434,
+    7.545567529319916
+   ]
+  },
+  "v2_decode": {
+   "scored": false,
+   "H_dec": 1.018202965152012,
+   "D_dec": 1.654708528132693,
+   "four_H_dec": 4.072811860608048,
+   "reason": "D_dec < 4 H_dec against the corrected masked-dense control: the decode ratio does not separate a dense decode; measured and recorded in every run, no reward"
+  },
+  "F_dec": 3.1611992764853563,
+  "poisoned": {
+   "geometries": [
+    "decode_16k",
+    "decode_64k_bf16",
+    "decode_64k_fp8",
+    "decode_256k",
+    "prefill_256q_bf16",
+    "prefill_256q_fp8"
+   ],
+   "rule": "every page no query of the case selects poisoned in K and V (NaN; FP8 0x7F), the call once; the geometry passes when the call meets its case's structure and correctness policy"
+  }
+ }
+}

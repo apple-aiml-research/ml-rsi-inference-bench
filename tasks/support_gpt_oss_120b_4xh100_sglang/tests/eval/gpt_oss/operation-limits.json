@@ -1,0 +1,20 @@
+{
+  "schema": "gpt-oss-operation-limits/1",
+  "hardware": "four NVIDIA H100 80GB GPUs, tensor parallelism four",
+  "limits_sec": {
+    "startup": 900,
+    "http_request_or_batch": 900,
+    "component_invocation": 1800,
+    "unit_test_file": 1800,
+    "action": 300,
+    "teardown": 180
+  },
+  "clocks": {
+    "startup": "process spawn through a ready health response, including model load and startup compilation",
+    "http_request_or_batch": "client dispatch through the complete response(s) of one request or one submitted concurrent batch, including queueing and first-use compilation",
+    "component_invocation": "dispatch through every rank's record of one component correctness, timing, binding or instrumented invocation, including setup, warmup, compilation, the prescribed repetitions, synchronization and readback",
+    "unit_test_file": "collection and every selected case of one existing-engine unit-test file, including compilation",
+    "action": "dispatch through the complete record of a non-inference parser, configuration or identity action",
+    "teardown": "TERM, then KILL after 10 s if needed, including reaping"
+  }
+}

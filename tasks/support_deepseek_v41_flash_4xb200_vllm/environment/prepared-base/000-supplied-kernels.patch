@@ -1,0 +1,1783 @@
+diff --git a/vllm/model_executor/kernels/attention/dsa/candidate_blocks.py b/vllm/model_executor/kernels/attention/dsa/candidate_blocks.py
+new file mode 100644
+index 0000000000..efc7c418ca
+--- /dev/null
++++ b/vllm/model_executor/kernels/attention/dsa/candidate_blocks.py
+@@ -0,0 +1,234 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++import torch
++
++from vllm.triton_utils import tl, triton
++
++
++@triton.jit
++def _max_with_nan(a, b):
++    return tl.maximum(a, b, propagate_nan=tl.PropagateNan.ALL)
++
++
++@triton.jit(do_not_specialize=["width", "nblocks"])
++def _block_scores_kernel(
++    logits,
++    starts,
++    ends,
++    scores,
++    stride_row,
++    stride_col,
++    stride_start,
++    stride_end,
++    width,
++    nblocks,
++    BLOCK_SIZE: tl.constexpr,
++    HAS_STARTS: tl.constexpr,
++    ROW_REPEAT: tl.constexpr,
++    TILE: tl.constexpr,
++):
++    row = tl.program_id(0).to(tl.int64)
++    blocks = tl.program_id(1) * TILE + tl.arange(0, TILE)
++    start = tl.load(starts + row // ROW_REPEAT * stride_start) if HAS_STARTS else 0
++    end = tl.load(ends + row // ROW_REPEAT * stride_end)
++    offsets = tl.arange(0, triton.next_power_of_2(BLOCK_SIZE))
++    cols = start + blocks[:, None] * BLOCK_SIZE + offsets[None, :]
++    values = tl.load(
++        logits + row * stride_row + cols * stride_col,
++        (blocks[:, None] < nblocks)
++        & (offsets[None, :] < BLOCK_SIZE)
++        & (cols < end)
++        & (cols < width),
++        other=-float("inf"),
++    )
++    reduced = tl.reduce(values, 1, _max_with_nan)
++    reduced = tl.where(
++        (end > start) & (blocks == (end - start - 1) // BLOCK_SIZE),
++        float("inf"),
++        reduced,
++    )
++    tl.store(scores + row * nblocks + blocks, reduced, blocks < nblocks)
++
++
++@triton.jit(do_not_specialize=["k"])
++def _store_candidates_kernel(
++    values,
++    indices,
++    output,
++    out_stride_row,
++    out_stride_col,
++    k,
++    OUT_K: tl.constexpr,
++    TILE: tl.constexpr,
++):
++    row = tl.program_id(0).to(tl.int64)
++    cols = tl.program_id(1) * TILE + tl.arange(0, TILE)
++    value = tl.load(values + row * k + cols, cols < k, other=-float("inf"))
++    index = tl.load(indices + row * k + cols, cols < k, other=-1)
++    tl.store(
++        output + row * out_stride_row + cols * out_stride_col,
++        tl.where(value > -float("inf"), index, -1),
++        cols < OUT_K,
++    )
++
++
++@triton.jit(do_not_specialize=["width", "nblocks"])
++def _candidate_flags_kernel(
++    candidates,
++    starts,
++    flags,
++    stride_row,
++    stride_col,
++    stride_start,
++    width,
++    nblocks,
++    BLOCK_SIZE: tl.constexpr,
++    K: tl.constexpr,
++    HAS_STARTS: tl.constexpr,
++    ROW_REPEAT: tl.constexpr,
++):
++    row = tl.program_id(0).to(tl.int64)
++    offsets = tl.arange(0, 1024)
++    for tile in range(tl.cdiv(nblocks + 1, 1024)):
++        slots = tile * 1024 + offsets
++        tl.store(flags + row * (nblocks + 1) + slots, 0, slots <= nblocks)
++    start = tl.load(starts + row // ROW_REPEAT * stride_start) if HAS_STARTS else 0
++    cols = tl.arange(0, triton.next_power_of_2(K))
++    block = tl.load(
++        candidates + row * stride_row + cols * stride_col, cols < K, other=-1
++    ).to(tl.int64)
++    # Preserve the packed-column clamp for candidates beyond the logits width.
++    block = tl.where(start + block * BLOCK_SIZE >= width, nblocks, block)
++    tl.debug_barrier()
++    tl.store(flags + row * (nblocks + 1) + block, 1, (cols < K) & (block >= 0))
++
++
++@triton.jit(do_not_specialize=["width", "nblocks"])
++def _mask_candidates_kernel(
++    logits,
++    starts,
++    ends,
++    flags,
++    stride_row,
++    stride_col,
++    stride_start,
++    stride_end,
++    width,
++    nblocks,
++    BLOCK_SIZE: tl.constexpr,
++    HAS_STARTS: tl.constexpr,
++    ROW_REPEAT: tl.constexpr,
++    TILE: tl.constexpr,
++):
++    row = tl.program_id(0).to(tl.int64)
++    cols = tl.program_id(1) * TILE + tl.arange(0, TILE)
++    start = tl.load(starts + row // ROW_REPEAT * stride_start) if HAS_STARTS else 0
++    end = tl.load(ends + row // ROW_REPEAT * stride_end)
++    valid = (cols >= start) & (cols < end) & (cols < width)
++    block = (cols - start) // BLOCK_SIZE
++    keep = tl.load(flags + row * (nblocks + 1) + block, valid, other=0)
++    edge = tl.load(flags + row * (nblocks + 1) + nblocks)
++    keep = (keep != 0) | ((cols == width - 1) & (edge != 0))
++    tl.store(
++        logits + row * stride_row + cols * stride_col,
++        -float("inf"),
++        (cols < width) & ~(valid & keep),
++    )
++
++
++def select_candidate_blocks(
++    logits: torch.Tensor,
++    row_ks: torch.Tensor | None,
++    row_ke: torch.Tensor,
++    topk_blocks: int,
++    block_size: int,
++    out: torch.Tensor,
++    row_repeat: int = 1,
++) -> None:
++    """Select local block IDs by maximum score, pinning each row's newest block.
++
++    Row bounds are in packed column space; absent starts mean zero.
++    Decode rows share bounds in groups of ``row_repeat``. Output is -1 padded.
++    """
++    assert logits.is_cuda
++    rows, width = logits.shape
++    if not rows:
++        return
++    if not width:
++        out.fill_(-1)
++        return
++    nblocks = triton.cdiv(width, block_size)
++    scores = logits.new_empty((rows, nblocks))
++    _block_scores_kernel[(rows, triton.cdiv(nblocks, 128))](
++        logits,
++        row_ks,
++        row_ke,
++        scores,
++        *logits.stride(),
++        row_ks.stride(0) if row_ks is not None else 0,
++        row_ke.stride(0),
++        width,
++        nblocks,
++        block_size,
++        row_ks is not None,
++        row_repeat,
++        128,
++    )
++    # Keep the existing top-k tie behavior.
++    top = scores.topk(min(topk_blocks, nblocks), dim=-1)
++    _store_candidates_kernel[(rows, triton.cdiv(topk_blocks, 256))](
++        top.values,
++        top.indices,
++        out,
++        *out.stride(),
++        top.values.shape[1],
++        topk_blocks,
++        256,
++    )
++
++
++def apply_candidate_mask(
++    logits: torch.Tensor,
++    row_ks: torch.Tensor | None,
++    row_ke: torch.Tensor,
++    candidate_blocks: torch.Tensor,
++    block_size: int,
++    row_repeat: int = 1,
++) -> None:
++    """Mask packed logits outside causal bounds and request-local candidates."""
++    assert logits.is_cuda
++    rows, width = logits.shape
++    if not rows or not width:
++        return
++    nblocks = triton.cdiv(width, block_size)
++    flags = torch.empty((rows, nblocks + 1), device=logits.device, dtype=torch.uint8)
++    start_stride = row_ks.stride(0) if row_ks is not None else 0
++    _candidate_flags_kernel[(rows,)](
++        candidate_blocks,
++        row_ks,
++        flags,
++        *candidate_blocks.stride(),
++        start_stride,
++        width,
++        nblocks,
++        block_size,
++        candidate_blocks.shape[1],
++        row_ks is not None,
++        row_repeat,
++    )
++    _mask_candidates_kernel[(rows, triton.cdiv(width, 1024))](
++        logits,
++        row_ks,
++        row_ke,
++        flags,
++        *logits.stride(),
++        start_stride,
++        row_ke.stride(0),
++        width,
++        nblocks,
++        block_size,
++        row_ks is not None,
++        row_repeat,
++        1024,
++    )
+diff --git a/vllm/model_executor/kernels/linear/__init__.py b/vllm/model_executor/kernels/linear/__init__.py
+index f8e4f5ecb4..9c52e7b413 100644
+--- a/vllm/model_executor/kernels/linear/__init__.py
++++ b/vllm/model_executor/kernels/linear/__init__.py
+@@ -109,6 +109,9 @@ from vllm.model_executor.kernels.linear.mxfp8 import (
+ from vllm.model_executor.kernels.linear.mxfp8.b12x import (
+     B12xMxfp8LinearKernel,
+ )
++from vllm.model_executor.kernels.linear.mxfp8.deep_gemm import (
++    DeepGemmMxfp8BmmLinearKernel,
++)
+ from vllm.model_executor.kernels.linear.mxfp8.emulation import (
+     EmulationMxfp8LinearKernel,
+ )
+@@ -301,6 +304,7 @@ _LINEAR_BACKEND_KERNEL_MAP: dict[str, set[type]] = {
+     },
+     "deep_gemm": {
+         DeepGemmFp8BlockScaledMMKernel,
++        DeepGemmMxfp8BmmLinearKernel,
+     },
+     "torch": {
+         PerTensorTorchFP8ScaledMMLinearKernel,
+@@ -851,13 +855,21 @@ def choose_mp_linear_kernel(
+     )
+ 
+ 
+-def init_mxfp8_linear_kernel() -> Mxfp8LinearKernel:
++def init_mxfp8_linear_kernel(*, bmm_batch_size: int | None = None) -> Mxfp8LinearKernel:
+     """Select and instantiate the best MXFP8 linear kernel for the
+     current platform."""
+-    config = Mxfp8LinearLayerConfig()
++    config = Mxfp8LinearLayerConfig(bmm_batch_size=bmm_batch_size)
+ 
+     platform = current_platform._enum
+-    possible = list(_POSSIBLE_MXFP8_KERNELS.get(platform, []))
++    possible: list[type[Mxfp8LinearKernel]]
++    if bmm_batch_size is not None:
++        possible = (
++            [DeepGemmMxfp8BmmLinearKernel, EmulationMxfp8LinearKernel]
++            if current_platform.is_cuda()
++            else []
++        )
++    else:
++        possible = list(_POSSIBLE_MXFP8_KERNELS.get(platform, []))
+ 
+     # Apply --linear-backend filtering when set.
+     possible = _resolve_backend_kernels(possible, "MXFP8")
+diff --git a/vllm/model_executor/kernels/linear/mxfp8/Mxfp8LinearKernel.py b/vllm/model_executor/kernels/linear/mxfp8/Mxfp8LinearKernel.py
+index c8b8582c0e..3fe34029e5 100644
+--- a/vllm/model_executor/kernels/linear/mxfp8/Mxfp8LinearKernel.py
++++ b/vllm/model_executor/kernels/linear/mxfp8/Mxfp8LinearKernel.py
+@@ -17,7 +17,7 @@ class Mxfp8LinearLayerConfig:
+     uint8 (E8M0) per-block scales at block size 32.
+     """
+ 
+-    pass
++    bmm_batch_size: int | None = None
+ 
+ 
+ class Mxfp8LinearKernel(ABC):
+diff --git a/vllm/model_executor/kernels/linear/mxfp8/deep_gemm.py b/vllm/model_executor/kernels/linear/mxfp8/deep_gemm.py
+new file mode 100644
+index 0000000000..b74f11497b
+--- /dev/null
++++ b/vllm/model_executor/kernels/linear/mxfp8/deep_gemm.py
+@@ -0,0 +1,128 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++import torch
++
++from vllm.model_executor.layers.quantization.utils.fp8_utils import (
++    deepgemm_post_process_fp8_weight_block,
++    per_token_group_quant_fp8_packed_for_deepgemm,
++)
++from vllm.model_executor.utils import replace_parameter
++from vllm.platforms import current_platform
++from vllm.utils.deep_gemm import (
++    fp8_einsum,
++    is_deep_gemm_supported,
++)
++from vllm.utils.torch_utils import direct_register_custom_op
++
++from .Mxfp8LinearKernel import Mxfp8LinearKernel, Mxfp8LinearLayerConfig
++
++
++class DeepGemmMxfp8BmmLinearKernel(Mxfp8LinearKernel):
++    """Grouped MXFP8 einsum with per-row, 32-element weight scales."""
++
++    def __init__(self, config: Mxfp8LinearLayerConfig):
++        super().__init__(config)
++        self.recipe = (1, 1, 32)
++
++    @classmethod
++    def is_supported(
++        cls, compute_capability: int | None = None
++    ) -> tuple[bool, str | None]:
++        if not current_platform.is_cuda() or not is_deep_gemm_supported():
++            return False, "DeepGEMM BMM requires a supported CUDA device."
++        if not current_platform.is_device_capability_family(100):
++            return False, "DeepGEMM MXFP8 BMM requires Blackwell."
++        return True, None
++
++    @classmethod
++    def can_implement(cls, config: Mxfp8LinearLayerConfig) -> tuple[bool, str | None]:
++        if config.bmm_batch_size is None or config.bmm_batch_size <= 0:
++            return False, "DeepGEMM BMM requires a positive batch size."
++        return True, None
++
++    def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
++        weight = layer.weight.data
++        if weight.ndim == 3:
++            return
++        scale = layer.weight_scale.data
++        assert weight.dtype == torch.float8_e4m3fn and weight.ndim == 2
++        assert scale.shape == (weight.shape[0], weight.shape[1] // 32)
++        assert self.config.bmm_batch_size is not None
++        weight, scale = deepgemm_post_process_fp8_weight_block(
++            wq=weight,
++            ws=scale,
++            quant_block_shape=(1, 32),
++            use_e8m0=False,
++            is_bmm=True,
++            bmm_batch_size=self.config.bmm_batch_size,
++        )
++        replace_parameter(layer, "weight", weight)
++        replace_parameter(layer, "weight_scale", scale)
++        layer.weight_block_size = [1, 32]
++
++    def apply_weights(
++        self,
++        layer: torch.nn.Module,
++        x: torch.Tensor | tuple[torch.Tensor, torch.Tensor],
++        bias: torch.Tensor | None = None,
++    ) -> torch.Tensor:
++        """Project [tokens, groups, K] input to [tokens, groups, N]."""
++        if isinstance(x, tuple):
++            q_input, input_scale = x
++        else:
++            tokens, groups, k = x.shape
++            q_input, input_scale = per_token_group_quant_fp8_packed_for_deepgemm(
++                x.reshape(tokens, groups * k),
++                group_size=32,
++                use_ue8m0=True,
++            )
++            q_input = q_input.view(tokens, groups, k)
++            input_scale = input_scale.view(tokens, groups, k // 128)
++        output = torch.ops.vllm.deepgemm_mxfp8_bmm(
++            q_input, input_scale, layer.weight, layer.weight_scale, list(self.recipe)
++        )
++        if bias is not None:
++            output = output + bias.view(output.shape[1:])
++        return output
++
++
++def _deepgemm_mxfp8_bmm_fake(
++    x: torch.Tensor,
++    x_scale: torch.Tensor,
++    weight: torch.Tensor,
++    weight_scale: torch.Tensor,
++    recipe: list[int],
++) -> torch.Tensor:
++    return torch.empty(
++        (x.shape[0], weight.shape[0], weight.shape[1]),
++        device=x.device,
++        dtype=torch.bfloat16,
++    )
++
++
++def _deepgemm_mxfp8_bmm(
++    x: torch.Tensor,
++    x_scale: torch.Tensor,
++    weight: torch.Tensor,
++    weight_scale: torch.Tensor,
++    recipe: list[int],
++) -> torch.Tensor:
++    output = torch.empty(
++        (x.shape[0], weight.shape[0], weight.shape[1]),
++        device=x.device,
++        dtype=torch.bfloat16,
++    )
++    fp8_einsum(
++        "bhr,hdr->bhd",
++        (x, x_scale),
++        (weight, weight_scale),
++        output,
++        recipe=tuple(recipe),
++    )
++    return output
++
++
++direct_register_custom_op(
++    "deepgemm_mxfp8_bmm", _deepgemm_mxfp8_bmm, fake_impl=_deepgemm_mxfp8_bmm_fake
++)
+diff --git a/vllm/model_executor/kernels/linear/mxfp8/flashinfer.py b/vllm/model_executor/kernels/linear/mxfp8/flashinfer.py
+index 6ea9138de9..02700a0ced 100644
+--- a/vllm/model_executor/kernels/linear/mxfp8/flashinfer.py
++++ b/vllm/model_executor/kernels/linear/mxfp8/flashinfer.py
+@@ -4,11 +4,19 @@
+ import torch
+ from torch.nn.parameter import Parameter
+ 
++from vllm.model_executor.layers.fusion.quant_activation import (
++    QuantizedActivation,
++    as_quantized_activation,
++)
+ from vllm.model_executor.layers.quantization.utils.mxfp8_utils import (
+     MXFP8_BLOCK_SIZE,
+     mxfp8_e4m3_quantize,
+     swizzle_mxfp8_scale,
+ )
++from vllm.model_executor.layers.quantization.utils.quant_utils import (
++    QuantKey,
++    kMxfp8Dynamic,
++)
+ from vllm.platforms import current_platform
+ from vllm.utils import flashinfer as vllm_flashinfer
+ from vllm.utils.flashinfer import has_flashinfer, has_flashinfer_cutedsl
+@@ -35,6 +43,10 @@ class FlashInferCutlassMxfp8LinearKernel(Mxfp8LinearKernel):
+     def can_implement(cls, c: Mxfp8LinearLayerConfig) -> tuple[bool, str | None]:
+         return True, None
+ 
++    def input_quant_key(self) -> QuantKey:
++        # Activations use FlashInfer's F8_128x4 swizzled scale layout.
++        return kMxfp8Dynamic
++
+     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+         weight = layer.weight.data  # [N, K]
+         N, K = weight.shape
+@@ -51,16 +63,13 @@ class FlashInferCutlassMxfp8LinearKernel(Mxfp8LinearKernel):
+     def apply_weights(
+         self,
+         layer: torch.nn.Module,
+-        x: torch.Tensor,
++        x: torch.Tensor | QuantizedActivation,
+         bias: torch.Tensor | None = None,
+     ) -> torch.Tensor:
+         weight = layer.weight
+         weight_scale = layer.weight_scale
+-        out_dtype = x.dtype
+         N, K = weight.shape
+ 
+-        input_shape = x.shape
+-        input_2d = x.view(-1, K)
+         min_dim = 128
+ 
+         assert min_dim <= K, (
+@@ -75,9 +84,16 @@ class FlashInferCutlassMxfp8LinearKernel(Mxfp8LinearKernel):
+             f"out_features is too small for mm_mxfp8."
+         )
+ 
+-        input_mxfp8, input_scale = mxfp8_e4m3_quantize(
+-            input_2d, is_sf_swizzled_layout=True
+-        )
++        qa = as_quantized_activation(x, self.input_quant_key())
++        if qa is not None:
++            input_mxfp8, input_scale = qa.data, qa.scale
++            out_dtype, input_shape = qa.orig_dtype, qa.orig_shape
++        else:
++            assert isinstance(x, torch.Tensor)
++            out_dtype, input_shape = x.dtype, x.shape
++            input_mxfp8, input_scale = mxfp8_e4m3_quantize(
++                x.view(-1, K), is_sf_swizzled_layout=True
++            )
+ 
+         if not weight.is_contiguous():
+             weight = weight.contiguous()
+@@ -118,6 +134,10 @@ class FlashInferCutedslMxfp8LinearKernel(Mxfp8LinearKernel):
+     def can_implement(cls, c: Mxfp8LinearLayerConfig) -> tuple[bool, str | None]:
+         return True, None
+ 
++    def input_quant_key(self) -> QuantKey:
++        # Activations use FlashInfer's F8_128x4 swizzled scale layout.
++        return kMxfp8Dynamic
++
+     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+         weight = layer.weight.data  # [N, K]
+         N, K = weight.shape
+@@ -135,16 +155,13 @@ class FlashInferCutedslMxfp8LinearKernel(Mxfp8LinearKernel):
+     def apply_weights(
+         self,
+         layer: torch.nn.Module,
+-        x: torch.Tensor,
++        x: torch.Tensor | QuantizedActivation,
+         bias: torch.Tensor | None = None,
+     ) -> torch.Tensor:
+         weight = layer.weight  # [K, N], column-major
+         weight_scale = layer.weight_scale
+-        out_dtype = x.dtype
+         K, N = weight.shape
+ 
+-        input_shape = x.shape
+-        input_2d = x.view(-1, K)
+         min_dim = 128
+ 
+         assert min_dim <= K, (
+@@ -159,9 +176,16 @@ class FlashInferCutedslMxfp8LinearKernel(Mxfp8LinearKernel):
+             f"out_features is too small for mm_mxfp8."
+         )
+ 
+-        input_mxfp8, input_scale = mxfp8_e4m3_quantize(
+-            input_2d, is_sf_swizzled_layout=True
+-        )
++        qa = as_quantized_activation(x, self.input_quant_key())
++        if qa is not None:
++            input_mxfp8, input_scale = qa.data, qa.scale
++            out_dtype, input_shape = qa.orig_dtype, qa.orig_shape
++        else:
++            assert isinstance(x, torch.Tensor)
++            out_dtype, input_shape = x.dtype, x.shape
++            input_mxfp8, input_scale = mxfp8_e4m3_quantize(
++                x.view(-1, K), is_sf_swizzled_layout=True
++            )
+ 
+         output = vllm_flashinfer.mm_mxfp8(
+             input_mxfp8,
+diff --git a/vllm/model_executor/kernels/mhc/tilelang.py b/vllm/model_executor/kernels/mhc/tilelang.py
+index c3c773d07f..c4fe6dd163 100644
+--- a/vllm/model_executor/kernels/mhc/tilelang.py
++++ b/vllm/model_executor/kernels/mhc/tilelang.py
+@@ -87,6 +87,190 @@ def _tilelang_hc_prenorm_gemm(
+     )
+ 
+ 
++def mhc_pre_delayed_tilelang(
++    residual: torch.Tensor,
++    fn: torch.Tensor,
++    hc_scale: torch.Tensor,
++    hc_base: torch.Tensor,
++    rms_eps: float,
++    hc_pre_eps: float,
++    hc_sinkhorn_eps: float,
++    hc_post_mult_value: float,
++    sinkhorn_repeat: int,
++    pre_mix: torch.Tensor | None = None,
++    x: torch.Tensor | None = None,
++    norm_weight: torch.Tensor | None = None,
++    norm_eps: float = 1e-6,
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
++    """Run mHC pre with a carried pre-mix and return the next pre-mix.
++
++    Args:
++        residual: BF16 residual streams of shape (tokens, hc_mult, hidden_size).
++        fn: FP32 projection of shape (hc_mult * (hc_mult + 2), input_size).
++        hc_scale: FP32 scales of shape (3,).
++        hc_base: FP32 bias of shape (hc_mult * (hc_mult + 2),).
++        rms_eps: RMS normalization epsilon.
++        hc_pre_eps: Pre-mix epsilon.
++        hc_sinkhorn_eps: Sinkhorn epsilon.
++        hc_post_mult_value: Post-mix multiplier.
++        sinkhorn_repeat: Number of Sinkhorn iterations.
++        pre_mix: FP32 coefficients from the previous sublayer, or None to
++            select residual stream zero at model entry.
++        x: Optional BF16 projection input of shape (tokens, input_size), for
++            the first layer's broadcast embedding and summed projection.
++        norm_weight: Optional BF16 RMSNorm weight for the collapsed input.
++        norm_eps: RMSNorm epsilon for the collapsed input.
++
++    Returns:
++        Post and residual coefficients, optionally normalized BF16 layer input,
++        and the next FP32 pre-mix, with shapes (tokens, hc_mult, 1),
++        (tokens, hc_mult, hc_mult), (tokens, hidden_size), and (tokens, hc_mult).
++    """
++    from vllm.model_executor.kernels.mhc.tilelang_kernels import (
++        mhc_pre_big_fuse_tilelang,
++    )
++    from vllm.model_executor.kernels.mhc.warmup import (
++        MHC_PRE_NORM_KERNEL,
++        compute_mhc_pre_num_splits,
++    )
++    from vllm.utils.deep_gemm import (
++        is_deep_gemm_supported,
++        tf32_hc_prenorm_gemm,
++    )
++
++    assert residual.ndim == 3 and residual.dtype == torch.bfloat16
++    assert residual.is_contiguous()
++    num_tokens, hc_mult, hidden_size = residual.shape
++    if x is None:
++        x = residual.view(num_tokens, hc_mult * hidden_size)
++    assert x.ndim == 2 and x.dtype == torch.bfloat16 and x.is_contiguous()
++    assert x.shape[0] == num_tokens
++    input_size = x.shape[1]
++    mix_size = hc_mult * (hc_mult + 2)
++    assert fn.shape == (mix_size, input_size) and fn.dtype == torch.float32
++    assert hc_scale.shape == (3,) and hc_scale.dtype == torch.float32
++    assert hc_base.shape == (mix_size,) and hc_base.dtype == torch.float32
++    if pre_mix is not None:
++        assert pre_mix.shape == (num_tokens, hc_mult)
++        assert pre_mix.dtype == torch.float32 and pre_mix.is_contiguous()
++
++    next_pre_mix = torch.empty(
++        num_tokens, hc_mult, dtype=torch.float32, device=residual.device
++    )
++    post = torch.empty_like(next_pre_mix)
++    comb = torch.empty(
++        num_tokens, hc_mult * hc_mult, dtype=torch.float32, device=residual.device
++    )
++    layer_input = torch.empty(
++        num_tokens, hidden_size, dtype=torch.bfloat16, device=residual.device
++    )
++    outputs = (
++        post.unsqueeze(-1),
++        comb.view(num_tokens, hc_mult, hc_mult),
++        layer_input,
++        next_pre_mix,
++    )
++    if num_tokens == 0:
++        return outputs
++
++    use_deep_gemm = is_deep_gemm_supported()
++    n_splits = (
++        compute_mhc_pre_num_splits(input_size, num_tokens) if use_deep_gemm else 1
++    )
++    mixes = torch.empty(
++        n_splits, num_tokens, mix_size, dtype=torch.float32, device=residual.device
++    )
++    sqrsum = torch.empty(
++        n_splits, num_tokens, dtype=torch.float32, device=residual.device
++    )
++    if use_deep_gemm:
++        tf32_hc_prenorm_gemm(x, fn, mixes, sqrsum, n_splits)
++    else:
++        _tilelang_hc_prenorm_gemm(x, fn, mixes, sqrsum, input_size, 1)
++    if norm_weight is not None:
++        assert norm_weight.shape == (hidden_size,)
++        assert norm_weight.dtype == torch.bfloat16 and norm_weight.is_contiguous()
++        MHC_PRE_NORM_KERNEL(
++            mixes,
++            sqrsum,
++            hc_scale,
++            hc_base,
++            residual,
++            post,
++            comb,
++            layer_input,
++            norm_weight,
++            pre_mix if pre_mix is not None else post,
++            next_pre_mix,
++            hidden_size=hidden_size,
++            rms_eps=rms_eps,
++            hc_pre_eps=hc_pre_eps,
++            hc_sinkhorn_eps=hc_sinkhorn_eps,
++            hc_post_mult_value=hc_post_mult_value,
++            sinkhorn_repeat=sinkhorn_repeat,
++            norm_eps=norm_eps,
++            hc_mult=hc_mult,
++            use_pre_mix_in=pre_mix is not None,
++            save_pre_mix=True,
++            rms_numel=input_size,
++        )
++        return outputs
++    mhc_pre_big_fuse_tilelang(
++        mixes,
++        sqrsum,
++        hc_scale,
++        hc_base,
++        residual,
++        post,
++        comb,
++        layer_input,
++        pre_mix if pre_mix is not None else post,
++        next_pre_mix,
++        hidden_size,
++        rms_eps,
++        hc_pre_eps,
++        hc_sinkhorn_eps,
++        hc_post_mult_value,
++        sinkhorn_repeat,
++        n_splits,
++        hc_mult,
++        use_pre_mix_in=pre_mix is not None,
++        save_pre_mix=True,
++        rms_numel=input_size,
++    )
++    return outputs
++
++
++def _mhc_pre_delayed_tilelang_fake(
++    residual: torch.Tensor,
++    fn: torch.Tensor,
++    hc_scale: torch.Tensor,
++    hc_base: torch.Tensor,
++    rms_eps: float,
++    hc_pre_eps: float,
++    hc_sinkhorn_eps: float,
++    hc_post_mult_value: float,
++    sinkhorn_repeat: int,
++    pre_mix: torch.Tensor | None = None,
++    x: torch.Tensor | None = None,
++    norm_weight: torch.Tensor | None = None,
++    norm_eps: float = 1e-6,
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
++    num_tokens, hc_mult, hidden_size = residual.shape
++    return (
++        torch.empty(
++            num_tokens, hc_mult, 1, dtype=torch.float32, device=residual.device
++        ),
++        torch.empty(
++            num_tokens, hc_mult, hc_mult, dtype=torch.float32, device=residual.device
++        ),
++        torch.empty(
++            num_tokens, hidden_size, dtype=torch.bfloat16, device=residual.device
++        ),
++        torch.empty(num_tokens, hc_mult, dtype=torch.float32, device=residual.device),
++    )
++
++
+ def mhc_pre_tilelang(
+     residual: torch.Tensor,
+     fn: torch.Tensor,
+@@ -219,6 +403,9 @@ def mhc_pre_tilelang(
+             post_mix,
+             comb_mix,
+             layer_input,
++            # Pre-mix buffers are unused in V4 mode.
++            post_mix,
++            post_mix,
+             hidden_size,
+             rms_eps,
+             hc_pre_eps,
+@@ -239,6 +426,8 @@ def mhc_pre_tilelang(
+             comb_mix,
+             layer_input,
+             norm_weight,
++            post_mix,
++            post_mix,
+             hidden_size,
+             rms_eps,
+             hc_pre_eps,
+@@ -622,6 +811,9 @@ def mhc_fused_post_pre_tilelang(
+             post_mix_cur,
+             comb_mix_cur,
+             layer_input_cur,
++            # Pre-mix buffers are unused in V4 mode.
++            post_mix_cur,
++            post_mix_cur,
+             hidden_size,
+             rms_eps,
+             hc_pre_eps,
+@@ -642,6 +834,8 @@ def mhc_fused_post_pre_tilelang(
+             comb_mix_cur,
+             layer_input_cur,
+             norm_weight,
++            post_mix_cur,
++            post_mix_cur,
+             hidden_size,
+             rms_eps,
+             hc_pre_eps,
+@@ -762,6 +956,12 @@ def _hc_head_fused_kernel_tilelang_fake(
+     )
+ 
+ 
++direct_register_custom_op(
++    op_name="mhc_pre_delayed_tilelang",
++    op_func=mhc_pre_delayed_tilelang,
++    mutates_args=[],
++    fake_impl=_mhc_pre_delayed_tilelang_fake,
++)
+ direct_register_custom_op(
+     op_name="mhc_pre_tilelang",
+     op_func=mhc_pre_tilelang,
+diff --git a/vllm/model_executor/kernels/mhc/tilelang_kernels.py b/vllm/model_executor/kernels/mhc/tilelang_kernels.py
+index 925f4631a5..1c23d152b9 100644
+--- a/vllm/model_executor/kernels/mhc/tilelang_kernels.py
++++ b/vllm/model_executor/kernels/mhc/tilelang_kernels.py
+@@ -38,6 +38,8 @@ def mhc_pre_big_fuse_tilelang(
+     post_mix,
+     comb_mix,
+     layer_input,
++    pre_mix_in,
++    pre_mix_out,
+     hidden_size: int,
+     rms_eps: float,
+     hc_pre_eps: float,
+@@ -46,11 +48,20 @@ def mhc_pre_big_fuse_tilelang(
+     sinkhorn_repeat: int,
+     n_splits: int = 16,
+     hc_mult: int = 4,
++    use_pre_mix_in: bool = False,
++    save_pre_mix: bool = False,
++    rms_numel: int = 0,
+ ):
+-    """Deeply fused kernels, everything other than gemm & sqrsum in mHC pre block."""
++    """Fuse coefficient generation and residual collapse after the projection.
++
++    With save_pre_mix, store the new pre-mix and collapse with pre_mix_in,
++    or select stream zero when use_pre_mix_in is false.
++    """
+     num_tokens = T.dynamic("num_tokens")
+     hc_mult3 = hc_mult * (2 + hc_mult)
+     hidden_block = math.gcd(512, hidden_size)
++    if rms_numel == 0:
++        rms_numel = hc_mult * hidden_size
+ 
+     gemm_out_mul: T.Tensor[[n_splits, num_tokens, hc_mult3], T.float32]  # type: ignore[no-redef, valid-type]
+     gemm_out_sqrsum: T.Tensor[[n_splits, num_tokens], T.float32]  # type: ignore[no-redef, valid-type]
+@@ -62,6 +73,9 @@ def mhc_pre_big_fuse_tilelang(
+     comb_mix: T.Tensor[[num_tokens, hc_mult * hc_mult], T.float32]  # type: ignore[no-redef, valid-type]
+     layer_input: T.Tensor[[num_tokens, hidden_size], T.bfloat16]  # type: ignore[no-redef, valid-type]
+ 
++    pre_mix_in: T.Tensor[[num_tokens, hc_mult], T.float32]  # type: ignore[no-redef, valid-type]
++    pre_mix_out: T.Tensor[[num_tokens, hc_mult], T.float32]  # type: ignore[no-redef, valid-type]
++
+     with T.Kernel(num_tokens, threads=96) as i:
+         if ENABLE_PDL:
+             T.pdl_sync()
+@@ -73,7 +87,7 @@ def mhc_pre_big_fuse_tilelang(
+         rms[0] = 0
+         for i_split in T.serial(n_splits):
+             rms[0] += gemm_out_sqrsum[i_split, i]
+-        rms[0] = T.rsqrt(rms[0] / (hc_mult * hidden_size) + rms_eps)
++        rms[0] = T.rsqrt(rms[0] / rms_numel + rms_eps)
+         for j in T.Parallel(hc_mult3):
+             mixes[j] = 0
+             for i_split in T.serial(n_splits):
+@@ -87,6 +101,11 @@ def mhc_pre_big_fuse_tilelang(
+             # _pre_split_mixes_fwd (post & comb)
+             cm = T.alloc_fragment((hc_mult, hc_mult), T.float32)
+             for j in T.Parallel(hc_mult):
++                if save_pre_mix:
++                    pre_mix_out[i, j] = (
++                        T.sigmoid(mixes_shared[j] * hc_scale[0] + hc_base[j])
++                        + hc_pre_eps
++                    )
+                 post_mix[i, j] = (
+                     T.sigmoid(
+                         mixes_shared[j + hc_mult] * hc_scale[1] + hc_base[j + hc_mult]
+@@ -137,12 +156,15 @@ def mhc_pre_big_fuse_tilelang(
+             # _pre_split_mixes_fwd (pre)
+             pre_mix_shared = T.alloc_shared(hc_mult, T.float32)
+             for j in T.Parallel(hc_mult):
+-                pre_mix_shared[j] = (
+-                    T.sigmoid(
+-                        mixes_shared[j] * hc_scale[0] + hc_base[j],
++                if use_pre_mix_in:
++                    pre_mix_shared[j] = pre_mix_in[i, j]
++                elif save_pre_mix:
++                    pre_mix_shared[j] = T.if_then_else(j == 0, 1.0, 0.0)
++                else:
++                    pre_mix_shared[j] = (
++                        T.sigmoid(mixes_shared[j] * hc_scale[0] + hc_base[j])
++                        + hc_pre_eps
+                     )
+-                    + hc_pre_eps
+-                )
+             ###################################################################
+             # _pre_apply_mix_fwd
+             for i0_h in T.Pipelined(hidden_size // hidden_block, num_stages=2):
+@@ -179,6 +201,8 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+     comb_mix,
+     layer_input,
+     norm_weight,
++    pre_mix_in,
++    pre_mix_out,
+     hidden_size: int,
+     rms_eps: float,
+     hc_pre_eps: float,
+@@ -189,11 +213,16 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+     n_splits: int = 16,
+     hc_mult: int = 4,
+     gemm_last_dim: int = -1,
++    use_pre_mix_in: bool = False,
++    save_pre_mix: bool = False,
++    rms_numel: int = 0,
+ ):
+     num_tokens = T.dynamic("num_tokens")
+     hc_mult3 = hc_mult * (2 + hc_mult)
+     if gemm_last_dim < 0:
+         gemm_last_dim = hc_mult3
++    if rms_numel == 0:
++        rms_numel = hc_mult * hidden_size
+     hidden_block = math.gcd(1024, hidden_size)
+ 
+     gemm_out_mul: T.Tensor[[n_splits, num_tokens, gemm_last_dim], T.float32]  # type: ignore[no-redef, valid-type]
+@@ -206,6 +235,9 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+     layer_input: T.Tensor[[num_tokens, hidden_size], T.bfloat16]  # type: ignore[no-redef, valid-type]
+     norm_weight: T.Tensor[[hidden_size], T.bfloat16]  # type: ignore[no-redef, valid-type]
+ 
++    pre_mix_in: T.Tensor[[num_tokens, hc_mult], T.float32]  # type: ignore[no-redef, valid-type]
++    pre_mix_out: T.Tensor[[num_tokens, hc_mult], T.float32]  # type: ignore[no-redef, valid-type]
++
+     with T.Kernel(num_tokens, threads=96) as i:
+         rms = T.alloc_fragment(1, T.float32)
+         mixes = T.alloc_fragment(hc_mult3, T.float32)
+@@ -217,7 +249,7 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+ 
+         for i_split in T.serial(n_splits):
+             rms[0] += gemm_out_sqrsum[i_split, i]
+-        rms[0] = T.rsqrt(rms[0] / (hc_mult * hidden_size) + rms_eps)
++        rms[0] = T.rsqrt(rms[0] / rms_numel + rms_eps)
+         for j in T.Parallel(hc_mult3):
+             mixes[j] = 0
+             for i_split in T.serial(n_splits):
+@@ -229,6 +261,11 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+         if T.get_thread_binding() < 32:
+             cm = T.alloc_fragment((hc_mult, hc_mult), T.float32)
+             for j in T.Parallel(hc_mult):
++                if save_pre_mix:
++                    pre_mix_out[i, j] = (
++                        T.sigmoid(mixes_shared[j] * hc_scale[0] + hc_base[j])
++                        + hc_pre_eps
++                    )
+                 post_mix[i, j] = (
+                     T.sigmoid(
+                         mixes_shared[j + hc_mult] * hc_scale[1] + hc_base[j + hc_mult]
+@@ -270,12 +307,15 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+         else:
+             pre_mix_shared = T.alloc_shared(hc_mult, T.float32)
+             for j in T.Parallel(hc_mult):
+-                pre_mix_shared[j] = (
+-                    T.sigmoid(
+-                        mixes_shared[j] * hc_scale[0] + hc_base[j],
++                if use_pre_mix_in:
++                    pre_mix_shared[j] = pre_mix_in[i, j]
++                elif save_pre_mix:
++                    pre_mix_shared[j] = T.if_then_else(j == 0, 1.0, 0.0)
++                else:
++                    pre_mix_shared[j] = (
++                        T.sigmoid(mixes_shared[j] * hc_scale[0] + hc_base[j])
++                        + hc_pre_eps
+                     )
+-                    + hc_pre_eps
+-                )
+ 
+             # Pass 1: stash unnormalized weighted-sum output in shared memory
+             # as bf16 (matches the rounding that RMSNorm would see) while
+@@ -298,9 +338,18 @@ def mhc_pre_big_fuse_with_norm_tilelang(
+                     for i1_h in T.Parallel(hidden_block):
+                         ol[i1_h] += pre * xl[i_hc, i1_h]
+ 
+-                for i1_h in T.Parallel(hidden_block):
+-                    sumsq_per_pos[i1_h] += ol[i1_h] * ol[i1_h]
+-                    output_shared[i0_h * hidden_block + i1_h] = T.bfloat16(ol[i1_h])
++                if save_pre_mix:
++                    # Keep the BF16 boundary before the delayed input RMSNorm.
++                    rounded = T.alloc_fragment(hidden_block, T.bfloat16)
++                    T.copy(ol, rounded)
++                    for i1_h in T.Parallel(hidden_block):
++                        value = T.float32(rounded[i1_h])
++                        sumsq_per_pos[i1_h] += value * value
++                        output_shared[i0_h * hidden_block + i1_h] = rounded[i1_h]
++                else:
++                    for i1_h in T.Parallel(hidden_block):
++                        sumsq_per_pos[i1_h] += ol[i1_h] * ol[i1_h]
++                        output_shared[i0_h * hidden_block + i1_h] = T.bfloat16(ol[i1_h])
+ 
+             sumsq = T.alloc_fragment(1, T.float32)
+             T.reduce_sum(sumsq_per_pos, sumsq, dim=0)
+@@ -704,7 +753,7 @@ def hc_prenorm_gemm_tilelang(
+ 
+         for it in T.serial(k_iters):
+             i_k = i_s * k_per_split + it * n_thr + tid
+-            x_val = x[i_n, i_k]
++            x_val = T.cast(x[i_n, i_k], T.float32)
+             for i_o in T.unroll(tile_n):
+                 out_idx = i_t * tile_n + i_o
+                 if out_idx < n_out:
+@@ -794,7 +843,7 @@ def hc_prenorm_gemm_block_m_tilelang(
+             for i_m in T.unroll(block_m):
+                 token_idx = i_mt * block_m + i_m
+                 if token_idx < num_tokens:
+-                    x_val = x[token_idx, i_k]
++                    x_val = T.cast(x[token_idx, i_k], T.float32)
+                     for i_o in T.unroll(tile_n):
+                         acc[i_m, i_o] += x_val * fn_val[i_o]
+                     if i_t == 0:
+diff --git a/vllm/model_executor/kernels/mhc/torch.py b/vllm/model_executor/kernels/mhc/torch.py
+index 1a54ce4ad2..9c57cc169c 100644
+--- a/vllm/model_executor/kernels/mhc/torch.py
++++ b/vllm/model_executor/kernels/mhc/torch.py
+@@ -3,6 +3,48 @@
+ import torch
+ 
+ 
++def mhc_pre_delayed_torch(
++    residual: torch.Tensor,
++    fn: torch.Tensor,
++    hc_scale: torch.Tensor,
++    hc_base: torch.Tensor,
++    rms_eps: float,
++    hc_pre_eps: float,
++    hc_sinkhorn_eps: float,
++    hc_post_mult_value: float,
++    sinkhorn_repeat: int,
++    pre_mix: torch.Tensor | None = None,
++    x: torch.Tensor | None = None,
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
++    """Reference for mHC pre using coefficients from the previous sublayer."""
++    hc_mult = residual.shape[1]
++    x = (residual.flatten(1) if x is None else x).float()
++    mixes = (x @ fn.t()) * torch.rsqrt(x.square().mean(-1, keepdim=True) + rms_eps)
++    pre = (
++        torch.sigmoid(mixes[:, :hc_mult] * hc_scale[0] + hc_base[:hc_mult]) + hc_pre_eps
++    )
++    post = (
++        torch.sigmoid(
++            mixes[:, hc_mult : 2 * hc_mult] * hc_scale[1]
++            + hc_base[hc_mult : 2 * hc_mult]
++        )
++        * hc_post_mult_value
++    )
++    comb = mixes[:, 2 * hc_mult :].view(-1, hc_mult, hc_mult) * hc_scale[2]
++    comb = comb + hc_base[2 * hc_mult :].view(1, hc_mult, hc_mult)
++    comb = torch.softmax(comb, dim=-1) + hc_sinkhorn_eps
++    comb = comb / (comb.sum(dim=-2, keepdim=True) + hc_sinkhorn_eps)
++    for _ in range(sinkhorn_repeat - 1):
++        comb = comb / (comb.sum(dim=-1, keepdim=True) + hc_sinkhorn_eps)
++        comb = comb / (comb.sum(dim=-2, keepdim=True) + hc_sinkhorn_eps)
++    layer_input = (
++        residual[:, 0]
++        if pre_mix is None
++        else (pre_mix.unsqueeze(-1) * residual.float()).sum(dim=1).to(residual.dtype)
++    )
++    return post.unsqueeze(-1), comb, layer_input, pre
++
++
+ def mhc_pre_torch(
+     residual: torch.Tensor,
+     fn: torch.Tensor,
+diff --git a/vllm/model_executor/kernels/mhc/triton.py b/vllm/model_executor/kernels/mhc/triton.py
+index facb6813ca..d94d71a6ea 100644
+--- a/vllm/model_executor/kernels/mhc/triton.py
++++ b/vllm/model_executor/kernels/mhc/triton.py
+@@ -78,7 +78,7 @@ def _hc_head_reduce_store_kernel(
+     out_stride_h: tl.constexpr,
+     BLOCK_H: tl.constexpr,
+ ):
+-    token_idx = tl.program_id(0)
++    token_idx = tl.program_id(0).to(tl.int64)
+     block_idx = tl.program_id(1)
+     offsets = block_idx * BLOCK_H + tl.arange(0, BLOCK_H)
+     mask = offsets < hidden_size
+@@ -105,6 +105,42 @@ def _hc_head_reduce_store_kernel(
+     )
+ 
+ 
++def hc_collapse_triton(x: Tensor, pre_mix: Tensor) -> Tensor:
++    """Collapse BF16 residual streams with FP32 pre-mix coefficients."""
++    assert x.ndim == 3 and x.dtype == torch.bfloat16
++    num_tokens, hc_mult, hidden_size = x.shape
++    assert pre_mix.shape == (num_tokens, hc_mult)
++    assert pre_mix.dtype == torch.float32
++    out = torch.empty(num_tokens, hidden_size, dtype=x.dtype, device=x.device)
++    if num_tokens == 0:
++        return out
++
++    block_h = 1024
++    _hc_head_reduce_store_kernel[(num_tokens, triton.cdiv(hidden_size, block_h))](
++        pre_mix,
++        x,
++        out,
++        hidden_size,
++        hc_mult,
++        pre_mix.stride(0),
++        pre_mix.stride(1),
++        x.stride(0),
++        x.stride(1),
++        x.stride(2),
++        out.stride(0),
++        out.stride(1),
++        BLOCK_H=block_h,
++        num_warps=4,
++        # Preserve the separate FP32 multiply and sum in the Torch reference.
++        enable_fp_fusion=False,
++    )
++    return out
++
++
++def _hc_collapse_triton_fake(x: Tensor, pre_mix: Tensor) -> Tensor:
++    return torch.empty(x.shape[0], x.shape[2], dtype=x.dtype, device=x.device)
++
++
+ def hc_head_reduce_triton_kernel(
+     x: torch.Tensor,
+     hc_fn: torch.Tensor,
+@@ -172,3 +208,11 @@ direct_register_custom_op(
+     op_func=_hc_head_triton,
+     mutates_args=["out"],
+ )
++
++
++direct_register_custom_op(
++    op_name="hc_collapse_triton",
++    op_func=hc_collapse_triton,
++    mutates_args=[],
++    fake_impl=_hc_collapse_triton_fake,
++)
+diff --git a/vllm/model_executor/kernels/mhc/warmup.py b/vllm/model_executor/kernels/mhc/warmup.py
+new file mode 100644
+index 0000000000..6a42ca6222
+--- /dev/null
++++ b/vllm/model_executor/kernels/mhc/warmup.py
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++from dataclasses import asdict, dataclass
++from typing import Any
++
++from vllm.model_executor.kernels.mhc.tilelang_kernels import (
++    compute_num_split,
++    mhc_pre_big_fuse_with_norm_tilelang,
++)
++from vllm.model_executor.warmup.jit_warmup import VllmJitKernel
++from vllm.platforms import current_platform
++from vllm.utils.deep_gemm import is_deep_gemm_supported
++from vllm.utils.math_utils import cdiv
++
++
++def compute_mhc_pre_num_splits(input_size: int, num_tokens: int) -> int:
++    splits = compute_num_split(64, input_size, cdiv(num_tokens, 64))
++    # Bound both GEMM and fused-normalization specializations during startup.
++    return 1 if splits == 1 else 4 if splits <= 4 else 16
++
++
++class MHCPreNormKernel(VllmJitKernel["MHCPreNormKernel.CompileKey"]):
++    @dataclass(frozen=True)
++    class CompileKey:
++        hidden_size: int
++        rms_eps: float
++        hc_pre_eps: float
++        hc_sinkhorn_eps: float
++        hc_post_mult_value: float
++        sinkhorn_repeat: int
++        norm_eps: float
++        n_splits: int
++        hc_mult: int
++        use_pre_mix_in: bool
++        rms_numel: int
++        save_pre_mix: bool = True
++
++    kernel: Any = staticmethod(mhc_pre_big_fuse_with_norm_tilelang)
++
++    def dispatch(self, *, n_splits, **fields) -> CompileKey:  # type: ignore[override]
++        return self.CompileKey(n_splits=n_splits, **fields)
++
++    def get_warmup_keys(self, *, max_tokens: int, **fields) -> list[CompileKey]:
++        # The split heuristic changes only at 64-token boundaries.
++        splits = (
++            sorted(
++                {
++                    compute_mhc_pre_num_splits(fields["rms_numel"], num_tokens)
++                    for num_tokens in range(1, max_tokens + 1, 64)
++                }
++            )
++            if is_deep_gemm_supported()
++            else [1]
++        )
++        return self._trace_dispatch(self.dispatch)(n_splits=splits, **fields)
++
++    def compile(self, compile_key: CompileKey) -> None:
++        if compile_key not in self._compiled_cache:
++            self._compiled_cache[compile_key] = self.kernel.compile(
++                **asdict(compile_key)
++            )
++
++    def __call__(self, *tensors, **fields):
++        compile_key = self.dispatch(
++            n_splits=tensors[0].shape[0],
++            **fields,
++        )
++        if not current_platform.is_cuda():
++            return self.kernel(*tensors, **asdict(compile_key))
++        return self._get_or_compile(compile_key)(*tensors)
++
++
++MHC_PRE_NORM_KERNEL = MHCPreNormKernel()
+diff --git a/vllm/model_executor/layers/fused_moe/router/fused_moe_router.py b/vllm/model_executor/layers/fused_moe/router/fused_moe_router.py
+index 306f9c1999..f87b7d3ae8 100644
+--- a/vllm/model_executor/layers/fused_moe/router/fused_moe_router.py
++++ b/vllm/model_executor/layers/fused_moe/router/fused_moe_router.py
+@@ -18,6 +18,10 @@ class FusedMoERouter(ABC):
+     def __init__(self, eplb_state: EplbLayerState | None = None):
+         self._routing_replay_out: torch.Tensor | None = None
+         self.eplb_state = eplb_state
++        # Deepseek V4.1 vision checkpoints carry a second per-expert routing
++        # bias for image sentinel tokens; attached by model code when present.
++        self.bias_vl: torch.Tensor | None = None
++        self.image_sentinel_lo: int = 0
+ 
+     @abstractmethod
+     def set_capture_fn(
+diff --git a/vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py b/vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py
+index 87323926ef..948d84be5c 100644
+--- a/vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py
++++ b/vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py
+@@ -32,37 +32,39 @@ class FusedInvRopeFP8QuantKernel(
+         fp8_max: float
+         quant_group_size: int
+         chunks_per_head: int
+-        rope_start: int
++        nope_dim: int
+         half_rope: int
+         tma_aligned_scales: bool
+         launch_pdl: bool
++        quantize: bool
+ 
+     @staticmethod
+     # scale_stride_k = align(num_tokens, 4) is only 4-aligned, so its Triton int
+     # class varies with batch size; not specialized so one warmup key covers all
+-    # (int64-cast, scalar addressing only, so perf-neutral).
++    # (int64-cast, so perf-neutral).
+     @triton.jit(do_not_specialize=["num_tokens", "scale_stride_k"])
+     def kernel(
+         o_ptr,
+         positions_ptr,
+         cos_sin_cache_ptr,
+-        fp8_ptr,
++        out_ptr,
+         scale_ptr,
+         num_tokens,
+         heads_per_group: tl.constexpr,
+         o_stride_token,
+         o_stride_head,
+         cache_stride_pos,
+-        fp8_stride_group,
+-        fp8_stride_token,
++        out_stride_group,
++        out_stride_token,
+         scale_stride_group,
+         scale_stride_k,
+         fp8_max: tl.constexpr,
+         eps: tl.constexpr,
+         QUANT_GROUP_SIZE: tl.constexpr,
+         CHUNKS_PER_HEAD: tl.constexpr,
+-        ROPE_START: tl.constexpr,
++        NOPE_DIM: tl.constexpr,
+         HALF_ROPE: tl.constexpr,
++        QUANTIZE: tl.constexpr,
+         TMA_ALIGNED_SCALES: tl.constexpr,
+         launch_pdl: tl.constexpr,
+     ):
+@@ -74,8 +76,8 @@ class FusedInvRopeFP8QuantKernel(
+         o_stride_token = o_stride_token.to(tl.int64)
+         o_stride_head = o_stride_head.to(tl.int64)
+         cache_stride_pos = cache_stride_pos.to(tl.int64)
+-        fp8_stride_group = fp8_stride_group.to(tl.int64)
+-        fp8_stride_token = fp8_stride_token.to(tl.int64)
++        out_stride_group = out_stride_group.to(tl.int64)
++        out_stride_token = out_stride_token.to(tl.int64)
+         scale_stride_group = scale_stride_group.to(tl.int64)
+         scale_stride_k = scale_stride_k.to(tl.int64)
+ 
+@@ -88,14 +90,18 @@ class FusedInvRopeFP8QuantKernel(
+             tl.extra.cuda.gdc_wait()
+         # Padding rows in the TMA-aligned scale buffer: fill with zero and skip quant.
+         if pid_token >= num_tokens:
++            if not QUANTIZE:
++                return
+             if TMA_ALIGNED_SCALES:
++                packed_offsets = tl.arange(0, CHUNKS_PER_HEAD // 4)
+                 scale_addr = (
+                     scale_ptr
+                     + g * scale_stride_group
+                     + pid_token
+-                    + head_in_group * scale_stride_k
++                    + (head_in_group * (CHUNKS_PER_HEAD // 4) + packed_offsets)
++                    * scale_stride_k
+                 )
+-                tl.store(scale_addr, tl.zeros((), dtype=tl.int32))
++                tl.store(scale_addr, tl.zeros((CHUNKS_PER_HEAD // 4,), dtype=tl.int32))
+             else:
+                 block_offsets = tl.arange(0, CHUNKS_PER_HEAD)
+                 qb_indices = qb_start + block_offsets
+@@ -114,9 +120,7 @@ class FusedInvRopeFP8QuantKernel(
+         offsets = tl.arange(0, HEAD_DIM)
+         x = tl.load(input_base + offsets).to(tl.float32)
+ 
+-        rope_abs_start: tl.constexpr = (
+-            CHUNKS_PER_HEAD - 1
+-        ) * QUANT_GROUP_SIZE + ROPE_START
++        rope_abs_start: tl.constexpr = NOPE_DIM
+         pos = tl.load(positions_ptr + pid_token)
+         cache_base = cos_sin_cache_ptr + pos * cache_stride_pos
+         is_rope = offsets >= rope_abs_start
+@@ -134,6 +138,16 @@ class FusedInvRopeFP8QuantKernel(
+         rotated = tl.where(is_even, x_add, x_sub)
+         x = tl.where(is_rope, rotated, x)
+ 
++        if not QUANTIZE:
++            out_base = (
++                out_ptr
++                + g * out_stride_group
++                + pid_token * out_stride_token
++                + qb_start * QUANT_GROUP_SIZE
++            )
++            tl.store(out_base + offsets, x)
++            return
++
+         x_2d = tl.reshape(tl.abs(x), (CHUNKS_PER_HEAD, QUANT_GROUP_SIZE))
+         block_absmax = tl.maximum(tl.max(x_2d, axis=1), eps)
+         scale_raw = block_absmax * (1.0 / fp8_max)
+@@ -148,25 +162,31 @@ class FusedInvRopeFP8QuantKernel(
+         )
+         x_quant = tl.clamp(x / scales_exp, -fp8_max, fp8_max).to(tl.float8e4nv)
+ 
+-        fp8_base = (
+-            fp8_ptr
+-            + g * fp8_stride_group
+-            + pid_token * fp8_stride_token
++        out_base = (
++            out_ptr
++            + g * out_stride_group
++            + pid_token * out_stride_token
+             + qb_start * QUANT_GROUP_SIZE
+         )
+-        tl.store(fp8_base + offsets, x_quant)
++        tl.store(out_base + offsets, x_quant)
+ 
+         block_offsets = tl.arange(0, CHUNKS_PER_HEAD)
+         qb_indices = qb_start + block_offsets
+         if TMA_ALIGNED_SCALES:
+             scale_bits = scales.to(tl.int32, bitcast=True)
+             ue8m0_bytes = (scale_bits >> 23) & 0xFF
+-            packed_val = tl.sum(ue8m0_bytes << (block_offsets * 8))
++            packed_val = tl.sum(
++                tl.reshape(ue8m0_bytes, (CHUNKS_PER_HEAD // 4, 4))
++                << (tl.arange(0, 4)[None, :] * 8),
++                axis=1,
++            )
++            packed_offsets = tl.arange(0, CHUNKS_PER_HEAD // 4)
+             scale_addr = (
+                 scale_ptr
+                 + g * scale_stride_group
+                 + pid_token
+-                + head_in_group * scale_stride_k
++                + (head_in_group * (CHUNKS_PER_HEAD // 4) + packed_offsets)
++                * scale_stride_k
+             )
+             tl.store(scale_addr, packed_val)
+         else:
+@@ -188,7 +208,7 @@ class FusedInvRopeFP8QuantKernel(
+         quant_group_size: int,
+         runtime_fp8_max: float | None = None,
+         runtime_chunks_per_head: int | None = None,
+-        runtime_rope_start: int | None = None,
++        runtime_nope_dim: int | None = None,
+         runtime_half_rope: int | None = None,
+         **compile_key_fields: bool,
+     ) -> CompileKey:
+@@ -202,11 +222,7 @@ class FusedInvRopeFP8QuantKernel(
+             if runtime_chunks_per_head is not None
+             else head_dim // quant_group_size
+         )
+-        rope_start = (
+-            runtime_rope_start
+-            if runtime_rope_start is not None
+-            else nope_dim % quant_group_size
+-        )
++        nope_dim = runtime_nope_dim if runtime_nope_dim is not None else nope_dim
+         half_rope = (
+             runtime_half_rope if runtime_half_rope is not None else rope_dim // 2
+         )
+@@ -216,7 +232,7 @@ class FusedInvRopeFP8QuantKernel(
+             fp8_max=fp8_max,
+             quant_group_size=quant_group_size,
+             chunks_per_head=chunks_per_head,
+-            rope_start=rope_start,
++            nope_dim=nope_dim,
+             half_rope=half_rope,
+         )
+ 
+@@ -250,11 +266,12 @@ class FusedInvRopeFP8QuantKernel(
+             quant_group_size=128,
+             tma_aligned_scales=capability.major >= 10,
+             launch_pdl=current_platform.is_arch_support_pdl(),
++            quantize=True,
+         )
+ 
+     def warmup_inputs(self, compile_key: CompileKey) -> dict[str, Any]:
+         head_dim = compile_key.chunks_per_head * compile_key.quant_group_size
+-        fp8_dim = compile_key.heads_per_group * head_dim
++        out_dim = compile_key.heads_per_group * head_dim
+         scale_dtype = torch.int32 if compile_key.tma_aligned_scales else torch.float32
+         return dict(
+             o=TritonWarmupTensor(
+@@ -266,10 +283,10 @@ class FusedInvRopeFP8QuantKernel(
+                 torch.float32,
+                 shape=(1, compile_key.half_rope * 2),
+             ),
+-            fp8_buf=TritonWarmupTensor(
+-                torch.float8_e4m3fn,
+-                shape=(compile_key.heads_per_group, 1, fp8_dim),
+-                strides=(fp8_dim, fp8_dim, 1),
++            out_buf=TritonWarmupTensor(
++                torch.float8_e4m3fn if compile_key.quantize else torch.bfloat16,
++                shape=(compile_key.heads_per_group, 1, out_dim),
++                strides=(out_dim, out_dim, 1),
+             ),
+             scale_buf=TritonWarmupTensor(
+                 scale_dtype,
+@@ -280,9 +297,10 @@ class FusedInvRopeFP8QuantKernel(
+             heads_per_group=compile_key.heads_per_group,
+             quant_group_size=compile_key.quant_group_size,
+             chunks_per_head=compile_key.chunks_per_head,
+-            rope_start=compile_key.rope_start,
++            nope_dim=compile_key.nope_dim,
+             half_rope=compile_key.half_rope,
+             tma_aligned_scales=compile_key.tma_aligned_scales,
++            quantize=compile_key.quantize,
+             fp8_max=compile_key.fp8_max,
+             launch_pdl=compile_key.launch_pdl,
+             grid=(1, compile_key.heads_per_group),
+@@ -294,35 +312,37 @@ class FusedInvRopeFP8QuantKernel(
+         o: torch.Tensor,
+         positions: torch.Tensor,
+         cos_sin_cache: torch.Tensor,
+-        fp8_buf: torch.Tensor,
++        out_buf: torch.Tensor,
+         scale_buf: torch.Tensor,
+         num_tokens: int,
+         *,
+         heads_per_group: int,
+         quant_group_size: int,
+         chunks_per_head: int,
+-        rope_start: int,
++        nope_dim: int,
+         half_rope: int,
+         tma_aligned_scales: bool,
++        quantize: bool,
+         fp8_max: float,
+         launch_pdl: bool,
+         grid: tuple[int, int],
+     ) -> LaunchSpec:
+         return grid, dict(
+-            fp8_ptr=fp8_buf,
++            out_ptr=out_buf,
+             scale_ptr=scale_buf,
+             o_stride_token=o.stride(0),
+             o_stride_head=o.stride(1),
+             cache_stride_pos=cos_sin_cache.stride(0),
+-            fp8_stride_group=fp8_buf.stride(0),
+-            fp8_stride_token=fp8_buf.stride(1),
+-            scale_stride_group=scale_buf.stride(0),
+-            scale_stride_k=scale_buf.stride(2),
++            out_stride_group=out_buf.stride(0),
++            out_stride_token=out_buf.stride(1),
++            scale_stride_group=scale_buf.stride(0) if quantize else 0,
++            scale_stride_k=scale_buf.stride(2) if quantize else 0,
+             eps=1e-10,
+             QUANT_GROUP_SIZE=quant_group_size,
+             CHUNKS_PER_HEAD=chunks_per_head,
+-            ROPE_START=rope_start,
++            NOPE_DIM=nope_dim,
+             HALF_ROPE=half_rope,
++            QUANTIZE=quantize,
+             TMA_ALIGNED_SCALES=tma_aligned_scales,
+             launch_pdl=launch_pdl,
+             num_stages=1,
+@@ -340,6 +360,7 @@ def fused_inv_rope_fp8_quant(
+     rope_dim: int = 64,
+     quant_group_size: int = 128,
+     tma_aligned_scales: bool = False,
++    quantize: bool = True,
+ ) -> tuple[torch.Tensor, torch.Tensor]:
+     """Fused inverse RoPE + block-scaled FP8 quantization.
+ 
+@@ -354,10 +375,11 @@ def fused_inv_rope_fp8_quant(
+         quant_group_size: FP8 quantization block size (default 128).
+         tma_aligned_scales: Output INT32 packed UE8M0 for SM100 (True)
+                             or FP32 for SM90 (False).
++        quantize: Quantize the rotated output to FP8 and return its scales.
+ 
+     Returns:
+-        o_fp8: [T, G, D] float8_e4m3fn, strides (D, T*D, 1).
+-        o_scale: Pre-transformed scale tensor for fp8_einsum.
++        Rotated output in [T, G, D] and its FP8 scales. The scale tensor is
++        empty when quantization is disabled.
+     """
+     from vllm.utils.deep_gemm import get_tma_aligned_size
+ 
+@@ -365,7 +387,6 @@ def fused_inv_rope_fp8_quant(
+     assert num_heads == n_groups * heads_per_group
+     assert head_dim == nope_dim + rope_dim
+     assert head_dim % quant_group_size == 0
+-    assert nope_dim % quant_group_size == (quant_group_size - rope_dim)
+     assert rope_dim % 2 == 0
+     assert cos_sin_cache.shape[-1] == rope_dim
+     assert cos_sin_cache.dtype == torch.float32
+@@ -377,23 +398,26 @@ def fused_inv_rope_fp8_quant(
+     fp8_dtype = torch.float8_e4m3fn
+     fp8_max = torch.finfo(fp8_dtype).max
+ 
+-    tma_aligned_T = get_tma_aligned_size(num_tokens, 4)
+-    if tma_aligned_scales:
++    tma_aligned_T = get_tma_aligned_size(num_tokens, 4) if quantize else num_tokens
++    if quantize and tma_aligned_scales:
++        assert chunks_per_head % 4 == 0
+         packed_sf_k = (num_scale_blocks + 3) // 4
+         scale_inner = packed_sf_k
+-    else:
++    elif quantize:
+         scale_inner = num_scale_blocks
++    else:
++        scale_inner = 0
+ 
+     # Run kernel through a custom op so inductor sees an opaque boundary.
+     # It's a pytorch bug, see https://github.com/vllm-project/vllm/issues/41106
+-    fp8_buf, scale_buf = torch.ops.vllm.fused_inv_rope_fp8_quant_kernel(
++    out_buf, scale_buf = torch.ops.vllm.fused_inv_rope_fp8_quant_kernel(
+         o,
+         positions,
+         cos_sin_cache,
+         heads_per_group,
+         quant_group_size,
+         chunks_per_head,
+-        nope_dim % quant_group_size,
++        nope_dim,
+         rope_dim // 2,
+         tma_aligned_scales,
+         fp8_max,
+@@ -402,8 +426,11 @@ def fused_inv_rope_fp8_quant(
+         n_groups,
+         d,
+         scale_inner,
++        quantize,
+     )
+-    return fp8_buf.transpose(0, 1), scale_buf.transpose(0, 1)
++    output = out_buf.transpose(0, 1)
++    scales = scale_buf.transpose(0, 1) if quantize else scale_buf
++    return output, scales
+ 
+ 
+ def _fused_inv_rope_fp8_quant_kernel_impl(
+@@ -413,7 +440,7 @@ def _fused_inv_rope_fp8_quant_kernel_impl(
+     heads_per_group: int,
+     quant_group_size: int,
+     chunks_per_head: int,
+-    rope_start: int,
++    nope_dim: int,
+     half_rope: int,
+     tma_aligned_scales: bool,
+     fp8_max: float,
+@@ -422,41 +449,46 @@ def _fused_inv_rope_fp8_quant_kernel_impl(
+     n_groups: int,
+     d: int,
+     scale_inner: int,
++    quantize: bool,
+ ) -> tuple[torch.Tensor, torch.Tensor]:
+-    fp8_buf = torch.empty(
+-        (n_groups, num_tokens, d),
+-        dtype=torch.float8_e4m3fn,
+-        device=o.device,
+-    )
+     scale_dtype = torch.int32 if tma_aligned_scales else torch.float32
+-    scale_buf = torch.empty(
+-        n_groups * scale_inner * tma_aligned_T,
+-        dtype=scale_dtype,
++    out_buf = torch.empty(
++        (n_groups, num_tokens, d),
++        dtype=torch.float8_e4m3fn if quantize else o.dtype,
+         device=o.device,
+-    ).as_strided(
+-        (n_groups, num_tokens, scale_inner),
+-        (scale_inner * tma_aligned_T, 1, tma_aligned_T),
+     )
++    if quantize:
++        scale_buf = torch.empty(
++            n_groups * scale_inner * tma_aligned_T,
++            dtype=scale_dtype,
++            device=o.device,
++        ).as_strided(
++            (n_groups, num_tokens, scale_inner),
++            (scale_inner * tma_aligned_T, 1, tma_aligned_T),
++        )
++    else:
++        scale_buf = torch.empty(0, dtype=scale_dtype, device=o.device)
+     grid = (tma_aligned_T, n_groups * heads_per_group)
+     launch_pdl = current_platform.is_arch_support_pdl()
+     _FUSED_INV_ROPE_FP8_QUANT_KERNEL(
+         o,
+         positions,
+         cos_sin_cache,
+-        fp8_buf,
++        out_buf,
+         scale_buf,
+         num_tokens,
+         heads_per_group=heads_per_group,
+         quant_group_size=quant_group_size,
+         chunks_per_head=chunks_per_head,
+-        rope_start=rope_start,
++        nope_dim=nope_dim,
+         half_rope=half_rope,
+         tma_aligned_scales=tma_aligned_scales,
++        quantize=quantize,
+         fp8_max=fp8_max,
+         launch_pdl=launch_pdl,
+         grid=grid,
+     )
+-    return fp8_buf, scale_buf
++    return out_buf, scale_buf
+ 
+ 
+ def _fused_inv_rope_fp8_quant_kernel_fake(
+@@ -466,7 +498,7 @@ def _fused_inv_rope_fp8_quant_kernel_fake(
+     heads_per_group: int,
+     quant_group_size: int,
+     chunks_per_head: int,
+-    rope_start: int,
++    nope_dim: int,
+     half_rope: int,
+     tma_aligned_scales: bool,
+     fp8_max: float,
+@@ -475,13 +507,16 @@ def _fused_inv_rope_fp8_quant_kernel_fake(
+     n_groups: int,
+     d: int,
+     scale_inner: int,
++    quantize: bool,
+ ) -> tuple[torch.Tensor, torch.Tensor]:
+-    fp8_buf = torch.empty(
++    scale_dtype = torch.int32 if tma_aligned_scales else torch.float32
++    out_buf = torch.empty(
+         (n_groups, num_tokens, d),
+-        dtype=torch.float8_e4m3fn,
++        dtype=torch.float8_e4m3fn if quantize else o.dtype,
+         device=o.device,
+     )
+-    scale_dtype = torch.int32 if tma_aligned_scales else torch.float32
++    if not quantize:
++        return out_buf, torch.empty(0, dtype=scale_dtype, device=o.device)
+     scale_buf = torch.empty(
+         n_groups * scale_inner * tma_aligned_T,
+         dtype=scale_dtype,
+@@ -490,7 +525,7 @@ def _fused_inv_rope_fp8_quant_kernel_fake(
+         (n_groups, num_tokens, scale_inner),
+         (scale_inner * tma_aligned_T, 1, tma_aligned_T),
+     )
+-    return fp8_buf, scale_buf
++    return out_buf, scale_buf
+ 
+ 
+ direct_register_custom_op(
+diff --git a/vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py b/vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
+index 3bd5e1b52f..16e98abf23 100644
+--- a/vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
++++ b/vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
+@@ -165,9 +165,13 @@ class IndexerQRopeQuantKernel:
+         # NOTE: token_id may exceed bounds, hence we need to add load/store guards
+         # we can't do early exit because CuteDSL doesn't support it. and we also need
+         # all threads in a warp to be active since we utilize warp shuffle later.
+-        # must_in_bounds is constexpr, True when 1 threadblock fit within 1 token
+-        # position. the compiler will remove bounds check when that happens.
+-        must_in_bounds = cutlass.const_expr(self.tb_size % self.threads_per_token == 0)
++        # must_in_bounds is constexpr, True when a token spans a whole number of
++        # threadblocks. Then num_tokens * threads_per_token is always a multiple of
++        # tb_size, so the trailing block never straddles num_tokens and the compiler
++        # removes the bounds check. Otherwise the guard has to stay: e.g. 32 heads
++        # with coarsen=4 needs 64 threads per token, so an odd num_tokens leaves half
++        # of the last block addressing token num_tokens.
++        must_in_bounds = cutlass.const_expr(self.threads_per_token % self.tb_size == 0)
+         in_bounds = must_in_bounds or (token_id < num_tokens)
+ 
+         cp_op = cute.nvgpu.CopyUniversalOp()
+diff --git a/vllm/models/deepseek_v4/nvidia/ops/o_proj.py b/vllm/models/deepseek_v4/nvidia/ops/o_proj.py
+index b064fbe9cd..72ce43b46c 100644
+--- a/vllm/models/deepseek_v4/nvidia/ops/o_proj.py
++++ b/vllm/models/deepseek_v4/nvidia/ops/o_proj.py
+@@ -10,17 +10,18 @@ from vllm.platforms import current_platform
+ from vllm.utils.deep_gemm import fp8_einsum
+ 
+ 
+-def compute_fp8_einsum_recipe() -> tuple[tuple[int, int, int], bool]:
++def compute_fp8_einsum_recipe(
++    block_size: int = 128,
++) -> tuple[tuple[int, int, int], bool]:
+     """fp8_einsum recipe + scale layout for the current GPU arch.
+ 
+-    SM90: FP32 block scales stay [g, r/128, d/128] → sfb_gran_mn=128.
+-    SM100: INT32 packed scales become [g, r, ...] → sfb_gran_mn=1.
++    SM90 keeps block-row FP32 scales. SM100 uses packed per-row E8M0 scales.
+ 
+     Returns ``(einsum_recipe, tma_aligned_scales)`` for ``deep_gemm_fp8_o_proj``.
+     """
+     cap = current_platform.get_device_capability()
+     assert cap is not None, "DeepseekV4 attention requires a CUDA device"
+-    einsum_recipe = (1, 128, 128) if cap.major <= 9 else (1, 1, 128)
++    einsum_recipe = (1, 128, 128) if cap.major <= 9 else (1, 1, block_size)
+     tma_aligned_scales = cap.major >= 10
+     return einsum_recipe, tma_aligned_scales
+ 
+@@ -40,12 +41,13 @@ def deep_gemm_fp8_o_proj(
+     einsum_recipe: tuple[int, int, int],
+     tma_aligned_scales: bool,
+ ) -> torch.Tensor:
+-    """O projection: inverse RoPE + FP8 quant + einsum + wo_b.
++    """O projection: inverse RoPE + grouped wo_a + wo_b.
+ 
+-    Shared by the FlashMLA and FlashInfer CUDA backends. ``einsum_recipe`` /
+-    ``tma_aligned_scales`` come from ``compute_fp8_einsum_recipe``.
++    Shared by the FlashMLA and FlashInfer CUDA backends. The attention
++    layer selects the recipe at initialization.
+     """
+-    o_fp8, o_scale = fused_inv_rope_fp8_quant(
++    use_fp8 = wo_a.weight.dtype == torch.float8_e4m3fn
++    o_proj_input, o_scale = fused_inv_rope_fp8_quant(
+         o,
+         positions,
+         cos_sin_cache,
+@@ -53,21 +55,33 @@ def deep_gemm_fp8_o_proj(
+         heads_per_group=heads_per_group,
+         nope_dim=nope_dim,
+         rope_dim=rope_dim,
++        quant_group_size=einsum_recipe[2],
+         tma_aligned_scales=tma_aligned_scales,
++        quantize=use_fp8,
+     )
+     z = torch.empty(
+         (o.shape[0], n_groups, o_lora_rank),
+         device=o.device,
+         dtype=torch.bfloat16,
+     )
+-    weight_scale = (
+-        wo_a.weight_scale if hasattr(wo_a, "weight_scale") else wo_a.weight_scale_inv
+-    )
+-    fp8_einsum(
+-        "bhr,hdr->bhd",
+-        (o_fp8, o_scale),
+-        (wo_a.weight, weight_scale),
+-        z,
+-        recipe=einsum_recipe,
+-    )
++    if use_fp8:
++        weight_scale = (
++            wo_a.weight_scale
++            if hasattr(wo_a, "weight_scale")
++            else wo_a.weight_scale_inv
++        )
++        fp8_einsum(
++            "bhr,hdr->bhd",
++            (o_proj_input, o_scale),
++            (wo_a.weight, weight_scale),
++            z,
++            recipe=einsum_recipe,
++        )
++    else:
++        grouped_weight = wo_a.weight.view(n_groups, o_lora_rank, -1)
++        torch.bmm(
++            o_proj_input.transpose(0, 1),
++            grouped_weight.transpose(1, 2),
++            out=z.transpose(0, 1),
++        )
+     return wo_b(z.flatten(1))

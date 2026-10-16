@@ -1,0 +1,770 @@
+{
+ "schema": "infb-m3-corpus/1",
+ "tokenizer": {
+  "path": "/model/tokenizer.json",
+  "sha256": "bb1f1626cf01448f1e3b6036d0a061ffc66c91d9046aada14ea23a5441b5ad6e",
+  "add_special_tokens": false
+ },
+ "sources": {
+  "hidden/prose": {
+   "url": "https://www.gutenberg.org/cache/epub/2600/pg2600.txt",
+   "sha256": "2d5bb2ad5f422765e714617e21fa31bbaf8958aa79682c86fca6660fcc5d1b2b",
+   "license": "Project Gutenberg License (public domain in the United States)",
+   "bytes": 3359610
+  },
+  "hidden/dialogue": {
+   "url": "https://www.gutenberg.org/cache/epub/100/pg100.txt",
+   "sha256": "3cf4b3d44ee14cff4e14e78e2ad3318eff76f3f7f2afc3cee6bb925879110a37",
+   "license": "Project Gutenberg License (public domain in the United States)",
+   "bytes": 5638480
+  },
+  "public/prose": {
+   "url": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+   "sha256": "3f6bb9d6f78e0293b56acd4714dd68cb7d6d1d293402031ce9d5a216bcaf9d75",
+   "license": "Project Gutenberg License (public domain in the United States)",
+   "bytes": 772386
+  },
+  "public/dialogue": {
+   "url": "https://www.gutenberg.org/cache/epub/2542/pg2542.txt",
+   "sha256": "d72a481b08ca7ace73e8ca2087b2baec29fc00e0d6e493f5e877b12116bccf4f",
+   "license": "Project Gutenberg License (public domain in the United States)",
+   "bytes": 169080
+  },
+  "gsm8k-train": {
+   "url": "https://raw.githubusercontent.com/openai/grade-school-math/master/grade_school_math/data/train.jsonl",
+   "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+   "license": "MIT (openai/grade-school-math)",
+   "bytes": 4166206
+  },
+  "cpython-3.12.0": {
+   "url": "https://github.com/python/cpython/archive/refs/tags/v3.12.0.tar.gz",
+   "sha256": "ddfaf383c97f393a7768943630ea01e6c3cfb9af4fbc02655a37a2f3680013d6",
+   "license": "PSF License Agreement (CPython)",
+   "bytes": 27444613
+  }
+ },
+ "code_files": {
+  "Lib": 1741,
+  "Tools": 162
+ },
+ "normalisation": "UTF-8, leading BOM dropped, CRLF/CR to LF; code files decoded errors='replace', each preceded by '# file: <path>' in sorted path order; GSM8K rows as their raw JSON lines",
+ "family_tokens": {
+  "hidden/prose": 756761,
+  "hidden/code": 7968070,
+  "hidden/dialogue": 1422853,
+  "hidden/records": 1087056,
+  "public/prose": 171572,
+  "public/code": 374576,
+  "public/dialogue": 42757,
+  "public/records": 166560
+ },
+ "rule": "per family from token 10000, in request order, [o, o+length), next o = previous end + 1000",
+ "windows": [
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 10000,
+   "end": 11024,
+   "length": 1024,
+   "band": 1024,
+   "index": 0,
+   "id": "fidelity-000"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 12024,
+   "end": 13048,
+   "length": 1024,
+   "band": 1024,
+   "index": 1,
+   "id": "fidelity-001"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 14048,
+   "end": 18144,
+   "length": 4096,
+   "band": 4096,
+   "index": 0,
+   "id": "fidelity-002"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 19144,
+   "end": 23240,
+   "length": 4096,
+   "band": 4096,
+   "index": 1,
+   "id": "fidelity-003"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 24240,
+   "end": 40624,
+   "length": 16384,
+   "band": 16384,
+   "index": 0,
+   "id": "fidelity-004"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 41624,
+   "end": 58008,
+   "length": 16384,
+   "band": 16384,
+   "index": 1,
+   "id": "fidelity-005"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 59008,
+   "end": 124544,
+   "length": 65536,
+   "band": 65536,
+   "index": 0,
+   "id": "fidelity-006"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "fidelity",
+   "start": 125544,
+   "end": 191080,
+   "length": 65536,
+   "band": 65536,
+   "index": 1,
+   "id": "fidelity-007"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 10000,
+   "end": 11024,
+   "length": 1024,
+   "band": 1024,
+   "index": 0,
+   "id": "fidelity-008"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 12024,
+   "end": 13048,
+   "length": 1024,
+   "band": 1024,
+   "index": 1,
+   "id": "fidelity-009"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 14048,
+   "end": 18144,
+   "length": 4096,
+   "band": 4096,
+   "index": 0,
+   "id": "fidelity-010"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 19144,
+   "end": 23240,
+   "length": 4096,
+   "band": 4096,
+   "index": 1,
+   "id": "fidelity-011"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 24240,
+   "end": 40624,
+   "length": 16384,
+   "band": 16384,
+   "index": 0,
+   "id": "fidelity-012"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 41624,
+   "end": 58008,
+   "length": 16384,
+   "band": 16384,
+   "index": 1,
+   "id": "fidelity-013"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 59008,
+   "end": 124544,
+   "length": 65536,
+   "band": 65536,
+   "index": 0,
+   "id": "fidelity-014"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "fidelity",
+   "start": 125544,
+   "end": 191080,
+   "length": 65536,
+   "band": 65536,
+   "index": 1,
+   "id": "fidelity-015"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 10000,
+   "end": 11024,
+   "length": 1024,
+   "band": 1024,
+   "index": 0,
+   "id": "fidelity-016"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 12024,
+   "end": 13048,
+   "length": 1024,
+   "band": 1024,
+   "index": 1,
+   "id": "fidelity-017"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 14048,
+   "end": 18144,
+   "length": 4096,
+   "band": 4096,
+   "index": 0,
+   "id": "fidelity-018"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 19144,
+   "end": 23240,
+   "length": 4096,
+   "band": 4096,
+   "index": 1,
+   "id": "fidelity-019"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 24240,
+   "end": 40624,
+   "length": 16384,
+   "band": 16384,
+   "index": 0,
+   "id": "fidelity-020"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 41624,
+   "end": 58008,
+   "length": 16384,
+   "band": 16384,
+   "index": 1,
+   "id": "fidelity-021"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 59008,
+   "end": 124544,
+   "length": 65536,
+   "band": 65536,
+   "index": 0,
+   "id": "fidelity-022"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "fidelity",
+   "start": 125544,
+   "end": 191080,
+   "length": 65536,
+   "band": 65536,
+   "index": 1,
+   "id": "fidelity-023"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 10000,
+   "end": 11024,
+   "length": 1024,
+   "band": 1024,
+   "index": 0,
+   "id": "fidelity-024"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 12024,
+   "end": 13048,
+   "length": 1024,
+   "band": 1024,
+   "index": 1,
+   "id": "fidelity-025"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 14048,
+   "end": 18144,
+   "length": 4096,
+   "band": 4096,
+   "index": 0,
+   "id": "fidelity-026"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 19144,
+   "end": 23240,
+   "length": 4096,
+   "band": 4096,
+   "index": 1,
+   "id": "fidelity-027"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 24240,
+   "end": 40624,
+   "length": 16384,
+   "band": 16384,
+   "index": 0,
+   "id": "fidelity-028"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 41624,
+   "end": 58008,
+   "length": 16384,
+   "band": 16384,
+   "index": 1,
+   "id": "fidelity-029"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 59008,
+   "end": 124544,
+   "length": 65536,
+   "band": 65536,
+   "index": 0,
+   "id": "fidelity-030"
+  },
+  {
+   "family": "hidden/records",
+   "purpose": "fidelity",
+   "start": 125544,
+   "end": 191080,
+   "length": 65536,
+   "band": 65536,
+   "index": 1,
+   "id": "fidelity-031"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "engine_agreement",
+   "start": 192080,
+   "end": 454223,
+   "length": 262143,
+   "id": "engine_agreement-032"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "engine_agreement",
+   "start": 192080,
+   "end": 454223,
+   "length": 262143,
+   "id": "engine_agreement-033"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 455223,
+   "end": 457270,
+   "length": 2047,
+   "concurrency": 1,
+   "id": "replay-034"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 458270,
+   "end": 460318,
+   "length": 2048,
+   "concurrency": 1,
+   "id": "replay-035"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 461318,
+   "end": 463367,
+   "length": 2049,
+   "concurrency": 1,
+   "id": "replay-036"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 464367,
+   "end": 468462,
+   "length": 4095,
+   "concurrency": 1,
+   "id": "replay-037"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 469462,
+   "end": 473558,
+   "length": 4096,
+   "concurrency": 1,
+   "id": "replay-038"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 474558,
+   "end": 478655,
+   "length": 4097,
+   "concurrency": 1,
+   "id": "replay-039"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 479655,
+   "end": 496038,
+   "length": 16383,
+   "concurrency": 1,
+   "id": "replay-040"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 497038,
+   "end": 513422,
+   "length": 16384,
+   "concurrency": 1,
+   "id": "replay-041"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "replay",
+   "start": 514422,
+   "end": 530807,
+   "length": 16385,
+   "concurrency": 1,
+   "id": "replay-042"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "replay",
+   "start": 455223,
+   "end": 457270,
+   "length": 2047,
+   "concurrency": 3,
+   "id": "replay-043"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "replay",
+   "start": 458270,
+   "end": 462367,
+   "length": 4097,
+   "concurrency": 3,
+   "id": "replay-044"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "replay",
+   "start": 463367,
+   "end": 479752,
+   "length": 16385,
+   "concurrency": 3,
+   "id": "replay-045"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "replay",
+   "start": 192080,
+   "end": 194128,
+   "length": 2048,
+   "concurrency": 5,
+   "id": "replay-046"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "replay",
+   "start": 195128,
+   "end": 197177,
+   "length": 2049,
+   "concurrency": 5,
+   "id": "replay-047"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "replay",
+   "start": 198177,
+   "end": 202272,
+   "length": 4095,
+   "concurrency": 5,
+   "id": "replay-048"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "replay",
+   "start": 203272,
+   "end": 207368,
+   "length": 4096,
+   "concurrency": 5,
+   "id": "replay-049"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "replay",
+   "start": 208368,
+   "end": 224751,
+   "length": 16383,
+   "concurrency": 5,
+   "id": "replay-050"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "prefix",
+   "start": 531807,
+   "end": 536031,
+   "length": 4224,
+   "shared_prefix": 4224,
+   "id": "prefix-051"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 225751,
+   "end": 225880,
+   "length": 129,
+   "source": "hidden/prose",
+   "shared_prefix": 4224,
+   "branch": "A",
+   "id": "suffix-052"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 226880,
+   "end": 227009,
+   "length": 129,
+   "source": "hidden/prose",
+   "shared_prefix": 4224,
+   "branch": "B",
+   "id": "suffix-053"
+  },
+  {
+   "family": "hidden/prose",
+   "purpose": "prefix",
+   "start": 537031,
+   "end": 553542,
+   "length": 16511,
+   "shared_prefix": 16511,
+   "id": "prefix-054"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 228009,
+   "end": 228138,
+   "length": 129,
+   "source": "hidden/prose",
+   "shared_prefix": 16511,
+   "branch": "A",
+   "id": "suffix-055"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 229138,
+   "end": 229267,
+   "length": 129,
+   "source": "hidden/prose",
+   "shared_prefix": 16511,
+   "branch": "B",
+   "id": "suffix-056"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "prefix",
+   "start": 480752,
+   "end": 484976,
+   "length": 4224,
+   "shared_prefix": 4224,
+   "id": "prefix-057"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 230267,
+   "end": 230396,
+   "length": 129,
+   "source": "hidden/code",
+   "shared_prefix": 4224,
+   "branch": "A",
+   "id": "suffix-058"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 231396,
+   "end": 231525,
+   "length": 129,
+   "source": "hidden/code",
+   "shared_prefix": 4224,
+   "branch": "B",
+   "id": "suffix-059"
+  },
+  {
+   "family": "hidden/code",
+   "purpose": "prefix",
+   "start": 485976,
+   "end": 502487,
+   "length": 16511,
+   "shared_prefix": 16511,
+   "id": "prefix-060"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 232525,
+   "end": 232654,
+   "length": 129,
+   "source": "hidden/code",
+   "shared_prefix": 16511,
+   "branch": "A",
+   "id": "suffix-061"
+  },
+  {
+   "family": "hidden/dialogue",
+   "purpose": "suffix",
+   "start": 233654,
+   "end": 233783,
+   "length": 129,
+   "source": "hidden/code",
+   "shared_prefix": 16511,
+   "branch": "B",
+   "id": "suffix-062"
+  },
+  {
+   "family": "public/prose",
+   "purpose": "public_fidelity",
+   "start": 10000,
+   "end": 11024,
+   "length": 1024,
+   "id": "public_fidelity-063"
+  },
+  {
+   "family": "public/code",
+   "purpose": "public_fidelity",
+   "start": 10000,
+   "end": 14096,
+   "length": 4096,
+   "id": "public_fidelity-064"
+  },
+  {
+   "family": "public/dialogue",
+   "purpose": "public_fidelity",
+   "start": 10000,
+   "end": 14096,
+   "length": 4096,
+   "id": "public_fidelity-065"
+  },
+  {
+   "family": "public/records",
+   "purpose": "public_fidelity",
+   "start": 10000,
+   "end": 26384,
+   "length": 16384,
+   "id": "public_fidelity-066"
+  },
+  {
+   "family": "public/prose",
+   "purpose": "public_fidelity",
+   "start": 12024,
+   "end": 77560,
+   "length": 65536,
+   "id": "public_fidelity-067"
+  },
+  {
+   "family": "public/prose",
+   "purpose": "public_replay",
+   "start": 78560,
+   "end": 80607,
+   "length": 2047,
+   "id": "public_replay-068"
+  },
+  {
+   "family": "public/prose",
+   "purpose": "public_replay",
+   "start": 81607,
+   "end": 83655,
+   "length": 2048,
+   "id": "public_replay-069"
+  },
+  {
+   "family": "public/prose",
+   "purpose": "public_replay",
+   "start": 84655,
+   "end": 88752,
+   "length": 4097,
+   "id": "public_replay-070"
+  },
+  {
+   "family": "public/prose",
+   "purpose": "public_prefix",
+   "start": 89752,
+   "end": 91928,
+   "length": 2176,
+   "shared_prefix": 2176,
+   "id": "public_prefix-071"
+  },
+  {
+   "family": "public/dialogue",
+   "purpose": "public_suffix",
+   "start": 15096,
+   "end": 15160,
+   "length": 64,
+   "shared_prefix": 2176,
+   "branch": "A",
+   "id": "public_suffix-072"
+  },
+  {
+   "family": "public/dialogue",
+   "purpose": "public_suffix",
+   "start": 16160,
+   "end": 16224,
+   "length": 64,
+   "shared_prefix": 2176,
+   "branch": "B",
+   "id": "public_suffix-073"
+  }
+ ]
+}

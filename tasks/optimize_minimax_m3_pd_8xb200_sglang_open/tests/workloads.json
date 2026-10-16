@@ -1,0 +1,73 @@
+{
+  "workloads": [
+    {
+      "name": "pd_multiturn",
+      "input_len": 12000,
+      "output_len": 1024,
+      "first_turn_prefix_tokens": 8000,
+      "num_prompts": 64,
+      "max_concurrency": 16,
+      "_comment": "input_len is the tokens each TURN adds, not the prompt length. The conversation starts at 8000 tokens and every turn appends this many plus the reply, so by turn 8 the prompt is ~60096 tokens. Feeding input_len to --random-input-len benches a 5x smaller shape than the one this task scores.",
+      "profiles": [
+        {
+          "name": "c4",
+          "pattern": "closed_loop",
+          "concurrency": 4
+        },
+        {
+          "name": "c8",
+          "pattern": "closed_loop",
+          "concurrency": 8
+        },
+        {
+          "name": "c16",
+          "pattern": "closed_loop",
+          "concurrency": 16
+        }
+      ]
+    }
+  ],
+  "pd": {
+    "chunked_prefill_size": 8192,
+    "context_window": 65536,
+    "conversation_turns": 8,
+    "conversations": 16,
+    "decode_gpus": 4,
+    "discovery_port": 30001,
+    "engine": "sglang",
+    "engine_argv_template": [
+      "{python}",
+      "-m",
+      "sglang.launch_server",
+      "--model-path",
+      "{model}",
+      "--host",
+      "0.0.0.0",
+      "--tp-size",
+      "{width}",
+      "--served-model-name",
+      "{served}",
+      "--trust-remote-code",
+      "--random-seed",
+      "1024",
+      "--context-length",
+      "{max_len}",
+      "--max-running-requests",
+      "256",
+      "--dtype",
+      "bfloat16",
+      "--chunked-prefill-size",
+      "{chunked_prefill_size}",
+      "--moe-runner-backend",
+      "{moe_runner_backend}"
+    ],
+    "first_turn_prefix_tokens": 8000,
+    "jit_host_compiler": "clang++",
+    "moe_runner_backend": "flashinfer_trtllm_routed",
+    "new_tokens_per_turn": 12000,
+    "prefill_gpus": 4,
+    "reply_tokens": 1024,
+    "router_port": 10001,
+    "transfer_backend": "nixl"
+  }
+}

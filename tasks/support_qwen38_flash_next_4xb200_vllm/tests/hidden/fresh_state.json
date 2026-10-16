@@ -1,0 +1,61 @@
+{
+ "note": "The hidden inputs of test_fresh_request_state. Eight one-token prompts, each encoded by the checkpoint's own tokenizer (/model/tokenizer.json) as exactly one token, distinct from the protocol witnesses; turnover and background prompts are cut from the hidden fidelity set's 12,288- and 18,432-token sequences.",
+ "witnesses": [
+  {
+   "word": "Yesterday",
+   "id": 48590
+  },
+  {
+   "word": "Water",
+   "id": 27336
+  },
+  {
+   "word": "If",
+   "id": 2592
+  },
+  {
+   "word": "When",
+   "id": 4350
+  },
+  {
+   "word": "import",
+   "id": 464
+  },
+  {
+   "word": "Dear",
+   "id": 29664
+  },
+  {
+   "word": "Why",
+   "id": 9930
+  },
+  {
+   "word": "Please",
+   "id": 5328
+  }
+ ],
+ "generated_tokens": 64,
+ "turnover_sequences": [
+  "fid-24-prose-12288",
+  "fid-25-code-12288",
+  "fid-26-dialogue-12288",
+  "fid-27-records-12288",
+  "fid-28-prose-12288",
+  "fid-29-code-12288",
+  "fid-30-dialogue-12288",
+  "fid-31-records-12288",
+  "fid-32-prose-18432",
+  "fid-33-code-18432",
+  "fid-34-dialogue-18432",
+  "fid-35-records-18432",
+  "fid-36-prose-18432",
+  "fid-37-code-18432",
+  "fid-38-dialogue-18432",
+  "fid-39-records-18432"
+ ],
+ "turnover_tokens": 1024,
+ "turnover_max_tokens": 8,
+ "background_tokens": 200,
+ "background_max_tokens": 256,
+ "join_after_s": 2.0
+}

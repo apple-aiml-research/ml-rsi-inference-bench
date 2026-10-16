@@ -1,0 +1,15 @@
+{
+  "completed": 16,
+  "failed": 0,
+  "total_input_tokens": 1024,
+  "total_output_tokens": 1024,
+  "request_throughput": 8.0,
+  "request_goodput": 8.0,
+  "output_throughput": 512.0,
+  "total_token_throughput": 1024.0,
+  "mean_ttft_ms": 18.0,
+  "p99_ttft_ms": 40.0,
+  "mean_tpot_ms": 2.5,
+  "p99_tpot_ms": 5.0,
+  "p99_e2el_ms": 150.0
+}

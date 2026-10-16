@@ -1,0 +1,55 @@
+{
+ "schema": "qwen38-scope/1",
+ "deployment": {
+  "recipes": "serving/recipes.py (ordinary and mtp3); full checkpoint, tensor parallel 4, no expert parallelism, four B200 GPUs, BF16 KV cache, the fixed engine and dependency versions",
+  "checkpoint": {"repository": "Qwen/Qwen3.8-Flash-Next-FP8", "revision": "236dfdf285828023ca3bcd3f37366c58a3469b13"}
+ },
+ "context": {
+  "configured_capacity_tokens": 262144,
+  "independent_fidelity_sequence_tokens": [512, 18432],
+  "meaning": "the recipes keep the checkpoint's native configured context; independent model-author fidelity is evaluated on sequences of 512 to 18,432 tokens; no measured full-context fidelity guarantee is made"
+ },
+ "components": {
+  "requests": [1, 32],
+  "max_active_prefill_tokens_per_step": 16384,
+  "max_prefill_history_plus_new_tokens_per_request": 32768,
+  "max_decode_history_tokens_at_start": 32768,
+  "measured_steps": [1, 64],
+  "speculative_draft_tokens": 3,
+  "max_target_positions_per_request_per_step": 4,
+  "meaning": "a supported envelope, not a promise to test its whole Cartesian product; inputs may be unequal in length; decode and speculative histories may extend past 32,768 tokens during the measured steps; each speculative verification evaluates up to four target positions per request, and accepted and rejected progress follow native semantics"
+ },
+ "serving_state": {
+  "classes": ["continued requests", "fresh requests", "ordinary prefix reuse", "MTP3 state preservation through engine-supported scheduling and cache reuse"],
+  "max_live_requests": 32,
+  "max_input_tokens_per_request": 32768,
+  "max_generated_tokens_per_request": 1024
+ },
+ "serving_performance": {
+  "input_tokens": 4096, "output_tokens": 512, "greedy": true, "ignore_eos": true, "concurrency": [1, 32],
+  "recipes": ["ordinary", "mtp3"],
+  "client": "measurement/efficiency.py"
+ },
+ "numerical_allowances": {
+  "qsa": {"output_and_state": {"atol": 0.02, "rtol": 0.016}, "selection_scores": {"atol": 0.05, "rtol": 0.016},
+          "discrete_positions": "exact",
+          "meaning": "logical outputs and state; selection ties and near ties within the score allowance are admissible, without an exposed top-k buffer"},
+  "ple": {"output_and_state": {"atol": 0.01, "rtol": 0.016}, "discrete_token_and_history_identities": "exact",
+          "meaning": "logical outputs and state; a physical dtype or axis order is not itself a correctness verdict"}
+ },
+ "ple_memory": {
+  "cap_bytes": "268435456 + 16*N*C + 4*R*C*H + 2*N*C*S per rank and component case",
+  "C": 10240, "H": 9,
+  "N": "active tokens per step (prefill: the step's tokens; decode: requests; speculative: four positions per request)",
+  "R": "active requests", "S": "retained measured steps",
+  "counted": "the peak live union of storage attributable to the measured native PLE region over the combined allocator and CUDA driver timeline: persistent auxiliary storage reachable from the region, preallocated workspace, outputs retained across the measured sequence, temporary and external allocations inside the calls, and bound-state capacity beyond the logical live state",
+  "excluded": "checkpoint parameters, the region's mathematical inputs, and the logical live state of the case's requests (per request C channels by H positions, plus the three speculative positions under MTP3, in the state dtype); storage is deduplicated by range; unused reserved allocator capacity is reported, not charged"
+ },
+ "accuracy": {"protocol": "the complete ordinary-recipe EvalScope workload in /public/upstream-test with its own generation limits; the efficiency workload's 512-token output limit does not cap it"},
+ "registered_architectures": {
+  "rule": "grading restores the base engine's registry tests with a trusted fixture; its coverage test accepts registered architecture names only from that fixture",
+  "required": "Qwen4ExpForConditionalGeneration (the checkpoint's declared architecture)",
+  "other_names_in_the_fixture": ["Qwen4ExpForCausalLM", "Qwen4ExpMTP"],
+  "consequence": "any other registered architecture name fails that base test at grading"
+ }
+}

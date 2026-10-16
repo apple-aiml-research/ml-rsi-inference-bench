@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Thu, 27 Aug 2026 00:00:00 +0000
+Subject: [PATCH] oracle: optimize_minimax_m3_4xb200_mtp_open marker -- semantically neutral, non-empty
+
+WHAT THIS IS. A no-op marker: it inserts two comment lines into vllm/__init__.py and changes
+nothing at runtime. Two jobs, and it is deliberately the same asset for both.
+
+  1. ORACLE ASSET. The oracle agent applies this file. Without a real patch the run returns
+     reason=no_patch and reward 0.0, which proves nothing about the task -- it is the most
+     common false zero in this benchmark.
+  2. NOISE PROBE. Semantically neutral means the true speedup is 1.000 at every point, so a
+     scored run of it measures this profile's NOISE FLOOR and nothing else. vllm/__init__.py is
+     chosen over a new file precisely because it IS imported on every engine boot: a patch the
+     engine never loads cannot control for whether the harness measured the candidate tree at
+     all.
+
+EXPECT reward ~= 0. A neutral patch earns max(0, geomean - 1) ~= 0 by construction. A reward
+materially above 0 here is a measurement of noise, not of an optimization -- which is the point.
+
+SCORED PROFILE at the time this was written: mtp_longctx_8k out=4096 scored=c1(n=2)/c8(n=16)/c32(n=64).
+
+APPLIES AT the pins this family uses: vllm/__init__.py is byte-identical at v0.20.1 and v0.24.0
+(3661 bytes both), and each context line below appears exactly once in each. Verified with
+`git apply --check` against the real file fetched at each pin.
+---
+ vllm/__init__.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/vllm/__init__.py b/vllm/__init__.py
+--- a/vllm/__init__.py
++++ b/vllm/__init__.py
+@@ -4,6 +4,8 @@
+
+ # The version.py should be independent library, and we always import the
+ # version library first.  Such assumption is critical for some customization.
++# inference-bench optimize_minimax_m3_4xb200_mtp_open: oracle marker / neutral noise probe.
++#   No runtime effect. See solution/known_good.patch for why this file and not a new one.
+ from .version import __version__, __version_tuple__  # isort:skip
+
+ import typing

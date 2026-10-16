@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Mon, 02 Jun 2026 00:00:00 +0000
+Subject: [PATCH] oracle: add inference-bench kimi_k2_6_8xb200 marker
+
+ORACLE MARKER: adds a new file to vllm/ so the static verifier
+classifies the candidate as `source_edit` (rather than empty),
+proving the oracle path runs end-to-end.
+---
+ vllm/inference_bench_kimi_k2_6_oracle.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 vllm/inference_bench_kimi_k2_6_oracle.py
+
+diff --git a/vllm/inference_bench_kimi_k2_6_oracle.py b/vllm/inference_bench_kimi_k2_6_oracle.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/vllm/inference_bench_kimi_k2_6_oracle.py
+@@ -0,0 +1,5 @@
++# inference-bench: kimi_k2_6_8xb200 oracle marker (no-op)
++# Task: optimize moonshotai/Kimi-K2.6 on 8xB200 / vLLM 0.20.1+cu129
++# Architecture: KimiK25ForConditionalGeneration wrapper + DeepseekV3-derived text backbone; MLA attention (kv_lora_rank=512); 61 decoder layers (1 dense + 60 MoE × 384 routed experts + 1 shared); bf16 weights
++# Correctness: loose / logits (atol=0.20 rtol=0.10 min_pass_rate=0.95)
++ORACLE_TASK = "kimi_k2_6_8xb200"

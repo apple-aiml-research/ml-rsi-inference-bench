@@ -1,0 +1,143 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/vllm-project/vllm.git",
+ "upstream_base": "687db597440bf2b0cc65404e5f8cc238632127e0",
+ "prepared_base": {
+  "commit": "a5e63c9ee859ceb2f299ff55f063c7c32f94f08b",
+  "tree": "f212ad2dd04d6753e08955cc50f48c192742a3c0",
+  "kernel_commit": "6a88e6efdce8c965a8424cd9066179c88aa70554",
+  "kernel_tree": "11c34a2db64752f0f7e4a876f8ec9c164ea5f64f",
+  "patch": "../environment/prepared-base/000-supplied-kernels.patch",
+  "sha256": "0ba3b30b8518d17cc4dd57313d725e7d76e75447245e5104e7006a22e7f29470",
+  "bytes": 29309,
+  "withheld": [
+   "vllm/models/qwen4_exp/nvidia/ops/qsa.py",
+   "vllm/models/qwen4_exp/nvidia/ops/qsa_pre_indexer.py"
+  ],
+  "supplied": [
+   "vllm/models/qwen4_exp/nvidia/ops/hc.py",
+   "vllm/models/qwen4_exp/nvidia/low_latency_gemm.py",
+   "csrc/libtorch_stable/gdn/fused_gdn_decode_kernel.cu",
+   "csrc/libtorch_stable/ops.h",
+   "csrc/libtorch_stable/torch_bindings.cpp",
+   "vllm/model_executor/layers/fused_moe/fused_moe.py"
+  ],
+  "evaluation_files": 39,
+  "reproduced_by": "environment/Dockerfile: unchanged kernel preparation at 1788153123 +0000, generic FP8 preparation at 1788153124 +0000 after unchanged native compilation, then eval/qwen38 (the public evaluation package, 39 files) at 1788153125 +0000; neutral committed messages and pinned identity.",
+  "engine_commit": "ada6bd3c2d576cc95a9c7a834690c5fd2ff34b13",
+  "engine_tree": "00ea3079973d5654bb0460d0d76f4f4d504377b0",
+  "generic_repair": {
+   "id": "sm100-block32-fp8-default",
+   "commit": "ada6bd3c2d576cc95a9c7a834690c5fd2ff34b13",
+   "tree": "00ea3079973d5654bb0460d0d76f4f4d504377b0",
+   "patch": "../environment/preparation-fp8/001-sm100-fp8-default.patch",
+   "sha256": "0a841a179cc23fb8f06d79d2ba2a10c400af6762652f06a317bf174bc14b4818",
+   "bytes": 780,
+   "path": "vllm/model_executor/layers/fused_moe/fused_moe.py",
+   "authorized_at": "2026-09-28"
+  }
+ },
+ "base": "a5e63c9ee859ceb2f299ff55f063c7c32f94f08b",
+ "landing": {
+  "pr": 53896,
+  "sha": "e126687a9a828d513c01a07cd69f025f27d63280",
+  "tree": "8d8b2682fee831c237da5cae6288569e195a6768",
+  "merged_at": "2026-08-31T05:57:56Z",
+  "files_from_prepared_base": 115,
+  "insertions": 17093,
+  "deletions": 439,
+  "squash_from_upstream_base": {
+   "files": 124,
+   "insertions": 19425,
+   "deletions": 451
+  }
+ },
+ "post_merge_repairs": [
+  54517,
+  55375,
+  51565,
+  58434
+ ],
+ "repair_commits": {
+  "54517": "f870b9297685bd3c968063b52b769315cb08fd7f",
+  "55375": "28e605fb330093fee5a2b98aebc19d9c268c1822",
+  "51565": "79468c20ef23227d4e051f807e10fd54fb24e24f",
+  "58434": "7dbd0a8d22d20eb938994ad7a9158e02f30c9ce6"
+ },
+ "repair_scope": "The first three repairs are the admitted combined baseline. #58434 is limited to the fresh-prompt predicate and its required prompt-tail predicate; no adaptive speculation or later runner redesign. Also admitted: the author-discovered fresh-prefill padding guard, with its reachable reversal control, as a narrow exception to the merged-upstream-PR rule; and the seven-line SM100/block-32 FP8 default workaround for M > 64 in preparation and reference; canonicalize QSA compressed blocks only from the selector in the withheld reference, preserving direct expansion input order by default.",
+ "closure_oracle_tree": "377c37a6176ccf0ade28325606c9b54392346e86",
+ "engine_projection_tree": "b7fe2b6cbcc6ac39bac28808aa6622dcc0b1b2c5",
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "6b6cd2a24736206ed27c3d17d1b2c3cf95675bb87aca9acf6245577e00f489e2",
+  "bytes": 906774,
+  "applies_to_tree": "377c37a6176ccf0ade28325606c9b54392346e86",
+  "produced_by": "Binary full-index difference from prepared engine tree 00ea3079973d5654bb0460d0d76f4f4d504377b0 to admitted combined engine tree b7fe2b6cbcc6ac39bac28808aa6622dcc0b1b2c5; generic FP8 preparation and public evaluation are identical in base and reference. Applied to the prepared base it gives the closure tree above."
+ },
+ "model": {
+  "repo": "Qwen/Qwen3.8-Flash-Next-FP8",
+  "revision": "236dfdf285828023ca3bcd3f37366c58a3469b13",
+  "files": 143,
+  "bytes": 185563781942,
+  "manifest_sha256": "b7ea54fb209b61b89b9b65c7cfc12a03e49acb7af01b751d58e83a2542d372fb"
+ },
+ "qualification_status": "Source identities derived for this task's evaluation resources; engine projections 00ea3079 (base) and cb448de6 (reference).",
+ "author_repairs": [
+  {
+   "id": "fresh-prefill-padding",
+   "authorized_at": "2026-09-27",
+   "path": "vllm/v1/core/sched/scheduler.py",
+   "change": "Require num_computed_tokens > 0 before padding a newly scheduled one-token request with speculative placeholders.",
+   "guard_patch_sha256": "0a7927139950d02d9b3cacae5deaa642daadb2eda53aaa4c764c7b92efd968ea",
+   "previous_engine_tree": "b8fac7bf5cce65481854892d7c1e7995ce1162df",
+   "previous_complete_tree": "62fc8992a2fc322ca4c5a2cb6f2b129247e50e7c",
+   "evidence": "reference state and short-sequence comparisons, a state trace, a fresh-padding reproduction and a unit check",
+   "control": "Remove exactly this condition; the previous reference's MTP joining-one state comparison then disagrees."
+  },
+  {
+   "id": "sm100-block32-fp8-default",
+   "authorized_at": "2026-09-28",
+   "path": "vllm/model_executor/layers/fused_moe/fused_moe.py",
+   "placement": "preparation and reference",
+   "change": "Default block-32 FP8 configuration on SM100 uses num_stages=1 when M > 64; smaller default tiles and tuned configurations are unchanged.",
+   "patch_sha256": "0a841a179cc23fb8f06d79d2ba2a10c400af6762652f06a317bf174bc14b4818",
+   "previous_prepared_engine_tree": "11c34a2db64752f0f7e4a876f8ec9c164ea5f64f",
+   "evidence": "Fixed-input studies, full-model and performance studies, and an exact compatible-source study.",
+   "control": "Remove only these seven lines; exact complete reversal tree a76d971de68e352994aadb370268e9086d8250c4."
+  },
+  {
+   "id": "qsa-selector-canonical-block-order",
+   "authorized_at": "2026-09-28",
+   "path": "vllm/models/qwen4_exp/nvidia/ops/qsa.py",
+   "placement": "withheld reference only",
+   "change": "Expand selected compressed blocks in canonical order inside the existing expansion kernel only when requested by the selector. Direct expansion defaults to native input order.",
+   "combined_patch_sha256": "34c40dfb0020588da29611a8ce43fc9754ebd5b4d7d259fd188f9e2dd09e6aea",
+   "previous_engine_tree": "a4db9a3a3aa564074de9ed2efa9e4362a539d624",
+   "previous_complete_tree": "8d4583ac7c83c1746f45c28c8fd5bdd6f3caff57",
+   "evidence": "Studies covering the exact compatible source, the original upstream tests, repeated cases and compiled-path equivalence.",
+   "control": "Remove only canonical ordering; exact complete reversal tree 8ade92b7943ba475644fb8e947d41b8150f33998. Removing both new repairs recovers 8d4583ac7c83c1746f45c28c8fd5bdd6f3caff57."
+  }
+ ],
+ "identity_derivation_previous": {
+  "method": "the evaluation commit reproduced on the unchanged FP8 preparation commit ada6bd3c2d576cc95a9c7a834690c5fd2ff34b13 with the earlier environment/eval tree, as environment/Dockerfile makes it; engine projection = the commit tree without eval/",
+  "previous": {
+   "prepared_base": "687d70ddfe0a3809da991d1673e98d1398a8053e",
+   "prepared_tree": "2ecb15b33f0c030d273106111c8c730c4350511e",
+   "closure_oracle_tree": "f46f61bf29f65a5833cd18a2d6af09b2f8fd6b53",
+   "evaluation_files": 31
+  },
+  "engine_projection_base": "00ea3079973d5654bb0460d0d76f4f4d504377b0",
+  "engine_projection_reference": "b7fe2b6cbcc6ac39bac28808aa6622dcc0b1b2c5"
+ },
+ "identity_derivation": {
+  "method": "the evaluation commit reproduced on the unchanged FP8 preparation commit ada6bd3c2d576cc95a9c7a834690c5fd2ff34b13 with this task's environment/eval tree, as environment/Dockerfile makes it (the earlier of the two was derived in the previous image from its preparation commit; the same method reproduces both sets of identities exactly)",
+  "previous": {
+   "prepared_base": "0f6d79cb39774f2d838b8b84790a008ef23570eb",
+   "prepared_tree": "4cad545464caacaae2156cc6a23bb1adc76b1f55",
+   "closure_oracle_tree": "0adc6fe6073c36cadd2661f9f0c333a8ddab4a4a",
+   "evaluation_files": 39
+  },
+  "engine_projection_base": "00ea3079973d5654bb0460d0d76f4f4d504377b0",
+  "engine_projection_reference": "b7fe2b6cbcc6ac39bac28808aa6622dcc0b1b2c5"
+ }
+}

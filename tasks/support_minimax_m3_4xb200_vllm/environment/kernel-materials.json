@@ -1,0 +1,537 @@
+{
+ "schema": "infb-day0-kernel-materials/1",
+ "task": "support_minimax_m3_4xb200_vllm",
+ "repo": "https://github.com/vllm-project/vllm.git",
+ "upstream_base": "a3195fab7b1227e75403fef83891e961e69228a6",
+ "source_revision": "0a1c5034f5e4fe736db672010cda33d9d850f87e",
+ "commit": {
+  "author": "Inference-Bench <inference-bench@local>",
+  "date": "1781541473 +0000",
+  "message_file": "prepared-base/kernels-message.txt"
+ },
+ "supplied": [
+  {
+   "path": "csrc/libtorch_stable/activation_kernels.cu",
+   "operation": "whole_file",
+   "base_blob": "cdab456348e2680e349747baa9c125b99e8e53e8",
+   "source_blob": "e1dc0134605522b3ef1b635946fd415bd40b1f9a",
+   "supplied_blob": "e1dc0134605522b3ef1b635946fd415bd40b1f9a",
+   "content": "silu_and_mul_clamp with alpha (sigmoid scale) and beta (up bias)"
+  },
+  {
+   "path": "csrc/libtorch_stable/fp32_router_gemm.cu",
+   "operation": "whole_file",
+   "base_blob": "04397e0893c27ed643daca4c5f5c7adaedadc4b4",
+   "source_blob": "80374d66a0255de8681695a39acc2fe0cd4d7f25",
+   "supplied_blob": "80374d66a0255de8681695a39acc2fe0cd4d7f25",
+   "content": "the FP32 router GEMM at the (6144, 128) shape beside (3072, 256)"
+  },
+  {
+   "path": "csrc/libtorch_stable/fp32_router_gemm_entry.cu",
+   "operation": "whole_file",
+   "base_blob": "4baa740de9307877b7cfc47c3671c8fc633b48f0",
+   "source_blob": "b4bc0a11d20026f789af7eac1fb54a0530dea241",
+   "supplied_blob": "b4bc0a11d20026f789af7eac1fb54a0530dea241",
+   "content": "its entry point for the added shape"
+  },
+  {
+   "path": "csrc/libtorch_stable/ops.h",
+   "operation": "hunks",
+   "base_blob": "05e55e7198ca34426771bf6f94c55e13a619e9e8",
+   "source_blob": "d5144d76818a489c74ae24004815ddcf9f977a85",
+   "supplied_blob": "0d248018392fb80fc429fdbb169712e128423dca",
+   "content": "only the silu_and_mul_clamp declaration hunk (not the fused QK-norm/RoPE/KV-insert declaration)",
+   "source_hunks": 2,
+   "supplied_hunks": 1,
+   "select_if_contains": [
+    "void silu_and_mul_clamp("
+   ]
+  },
+  {
+   "path": "csrc/libtorch_stable/torch_bindings.cpp",
+   "operation": "hunks",
+   "base_blob": "b1c166b1d3aac781c1e395447e14224323c50284",
+   "source_blob": "7d9a39a7a4b7fd08d0c9fcb4c15d1d9654420bb8",
+   "supplied_blob": "57fcaca66e0f6f32b6a9368cd712da2c3f233b4f",
+   "content": "only the silu_and_mul_with_clamp schema hunk (not the fused QK-norm/RoPE/KV-insert schema or impl)",
+   "source_hunks": 3,
+   "supplied_hunks": 1,
+   "select_if_contains": [
+    "\"silu_and_mul_with_clamp(Tensor! result"
+   ]
+  },
+  {
+   "path": "csrc/ops.h",
+   "operation": "hunks",
+   "base_blob": "e39bae08f1985b238ac21bf9f16e1ad72a8c61a1",
+   "source_blob": "b909c5711d4940bce1bf5b41b863acff0826a621",
+   "supplied_blob": "b909c5711d4940bce1bf5b41b863acff0826a621",
+   "content": "the silu_and_mul_clamp declaration hunk",
+   "source_hunks": 1,
+   "supplied_hunks": 1,
+   "select_if_contains": [
+    "void silu_and_mul_clamp("
+   ]
+  },
+  {
+   "path": "tests/kernels/core/test_fused_allreduce_gemma_rms_norm.py",
+   "operation": "whole_file",
+   "base_blob": null,
+   "source_blob": "cb936ce33ad121d7ea68dd640657ef4b264eac7e",
+   "supplied_blob": "cb936ce33ad121d7ea68dd640657ef4b264eac7e",
+   "content": "new file: the fused all-reduce Gemma RMSNorm test"
+  },
+  {
+   "path": "tests/kernels/test_fp32_router_gemm.py",
+   "operation": "whole_file",
+   "base_blob": "f855eb7aa17161885e73fb7bb6962264a1ccfaf0",
+   "source_blob": "0673a438c5468672bc32a443860b9d079338eec8",
+   "supplied_blob": "0673a438c5468672bc32a443860b9d079338eec8",
+   "content": "the router GEMM test at source content"
+  },
+  {
+   "path": "vllm/model_executor/layers/activation.py",
+   "operation": "hunks",
+   "base_blob": "ddad6801adc4aa763611f87c3ce2864ffd7e8cc1",
+   "source_blob": "80bf251b2d883c3b568ba383e56a88de6584a197",
+   "supplied_blob": "80bf251b2d883c3b568ba383e56a88de6584a197",
+   "content": "the SiluAndMulWithClamp alpha/beta hunks",
+   "source_hunks": 2,
+   "supplied_hunks": 2,
+   "select_if_contains": [
+    "self.alpha",
+    "alpha"
+   ]
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_allreduce_gemma_rms_norm.py",
+   "operation": "whole_file",
+   "base_blob": null,
+   "source_blob": "e49e135b26a928ba43ba3c8db71a1851293d53f4",
+   "supplied_blob": "e49e135b26a928ba43ba3c8db71a1851293d53f4",
+   "content": "new file: fused all-reduce with Gemma RMSNorm"
+  }
+ ],
+ "withheld_components": [
+  "the MiniMax Sparse Attention package fmha_sm100 at any revision (vllm-project/MSA, MiniMax-AI/MSA code, every installed or cached copy), and cmake/external_projects/fmha_sm100.cmake",
+  "vllm/models/minimax_m3/common/ops/index_topk.py",
+  "vllm/models/minimax_m3/common/ops/sparse_attn.py",
+  "csrc/libtorch_stable/fused_minimax_m3_qknorm_rope_kv_insert_kernel.cu, its declaration, schema, implementation registration and the vllm/_custom_ops.py wrapper",
+  "every other change of the source revision (model, config, registry, backends, parsers, MXFP8 MoE/linear, tests, docs)"
+ ],
+ "withheld_paths_of_source_revision": [
+  {
+   "path": ".gitignore",
+   "status": "M"
+  },
+  {
+   "path": "CMakeLists.txt",
+   "status": "M"
+  },
+  {
+   "path": "cmake/external_projects/fmha_sm100.cmake",
+   "status": "A"
+  },
+  {
+   "path": "csrc/libtorch_stable/fused_minimax_m3_qknorm_rope_kv_insert_kernel.cu",
+   "status": "A"
+  },
+  {
+   "path": "csrc/libtorch_stable/ops.h",
+   "status": "M"
+  },
+  {
+   "path": "csrc/libtorch_stable/torch_bindings.cpp",
+   "status": "M"
+  },
+  {
+   "path": "csrc/ops.h",
+   "status": "M"
+  },
+  {
+   "path": "docs/design/attention_backends.md",
+   "status": "M"
+  },
+  {
+   "path": "pyproject.toml",
+   "status": "M"
+  },
+  {
+   "path": "requirements/common.txt",
+   "status": "M"
+  },
+  {
+   "path": "requirements/test/cuda.txt",
+   "status": "M"
+  },
+  {
+   "path": "requirements/test/rocm.txt",
+   "status": "M"
+  },
+  {
+   "path": "requirements/test/xpu.txt",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/chat/src/lib.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/chat/src/parser/reasoning/mod.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/chat/src/parser/reasoning/tests.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/chat/src/parser/tool/mod.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/chat/src/parser/tool/tests.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/reasoning-parser/src/lib.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/reasoning-parser/src/minimax_m3.rs",
+   "status": "A"
+  },
+  {
+   "path": "rust/src/reasoning-parser/src/tests.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/tool-parser/python/src/lib.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/tool-parser/src/lib.rs",
+   "status": "M"
+  },
+  {
+   "path": "rust/src/tool-parser/src/minimax_m3.rs",
+   "status": "A"
+  },
+  {
+   "path": "setup.py",
+   "status": "M"
+  },
+  {
+   "path": "tests/kernels/attention/test_minimax_m3.py",
+   "status": "A"
+  },
+  {
+   "path": "tests/kernels/test_fused_minimax_m3_qknorm_rope_kv_insert.py",
+   "status": "A"
+  },
+  {
+   "path": "tests/kernels/test_minimax_m3_amd_ops.py",
+   "status": "A"
+  },
+  {
+   "path": "tests/models/multimodal/processing/test_minimax_m3.py",
+   "status": "A"
+  },
+  {
+   "path": "tests/models/registry.py",
+   "status": "M"
+  },
+  {
+   "path": "tests/reasoning/test_minimax_m3_reasoning_parser.py",
+   "status": "A"
+  },
+  {
+   "path": "tests/tool_parsers/test_minimax_m3_tool_parser.py",
+   "status": "A"
+  },
+  {
+   "path": "tools/pre_commit/generate_attention_backend_docs.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/_custom_ops.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/config/attention.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/config/speculative.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/config/vllm.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/envs.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/kernels/linear/__init__.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/kernels/linear/mxfp8/emulation.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/kernels/linear/mxfp8/flashinfer.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/kernels/linear/mxfp8/rocm_native.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/model_executor/layers/activation.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/attention/attention.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/activation.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/config.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/deep_gemm_utils.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/deep_gemm_moe.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/fused_batched_moe.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/gpt_oss_triton_kernels_moe.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/marlin_moe.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/mxfp8_emulation_moe.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/mxfp8_native_moe.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/experts/triton_moe.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/layer.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/modular_kernel.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/oracle/fp8.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/oracle/mxfp8.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/routed_experts.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/router/gate_linear.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/unquantized_fused_moe_method.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/fused_moe/utils.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/linear.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/quantization/__init__.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/quantization/modelopt.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/quantization/utils/fp8_utils.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/layers/quantization/utils/mxfp8_utils.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/models/registry.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/warmup/kernel_warmup.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/model_executor/warmup/minimax_m3_msa_warmup.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/__init__.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/amd/__init__.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/amd/model.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/amd/mtp.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/amd/ops/__init__.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/amd/ops/gemma_rmsnorm.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/amd/ops/swiglu_oai.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/__init__.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/indexer.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/mm_preprocess.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/ops/__init__.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/ops/index_topk.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/ops/sparse_attn.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/sparse_attention.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/common/vision_tower.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/nvidia/__init__.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/nvidia/model.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/nvidia/mtp.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/models/minimax_m3/nvidia/sparse_attention_msa.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/reasoning/__init__.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/reasoning/minimax_m3_reasoning_parser.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/tool_parsers/__init__.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/tool_parsers/minimax_m3_tool_parser.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/transformers_utils/config.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/transformers_utils/configs/__init__.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/transformers_utils/configs/minimax_m3.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/transformers_utils/processors/__init__.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/transformers_utils/processors/minimax_m3.py",
+   "status": "A"
+  },
+  {
+   "path": "vllm/v1/attention/backends/flashinfer.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/v1/attention/backends/registry.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/v1/spec_decode/llm_base_proposer.py",
+   "status": "M"
+  },
+  {
+   "path": "vllm/v1/worker/block_table.py",
+   "status": "M"
+  }
+ ],
+ "prepared_tree": "aab922a3d533cbec6cbe449b1a1b320e81217a58",
+ "patch": {
+  "sha256": "efb23a139bf34c8ee73e578fbe82addc876754f35220e55bc129364a3178707e",
+  "bytes": 43212
+ }
+}

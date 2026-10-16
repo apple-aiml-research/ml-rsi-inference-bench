@@ -1,0 +1,22 @@
+{
+  "schema": "gpt-oss-numerical-policy/1",
+  "normalization": "abs(a - r) / max(RMS(r), abs(r), 1e-30), elementwise, where r is the reference tensor and a the implementation's",
+  "requires": [
+    "the expected shape",
+    "finite values in both tensors",
+    "maximum normalized error at or below the operation's max",
+    "RMS normalized error at or below the operation's rms"
+  ],
+  "operations": {
+    "expert": {
+      "applies_to": "the complete TP4 expert output (every routed expert, both biases, the activation, route weighting and the complete tensor-parallel sum), for checkpoint or generated weights",
+      "max": 0.08,
+      "rms": 0.008
+    },
+    "attention": {
+      "applies_to": "the complete attention output",
+      "max": 0.02,
+      "rms": 0.004
+    }
+  }
+}

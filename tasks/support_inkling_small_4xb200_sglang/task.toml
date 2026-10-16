@@ -1,0 +1,72 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_inkling_small_4xb200_sglang"
+description = "Day-0 model support: native Inkling-Small serving in SGLang on four B200 GPUs at the registered NVFP4 recipe, including the model's per-token relative attention on SM100 through the public operator contract, numerically faithful, efficient and preserving existing engine behavior"
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "sglang", "b200", "moe", "relative-attention", "sliding-window", "short-convolution", "fp4"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+# No docker_image: environment/Dockerfile is self-contained and publicly buildable.
+build_timeout_sec = 10800
+cpus = 32
+memory_mb = 524288
+storage_mb = 3145728
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/sglang/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 65640
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/sglang/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+# Explicit and without docker_image, so the vendored Pier builds tests/Dockerfile (the recipe byte for byte plus the
+# tests tail: one ENV, one COPY of tests/, one RUN of the reference snapshot).
+build_timeout_sec = 3600
+cpus = 32
+memory_mb = 524288
+storage_mb = 3145728
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/sgl-project/sglang"
+base_commit_hash = "1183049084a198c8d133edcb843a4e55076ed1ab"
+reference_commit_hash = "02236fa38cb065660a0b4156aab283a3807a5290"
+model_repository = "thinkingmachines/Inkling-Small-NVFP4"
+model_revision = "b6a99534467840620d411e4cd4ad5819b2610d9c"
+
+[metadata.inference_bench]
+# The candidate is captured by pre_artifacts.sh (`git diff --binary <prepared base> HEAD`, commit to commit); the
+# instruction says only the committed tree is graded.
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "sglang"
+score_profile = "model_support_inkling_small_v5"

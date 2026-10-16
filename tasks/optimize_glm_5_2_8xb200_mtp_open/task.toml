@@ -1,0 +1,128 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/optimize_glm_5_2_8xb200_mtp_open"
+description = "Optimize vLLM throughput for zai-org/GLM-5.2 on 8×B200 / vLLM 0.24.0. MoE with DeepSeek Sparse Attention (DSA): served by GlmMoeDsaForCausalLM (subclass of DeepseekV2ForCausalLM, model_type=glm_moe_dsa) on the DeepSeek-V3.2 DSA backbone (vllm/models/deepseek_v32/). ~256 routed experts (top-8), hidden 6144; MLA (q_lora_rank≈2048, kv_lora_rank≈512) + lightning-indexer sparse attention with index_topk_freq=4 and INTERLEAVED indexer RoPE (GLM-5.2-specific; DeepSeek-V3.2 uses NeoX); FP32 router MANDATORY; FP8 (e4m3 block-scaled) weights + FP8 KV cache (served with --kv-cache-dtype fp8). DSA GPU kernels are NVIDIA SM100 (Blackwell) only — hence B200, not H100. Architecture registered natively in vLLM 0.24.0 (registry.py GlmMoeDsaForCausalLM → deepseek_v2)."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "throughput-optimization", "glm", "glm-5.2", "moe", "dsa", "fp8", "sparse-attention", "b200", "v0240", "tp8"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+timeout_sec = 18000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 1048576
+storage_mb = 786432
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 8
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "vllm"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.speculative_config]
+method = "mtp"
+num_speculative_tokens = 1
+draft_sample_method = "greedy"
+rejection_sample_method = "standard"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "v0.24.0"
+workdir = "/app/repo"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.9"
+engine_install = "task_scoped_vllm_0_24_0_cu129_with_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "zai-org/GLM-5.2-FP8"     # FP8 checkpoint (BF16 ~1.4TB doesn't fit 8×B200)
+architecture = "GlmMoeDsaForCausalLM"   # model_type=glm_moe_dsa (config-confirmed)
+total_parameters = "~744B"          # FP8 e4m3 block-scaled ≈ ~700GB on disk
+activated_parameters = "~40B"       # per-token: 3 dense + 75 MoE × top-8/256 + 1 shared
+context_window = 16384              # serve max_model_len — MATCHES _run_benchmark_serve.py + verifier (both --max-model-len 16384); covers workloads. Model max is 1048576 (1M).
+dtype = "auto"                      # FP8 weights per the -FP8 checkpoint's quantization_config
+tensor_parallel_size = 8
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 1
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.4
+rtol = 0.15
+min_pass_rate = 0.85
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "mtp_longctx_8k"
+input_len = 8192
+output_len = 4096
+num_prompts = 64
+
+[metadata.inference_bench.commands]
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_DEPS = "1"
+INFB_ACCEPT_RTOL = "0.04"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_GEN_JUDGE_J1_EPS = "0.5"
+INFB_GEN_JUDGE_J1_MAX_EXCESS = "0.005"
+INFB_GEN_JUDGE_J1_Z = "4"
+INFB_GEN_JUDGE_J2_Z = "5"
+INFB_OFFICIAL = "1"
+INFB_VLLM_PYTHON = "/opt/venv/bin/python3"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

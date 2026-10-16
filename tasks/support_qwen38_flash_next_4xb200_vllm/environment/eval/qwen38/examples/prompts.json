@@ -1,0 +1,7 @@
+{
+  "cases": [
+    {"id":"arithmetic","prompt":"Calculate 37 times 24. Explain the arithmetic."},
+    {"id":"python","prompt":"Write a Python function which merges two sorted lists. Explain its running time."},
+    {"id":"science","prompt":"Explain why seasons occur on Earth in three paragraphs."}
+  ]
+}

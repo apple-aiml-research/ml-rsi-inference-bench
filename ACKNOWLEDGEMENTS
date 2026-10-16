@@ -1,0 +1,77 @@
+Acknowledgements
+Portions of this Inference-Bench Software may utilize the following copyrighted
+material, the use of which is hereby acknowledged.
+
+_____________________
+
+datacurve (Pier)
+
+    Pier is the trial runner that reads this benchmark's task format. It IS
+    distributed with this software, vendored at third_party/pier/ (241 files), so
+    there is nothing to install from PyPI: `uv sync` installs the vendored copy.
+
+    Upstream is https://github.com/datacurve-ai/pier (PyPI package
+    "datacurve-pier", version 0.3.0), vendored at commit
+    3f688a1bd0d15f77f7191609e9f8ecdd3a69db33 on 2026-07-09. Pier is licensed under
+    the Apache License, Version 2.0, and is itself a fork of Harbor
+    (https://github.com/harbor-framework/harbor), also Apache License, Version 2.0.
+    The upstream LICENSE and NOTICE are preserved unchanged at
+    third_party/pier/LICENSE and third_party/pier/NOTICE. Each source file that Apple
+    modified says so in its license header.
+
+_____________________
+
+SGLang Team (SGLang)
+
+    SGLang is one of the two engines this benchmark's tasks target: 17 of the 37
+    tasks declare engine = "sglang" in task.toml. The engine is NOT distributed
+    with this software and no SGLang source tree is included: the tasks launch
+    `sglang.launch_server` from an install the task image builds, and drive it over
+    SGLang's own HTTP API. Install it from https://github.com/sgl-project/sglang.
+    SGLang is licensed under the Apache License, Version 2.0.
+
+    Some tasks' reference solutions under solution/ are diffs against SGLang, so
+    the files those patches add are distributed here. Where such a patch carries a
+    whole third-party tree, that tree's own LICENSE file is carried with it inside
+    the patch.
+
+_____________________
+
+vLLM Contributors (vLLM)
+
+    Copyright contributors to the vLLM project
+    SPDX-License-Identifier: Apache-2.0
+
+    vLLM is the other engine the tasks target: 20 of the 37 tasks declare
+    engine = "vllm". Two forms of use:
+
+    1. DISTRIBUTED WITH THIS SOFTWARE. Reference solutions under
+       tasks/<task>/solution/*.patch are diffs against vLLM, and the files those
+       patches add carry vLLM's own SPDX identifier and copyright line, shown
+       above. Licensed under the Apache License, Version 2.0.
+
+    2. NOT distributed. The engine itself -- wheel and source tree -- is installed
+       or cloned by each task's environment/Dockerfile from PyPI and
+       https://github.com/vllm-project/vllm.
+
+_____________________
+
+Model weights and datasets
+
+    NOT distributed. No model weights are included. All ten model-support tasks
+    resolve a checkpoint at image build time from the file list pinned in
+    environment/model-manifest.json, whose 672 entries carry 540 sha256 digests.
+    Each task's task.toml names the model it uses, and the model's own card carries
+    its terms. No task in this release declares a gated model.
+
+    A small number of tasks ship dataset fixtures under environment/public/,
+    redistributed under their own terms.
+
+_____________________
+
+CUDA, Python and container base images
+
+    NOT distributed. Each task's environment/Dockerfile builds FROM an upstream
+    base image -- 20 of the 45 Dockerfiles that reference an external image pin
+    every such reference by sha256 digest, the rest pin by tag -- and installs its
+    own dependencies. Those images and packages carry their own licences.

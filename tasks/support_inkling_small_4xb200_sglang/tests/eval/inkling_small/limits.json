@@ -1,0 +1,17 @@
+{
+ "what": "The wall-clock limits of this task's evaluation operations (README, Resource limits). Evaluation and the supplied scripts apply these values; an operation that exceeds its limit fails.",
+ "hardware": "the task's four NVIDIA B200 GPUs at the registered recipe (tests/test_inkling_small_nvfp4.py, both classes)",
+ "long_input_tokens": 64000,
+ "operations": {
+  "startup": {"limit_s": 3600, "clock": "process spawn through the first ready health response, including model load, startup compilation and graph capture; each launch of either class"},
+  "install": {"limit_s": 1800, "applies": "the documented editable install (README, Building), offline", "clock": "start to completion"},
+  "http_request": {"limit_s": 900, "applies": "one HTTP request, or one explicitly submitted concurrent batch, with every input below long_input_tokens", "clock": "client dispatch through the complete response(s), including queueing and first-use compilation"},
+  "http_request_long": {"limit_s": 1800, "applies": "the same, with any input of at least long_input_tokens", "clock": "client dispatch through the complete response(s), including queueing and first-use compilation"},
+  "registered_gsm8k": {"limit_s": 3600, "applies": "one run of the registered GSM8K evaluation (10 shots, 200 questions, 512 new tokens, parallel 128)", "clock": "first request through the last response"},
+  "deterministic_helper": {"limit_s": 1800, "applies": "one helper of the registered deterministic class", "clock": "helper start through its assertion"},
+  "invocation": {"limit_s": 1800, "applies": "one component correctness or timing invocation of the relative-attention entry point", "clock": "dispatch through the record, including JIT compilation, warm-up and allocation"},
+  "unit_test_file": {"limit_s": 1800, "applies": "one existing-engine unit-test file", "clock": "collection and all selected cases of that file, including compilation"},
+  "action": {"limit_s": 300, "applies": "a configuration, registry, identity or profile action, for example a cache flush, a server-information read or a profiler start or stop", "clock": "dispatch through the complete answer"},
+  "teardown": {"limit_s": 180, "applies": "stopping a server or worker group", "clock": "TERM, then KILL after 10 s if needed, including reaping"}
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "schema": "qwen38-expanded-policy/2",
+ "status": "qualified",
+ "component_ratio_floor": 0.8,
+ "component_statistic": "Three complete matrices in the fixed case order, each with three warm-ups and nine validated timed draws per case; per case and matrix the maximum over the four TP ranks of each rank's median synchronized wall time; per case the median of its three matrix statistics; paired ratio reference/candidate; every applicable case must reach the floor; no averaging, no best-of-reruns and no numerical-failure retry.",
+ "ple_memory": {
+  "fixed_bytes": 268435456,
+  "token_channel_bytes": 16,
+  "request_state_bytes": 4,
+  "retained_output_bytes": 2
+ },
+ "state": {
+  "mean_k3": 0.1,
+  "max_local_k3": 6.0,
+  "ungraded_mixed_records": [
+   "joining-0",
+   "joining-1",
+   "joining-2",
+   "joining-3",
+   "replacement"
+  ],
+  "ungraded_mixed_records_note": "These five records of the mixed-turnover workload are recorded and not graded. Their value is decided by the scheduler's division of the joining request's prefill into mixed iterations, which this task does not fix and a candidate cannot control: over 20 runs spanning two images, two driver versions and many hosts, runs that share a split read the same records to every printed digit, and the splits seen differ by up to sevenfold; over 36 repeats of this node on three hosts each record is a deterministic function of that split alone. Against mean_k3 0.1 the reference itself failed in 2 of 20 production runs, 1 of 36 repeats and 4 of 60 in-server repeats under MTP3 (5 of 60 with speculation off), and no registered state-leak control separates on the family. The four background records of the same workload, the restored branches and test_fresh_request_state are unchanged and still graded. The pooled diagnostic S_mt is recorded beside them as mixed_turnover_diagnostic in state.json."
+ },
+ "production": {
+  "minimum_score_change": 0.1,
+  "noise_multiple": 8,
+  "intervention_amplitude": 1.0
+ },
+ "production_statistic": "Two fixed signed probes (+1 and -1), each with normal, repeat and restored observations. Noise is the eight-replay range on the same token score and logical history. Both probes must exceed the same 0.1/eightfold bound at a common score coordinate, or both must break mutual top five against every replay for the same case. No retry to obtain sensitivity.",
+ "qualification_note": "The frozen policy for this profile. The MTP3 component inventory includes mixed speculative/prefill iterations (qsa-spec-mixed-c3 and ple-spec-mixed-c3, checked and untimed), and the MTP3 production/state gate also scores the background requests of its mixed-turnover workload. A verifier launch that loses its port to another socket before vLLM binds it is repeated on a fresh port, at most three attempts, each recorded beside the launch log; no measurement is repeated. The ordinary native production/state check and the MTP3 QSA prefill component timing are excluded. No agent outcome participates in any of these values.",
+ "profile": "model_support_qwen38_expanded_v5",
+ "ple_memory_accounting": "Peak live union over the combined PyTorch-allocator and CUDA runtime/driver timeline of storage attributable to the measured native PLE region, plus persistent auxiliary storage and bound-state capacity beyond the logical live state; parameters, mathematical inputs and the logical live state excluded; ranges deduplicated. The byte formula above is the public scope.json allowance."
+}

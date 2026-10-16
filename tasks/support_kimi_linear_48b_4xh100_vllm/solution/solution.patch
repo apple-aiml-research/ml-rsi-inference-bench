@@ -1,0 +1,4831 @@
+diff --git a/docs/models/supported_models.md b/docs/models/supported_models.md
+index 4d50c809d1966d8ecb4f89dfc5c87c8709b47d76..c9744d31f0efc82e2cc7464c263ec399edbb6351 100644
+--- a/docs/models/supported_models.md
++++ b/docs/models/supported_models.md
+@@ -382,6 +382,7 @@ th {
+ | `InternLM3ForCausalLM` | InternLM3 | `internlm/internlm3-8b-instruct`, etc. | ✅︎ | ✅︎ |
+ | `JAISLMHeadModel` | Jais | `inceptionai/jais-13b`, `inceptionai/jais-13b-chat`, `inceptionai/jais-30b-v3`, `inceptionai/jais-30b-chat-v3`, etc. | | ✅︎ |
+ | `JambaForCausalLM` | Jamba | `ai21labs/AI21-Jamba-1.5-Large`, `ai21labs/AI21-Jamba-1.5-Mini`, `ai21labs/Jamba-v0.1`, etc. | ✅︎ | ✅︎ |
++| `KimiLinearForCausalLM` | Kimi-Linear-48B-A3B-Base, Kimi-Linear-48B-A3B-Instruct | `moonshotai/Kimi-Linear-48B-A3B-Base`, `moonshotai/Kimi-Linear-48B-A3B-Instruct` | | ✅︎ |
+ | `Lfm2ForCausalLM`  | LFM2  | `LiquidAI/LFM2-1.2B`, `LiquidAI/LFM2-700M`, `LiquidAI/LFM2-350M`, etc. | ✅︎ | ✅︎ |
+ | `Lfm2MoeForCausalLM`  | LFM2MoE  | `LiquidAI/LFM2-8B-A1B-preview`, etc. | ✅︎ | ✅︎ |
+ | `LlamaForCausalLM` | Llama 3.1, Llama 3, Llama 2, LLaMA, Yi | `meta-llama/Meta-Llama-3.1-405B-Instruct`, `meta-llama/Meta-Llama-3.1-70B`, `meta-llama/Meta-Llama-3-70B-Instruct`, `meta-llama/Llama-2-70b-hf`, `01-ai/Yi-34B`, etc. | ✅︎ | ✅︎ |
+diff --git a/vllm/config/cache.py b/vllm/config/cache.py
+index d743d5aa9dd29211e01e147bc4c7aa4cc41b91a1..b646e2194535814865a27f4a6e0be2760a66c028 100644
+--- a/vllm/config/cache.py
++++ b/vllm/config/cache.py
+@@ -23,6 +23,7 @@ logger = init_logger(__name__)
+ BlockSize = Literal[1, 8, 16, 32, 64, 128, 256]
+ CacheDType = Literal["auto", "bfloat16", "fp8", "fp8_e4m3", "fp8_e5m2", "fp8_inc"]
+ MambaDType = Literal["auto", "float32"]
++MambaCacheMode = Literal["all", "align", "none"]
+ PrefixCachingHashAlgo = Literal["sha256", "sha256_cbor"]
+ 
+ 
+@@ -102,6 +103,16 @@ class CacheConfig:
+     """The data type to use for the Mamba cache (ssm state only, conv state will
+     still be controlled by mamba_cache_dtype). If set to 'auto', the data type
+     for the ssm state will be determined by mamba_cache_dtype."""
++    mamba_cache_mode: MambaCacheMode = "none"
++    """The cache strategy for Mamba layers, resolved from the model and
++    `enable_prefix_caching` (not a user setting).
++    - "none": set when prefix caching is disabled.
++    - "all": cache the mamba state of all tokens at position i * block_size.
++           This is the behavior for models that support Mamba prefix caching.
++    - "align": only cache the mamba state of the last token of each scheduler
++           step and when the token is at position i * block_size. Selected for
++           models that supply Mamba state-copy functions (Kimi Linear).
++    """
+ 
+     # Will be set after profiling.
+     num_gpu_blocks: int | None = field(default=None, init=False)
+diff --git a/vllm/config/compilation.py b/vllm/config/compilation.py
+index f3ed78779a9958db184524a901ff3e795d195abf..6a5bd5ef4e07cddb0b1c83d8f9f1b2c8ae9f0109 100644
+--- a/vllm/config/compilation.py
++++ b/vllm/config/compilation.py
+@@ -453,6 +453,7 @@ class CompilationConfig:
+         "vllm::linear_attention",
+         "vllm::plamo2_mamba_mixer",
+         "vllm::gdn_attention",
++        "vllm::kda_attention",
+         "vllm::sparse_attn_indexer",
+     ]
+ 
+diff --git a/vllm/config/model.py b/vllm/config/model.py
+index 2151939d5a9f606e577b0e4e9e662d2e569e8719..092c67e7bed8c54403e8e51be2654a1f6c609a49 100644
+--- a/vllm/config/model.py
++++ b/vllm/config/model.py
+@@ -1236,6 +1236,7 @@ class ModelConfig:
+             "deepseek_v32",
+             "deepseek_mtp",
+             "kimi_k2",
++            "kimi_linear",
+             "longcat_flash",
+         ):
+             return self.hf_text_config.kv_lora_rank is not None
+diff --git a/vllm/config/vllm.py b/vllm/config/vllm.py
+index 1acac70c32b039835afdead7c23b47fd1feca9d2..55e4bbab58eeb8b2c2821751f9d040b6b1ed34d0 100644
+--- a/vllm/config/vllm.py
++++ b/vllm/config/vllm.py
+@@ -615,6 +615,17 @@ class VllmConfig:
+                     # local attention.
+                     self.scheduler_config.disable_hybrid_kv_cache_manager = True
+ 
++        if self.cache_config.mamba_cache_mode == "align":
++            if self.scheduler_config.long_prefill_token_threshold > 0:
++                assert (
++                    self.scheduler_config.long_prefill_token_threshold
++                    >= self.cache_config.block_size
++                )
++            assert not self.scheduler_config.disable_chunked_mm_input, (
++                "Chunked MM input is required because we need the flexibility to "
++                "schedule a multiple of block_size tokens even if they are in the "
++                "middle of a mm input"
++            )
+         if self.compilation_config.debug_dump_path:
+             self.compilation_config.debug_dump_path = (
+                 self.compilation_config.debug_dump_path.absolute().expanduser()
+diff --git a/vllm/model_executor/layers/fla/ops/chunk.py b/vllm/model_executor/layers/fla/ops/chunk.py
+index b046a6d3919e9815d5601f166db9362d5d568d91..4c8bf9f4399727aea7d24cb3ed00f7a95308abde 100644
+--- a/vllm/model_executor/layers/fla/ops/chunk.py
++++ b/vllm/model_executor/layers/fla/ops/chunk.py
+@@ -36,7 +36,7 @@ def chunk_gated_delta_rule_fwd(
+     g = chunk_local_cumsum(g, chunk_size=64, cu_seqlens=cu_seqlens)
+     # obtain WY representation. u is actually the new v.
+     A = chunk_scaled_dot_kkt_fwd(
+-        k=k, beta=beta, g_cumsum=g, cu_seqlens=cu_seqlens, output_dtype=torch.float32
++        k=k, beta=beta, g=g, cu_seqlens=cu_seqlens, output_dtype=torch.float32
+     )
+     A = solve_tril(A=A, cu_seqlens=cu_seqlens, output_dtype=k.dtype)
+     w, u = recompute_w_u_fwd(
+diff --git a/vllm/model_executor/layers/fla/ops/chunk_delta_h.py b/vllm/model_executor/layers/fla/ops/chunk_delta_h.py
+index 1c14f84c2b895abf4b1f84e65b540811d29f2d45..f0b78b65c4a3287dc83dd6e9cdde8d1f77273cbb 100644
+--- a/vllm/model_executor/layers/fla/ops/chunk_delta_h.py
++++ b/vllm/model_executor/layers/fla/ops/chunk_delta_h.py
+@@ -14,14 +14,15 @@ from vllm.triton_utils import tl, triton
+ 
+ from .index import prepare_chunk_indices, prepare_chunk_offsets
+ from .op import exp
+-from .utils import is_nvidia_hopper, use_cuda_graph
++from .utils import use_cuda_graph
+ 
+-NUM_WARPS = [2, 4] if is_nvidia_hopper else [2, 4, 8, 16]
++NUM_WARPS = [2, 4, 8, 16]
+ 
+ 
+ @triton.heuristics(
+     {
+         "USE_G": lambda args: args["g"] is not None,
++        "USE_GK": lambda args: args["gk"] is not None,
+         "USE_INITIAL_STATE": lambda args: args["h0"] is not None,
+         "STORE_FINAL_STATE": lambda args: args["ht"] is not None,
+         "SAVE_NEW_VALUE": lambda args: args["v_new"] is not None,
+@@ -35,7 +36,7 @@ NUM_WARPS = [2, 4] if is_nvidia_hopper else [2, 4, 8, 16]
+         for num_stages in [2, 3, 4]
+         for BV in [32, 64]
+     ],
+-    key=["H", "K", "V", "BT", "USE_G"],
++    key=["H", "K", "V", "BT"],
+     use_cuda_graph=use_cuda_graph,
+ )
+ @triton.jit(do_not_specialize=["T"])
+@@ -45,6 +46,7 @@ def chunk_gated_delta_rule_fwd_kernel_h_blockdim64(
+     w,
+     v_new,
+     g,
++    gk,
+     h,
+     h0,
+     ht,
+@@ -58,6 +60,7 @@ def chunk_gated_delta_rule_fwd_kernel_h_blockdim64(
+     BT: tl.constexpr,
+     BV: tl.constexpr,
+     USE_G: tl.constexpr,
++    USE_GK: tl.constexpr,
+     USE_INITIAL_STATE: tl.constexpr,
+     STORE_FINAL_STATE: tl.constexpr,
+     SAVE_NEW_VALUE: tl.constexpr,
+@@ -88,12 +91,12 @@ def chunk_gated_delta_rule_fwd_kernel_h_blockdim64(
+         b_h4 = tl.zeros([64, BV], dtype=tl.float32)
+ 
+     # calculate offset
+-    h += (boh * H + i_h) * K * V
+-    v += (bos * H + i_h) * V
+-    k += (bos * Hg + i_h // (H // Hg)) * K
+-    w += (bos * H + i_h) * K
++    h += ((boh * H + i_h) * K * V).to(tl.int64)
++    v += ((bos * H + i_h) * V).to(tl.int64)
++    k += ((bos * Hg + i_h // (H // Hg)) * K).to(tl.int64)
++    w += ((bos * H + i_h) * K).to(tl.int64)
+     if SAVE_NEW_VALUE:
+-        v_new += (bos * H + i_h) * V
++        v_new += ((bos * H + i_h) * V).to(tl.int64)
+     stride_v = H * V
+     stride_h = H * K * V
+     stride_k = Hg * K
+@@ -145,92 +148,115 @@ def chunk_gated_delta_rule_fwd_kernel_h_blockdim64(
+             )
+             tl.store(p_h4, b_h4.to(p_h4.dtype.element_ty), boundary_check=(0, 1))
+ 
+-        p_v = tl.make_block_ptr(
+-            v, (T, V), (stride_v, 1), (i_t * BT, i_v * BV), (BT, BV), (1, 0)
+-        )
+-        p_v_new = (
+-            tl.make_block_ptr(
+-                v_new, (T, V), (stride_v, 1), (i_t * BT, i_v * BV), (BT, BV), (1, 0)
+-            )
+-            if SAVE_NEW_VALUE
+-            else None
+-        )
+-        b_v_new = tl.zeros([BT, BV], dtype=tl.float32)
+         p_w = tl.make_block_ptr(
+             w, (T, K), (stride_w, 1), (i_t * BT, 0), (BT, 64), (1, 0)
+         )
+         b_w = tl.load(p_w, boundary_check=(0, 1))
+-        b_v_new += tl.dot(b_w, b_h1.to(b_w.dtype))
++        b_v = tl.dot(b_w, b_h1.to(b_w.dtype))
+         if K > 64:
+             p_w = tl.make_block_ptr(
+                 w, (T, K), (stride_w, 1), (i_t * BT, 64), (BT, 64), (1, 0)
+             )
+             b_w = tl.load(p_w, boundary_check=(0, 1))
+-            b_v_new += tl.dot(b_w, b_h2.to(b_w.dtype))
++            b_v += tl.dot(b_w, b_h2.to(b_w.dtype))
+         if K > 128:
+             p_w = tl.make_block_ptr(
+                 w, (T, K), (stride_w, 1), (i_t * BT, 128), (BT, 64), (1, 0)
+             )
+             b_w = tl.load(p_w, boundary_check=(0, 1))
+-            b_v_new += tl.dot(b_w, b_h3.to(b_w.dtype))
++            b_v += tl.dot(b_w, b_h3.to(b_w.dtype))
+         if K > 192:
+             p_w = tl.make_block_ptr(
+                 w, (T, K), (stride_w, 1), (i_t * BT, 192), (BT, 64), (1, 0)
+             )
+             b_w = tl.load(p_w, boundary_check=(0, 1))
+-            b_v_new += tl.dot(b_w, b_h4.to(b_w.dtype))
+-        b_v_new = -b_v_new + tl.load(p_v, boundary_check=(0, 1))
++            b_v += tl.dot(b_w, b_h4.to(b_w.dtype))
++        p_v = tl.make_block_ptr(
++            v, (T, V), (stride_v, 1), (i_t * BT, i_v * BV), (BT, BV), (1, 0)
++        )
++        b_v = tl.load(p_v, boundary_check=(0, 1)) - b_v
+ 
+         if SAVE_NEW_VALUE:
+-            p_v_new = tl.make_block_ptr(
++            p_v = tl.make_block_ptr(
+                 v_new, (T, V), (stride_v, 1), (i_t * BT, i_v * BV), (BT, BV), (1, 0)
+             )
+-            tl.store(
+-                p_v_new, b_v_new.to(p_v_new.dtype.element_ty), boundary_check=(0, 1)
+-            )
++            tl.store(p_v, b_v.to(p_v.dtype.element_ty), boundary_check=(0, 1))
+ 
++        last_idx = min((i_t + 1) * BT, T) - 1
+         if USE_G:
+             m_t = (i_t * BT + tl.arange(0, BT)) < T
+-            last_idx = min((i_t + 1) * BT, T) - 1
+             b_g_last = tl.load(g + bos * H + last_idx * H + i_h)
+             p_g = tl.make_block_ptr(
+                 g + bos * H + i_h, (T,), (H,), (i_t * BT,), (BT,), (0,)
+             )
+             b_g = tl.load(p_g, boundary_check=(0,))
+-            b_v_new = b_v_new * tl.where(m_t, exp(b_g_last - b_g), 0)[:, None]
++            b_v = b_v * tl.where(m_t, exp(b_g_last - b_g), 0)[:, None]
+             b_g_last = exp(b_g_last)
+-            b_h1 = b_h1 * b_g_last
++            b_h1 *= b_g_last
++            if K > 64:
++                b_h2 *= b_g_last
++            if K > 128:
++                b_h3 *= b_g_last
++            if K > 192:
++                b_h4 *= b_g_last
++
++        if USE_GK:
++            o_k1 = tl.arange(0, 64)
++            b_gk_last1 = tl.load(
++                gk + (bos + last_idx) * H * K + i_h * K + o_k1,
++                mask=(o_k1 < K),
++                other=0.0,
++            )
++            b_h1 *= exp(b_gk_last1)[:, None]
+             if K > 64:
+-                b_h2 = b_h2 * b_g_last
++                o_k2 = 64 + o_k1
++                b_gk_last2 = tl.load(
++                    gk + (bos + last_idx) * H * K + i_h * K + o_k2,
++                    mask=(o_k2 < K),
++                    other=0.0,
++                )
++                b_h2 *= exp(b_gk_last2)[:, None]
+             if K > 128:
+-                b_h3 = b_h3 * b_g_last
++                o_k3 = 128 + o_k1
++                b_gk_last3 = tl.load(
++                    gk + (bos + last_idx) * H * K + i_h * K + o_k3,
++                    mask=(o_k3 < K),
++                    other=0.0,
++                )
++                b_h3 *= exp(b_gk_last3)[:, None]
+             if K > 192:
+-                b_h4 = b_h4 * b_g_last
+-        b_v_new = b_v_new.to(k.dtype.element_ty)
++                o_k4 = 192 + o_k1
++                b_gk_last4 = tl.load(
++                    gk + (bos + last_idx) * H * K + i_h * K + o_k4,
++                    mask=(o_k4 < K),
++                    other=0.0,
++                )
++                b_h4 *= exp(b_gk_last4)[:, None]
++        b_v = b_v.to(k.dtype.element_ty)
++
+         p_k = tl.make_block_ptr(
+             k, (K, T), (1, stride_k), (0, i_t * BT), (64, BT), (0, 1)
+         )
+         b_k = tl.load(p_k, boundary_check=(0, 1))
+-        b_h1 += tl.dot(b_k, b_v_new)
++        b_h1 += tl.dot(b_k, b_v)
+         if K > 64:
+             p_k = tl.make_block_ptr(
+                 k, (K, T), (1, stride_k), (64, i_t * BT), (64, BT), (0, 1)
+             )
+             b_k = tl.load(p_k, boundary_check=(0, 1))
+-            b_h2 += tl.dot(b_k, b_v_new)
++            b_h2 += tl.dot(b_k, b_v)
+         if K > 128:
+             p_k = tl.make_block_ptr(
+                 k, (K, T), (1, stride_k), (128, i_t * BT), (64, BT), (0, 1)
+             )
+             b_k = tl.load(p_k, boundary_check=(0, 1))
+-            b_h3 += tl.dot(b_k, b_v_new)
++            b_h3 += tl.dot(b_k, b_v)
+         if K > 192:
+             p_k = tl.make_block_ptr(
+                 k, (K, T), (1, stride_k), (192, i_t * BT), (64, BT), (0, 1)
+             )
+             b_k = tl.load(p_k, boundary_check=(0, 1))
+-            b_h4 += tl.dot(b_k, b_v_new)
+-
++            b_h4 += tl.dot(b_k, b_v)
+     # epilogue
+     if STORE_FINAL_STATE:
+         p_ht = tl.make_block_ptr(ht, (K, V), (V, 1), (0, i_v * BV), (64, BV), (1, 0))
+@@ -257,12 +283,15 @@ def chunk_gated_delta_rule_fwd_h(
+     w: torch.Tensor,
+     u: torch.Tensor,
+     g: torch.Tensor | None = None,
++    gk: torch.Tensor | None = None,
+     initial_state: torch.Tensor | None = None,
+     output_final_state: bool = False,
+     chunk_size: int = 64,  # SY: remove this argument and force chunk size 64?
+     save_new_value: bool = True,
+     cu_seqlens: torch.LongTensor | None = None,
+ ) -> tuple[torch.Tensor, torch.Tensor]:
++    # This kernel is slightly different from fla to support Q/K with different head numbers.
++    # In fla, Q/K always have the same head number, so Hg is always equal to H.
+     B, T, Hg, K, V = *k.shape, u.shape[-1]
+     H = u.shape[-2]
+     BT = chunk_size
+@@ -299,6 +328,7 @@ def chunk_gated_delta_rule_fwd_h(
+         w=w,
+         v_new=v_new,
+         g=g,
++        gk=gk,
+         h=h,
+         h0=initial_state,
+         ht=final_state,
+diff --git a/vllm/model_executor/layers/fla/ops/chunk_scaled_dot_kkt.py b/vllm/model_executor/layers/fla/ops/chunk_scaled_dot_kkt.py
+index 975e119af333ee2d801f45d4088baa76d14b0d8a..7724fa513d92e50725f4e1eb2d802269f27cdecd 100644
+--- a/vllm/model_executor/layers/fla/ops/chunk_scaled_dot_kkt.py
++++ b/vllm/model_executor/layers/fla/ops/chunk_scaled_dot_kkt.py
+@@ -18,8 +18,8 @@ from .op import exp
+ 
+ @triton.heuristics(
+     {
++        "USE_G": lambda args: args["g"] is not None,
+         "IS_VARLEN": lambda args: args["cu_seqlens"] is not None,
+-        "USE_G": lambda args: args["g_cumsum"] is not None,
+     }
+ )
+ @triton.autotune(
+@@ -35,7 +35,7 @@ from .op import exp
+ def chunk_scaled_dot_kkt_fwd_kernel(
+     k,
+     beta,
+-    g_cumsum,
++    g,
+     A,
+     cu_seqlens,
+     chunk_indices,
+@@ -85,9 +85,7 @@ def chunk_scaled_dot_kkt_fwd_kernel(
+         b_A += tl.dot(b_kb.to(b_k.dtype), tl.trans(b_k))
+ 
+     if USE_G:
+-        p_g = tl.make_block_ptr(
+-            g_cumsum + bos * H + i_h, (T,), (H,), (i_t * BT,), (BT,), (0,)
+-        )
++        p_g = tl.make_block_ptr(g + bos * H + i_h, (T,), (H,), (i_t * BT,), (BT,), (0,))
+         b_g = tl.load(p_g, boundary_check=(0,))
+         b_g_diff = b_g[:, None] - b_g[None, :]
+         b_A = b_A * exp(b_g_diff)
+@@ -102,8 +100,8 @@ def chunk_scaled_dot_kkt_fwd_kernel(
+ 
+ def chunk_scaled_dot_kkt_fwd(
+     k: torch.Tensor,
+-    beta: torch.Tensor,
+-    g_cumsum: torch.Tensor | None = None,
++    g: torch.Tensor | None = None,
++    beta: torch.Tensor | None = None,
+     cu_seqlens: torch.LongTensor | None = None,
+     chunk_size: int = 64,
+     output_dtype: torch.dtype = torch.float32,
+@@ -116,9 +114,8 @@ def chunk_scaled_dot_kkt_fwd(
+             The key tensor of shape `[B, T, H, K]`.
+         beta (torch.Tensor):
+             The beta tensor of shape `[B, T, H]`.
+-        g_cumsum (torch.Tensor):
+-            The cumulative sum of the gate tensor of shape `[B, T, H]`.
+-            Default: None
++        g (torch.Tensor):
++            The cumulative sum of the gate tensor of shape `[B, T, H]`. Default: `None`.
+         cu_seqlens (torch.LongTensor):
+             The cumulative sequence lengths of the input tensor.
+             Default: None
+@@ -130,20 +127,21 @@ def chunk_scaled_dot_kkt_fwd(
+     Returns:
+         beta * K * K^T of shape `[B, T, H, BT]` where `BT` is the chunk size.
+     """
+-
++    # This kernel is slightly different from fla to support Q/K with different head numbers.
++    # In fla, Q/K always have the same head number, so Hg is always equal to H.
+     B, T, Hg, K = k.shape
+-
+     H = beta.shape[-1]
+     BT = chunk_size
+     chunk_indices = (
+         prepare_chunk_indices(cu_seqlens, BT) if cu_seqlens is not None else None
+     )
+     NT = triton.cdiv(T, BT) if cu_seqlens is None else len(chunk_indices)
++
+     A = torch.empty(B, T, H, BT, device=k.device, dtype=output_dtype)
+     chunk_scaled_dot_kkt_fwd_kernel[(NT, B * H)](
+         k=k,
++        g=g,
+         beta=beta,
+-        g_cumsum=g_cumsum,
+         A=A,
+         cu_seqlens=cu_seqlens,
+         chunk_indices=chunk_indices,
+diff --git a/vllm/model_executor/layers/fla/ops/fused_recurrent.py b/vllm/model_executor/layers/fla/ops/fused_recurrent.py
+index f3de1bfa282198ad16664427f0fcb8dc50a8d681..0f27504780ac4c29f65b8eaacfd05b76fcfdc88a 100644
+--- a/vllm/model_executor/layers/fla/ops/fused_recurrent.py
++++ b/vllm/model_executor/layers/fla/ops/fused_recurrent.py
+@@ -57,6 +57,7 @@ def fused_recurrent_gated_delta_rule_fwd_kernel(
+     IS_VARLEN: tl.constexpr,
+     IS_CONTINUOUS_BATCHING: tl.constexpr,
+     IS_SPEC_DECODING: tl.constexpr,
++    IS_KDA: tl.constexpr,
+ ):
+     i_k, i_v, i_nh = tl.program_id(0), tl.program_id(1), tl.program_id(2)
+     i_n, i_hv = i_nh // HV, i_nh % HV
+@@ -86,7 +87,12 @@ def fused_recurrent_gated_delta_rule_fwd_kernel(
+         p_beta = beta + (bos * HV + i_hv) * V + o_v
+     else:
+         p_beta = beta + bos * HV + i_hv
+-    p_g = g + bos * HV + i_hv
++
++    if not IS_KDA:
++        p_g = g + bos * HV + i_hv
++    else:
++        p_gk = g + (bos * HV + i_hv) * K + o_k
++
+     p_o = o + ((i_k * all + bos) * HV + i_hv) * V + o_v
+ 
+     mask_k = o_k < K
+@@ -116,14 +122,18 @@ def fused_recurrent_gated_delta_rule_fwd_kernel(
+         b_q = tl.load(p_q, mask=mask_k, other=0).to(tl.float32)
+         b_k = tl.load(p_k, mask=mask_k, other=0).to(tl.float32)
+         b_v = tl.load(p_v, mask=mask_v, other=0).to(tl.float32)
+-        b_g = tl.load(p_g).to(tl.float32)
+ 
+         if USE_QK_L2NORM_IN_KERNEL:
+             b_q = b_q / tl.sqrt(tl.sum(b_q * b_q) + 1e-6)
+             b_k = b_k / tl.sqrt(tl.sum(b_k * b_k) + 1e-6)
+         b_q = b_q * scale
+         # [BK, BV]
+-        b_h *= exp(b_g)
++        if not IS_KDA:
++            b_g = tl.load(p_g).to(tl.float32)
++            b_h *= exp(b_g)
++        else:
++            b_gk = tl.load(p_gk).to(tl.float32)
++            b_h *= exp(b_gk[:, None])
+         # [BV]
+         b_v -= tl.sum(b_h * b_k[:, None], 0)
+         if IS_BETA_HEADWISE:
+@@ -155,7 +165,10 @@ def fused_recurrent_gated_delta_rule_fwd_kernel(
+         p_k += H * K
+         p_o += HV * V
+         p_v += HV * V
+-        p_g += HV
++        if not IS_KDA:
++            p_g += HV
++        else:
++            p_gk += HV * K
+         p_beta += HV * (V if IS_BETA_HEADWISE else 1)
+ 
+ 
+@@ -228,6 +241,7 @@ def fused_recurrent_gated_delta_rule_fwd(
+         IS_BETA_HEADWISE=beta.ndim == v.ndim,
+         USE_QK_L2NORM_IN_KERNEL=use_qk_l2norm_in_kernel,
+         INPLACE_FINAL_STATE=inplace_final_state,
++        IS_KDA=False,
+         num_warps=num_warps,
+         num_stages=num_stages,
+     )
+diff --git a/vllm/model_executor/layers/fla/ops/kda.py b/vllm/model_executor/layers/fla/ops/kda.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..700f287ca4569a7a459753e36da962ef84438482
+--- /dev/null
++++ b/vllm/model_executor/layers/fla/ops/kda.py
+@@ -0,0 +1,1351 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++# SPDX-FileCopyrightText: Songlin Yang, Yu Zhang
++#
++# This file contains code copied from the flash-linear-attention project.
++# The original source code was licensed under the MIT license and included
++# the following copyright notice:
++# Copyright (c) 2023-2025, Songlin Yang, Yu Zhang
++# ruff: noqa: E501
++
++
++import torch
++import torch.nn as nn
++
++from vllm.triton_utils import tl, triton
++from vllm.utils.math_utils import cdiv, next_power_of_2
++
++from .chunk_delta_h import chunk_gated_delta_rule_fwd_h
++from .cumsum import chunk_local_cumsum
++from .fused_recurrent import fused_recurrent_gated_delta_rule_fwd_kernel
++from .index import prepare_chunk_indices
++from .l2norm import l2norm_fwd
++from .op import exp, log
++from .solve_tril import solve_tril
++from .utils import is_amd
++
++BT_LIST_AUTOTUNE = [32, 64, 128]
++NUM_WARPS_AUTOTUNE = [2, 4, 8, 16] if is_amd else [4, 8, 16, 32]
++
++
++def fused_recurrent_kda_fwd(
++    q: torch.Tensor,
++    k: torch.Tensor,
++    v: torch.Tensor,
++    g: torch.Tensor,
++    beta: torch.Tensor,
++    scale: float,
++    initial_state: torch.Tensor,
++    inplace_final_state: bool = True,
++    cu_seqlens: torch.LongTensor | None = None,
++    ssm_state_indices: torch.Tensor | None = None,
++    num_accepted_tokens: torch.Tensor | None = None,
++    use_qk_l2norm_in_kernel: bool = False,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    B, T, H, K, V = *k.shape, v.shape[-1]
++    HV = v.shape[2]
++    N = B if cu_seqlens is None else len(cu_seqlens) - 1
++    BK, BV = next_power_of_2(K), min(next_power_of_2(V), 8)
++    NK, NV = cdiv(K, BK), cdiv(V, BV)
++    assert NK == 1, "NK > 1 is not supported yet"
++    num_stages = 3
++    num_warps = 1
++
++    o = torch.empty_like(k)
++    if inplace_final_state:
++        final_state = initial_state
++    else:
++        final_state = q.new_empty(T, HV, K, V, dtype=initial_state.dtype)
++
++    stride_init_state_token = initial_state.stride(0)
++    stride_final_state_token = final_state.stride(0)
++
++    if ssm_state_indices is None:
++        stride_indices_seq, stride_indices_tok = 1, 1
++    elif ssm_state_indices.ndim == 1:
++        stride_indices_seq, stride_indices_tok = ssm_state_indices.stride(0), 1
++    else:
++        stride_indices_seq, stride_indices_tok = ssm_state_indices.stride()
++
++    grid = (NK, NV, N * HV)
++    fused_recurrent_gated_delta_rule_fwd_kernel[grid](
++        q=q,
++        k=k,
++        v=v,
++        g=g,
++        beta=beta,
++        o=o,
++        h0=initial_state,
++        ht=final_state,
++        cu_seqlens=cu_seqlens,
++        ssm_state_indices=ssm_state_indices,
++        num_accepted_tokens=num_accepted_tokens,
++        scale=scale,
++        N=N,
++        T=T,
++        B=B,
++        H=H,
++        HV=HV,
++        K=K,
++        V=V,
++        BK=BK,
++        BV=BV,
++        stride_init_state_token=stride_init_state_token,
++        stride_final_state_token=stride_final_state_token,
++        stride_indices_seq=stride_indices_seq,
++        stride_indices_tok=stride_indices_tok,
++        IS_BETA_HEADWISE=beta.ndim == v.ndim,
++        USE_QK_L2NORM_IN_KERNEL=use_qk_l2norm_in_kernel,
++        INPLACE_FINAL_STATE=inplace_final_state,
++        IS_KDA=True,
++        num_warps=num_warps,
++        num_stages=num_stages,
++    )
++
++    return o, final_state
++
++
++def fused_recurrent_kda(
++    q: torch.Tensor,
++    k: torch.Tensor,
++    v: torch.Tensor,
++    g: torch.Tensor,
++    beta: torch.Tensor = None,
++    scale: float = None,
++    initial_state: torch.Tensor = None,
++    inplace_final_state: bool = True,
++    use_qk_l2norm_in_kernel: bool = True,
++    cu_seqlens: torch.LongTensor | None = None,
++    ssm_state_indices: torch.LongTensor | None = None,
++    **kwargs,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    if cu_seqlens is not None and q.shape[0] != 1:
++        raise ValueError(
++            f"The batch size is expected to be 1 rather than {q.shape[0]} when using `cu_seqlens`."
++            f"Please flatten variable-length inputs before processing."
++        )
++    if scale is None:
++        scale = k.shape[-1] ** -0.5
++
++    o, final_state = fused_recurrent_kda_fwd(
++        q=q.contiguous(),
++        k=k.contiguous(),
++        v=v.contiguous(),
++        g=g.contiguous(),
++        beta=beta.contiguous(),
++        scale=scale,
++        initial_state=initial_state,
++        inplace_final_state=inplace_final_state,
++        cu_seqlens=cu_seqlens,
++        ssm_state_indices=ssm_state_indices,
++        num_accepted_tokens=None,
++        use_qk_l2norm_in_kernel=use_qk_l2norm_in_kernel,
++    )
++    return o, final_state
++
++
++@triton.heuristics(
++    {
++        "STORE_RESIDUAL_OUT": lambda args: args["residual_out"] is not None,
++        "HAS_RESIDUAL": lambda args: args["residual"] is not None,
++        "HAS_WEIGHT": lambda args: args["w"] is not None,
++        "HAS_BIAS": lambda args: args["b"] is not None,
++    }
++)
++@triton.jit
++def layer_norm_gated_fwd_kernel(
++    x,  # pointer to the input
++    g,  # pointer to the gate
++    y,  # pointer to the output
++    w,  # pointer to the weights
++    b,  # pointer to the biases
++    residual,  # pointer to the residual
++    residual_out,  # pointer to the residual
++    mean,  # pointer to the mean
++    rstd,  # pointer to the 1/std
++    eps,  # epsilon to avoid division by zero
++    T,  # number of rows in x
++    D: tl.constexpr,  # number of columns in x
++    BT: tl.constexpr,
++    BD: tl.constexpr,
++    ACTIVATION: tl.constexpr,
++    IS_RMS_NORM: tl.constexpr,
++    STORE_RESIDUAL_OUT: tl.constexpr,
++    HAS_RESIDUAL: tl.constexpr,
++    HAS_WEIGHT: tl.constexpr,
++    HAS_BIAS: tl.constexpr,
++):
++    i_t = tl.program_id(0)
++
++    o_d = tl.arange(0, BD)
++    m_d = o_d < D
++
++    p_x = tl.make_block_ptr(x, (T, D), (D, 1), (i_t * BT, 0), (BT, BD), (1, 0))
++    b_x = tl.load(p_x, boundary_check=(0, 1)).to(tl.float32)
++    if HAS_RESIDUAL:
++        p_res = tl.make_block_ptr(
++            residual, (T, D), (D, 1), (i_t * BT, 0), (BT, BD), (1, 0)
++        )
++        b_x += tl.load(p_res, boundary_check=(0, 1)).to(tl.float32)
++    if STORE_RESIDUAL_OUT:
++        p_res_out = tl.make_block_ptr(
++            residual_out, (T, D), (D, 1), (i_t * BT, 0), (BT, BD), (1, 0)
++        )
++        tl.store(p_res_out, b_x.to(p_res_out.dtype.element_ty), boundary_check=(0, 1))
++    if not IS_RMS_NORM:
++        b_mean = tl.sum(b_x, axis=1) / D
++        p_mean = tl.make_block_ptr(mean, (T,), (1,), (i_t * BT,), (BT,), (0,))
++        tl.store(p_mean, b_mean.to(p_mean.dtype.element_ty), boundary_check=(0,))
++        b_xbar = tl.where(m_d[None, :], b_x - b_mean[:, None], 0.0)
++        b_var = tl.sum(b_xbar * b_xbar, axis=1) / D
++    else:
++        b_xbar = tl.where(m_d[None, :], b_x, 0.0)
++        b_var = tl.sum(b_xbar * b_xbar, axis=1) / D
++    b_rstd = 1 / tl.sqrt(b_var + eps)
++
++    p_rstd = tl.make_block_ptr(rstd, (T,), (1,), (i_t * BT,), (BT,), (0,))
++    tl.store(p_rstd, b_rstd.to(p_rstd.dtype.element_ty), boundary_check=(0,))
++
++    if HAS_WEIGHT:
++        b_w = tl.load(w + o_d, mask=m_d).to(tl.float32)
++    if HAS_BIAS:
++        b_b = tl.load(b + o_d, mask=m_d).to(tl.float32)
++    b_x_hat = (
++        (b_x - b_mean[:, None]) * b_rstd[:, None]
++        if not IS_RMS_NORM
++        else b_x * b_rstd[:, None]
++    )
++    b_y = b_x_hat * b_w[None, :] if HAS_WEIGHT else b_x_hat
++    if HAS_BIAS:
++        b_y = b_y + b_b[None, :]
++
++    # swish/sigmoid output gate
++    p_g = tl.make_block_ptr(g, (T, D), (D, 1), (i_t * BT, 0), (BT, BD), (1, 0))
++    b_g = tl.load(p_g, boundary_check=(0, 1)).to(tl.float32)
++    if ACTIVATION == "swish" or ACTIVATION == "silu":
++        b_y = b_y * b_g * tl.sigmoid(b_g)
++    elif ACTIVATION == "sigmoid":
++        b_y = b_y * tl.sigmoid(b_g)
++
++    # Write output
++    p_y = tl.make_block_ptr(y, (T, D), (D, 1), (i_t * BT, 0), (BT, BD), (1, 0))
++    tl.store(p_y, b_y.to(p_y.dtype.element_ty), boundary_check=(0, 1))
++
++
++@triton.heuristics(
++    {
++        "STORE_RESIDUAL_OUT": lambda args: args["residual_out"] is not None,
++        "HAS_RESIDUAL": lambda args: args["residual"] is not None,
++        "HAS_WEIGHT": lambda args: args["w"] is not None,
++        "HAS_BIAS": lambda args: args["b"] is not None,
++    }
++)
++@triton.jit
++def layer_norm_gated_fwd_kernel1(
++    x,  # pointer to the input
++    g,  # pointer to the gate
++    y,  # pointer to the output
++    w,  # pointer to the weights
++    b,  # pointer to the biases
++    residual,  # pointer to the residual
++    residual_out,  # pointer to the residual
++    mean,  # pointer to the mean
++    rstd,  # pointer to the 1/std
++    eps,  # epsilon to avoid division by zero
++    D: tl.constexpr,  # number of columns in x
++    BD: tl.constexpr,
++    ACTIVATION: tl.constexpr,
++    IS_RMS_NORM: tl.constexpr,
++    STORE_RESIDUAL_OUT: tl.constexpr,
++    HAS_RESIDUAL: tl.constexpr,
++    HAS_WEIGHT: tl.constexpr,
++    HAS_BIAS: tl.constexpr,
++):
++    i_t = tl.program_id(0)
++    x += i_t * D
++    y += i_t * D
++    g += i_t * D
++    if HAS_RESIDUAL:
++        residual += i_t * D
++    if STORE_RESIDUAL_OUT:
++        residual_out += i_t * D
++
++    o_d = tl.arange(0, BD)
++    m_d = o_d < D
++    b_x = tl.load(x + o_d, mask=m_d, other=0.0).to(tl.float32)
++    if HAS_RESIDUAL:
++        b_x += tl.load(residual + o_d, mask=m_d, other=0.0).to(tl.float32)
++    if STORE_RESIDUAL_OUT:
++        tl.store(residual_out + o_d, b_x, mask=m_d)
++    if not IS_RMS_NORM:
++        b_mean = tl.sum(b_x, axis=0) / D
++        tl.store(mean + i_t, b_mean)
++        b_xbar = tl.where(m_d, b_x - b_mean, 0.0)
++        b_var = tl.sum(b_xbar * b_xbar, axis=0) / D
++    else:
++        b_xbar = tl.where(m_d, b_x, 0.0)
++        b_var = tl.sum(b_xbar * b_xbar, axis=0) / D
++    b_rstd = 1 / tl.sqrt(b_var + eps)
++    tl.store(rstd + i_t, b_rstd)
++
++    if HAS_WEIGHT:
++        b_w = tl.load(w + o_d, mask=m_d).to(tl.float32)
++    if HAS_BIAS:
++        b_b = tl.load(b + o_d, mask=m_d).to(tl.float32)
++    b_x_hat = (b_x - b_mean) * b_rstd if not IS_RMS_NORM else b_x * b_rstd
++    b_y = b_x_hat * b_w if HAS_WEIGHT else b_x_hat
++    if HAS_BIAS:
++        b_y = b_y + b_b
++
++    # swish/sigmoid output gate
++    b_g = tl.load(g + o_d, mask=m_d, other=0.0).to(tl.float32)
++    if ACTIVATION == "swish" or ACTIVATION == "silu":
++        b_y = b_y * b_g * tl.sigmoid(b_g)
++    elif ACTIVATION == "sigmoid":
++        b_y = b_y * tl.sigmoid(b_g)
++
++    # Write output
++    tl.store(y + o_d, b_y, mask=m_d)
++
++
++def layer_norm_gated_fwd(
++    x: torch.Tensor,
++    g: torch.Tensor,
++    weight: torch.Tensor,
++    bias: torch.Tensor,
++    activation: str = "swish",
++    eps: float = 1e-5,
++    residual: torch.Tensor = None,
++    out_dtype: torch.dtype = None,
++    residual_dtype: torch.dtype = None,
++    is_rms_norm: bool = False,
++):
++    if residual is not None:
++        residual_dtype = residual.dtype
++    T, D = x.shape
++    if residual is not None:
++        assert residual.shape == (T, D)
++    if weight is not None:
++        assert weight.shape == (D,)
++    if bias is not None:
++        assert bias.shape == (D,)
++    # allocate output
++    y = x if out_dtype is None else torch.empty_like(x, dtype=out_dtype)
++    if residual is not None or (
++        residual_dtype is not None and residual_dtype != x.dtype
++    ):
++        residual_out = torch.empty(T, D, device=x.device, dtype=residual_dtype)
++    else:
++        residual_out = None
++    mean = (
++        torch.empty((T,), dtype=torch.float, device=x.device)
++        if not is_rms_norm
++        else None
++    )
++    rstd = torch.empty((T,), dtype=torch.float, device=x.device)
++    # Less than 64KB per feature: enqueue fused kernel
++    MAX_FUSED_SIZE = 65536 // x.element_size()
++    BD = min(MAX_FUSED_SIZE, next_power_of_2(D))
++    if D > BD:
++        raise RuntimeError("This layer norm doesn't support feature dim >= 64KB.")
++    # heuristics for number of warps
++
++    if D <= 512:
++        BT = 32
++        layer_norm_gated_fwd_kernel[(cdiv(T, BT),)](
++            x=x,
++            g=g,
++            y=y,
++            w=weight,
++            b=bias,
++            residual=residual,
++            residual_out=residual_out,
++            mean=mean,
++            rstd=rstd,
++            eps=eps,
++            T=T,
++            D=D,
++            BD=BD,
++            BT=BT,
++            ACTIVATION=activation,
++            IS_RMS_NORM=is_rms_norm,
++            num_warps=4,
++        )
++    else:
++        layer_norm_gated_fwd_kernel1[(T,)](
++            x=x,
++            g=g,
++            y=y,
++            w=weight,
++            b=bias,
++            residual=residual,
++            residual_out=residual_out,
++            mean=mean,
++            rstd=rstd,
++            eps=eps,
++            D=D,
++            BD=BD,
++            ACTIVATION=activation,
++            IS_RMS_NORM=is_rms_norm,
++            num_warps=4,
++        )
++    # residual_out is None if residual is None and residual_dtype == input_dtype
++    return y, mean, rstd, residual_out if residual_out is not None else x
++
++
++def rms_norm_gated(
++    x: torch.Tensor,
++    g: torch.Tensor,
++    weight: torch.Tensor,
++    bias: torch.Tensor,
++    activation: str = "swish",
++    residual: torch.Tensor | None = None,
++    prenorm: bool = False,
++    residual_in_fp32: bool = False,
++    eps: float = 1e-6,
++):
++    x_shape_og = x.shape
++    # reshape input data into 2D tensor
++    x = x.contiguous().reshape(-1, x.shape[-1])
++    g = g.contiguous().reshape(-1, g.shape[-1])
++    if residual is not None:
++        assert residual.shape == x_shape_og
++        residual = residual.contiguous().reshape(-1, residual.shape[-1])
++    residual_dtype = (
++        residual.dtype
++        if residual is not None
++        else (torch.float if residual_in_fp32 else None)
++    )
++    y, _, _, residual_out = layer_norm_gated_fwd(
++        x=x,
++        g=g,
++        weight=weight,
++        bias=bias,
++        activation=activation,
++        eps=eps,
++        residual=residual,
++        residual_dtype=residual_dtype,
++        is_rms_norm=True,
++    )
++    y = y.reshape(x_shape_og)
++    return y if not prenorm else (y, residual_out.reshape(x_shape_og))
++
++
++class FusedRMSNormGated(nn.Module):
++    def __init__(
++        self,
++        hidden_size: int,
++        elementwise_affine: bool = True,
++        eps: float = 1e-5,
++        activation: str = "swish",
++        device: torch.device | None = None,
++        dtype: torch.dtype | None = None,
++    ) -> None:
++        factory_kwargs = {"device": device, "dtype": dtype}
++        super().__init__()
++
++        self.hidden_size = hidden_size
++        self.elementwise_affine = elementwise_affine
++        self.eps = eps
++        self.activation = activation
++
++        if self.activation not in ["swish", "silu", "sigmoid"]:
++            raise ValueError(f"Unsupported activation: {self.activation}")
++
++        if elementwise_affine:
++            self.weight = nn.Parameter(torch.empty(hidden_size, **factory_kwargs))
++        else:
++            self.register_parameter("weight", None)
++        self.register_parameter("bias", None)
++
++    def forward(
++        self,
++        x: torch.Tensor,
++        g: torch.Tensor,
++        residual: torch.Tensor | None = None,
++        prenorm: bool = False,
++        residual_in_fp32: bool = False,
++    ) -> torch.Tensor:
++        return rms_norm_gated(
++            x,
++            g,
++            self.weight,
++            self.bias,
++            self.activation,
++            residual=residual,
++            eps=self.eps,
++            prenorm=prenorm,
++            residual_in_fp32=residual_in_fp32,
++        )
++
++
++@triton.heuristics({"IS_VARLEN": lambda args: args["cu_seqlens"] is not None})
++@triton.autotune(
++    configs=[
++        triton.Config({"BK": BK}, num_warps=num_warps, num_stages=num_stages)
++        for BK in [32, 64]
++        for num_warps in [1, 2, 4, 8]
++        for num_stages in [2, 3, 4]
++    ],
++    key=["BC"],
++)
++@triton.jit(do_not_specialize=["T"])
++def chunk_kda_scaled_dot_kkt_fwd_kernel_intra_sub_inter(
++    q,
++    k,
++    g,
++    beta,
++    A,
++    Aqk,
++    scale,
++    cu_seqlens,
++    chunk_indices,
++    T,
++    H: tl.constexpr,
++    K: tl.constexpr,
++    BT: tl.constexpr,
++    BC: tl.constexpr,
++    BK: tl.constexpr,
++    NC: tl.constexpr,
++    IS_VARLEN: tl.constexpr,
++):
++    i_t, i_c, i_bh = tl.program_id(0), tl.program_id(1), tl.program_id(2)
++    i_b, i_h = i_bh // H, i_bh % H
++    i_i, i_j = i_c // NC, i_c % NC
++    if IS_VARLEN:
++        i_n, i_t = (
++            tl.load(chunk_indices + i_t * 2).to(tl.int32),
++            tl.load(chunk_indices + i_t * 2 + 1).to(tl.int32),
++        )
++        bos, eos = (
++            tl.load(cu_seqlens + i_n).to(tl.int32),
++            tl.load(cu_seqlens + i_n + 1).to(tl.int32),
++        )
++        T = eos - bos
++    else:
++        bos, eos = i_b * T, i_b * T + T
++
++    if i_t * BT + i_i * BC >= T:
++        return
++    if i_i <= i_j:
++        return
++
++    q += (bos * H + i_h) * K
++    k += (bos * H + i_h) * K
++    g += (bos * H + i_h) * K
++    A += (bos * H + i_h) * BT
++    Aqk += (bos * H + i_h) * BT
++
++    p_b = tl.make_block_ptr(
++        beta + bos * H + i_h, (T,), (H,), (i_t * BT + i_i * BC,), (BC,), (0,)
++    )
++    b_b = tl.load(p_b, boundary_check=(0,))
++
++    b_A = tl.zeros([BC, BC], dtype=tl.float32)
++    b_Aqk = tl.zeros([BC, BC], dtype=tl.float32)
++    for i_k in range(tl.cdiv(K, BK)):
++        p_q = tl.make_block_ptr(
++            q, (T, K), (H * K, 1), (i_t * BT + i_i * BC, i_k * BK), (BC, BK), (1, 0)
++        )
++        p_k = tl.make_block_ptr(
++            k, (T, K), (H * K, 1), (i_t * BT + i_i * BC, i_k * BK), (BC, BK), (1, 0)
++        )
++        p_g = tl.make_block_ptr(
++            g, (T, K), (H * K, 1), (i_t * BT + i_i * BC, i_k * BK), (BC, BK), (1, 0)
++        )
++        b_kt = tl.make_block_ptr(
++            k, (K, T), (1, H * K), (i_k * BK, i_t * BT + i_j * BC), (BK, BC), (0, 1)
++        )
++        p_gk = tl.make_block_ptr(
++            g, (K, T), (1, H * K), (i_k * BK, i_t * BT + i_j * BC), (BK, BC), (0, 1)
++        )
++
++        o_k = i_k * BK + tl.arange(0, BK)
++        m_k = o_k < K
++        # [BK,]
++        b_gn = tl.load(g + (i_t * BT + i_i * BC) * H * K + o_k, mask=m_k, other=0)
++        # [BC, BK]
++        b_g = tl.load(p_g, boundary_check=(0, 1))
++        b_k = tl.load(p_k, boundary_check=(0, 1)) * exp(b_g - b_gn[None, :])
++        # [BK, BC]
++        b_gk = tl.load(p_gk, boundary_check=(0, 1))
++        b_kt = tl.load(b_kt, boundary_check=(0, 1))
++        # [BC, BC]
++        b_ktg = b_kt * exp(b_gn[:, None] - b_gk)
++        b_A += tl.dot(b_k, b_ktg)
++
++        b_q = tl.load(p_q, boundary_check=(0, 1))
++        b_qg = b_q * exp(b_g - b_gn[None, :]) * scale
++        b_Aqk += tl.dot(b_qg, b_ktg)
++
++    b_A *= b_b[:, None]
++
++    p_A = tl.make_block_ptr(
++        A, (T, BT), (H * BT, 1), (i_t * BT + i_i * BC, i_j * BC), (BC, BC), (1, 0)
++    )
++    tl.store(p_A, b_A.to(A.dtype.element_ty), boundary_check=(0, 1))
++    p_Aqk = tl.make_block_ptr(
++        Aqk, (T, BT), (H * BT, 1), (i_t * BT + i_i * BC, i_j * BC), (BC, BC), (1, 0)
++    )
++    tl.store(p_Aqk, b_Aqk.to(Aqk.dtype.element_ty), boundary_check=(0, 1))
++
++
++@triton.heuristics({"IS_VARLEN": lambda args: args["cu_seqlens"] is not None})
++@triton.autotune(
++    configs=[triton.Config({}, num_warps=num_warps) for num_warps in [1, 2, 4, 8]],
++    key=["BK", "BT"],
++)
++@triton.jit(do_not_specialize=["T"])
++def chunk_kda_scaled_dot_kkt_fwd_kernel_intra_sub_intra(
++    q,
++    k,
++    g,
++    beta,
++    A,
++    Aqk,
++    scale,
++    cu_seqlens,
++    chunk_indices,
++    T,
++    H: tl.constexpr,
++    K: tl.constexpr,
++    BT: tl.constexpr,
++    BC: tl.constexpr,
++    BK: tl.constexpr,
++    IS_VARLEN: tl.constexpr,
++):
++    i_t, i_i, i_bh = tl.program_id(0), tl.program_id(1), tl.program_id(2)
++    i_b, i_h = i_bh // H, i_bh % H
++    if IS_VARLEN:
++        i_n, i_t = (
++            tl.load(chunk_indices + i_t * 2).to(tl.int32),
++            tl.load(chunk_indices + i_t * 2 + 1).to(tl.int32),
++        )
++        bos, eos = (
++            tl.load(cu_seqlens + i_n).to(tl.int32),
++            tl.load(cu_seqlens + i_n + 1).to(tl.int32),
++        )
++        T = eos - bos
++    else:
++        bos, eos = i_b * T, i_b * T + T
++
++    if i_t * BT + i_i * BC >= T:
++        return
++
++    o_i = tl.arange(0, BC)
++    o_k = tl.arange(0, BK)
++    m_k = o_k < K
++    m_A = (i_t * BT + i_i * BC + o_i) < T
++    o_A = (bos + i_t * BT + i_i * BC + o_i) * H * BT + i_h * BT + i_i * BC
++
++    p_q = tl.make_block_ptr(
++        q + (bos * H + i_h) * K,
++        (T, K),
++        (H * K, 1),
++        (i_t * BT + i_i * BC, 0),
++        (BC, BK),
++        (1, 0),
++    )
++    p_k = tl.make_block_ptr(
++        k + (bos * H + i_h) * K,
++        (T, K),
++        (H * K, 1),
++        (i_t * BT + i_i * BC, 0),
++        (BC, BK),
++        (1, 0),
++    )
++    p_g = tl.make_block_ptr(
++        g + (bos * H + i_h) * K,
++        (T, K),
++        (H * K, 1),
++        (i_t * BT + i_i * BC, 0),
++        (BC, BK),
++        (1, 0),
++    )
++    b_q = tl.load(p_q, boundary_check=(0, 1))
++    b_k = tl.load(p_k, boundary_check=(0, 1))
++    b_g = tl.load(p_g, boundary_check=(0, 1))
++
++    p_b = beta + (bos + i_t * BT + i_i * BC + o_i) * H + i_h
++    b_k = b_k * tl.load(p_b, mask=m_A, other=0)[:, None]
++
++    p_kt = k + (bos + i_t * BT + i_i * BC) * H * K + i_h * K + o_k
++    p_gk = g + (bos + i_t * BT + i_i * BC) * H * K + i_h * K + o_k
++
++    for j in range(0, min(BC, T - i_t * BT - i_i * BC)):
++        b_kt = tl.load(p_kt, mask=m_k, other=0).to(tl.float32)
++        b_gk = tl.load(p_gk, mask=m_k, other=0).to(tl.float32)
++        b_ktg = b_kt[None, :] * exp(b_g - b_gk[None, :])
++        b_A = tl.sum(b_k * b_ktg, 1)
++        b_A = tl.where(o_i > j, b_A, 0.0)
++        b_Aqk = tl.sum(b_q * b_ktg, 1)
++        b_Aqk = tl.where(o_i >= j, b_Aqk * scale, 0.0)
++        tl.store(A + o_A + j, b_A, mask=m_A)
++        tl.store(Aqk + o_A + j, b_Aqk, mask=m_A)
++        p_kt += H * K
++        p_gk += H * K
++
++
++def chunk_kda_scaled_dot_kkt_fwd(
++    q: torch.Tensor,
++    k: torch.Tensor,
++    gk: torch.Tensor | None = None,
++    beta: torch.Tensor | None = None,
++    scale: float | None = None,
++    cu_seqlens: torch.LongTensor | None = None,
++    chunk_size: int = 64,
++    output_dtype: torch.dtype = torch.float32,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    r"""
++    Compute beta * K * K^T.
++
++    Args:
++        k (torch.Tensor):
++            The key tensor of shape `[B, T, H, K]`.
++        beta (torch.Tensor):
++            The beta tensor of shape `[B, T, H]`.
++        gk (torch.Tensor):
++            The cumulative sum of the gate tensor of shape `[B, T, H, K]` applied to the key tensor. Default: `None`.
++        cu_seqlens (torch.LongTensor):
++            The cumulative sequence lengths of the input tensor.
++            Default: None
++        chunk_size (int):
++            The chunk size. Default: 64.
++        output_dtype (torch.dtype):
++            The dtype of the output tensor. Default: `torch.float32`
++
++    Returns:
++        beta * K * K^T of shape `[B, T, H, BT]` where `BT` is the chunk size.
++    """
++    B, T, H, K = k.shape
++    assert K <= 256
++    BT = chunk_size
++    chunk_indices = (
++        prepare_chunk_indices(cu_seqlens, BT) if cu_seqlens is not None else None
++    )
++    NT = cdiv(T, BT) if cu_seqlens is None else len(chunk_indices)
++
++    BC = min(16, BT)
++    NC = cdiv(BT, BC)
++    BK = max(next_power_of_2(K), 16)
++    A = torch.zeros(B, T, H, BT, device=k.device, dtype=output_dtype)
++    Aqk = torch.zeros(B, T, H, BT, device=k.device, dtype=output_dtype)
++    grid = (NT, NC * NC, B * H)
++    chunk_kda_scaled_dot_kkt_fwd_kernel_intra_sub_inter[grid](
++        q=q,
++        k=k,
++        g=gk,
++        beta=beta,
++        A=A,
++        Aqk=Aqk,
++        scale=scale,
++        cu_seqlens=cu_seqlens,
++        chunk_indices=chunk_indices,
++        T=T,
++        H=H,
++        K=K,
++        BT=BT,
++        BC=BC,
++        NC=NC,
++    )
++
++    grid = (NT, NC, B * H)
++    chunk_kda_scaled_dot_kkt_fwd_kernel_intra_sub_intra[grid](
++        q=q,
++        k=k,
++        g=gk,
++        beta=beta,
++        A=A,
++        Aqk=Aqk,
++        scale=scale,
++        cu_seqlens=cu_seqlens,
++        chunk_indices=chunk_indices,
++        T=T,
++        H=H,
++        K=K,
++        BT=BT,
++        BC=BC,
++        BK=BK,
++    )
++    return A, Aqk
++
++
++@triton.heuristics(
++    {
++        "STORE_QG": lambda args: args["qg"] is not None,
++        "STORE_KG": lambda args: args["kg"] is not None,
++        "IS_VARLEN": lambda args: args["cu_seqlens"] is not None,
++    }
++)
++@triton.autotune(
++    configs=[
++        triton.Config({}, num_warps=num_warps, num_stages=num_stages)
++        for num_warps in [2, 4, 8]
++        for num_stages in [2, 3, 4]
++    ],
++    key=["H", "K", "V", "BT", "BK", "BV", "IS_VARLEN"],
++)
++@triton.jit(do_not_specialize=["T"])
++def recompute_w_u_fwd_kernel(
++    q,
++    k,
++    qg,
++    kg,
++    v,
++    beta,
++    w,
++    u,
++    A,
++    gk,
++    cu_seqlens,
++    chunk_indices,
++    T,
++    H: tl.constexpr,
++    K: tl.constexpr,
++    V: tl.constexpr,
++    BT: tl.constexpr,
++    BK: tl.constexpr,
++    BV: tl.constexpr,
++    STORE_QG: tl.constexpr,
++    STORE_KG: tl.constexpr,
++    IS_VARLEN: tl.constexpr,
++    DOT_PRECISION: tl.constexpr,
++):
++    i_t, i_bh = tl.program_id(0), tl.program_id(1)
++    i_b, i_h = i_bh // H, i_bh % H
++    if IS_VARLEN:
++        i_n, i_t = (
++            tl.load(chunk_indices + i_t * 2).to(tl.int32),
++            tl.load(chunk_indices + i_t * 2 + 1).to(tl.int32),
++        )
++        bos, eos = (
++            tl.load(cu_seqlens + i_n).to(tl.int32),
++            tl.load(cu_seqlens + i_n + 1).to(tl.int32),
++        )
++        T = eos - bos
++    else:
++        bos, eos = i_b * T, i_b * T + T
++    p_b = tl.make_block_ptr(beta + bos * H + i_h, (T,), (H,), (i_t * BT,), (BT,), (0,))
++    b_b = tl.load(p_b, boundary_check=(0,))
++
++    p_A = tl.make_block_ptr(
++        A + (bos * H + i_h) * BT, (T, BT), (H * BT, 1), (i_t * BT, 0), (BT, BT), (1, 0)
++    )
++    b_A = tl.load(p_A, boundary_check=(0, 1))
++
++    for i_v in range(tl.cdiv(V, BV)):
++        p_v = tl.make_block_ptr(
++            v + (bos * H + i_h) * V,
++            (T, V),
++            (H * V, 1),
++            (i_t * BT, i_v * BV),
++            (BT, BV),
++            (1, 0),
++        )
++        p_u = tl.make_block_ptr(
++            u + (bos * H + i_h) * V,
++            (T, V),
++            (H * V, 1),
++            (i_t * BT, i_v * BV),
++            (BT, BV),
++            (1, 0),
++        )
++        b_v = tl.load(p_v, boundary_check=(0, 1))
++        b_vb = (b_v * b_b[:, None]).to(b_v.dtype)
++        b_u = tl.dot(b_A, b_vb, input_precision=DOT_PRECISION)
++        tl.store(p_u, b_u.to(p_u.dtype.element_ty), boundary_check=(0, 1))
++
++    for i_k in range(tl.cdiv(K, BK)):
++        p_w = tl.make_block_ptr(
++            w + (bos * H + i_h) * K,
++            (T, K),
++            (H * K, 1),
++            (i_t * BT, i_k * BK),
++            (BT, BK),
++            (1, 0),
++        )
++        p_k = tl.make_block_ptr(
++            k + (bos * H + i_h) * K,
++            (T, K),
++            (H * K, 1),
++            (i_t * BT, i_k * BK),
++            (BT, BK),
++            (1, 0),
++        )
++        b_k = tl.load(p_k, boundary_check=(0, 1))
++        b_kb = b_k * b_b[:, None]
++
++        p_gk = tl.make_block_ptr(
++            gk + (bos * H + i_h) * K,
++            (T, K),
++            (H * K, 1),
++            (i_t * BT, i_k * BK),
++            (BT, BK),
++            (1, 0),
++        )
++        b_gk = tl.load(p_gk, boundary_check=(0, 1))
++        b_kb *= exp(b_gk)
++        if STORE_QG:
++            p_q = tl.make_block_ptr(
++                q + (bos * H + i_h) * K,
++                (T, K),
++                (H * K, 1),
++                (i_t * BT, i_k * BK),
++                (BT, BK),
++                (1, 0),
++            )
++            p_qg = tl.make_block_ptr(
++                qg + (bos * H + i_h) * K,
++                (T, K),
++                (H * K, 1),
++                (i_t * BT, i_k * BK),
++                (BT, BK),
++                (1, 0),
++            )
++            b_q = tl.load(p_q, boundary_check=(0, 1))
++            b_qg = b_q * exp(b_gk)
++            tl.store(p_qg, b_qg.to(p_qg.dtype.element_ty), boundary_check=(0, 1))
++        if STORE_KG:
++            last_idx = min(i_t * BT + BT, T) - 1
++
++            o_k = i_k * BK + tl.arange(0, BK)
++            m_k = o_k < K
++            b_gn = tl.load(
++                gk + ((bos + last_idx) * H + i_h) * K + o_k, mask=m_k, other=0.0
++            )
++            b_kg = b_k * exp(b_gn - b_gk)
++
++            p_kg = tl.make_block_ptr(
++                kg + (bos * H + i_h) * K,
++                (T, K),
++                (H * K, 1),
++                (i_t * BT, i_k * BK),
++                (BT, BK),
++                (1, 0),
++            )
++            tl.store(p_kg, b_kg.to(p_kg.dtype.element_ty), boundary_check=(0, 1))
++
++        b_w = tl.dot(b_A, b_kb.to(b_k.dtype))
++        tl.store(p_w, b_w.to(p_w.dtype.element_ty), boundary_check=(0, 1))
++
++
++def recompute_w_u_fwd(
++    k: torch.Tensor,
++    v: torch.Tensor,
++    beta: torch.Tensor,
++    A: torch.Tensor,
++    q: torch.Tensor | None = None,
++    gk: torch.Tensor | None = None,
++    cu_seqlens: torch.LongTensor | None = None,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    B, T, H, K, V = *k.shape, v.shape[-1]
++    BT = A.shape[-1]
++    BK = 64
++    BV = 64
++
++    chunk_indices = (
++        prepare_chunk_indices(cu_seqlens, BT) if cu_seqlens is not None else None
++    )
++    NT = cdiv(T, BT) if cu_seqlens is None else len(chunk_indices)
++
++    w = torch.empty_like(k)
++    u = torch.empty_like(v)
++    kg = torch.empty_like(k) if gk is not None else None
++    recompute_w_u_fwd_kernel[(NT, B * H)](
++        q=q,
++        k=k,
++        qg=None,
++        kg=kg,
++        v=v,
++        beta=beta,
++        w=w,
++        u=u,
++        A=A,
++        gk=gk,
++        cu_seqlens=cu_seqlens,
++        chunk_indices=chunk_indices,
++        T=T,
++        H=H,
++        K=K,
++        V=V,
++        BT=BT,
++        BK=BK,
++        BV=BV,
++        DOT_PRECISION="ieee",
++    )
++    return w, u, None, kg
++
++
++@triton.heuristics({"IS_VARLEN": lambda args: args["cu_seqlens"] is not None})
++@triton.autotune(
++    configs=[
++        triton.Config({"BK": BK, "BV": BV}, num_warps=num_warps, num_stages=num_stages)
++        for BK in [32, 64]
++        for BV in [64, 128]
++        for num_warps in [2, 4, 8]
++        for num_stages in [2, 3, 4]
++    ],
++    key=["BT"],
++)
++@triton.jit(do_not_specialize=["T"])
++def chunk_gla_fwd_kernel_o(
++    q,
++    v,
++    g,
++    h,
++    o,
++    A,
++    cu_seqlens,
++    chunk_indices,
++    scale,
++    T,
++    H: tl.constexpr,
++    K: tl.constexpr,
++    V: tl.constexpr,
++    BT: tl.constexpr,
++    BK: tl.constexpr,
++    BV: tl.constexpr,
++    IS_VARLEN: tl.constexpr,
++):
++    i_v, i_t, i_bh = tl.program_id(0), tl.program_id(1), tl.program_id(2)
++    i_b, i_h = i_bh // H, i_bh % H
++    if IS_VARLEN:
++        i_tg = i_t
++        i_n, i_t = (
++            tl.load(chunk_indices + i_t * 2).to(tl.int32),
++            tl.load(chunk_indices + i_t * 2 + 1).to(tl.int32),
++        )
++        bos, eos = (
++            tl.load(cu_seqlens + i_n).to(tl.int32),
++            tl.load(cu_seqlens + i_n + 1).to(tl.int32),
++        )
++        T = eos - bos
++        NT = tl.cdiv(T, BT)
++    else:
++        NT = tl.cdiv(T, BT)
++        i_tg = i_b * NT + i_t
++        bos, eos = i_b * T, i_b * T + T
++
++    m_s = tl.arange(0, BT)[:, None] >= tl.arange(0, BT)[None, :]
++
++    b_o = tl.zeros([BT, BV], dtype=tl.float32)
++    for i_k in range(tl.cdiv(K, BK)):
++        p_q = tl.make_block_ptr(
++            q + (bos * H + i_h) * K,
++            (T, K),
++            (H * K, 1),
++            (i_t * BT, i_k * BK),
++            (BT, BK),
++            (1, 0),
++        )
++        p_g = tl.make_block_ptr(
++            g + (bos * H + i_h) * K,
++            (T, K),
++            (H * K, 1),
++            (i_t * BT, i_k * BK),
++            (BT, BK),
++            (1, 0),
++        )
++        p_h = tl.make_block_ptr(
++            h + (i_tg * H + i_h) * K * V,
++            (K, V),
++            (V, 1),
++            (i_k * BK, i_v * BV),
++            (BK, BV),
++            (1, 0),
++        )
++
++        # [BT, BK]
++        b_q = tl.load(p_q, boundary_check=(0, 1))
++        b_q = (b_q * scale).to(b_q.dtype)
++        # [BT, BK]
++        b_g = tl.load(p_g, boundary_check=(0, 1))
++        # [BT, BK]
++        b_qg = (b_q * exp(b_g)).to(b_q.dtype)
++        # [BK, BV]
++        b_h = tl.load(p_h, boundary_check=(0, 1))
++        # works but dkw, owing to divine benevolence
++        # [BT, BV]
++        if i_k >= 0:
++            b_o += tl.dot(b_qg, b_h.to(b_qg.dtype))
++    p_v = tl.make_block_ptr(
++        v + (bos * H + i_h) * V,
++        (T, V),
++        (H * V, 1),
++        (i_t * BT, i_v * BV),
++        (BT, BV),
++        (1, 0),
++    )
++    p_o = tl.make_block_ptr(
++        o + (bos * H + i_h) * V,
++        (T, V),
++        (H * V, 1),
++        (i_t * BT, i_v * BV),
++        (BT, BV),
++        (1, 0),
++    )
++    p_A = tl.make_block_ptr(
++        A + (bos * H + i_h) * BT, (T, BT), (H * BT, 1), (i_t * BT, 0), (BT, BT), (1, 0)
++    )
++    # [BT, BV]
++    b_v = tl.load(p_v, boundary_check=(0, 1))
++    # [BT, BT]
++    b_A = tl.load(p_A, boundary_check=(0, 1))
++    b_A = tl.where(m_s, b_A, 0.0).to(b_v.dtype)
++    b_o += tl.dot(b_A, b_v, allow_tf32=False)
++    tl.store(p_o, b_o.to(p_o.dtype.element_ty), boundary_check=(0, 1))
++
++
++def chunk_gla_fwd_o_gk(
++    q: torch.Tensor,
++    v: torch.Tensor,
++    g: torch.Tensor,
++    A: torch.Tensor,
++    h: torch.Tensor,
++    o: torch.Tensor,
++    scale: float,
++    cu_seqlens: torch.LongTensor | None = None,
++    chunk_size: int = 64,
++):
++    B, T, H, K, V = *q.shape, v.shape[-1]
++    BT = chunk_size
++
++    chunk_indices = (
++        prepare_chunk_indices(cu_seqlens, chunk_size)
++        if cu_seqlens is not None
++        else None
++    )
++    NT = cdiv(T, BT) if cu_seqlens is None else len(chunk_indices)
++
++    def grid(meta):
++        return (cdiv(V, meta["BV"]), NT, B * H)
++
++    chunk_gla_fwd_kernel_o[grid](
++        q=q,
++        v=v,
++        g=g,
++        h=h,
++        o=o,
++        A=A,
++        cu_seqlens=cu_seqlens,
++        chunk_indices=chunk_indices,
++        scale=scale,
++        T=T,
++        H=H,
++        K=K,
++        V=V,
++        BT=BT,
++    )
++    return o
++
++
++def chunk_kda_fwd(
++    q: torch.Tensor,
++    k: torch.Tensor,
++    v: torch.Tensor,
++    g: torch.Tensor,
++    beta: torch.Tensor,
++    scale: float,
++    initial_state: torch.Tensor,
++    output_final_state: bool,
++    cu_seqlens: torch.LongTensor | None = None,
++):
++    chunk_size = 64
++    g = chunk_local_cumsum(g, chunk_size=chunk_size, cu_seqlens=cu_seqlens)
++    # the intra Aqk is kept in fp32
++    # the computation has very marginal effect on the entire throughput
++    A, Aqk = chunk_kda_scaled_dot_kkt_fwd(
++        q=q,
++        k=k,
++        gk=g,
++        beta=beta,
++        scale=scale,
++        cu_seqlens=cu_seqlens,
++        output_dtype=torch.float32,
++    )
++    A = solve_tril(A=A, cu_seqlens=cu_seqlens, output_dtype=k.dtype)
++    w, u, _, kg = recompute_w_u_fwd(
++        k=k,
++        v=v,
++        beta=beta,
++        A=A,
++        gk=g,
++        cu_seqlens=cu_seqlens,
++    )
++    del A
++    h, v_new, final_state = chunk_gated_delta_rule_fwd_h(
++        k=kg,
++        w=w,
++        u=u,
++        gk=g,
++        initial_state=initial_state,
++        output_final_state=output_final_state,
++        cu_seqlens=cu_seqlens,
++    )
++    del w, u, kg
++    o = chunk_gla_fwd_o_gk(
++        q=q,
++        v=v_new,
++        g=g,
++        A=Aqk,
++        h=h,
++        o=v,
++        scale=scale,
++        cu_seqlens=cu_seqlens,
++        chunk_size=chunk_size,
++    )
++    del Aqk, v_new, h
++    return o, final_state
++
++
++def chunk_kda(
++    q: torch.Tensor,
++    k: torch.Tensor,
++    v: torch.Tensor,
++    g: torch.Tensor,
++    beta: torch.Tensor,
++    scale: float = None,
++    initial_state: torch.Tensor = None,
++    output_final_state: bool = False,
++    use_qk_l2norm_in_kernel: bool = False,
++    cu_seqlens: torch.LongTensor | None = None,
++    **kwargs,
++):
++    if scale is None:
++        scale = k.shape[-1] ** -0.5
++
++    if use_qk_l2norm_in_kernel:
++        q = l2norm_fwd(q.contiguous())
++        k = l2norm_fwd(k.contiguous())
++
++    o, final_state = chunk_kda_fwd(
++        q=q,
++        k=k,
++        v=v.contiguous(),
++        g=g.contiguous(),
++        beta=beta.contiguous(),
++        scale=scale,
++        initial_state=initial_state.contiguous(),
++        output_final_state=output_final_state,
++        cu_seqlens=cu_seqlens,
++    )
++    return o, final_state
++
++
++@triton.autotune(
++    configs=[
++        triton.Config({"BT": bt}, num_warps=nw, num_stages=ns)
++        for bt in BT_LIST_AUTOTUNE
++        for nw in NUM_WARPS_AUTOTUNE
++        for ns in [2, 3]
++    ],
++    key=["H", "D"],
++)
++@triton.jit
++def kda_gate_fwd_kernel(
++    g,
++    A,
++    y,
++    g_bias,
++    beta: tl.constexpr,
++    threshold: tl.constexpr,
++    T,
++    H,
++    D: tl.constexpr,
++    BT: tl.constexpr,
++    BD: tl.constexpr,
++    HAS_BIAS: tl.constexpr,
++):
++    i_t, i_h = tl.program_id(0), tl.program_id(1)
++    n_t = i_t * BT
++
++    b_a = tl.load(A + i_h).to(tl.float32)
++    b_a = -tl.exp(b_a)
++
++    stride_row = H * D
++    stride_col = 1
++
++    g_ptr = tl.make_block_ptr(
++        base=g + i_h * D,
++        shape=(T, D),
++        strides=(stride_row, stride_col),
++        offsets=(n_t, 0),
++        block_shape=(BT, BD),
++        order=(1, 0),
++    )
++
++    y_ptr = tl.make_block_ptr(
++        base=y + i_h * D,
++        shape=(T, D),
++        strides=(stride_row, stride_col),
++        offsets=(n_t, 0),
++        block_shape=(BT, BD),
++        order=(1, 0),
++    )
++
++    b_g = tl.load(g_ptr, boundary_check=(0, 1)).to(tl.float32)
++
++    if HAS_BIAS:
++        n_d = tl.arange(0, BD)
++        bias_mask = n_d < D
++        b_bias = tl.load(g_bias + i_h * D + n_d, mask=bias_mask, other=0.0).to(
++            tl.float32
++        )
++        b_g = b_g + b_bias[None, :]
++
++    # softplus(x, beta) = (1/beta) * log(1 + exp(beta * x))
++    # When beta * x > threshold, use linear approximation x
++    # Use threshold to switch to linear when beta*x > threshold
++    g_scaled = b_g * beta
++    use_linear = g_scaled > threshold
++    sp = tl.where(use_linear, b_g, (1.0 / beta) * log(1.0 + tl.exp(g_scaled)))
++    b_y = b_a * sp
++
++    tl.store(y_ptr, b_y.to(y.dtype.element_ty), boundary_check=(0, 1))
++
++
++def fused_kda_gate(
++    g: torch.Tensor,
++    A: torch.Tensor,
++    head_k_dim: int,
++    g_bias: torch.Tensor | None = None,
++    beta: float = 1.0,
++    threshold: float = 20.0,
++) -> torch.Tensor:
++    """
++    Forward pass for KDA gate:
++      input g: [..., H*D]
++      param A: [H] or [1, 1, H, 1]
++      beta: softplus beta parameter
++      threshold: softplus threshold parameter
++      return  : [..., H, D]
++    """
++    orig_shape = g.shape[:-1]
++
++    g = g.view(-1, g.shape[-1])
++    T = g.shape[0]
++    HD = g.shape[1]
++    H = A.numel()
++    assert H * head_k_dim == HD
++
++    y = torch.empty_like(g, dtype=torch.float32)
++
++    def grid(meta):
++        return (cdiv(T, meta["BT"]), H)
++
++    kda_gate_fwd_kernel[grid](
++        g,
++        A,
++        y,
++        g_bias,
++        beta,
++        threshold,
++        T,
++        H,
++        head_k_dim,
++        BD=next_power_of_2(head_k_dim),
++        HAS_BIAS=g_bias is not None,
++    )
++
++    y = y.view(*orig_shape, H, head_k_dim)
++    return y
+diff --git a/vllm/model_executor/layers/kda.py b/vllm/model_executor/layers/kda.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..56ab8ecaea3e9200b9ba6bd5743f88453e2c882c
+--- /dev/null
++++ b/vllm/model_executor/layers/kda.py
+@@ -0,0 +1,457 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++import torch
++from einops import rearrange
++from torch import nn
++
++from vllm.attention import AttentionBackend
++from vllm.attention.backends.abstract import AttentionMetadata
++from vllm.config import CacheConfig, ModelConfig, get_current_vllm_config
++from vllm.distributed import (
++    divide,
++    get_tensor_model_parallel_rank,
++    get_tensor_model_parallel_world_size,
++)
++from vllm.forward_context import ForwardContext, get_forward_context
++from vllm.logger import init_logger
++from vllm.model_executor.model_loader.weight_utils import sharded_weight_loader
++from vllm.model_executor.utils import set_weight_attrs
++from vllm.utils.torch_utils import direct_register_custom_op
++from vllm.v1.attention.backends.gdn_attn import GDNAttentionMetadata
++
++from .fla.ops.kda import (
++    FusedRMSNormGated,
++    chunk_kda,
++    fused_kda_gate,
++    fused_recurrent_kda,
++)
++from .linear import (
++    ColumnParallelLinear,
++    ReplicatedLinear,
++    RowParallelLinear,
++)
++from .mamba.abstract import MambaBase
++from .mamba.mamba_utils import MambaStateDtypeCalculator, MambaStateShapeCalculator
++from .mamba.ops.causal_conv1d import causal_conv1d_fn, causal_conv1d_update
++from .mamba.ops.state_reset import reset_invalid_state_rows
++from .quantization.base_config import QuantizationConfig
++
++logger = init_logger(__name__)
++
++
++def kda_attention(
++    q_proj_states: torch.Tensor,
++    k_proj_states: torch.Tensor,
++    v_proj_states: torch.Tensor,
++    g1: torch.Tensor,
++    beta: torch.Tensor,
++    core_attn_out: torch.Tensor,
++    layer_name: str,
++) -> None:
++    forward_context: ForwardContext = get_forward_context()
++    self = forward_context.no_compile_layers[layer_name]
++    self._forward(
++        q_proj_states=q_proj_states,
++        k_proj_states=k_proj_states,
++        v_proj_states=v_proj_states,
++        g1=g1,
++        beta=beta,
++        core_attn_out=core_attn_out,
++    )
++
++
++def kda_attention_fake(
++    q_proj_states: torch.Tensor,
++    k_proj_states: torch.Tensor,
++    v_proj_states: torch.Tensor,
++    g1: torch.Tensor,
++    beta: torch.Tensor,
++    core_attn_out: torch.Tensor,
++    layer_name: str,
++) -> None:
++    return
++
++
++direct_register_custom_op(
++    op_name="kda_attention",
++    op_func=kda_attention,
++    mutates_args=["core_attn_out"],
++    fake_impl=kda_attention_fake,
++)
++
++
++class KimiDeltaAttention(nn.Module, MambaBase):
++    @property
++    def mamba_type(self) -> str:
++        return "linear_attention"
++
++    def get_attn_backend(self) -> type["AttentionBackend"]:
++        from vllm.v1.attention.backends.gdn_attn import GDNAttentionBackend
++
++        return GDNAttentionBackend
++
++    def get_state_dtype(
++        self,
++    ) -> tuple[torch.dtype, torch.dtype, torch.dtype, torch.dtype]:
++        if self.model_config is None or self.cache_config is None:
++            raise ValueError("model_config and cache_config must be set")
++        return MambaStateDtypeCalculator.kda_state_dtype(
++            self.model_config.dtype, self.cache_config.mamba_cache_dtype
++        )
++
++    def get_state_shape(
++        self,
++    ) -> tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...], tuple[int, ...]]:
++        return MambaStateShapeCalculator.kda_state_shape(
++            self.tp_size, self.num_heads, self.head_dim, conv_kernel_size=self.conv_size
++        )
++
++    def __init__(
++        self,
++        layer_idx: int,
++        hidden_size: int,
++        quant_config: QuantizationConfig | None = None,
++        cache_config: CacheConfig | None = None,
++        model_config: ModelConfig | None = None,
++        rms_norm_eps: float = 1e-5,
++        prefix: str = "",
++        **kwargs,
++    ) -> None:
++        super().__init__()
++        self.tp_size = get_tensor_model_parallel_world_size()
++        self.tp_rank = get_tensor_model_parallel_rank()
++        self.hidden_size = hidden_size
++        self.model_config = model_config
++        self.cache_config = cache_config
++        if model_config is None:
++            raise ValueError("model_config must be provided")
++        kda_config = model_config.linear_attn_config
++        self.head_dim = kda_config["head_dim"]
++        self.num_heads = kda_config["num_heads"]
++        self.layer_idx = layer_idx
++        self.prefix = prefix
++        assert self.num_heads % self.tp_size == 0
++        self.local_num_heads = divide(self.num_heads, self.tp_size)
++
++        projection_size = self.head_dim * self.num_heads
++        self.conv_size = kda_config["short_conv_kernel_size"]
++
++        self.q_proj = ColumnParallelLinear(
++            self.hidden_size,
++            projection_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.q_proj",
++        )
++        self.k_proj = ColumnParallelLinear(
++            self.hidden_size,
++            projection_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.k_proj",
++        )
++        self.v_proj = ColumnParallelLinear(
++            self.hidden_size,
++            projection_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.v_proj",
++        )
++
++        self.f_a_proj = ReplicatedLinear(
++            self.hidden_size,
++            self.head_dim,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.f_a_proj",
++        )
++
++        self.f_b_proj = ColumnParallelLinear(
++            self.head_dim,
++            projection_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.f_b_proj",
++        )
++        self.dt_bias = nn.Parameter(
++            torch.empty(divide(projection_size, self.tp_size), dtype=torch.float32)
++        )
++
++        set_weight_attrs(self.dt_bias, {"weight_loader": sharded_weight_loader(0)})
++
++        self.b_proj = ColumnParallelLinear(
++            self.hidden_size,
++            self.num_heads,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.b_proj",
++        )
++
++        self.q_conv1d = ColumnParallelLinear(
++            input_size=self.conv_size,
++            output_size=projection_size,
++            bias=False,
++            params_dtype=torch.float32,
++            prefix=f"{prefix}.q_conv1d",
++        )
++        self.k_conv1d = ColumnParallelLinear(
++            input_size=self.conv_size,
++            output_size=projection_size,
++            bias=False,
++            params_dtype=torch.float32,
++            prefix=f"{prefix}.k_conv1d",
++        )
++        self.v_conv1d = ColumnParallelLinear(
++            input_size=self.conv_size,
++            output_size=projection_size,
++            bias=False,
++            params_dtype=torch.float32,
++            prefix=f"{prefix}.v_conv1d",
++        )
++        # unsqueeze to fit conv1d weights shape into the linear weights shape.
++        # Can't do this in `weight_loader` since it already exists in
++        # `ColumnParallelLinear` and `set_weight_attrs`
++        # doesn't allow to override it
++        self.q_conv1d.weight.data = self.q_conv1d.weight.data.unsqueeze(1)
++        self.k_conv1d.weight.data = self.k_conv1d.weight.data.unsqueeze(1)
++        self.v_conv1d.weight.data = self.v_conv1d.weight.data.unsqueeze(1)
++
++        self.A_log = nn.Parameter(
++            torch.empty(1, 1, self.local_num_heads, 1, dtype=torch.float32)
++        )
++        set_weight_attrs(self.A_log, {"weight_loader": sharded_weight_loader(2)})
++
++        self.g_a_proj = ReplicatedLinear(
++            self.hidden_size,
++            self.head_dim,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.g_a_proj",
++        )
++        self.g_b_proj = ColumnParallelLinear(
++            self.head_dim,
++            projection_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.g_b_proj",
++        )
++        self.o_norm = FusedRMSNormGated(
++            self.head_dim, eps=rms_norm_eps, activation="sigmoid"
++        )
++        self.o_proj = RowParallelLinear(
++            projection_size,
++            self.hidden_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.o_proj",
++        )
++
++        compilation_config = get_current_vllm_config().compilation_config
++        if prefix in compilation_config.static_forward_context:
++            raise ValueError(f"Duplicate layer name: {prefix}")
++        compilation_config.static_forward_context[prefix] = self
++
++    def forward(
++        self,
++        hidden_states: torch.Tensor,
++        positions: torch.Tensor,
++        output: torch.Tensor,
++    ) -> None:
++        num_tokens = hidden_states.size(0)
++        q = self.q_proj(hidden_states)[0]
++        k = self.k_proj(hidden_states)[0]
++        v = self.v_proj(hidden_states)[0]
++
++        beta = self.b_proj(hidden_states)[0].float().sigmoid()
++        g1 = self.f_b_proj(self.f_a_proj(hidden_states)[0])[0]
++        g1 = fused_kda_gate(g1, self.A_log, self.head_dim, g_bias=self.dt_bias)
++        beta = beta.unsqueeze(0)
++        g1 = g1.unsqueeze(0)
++
++        g_proj_states = self.g_b_proj(self.g_a_proj(hidden_states)[0])[0]
++        g2 = rearrange(g_proj_states, "... (h d) -> ... h d", d=self.head_dim)
++
++        core_attn_out = torch.zeros(
++            (1, num_tokens, self.local_num_heads, self.head_dim),
++            dtype=hidden_states.dtype,
++            device=hidden_states.device,
++        )
++        torch.ops.vllm.kda_attention(
++            q,
++            k,
++            v,
++            g1,
++            beta,
++            core_attn_out,
++            self.prefix,
++        )
++        core_attn_out = self.o_norm(core_attn_out, g2)
++        core_attn_out = rearrange(core_attn_out, "1 n h d -> n (h d)")
++        output[:] = self.o_proj(core_attn_out)[0]
++
++    def _forward(
++        self,
++        q_proj_states: torch.Tensor,
++        k_proj_states: torch.Tensor,
++        v_proj_states: torch.Tensor,
++        g1: torch.Tensor,
++        beta: torch.Tensor,
++        core_attn_out: torch.Tensor,
++    ) -> None:
++        forward_context = get_forward_context()
++        attn_metadata: AttentionMetadata = forward_context.attn_metadata
++
++        if attn_metadata is None:
++            #     # V1 profile run
++            return
++
++        assert isinstance(attn_metadata, dict)
++        attn_metadata = attn_metadata[self.prefix]
++        assert isinstance(attn_metadata, GDNAttentionMetadata)
++        has_initial_state = attn_metadata.has_initial_state
++        non_spec_query_start_loc = attn_metadata.non_spec_query_start_loc
++        non_spec_state_indices_tensor = attn_metadata.non_spec_state_indices_tensor  # noqa: E501
++        num_actual_tokens = attn_metadata.num_actual_tokens
++        constant_caches = self.kv_cache[forward_context.virtual_engine]
++
++        q_proj_states = q_proj_states[:num_actual_tokens]
++        k_proj_states = k_proj_states[:num_actual_tokens]
++        v_proj_states = v_proj_states[:num_actual_tokens]
++        g1 = g1[:num_actual_tokens]
++        beta = beta[:num_actual_tokens]
++
++        (conv_state_q, conv_state_k, conv_state_v, recurrent_state) = constant_caches
++        # deal with strides
++        conv_state_q = conv_state_q.transpose(-1, -2)
++        conv_state_k = conv_state_k.transpose(-1, -2)
++        conv_state_v = conv_state_v.transpose(-1, -2)
++
++        q_conv_weights = self.q_conv1d.weight.view(
++            self.q_conv1d.weight.size(0), self.q_conv1d.weight.size(2)
++        )
++        k_conv_weights = self.k_conv1d.weight.view(
++            self.k_conv1d.weight.size(0), self.k_conv1d.weight.size(2)
++        )
++        v_conv_weights = self.v_conv1d.weight.view(
++            self.v_conv1d.weight.size(0), self.v_conv1d.weight.size(2)
++        )
++        if attn_metadata.num_prefills > 0:
++            q_proj_states = q_proj_states.transpose(0, 1)
++            k_proj_states = k_proj_states.transpose(0, 1)
++            v_proj_states = v_proj_states.transpose(0, 1)
++            q = causal_conv1d_fn(
++                q_proj_states,
++                q_conv_weights,
++                self.q_conv1d.bias,
++                activation="silu",
++                conv_states=conv_state_q,
++                has_initial_state=has_initial_state,
++                cache_indices=non_spec_state_indices_tensor,
++                query_start_loc=non_spec_query_start_loc,
++                metadata=attn_metadata,
++            ).transpose(0, 1)
++            k = causal_conv1d_fn(
++                k_proj_states,
++                k_conv_weights,
++                self.k_conv1d.bias,
++                activation="silu",
++                conv_states=conv_state_k,
++                has_initial_state=has_initial_state,
++                cache_indices=non_spec_state_indices_tensor,
++                query_start_loc=non_spec_query_start_loc,
++                metadata=attn_metadata,
++            ).transpose(0, 1)
++            v = causal_conv1d_fn(
++                v_proj_states,
++                v_conv_weights,
++                self.v_conv1d.bias,
++                activation="silu",
++                conv_states=conv_state_v,
++                has_initial_state=has_initial_state,
++                cache_indices=non_spec_state_indices_tensor,
++                query_start_loc=non_spec_query_start_loc,
++                metadata=attn_metadata,
++            ).transpose(0, 1)
++        else:
++            # Before the one-token kernels consume the slots, zero all three
++            # convolution histories and the recurrent state of live rows with
++            # no valid history (a recycled slot). Launched on every decode step,
++            # including graph capture; padding rows are never written.
++            assert has_initial_state is not None
++            reset_invalid_state_rows(
++                constant_caches, non_spec_state_indices_tensor, has_initial_state
++            )
++            decode_conv_indices = non_spec_state_indices_tensor[
++                : attn_metadata.num_actual_tokens
++            ]
++            q = causal_conv1d_update(
++                q_proj_states,
++                conv_state_q,
++                q_conv_weights,
++                self.q_conv1d.bias,
++                activation="silu",
++                conv_state_indices=decode_conv_indices,
++                validate_data=True,
++            )
++            k = causal_conv1d_update(
++                k_proj_states,
++                conv_state_k,
++                k_conv_weights,
++                self.k_conv1d.bias,
++                activation="silu",
++                conv_state_indices=decode_conv_indices,
++                validate_data=True,
++            )
++            v = causal_conv1d_update(
++                v_proj_states,
++                conv_state_v,
++                v_conv_weights,
++                self.v_conv1d.bias,
++                activation="silu",
++                conv_state_indices=decode_conv_indices,
++                validate_data=True,
++            )
++
++        q, k, v = map(
++            lambda x: rearrange(x, "n (h d) -> 1 n h d", d=self.head_dim), (q, k, v)
++        )
++
++        if attn_metadata.num_prefills > 0:
++            zero_idx = non_spec_state_indices_tensor[~has_initial_state]
++            recurrent_state[zero_idx] = 0
++            initial_state = recurrent_state[non_spec_state_indices_tensor].contiguous()
++            (
++                core_attn_out_non_spec,
++                last_recurrent_state,
++            ) = chunk_kda(
++                q=q,
++                k=k,
++                v=v,
++                g=g1,
++                beta=beta,
++                initial_state=initial_state,
++                output_final_state=True,
++                use_qk_l2norm_in_kernel=True,
++                cu_seqlens=non_spec_query_start_loc,
++            )
++            # Init cache
++            recurrent_state[non_spec_state_indices_tensor] = last_recurrent_state
++        else:
++            (
++                core_attn_out_non_spec,
++                last_recurrent_state,
++            ) = fused_recurrent_kda(
++                q=q,
++                k=k,
++                v=v,
++                g=g1,
++                beta=beta,
++                initial_state=recurrent_state,
++                use_qk_l2norm_in_kernel=True,
++                cu_seqlens=non_spec_query_start_loc[: attn_metadata.num_decodes + 1],
++                ssm_state_indices=non_spec_state_indices_tensor,
++            )
++        core_attn_out[0, :num_actual_tokens] = core_attn_out_non_spec[
++            0, :num_actual_tokens
++        ]
+diff --git a/vllm/model_executor/layers/mamba/abstract.py b/vllm/model_executor/layers/mamba/abstract.py
+index e68b09b4d81f52aac3ee73fc7809eed527c5b0f0..0c919e2ba499c1f27cfb78310ed43aeddee0afec 100644
+--- a/vllm/model_executor/layers/mamba/abstract.py
++++ b/vllm/model_executor/layers/mamba/abstract.py
+@@ -63,6 +63,7 @@ class MambaBase(AttentionLayerBase):
+             block_size=mamba_block_size,
+             page_size_padded=page_size_padded,
+             mamba_type=self.mamba_type,
++            mamba_cache_mode=vllm_config.cache_config.mamba_cache_mode,
+             num_speculative_blocks=(
+                 vllm_config.speculative_config.num_speculative_tokens
+                 if vllm_config.speculative_config
+diff --git a/vllm/model_executor/layers/mamba/mamba_utils.py b/vllm/model_executor/layers/mamba/mamba_utils.py
+index 91a45623582d54120c7ef4402a7b22f8879d137e..78fa8c044e491a2f3b536da5a76ea4926ab0e2b8 100644
+--- a/vllm/model_executor/layers/mamba/mamba_utils.py
++++ b/vllm/model_executor/layers/mamba/mamba_utils.py
+@@ -1,6 +1,10 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
+ 
++from collections.abc import Callable
++from dataclasses import dataclass
++from typing import TypeAlias
++
+ import torch
+ 
+ from vllm.config.cache import MambaDType
+@@ -80,6 +84,15 @@ class MambaStateDtypeCalculator:
+         state_dtype = get_kv_cache_torch_dtype(mamba_cache_dtype, model_dtype)
+         return (state_dtype, state_dtype)
+ 
++    @classmethod
++    def kda_state_dtype(
++        cls,
++        model_dtype: ModelDType | torch.dtype,
++        mamba_cache_dtype: MambaDType,
++    ):
++        state_dtype = get_kv_cache_torch_dtype(mamba_cache_dtype, model_dtype)
++        return (state_dtype, state_dtype, state_dtype, torch.float32)
++
+ 
+ class MambaStateShapeCalculator:
+     @classmethod
+@@ -182,3 +195,103 @@ class MambaStateShapeCalculator:
+             head_v_dim,
+         )
+         return conv_state_shape, temporal_state_shape
++
++    @classmethod
++    def kda_state_shape(
++        cls,
++        tp_world_size: int,
++        num_heads: int,
++        head_dim: int,
++        num_k_heads: int | None = None,
++        head_k_dim: int | None = None,
++        conv_kernel_size: int = 4,
++        num_spec: int = 0,
++    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int, int]]:
++        if num_k_heads is None:
++            num_k_heads = num_heads
++        if head_k_dim is None:
++            head_k_dim = head_dim
++
++        proj_size = num_heads * head_dim
++        proj_k_size = num_k_heads * head_k_dim
++
++        conv_state_shape = (divide(proj_size, tp_world_size), conv_kernel_size - 1)
++        conv_state_k_shape = (divide(proj_k_size, tp_world_size), conv_kernel_size - 1)
++        recurrent_state_shape = (divide(num_heads, tp_world_size), head_dim, head_dim)
++
++        conv_state_shape = conv_state_shape[1], conv_state_shape[0]
++        conv_state_k_shape = conv_state_k_shape[1], conv_state_k_shape[0]
++        return (
++            conv_state_shape,
++            conv_state_k_shape,
++            conv_state_k_shape,
++            recurrent_state_shape,
++        )
++
++
++@dataclass
++class MambaCopySpec:
++    """
++    Data class specifying the memory-copy parameters for Mamba states used for
++    prefix caching in align mode.
++
++    Attributes:
++        start_addr (int): Starting address for the memory copy operation.
++        num_elements (int): Number of elements to copy from the starting address.
++    """
++
++    start_addr: int
++    num_elements: int
++
++
++MambaStateCopyFunc: TypeAlias = Callable[
++    [torch.Tensor, list[int], int, int], MambaCopySpec
++]
++"""
++Type alias for a function that computes a MambaCopySpec for copying state slices.
++Parameters:
++  state: torch.Tensor - the Mamba state tensor (e.g., conv or temporal states).
++  block_ids: list[int] - the list of block indices for the state to copy.
++  cur_block_idx: int - current block index within `block_ids` to copy from.
++  num_accepted_tokens: int - number of accepted tokens used to compute the copy
++      offset; always 1 without speculative decoding.
++"""
++
++
++def get_conv_copy_spec(
++    state: torch.Tensor,
++    block_ids: list[int],
++    cur_block_idx: int,
++    num_accepted_tokens: int,
++) -> MambaCopySpec:
++    """Return a MambaCopySpec for copying a convolutional state slice."""
++    src_block_id = block_ids[cur_block_idx]
++    src_state = state[src_block_id, num_accepted_tokens - 1 :]
++    return MambaCopySpec(
++        start_addr=src_state.data_ptr(), num_elements=src_state.numel()
++    )
++
++
++def get_temporal_copy_spec(
++    state: torch.Tensor,
++    block_ids: list[int],
++    cur_block_idx: int,
++    num_accepted_tokens: int,
++) -> MambaCopySpec:
++    """Return a MambaCopySpec for copying a temporal state slice."""
++    src_block_id = block_ids[cur_block_idx + num_accepted_tokens - 1]
++    src_state = state[src_block_id]
++    return MambaCopySpec(
++        start_addr=src_state.data_ptr(), num_elements=src_state.numel()
++    )
++
++
++class MambaStateCopyFuncCalculator:
++    @classmethod
++    def kda_state_copy_func(cls):
++        return (
++            get_conv_copy_spec,
++            get_conv_copy_spec,
++            get_conv_copy_spec,
++            get_temporal_copy_spec,
++        )
+diff --git a/vllm/model_executor/layers/mamba/ops/state_reset.py b/vllm/model_executor/layers/mamba/ops/state_reset.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..1babb2d992d3cf9d7bebfb56e46d61acb3fbbe4c
+--- /dev/null
++++ b/vllm/model_executor/layers/mamba/ops/state_reset.py
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""Graph-safe reset of recycled per-slot recurrent state.
++
++A state slot is recycled between requests. A row whose request has no valid
++history (no computed or restored tokens) must not consume the previous owner's
++convolution history or recurrent state. Prefill kernels handle this through
++``has_initial_state``; one-token decode kernels read the slot unconditionally.
++This kernel zeroes, inside the same (possibly captured) computation, every state
++component of such rows before the decode kernels consume them. It is launched
++unconditionally, and the per-row decision is read from device tensors, so a CUDA
++graph replay refreshes it from the staged metadata.
++"""
++
++import torch
++
++from vllm.attention.backends.utils import PAD_SLOT_ID
++from vllm.triton_utils import tl, triton
++
++
++@triton.jit
++def _zero_slot_region(base_ptr, slot, slot_stride, numel, BLOCK: tl.constexpr):
++    offs = tl.arange(0, BLOCK)
++    row_ptr = base_ptr + slot * slot_stride
++    zeros = tl.zeros([BLOCK], dtype=base_ptr.dtype.element_ty)
++    for start in range(0, numel, BLOCK):
++        idx = start + offs
++        tl.store(row_ptr + idx, zeros, mask=idx < numel)
++
++
++@triton.jit
++def _reset_invalid_state_rows_kernel(
++    state_indices_ptr,
++    valid_ptr,
++    s0_ptr,
++    s1_ptr,
++    s2_ptr,
++    s3_ptr,
++    s0_stride,
++    s1_stride,
++    s2_stride,
++    s3_stride,
++    s0_numel,
++    s1_numel,
++    s2_numel,
++    s3_numel,
++    pad_slot_id: tl.constexpr,
++    NUM_STATES: tl.constexpr,
++    BLOCK: tl.constexpr,
++):
++    row = tl.program_id(0)
++    slot = tl.load(state_indices_ptr + row).to(tl.int64)
++    # Inactive rows are masked before any destination address is formed: a
++    # padding sentinel is never mapped onto a real slot.
++    if (slot == pad_slot_id) | (slot < 0):
++        return
++    valid = tl.load(valid_ptr + row)
++    if valid:
++        return
++    _zero_slot_region(s0_ptr, slot, s0_stride, s0_numel, BLOCK)
++    if NUM_STATES > 1:
++        _zero_slot_region(s1_ptr, slot, s1_stride, s1_numel, BLOCK)
++    if NUM_STATES > 2:
++        _zero_slot_region(s2_ptr, slot, s2_stride, s2_numel, BLOCK)
++    if NUM_STATES > 3:
++        _zero_slot_region(s3_ptr, slot, s3_stride, s3_numel, BLOCK)
++
++
++def reset_invalid_state_rows(
++    state_tensors: tuple[torch.Tensor, ...] | list[torch.Tensor],
++    state_indices: torch.Tensor,
++    has_valid_state: torch.Tensor,
++    pad_slot_id: int = PAD_SLOT_ID,
++) -> None:
++    """Zero every state component of rows whose state is not valid.
++
++    Args:
++        state_tensors: up to four per-layer state tensors indexed by slot along
++            dim 0, each contiguous within a slot (the allocator's page layout:
++            ``stride(0)`` may exceed the slot's element count). Pass the
++            untransposed cache tensors.
++        state_indices: (rows,) slot index per row; ``pad_slot_id`` (or any
++            negative value) marks an inactive row, which is never written.
++        has_valid_state: (rows,) bool; True keeps the row's state unchanged.
++    """
++    assert 1 <= len(state_tensors) <= 4
++    assert state_indices.dim() == 1 and has_valid_state.dim() == 1
++    assert state_indices.shape[0] == has_valid_state.shape[0]
++    assert has_valid_state.dtype == torch.bool
++    rows = state_indices.shape[0]
++    if rows == 0:
++        return
++    ptrs, strides, numels = [], [], []
++    for t in state_tensors:
++        inner = t[0]
++        assert inner.is_contiguous(), "state must be contiguous within a slot"
++        ptrs.append(t)
++        strides.append(t.stride(0))
++        numels.append(inner.numel())
++    num_states = len(ptrs)
++    while len(ptrs) < 4:
++        ptrs.append(ptrs[0])
++        strides.append(strides[0])
++        numels.append(0)
++    _reset_invalid_state_rows_kernel[(rows,)](
++        state_indices,
++        has_valid_state,
++        ptrs[0],
++        ptrs[1],
++        ptrs[2],
++        ptrs[3],
++        strides[0],
++        strides[1],
++        strides[2],
++        strides[3],
++        numels[0],
++        numels[1],
++        numels[2],
++        numels[3],
++        pad_slot_id=pad_slot_id,
++        NUM_STATES=num_states,
++        BLOCK=1024,
++        num_warps=4,
++    )
+diff --git a/vllm/model_executor/layers/mla.py b/vllm/model_executor/layers/mla.py
+index 34f05f2ee96240a1c8bb3c3085ce5ff8acf2f820..c4c44b83ae6bf909291fbf058302aca229317485 100644
+--- a/vllm/model_executor/layers/mla.py
++++ b/vllm/model_executor/layers/mla.py
+@@ -147,9 +147,10 @@ class MultiHeadLatentAttentionWrapper(CustomOp):
+         # Add head dim of 1 to k_pe
+         k_pe = k_pe.unsqueeze(1)
+ 
+-        q[..., self.qk_nope_head_dim :], k_pe = self.rotary_emb(
+-            positions, q[..., self.qk_nope_head_dim :], k_pe
+-        )
++        if self.rotary_emb is not None:
++            q[..., self.qk_nope_head_dim :], k_pe = self.rotary_emb(
++                positions, q[..., self.qk_nope_head_dim :], k_pe
++            )
+ 
+         if self.indexer and self.is_sparse:
+             _topk_indices = self.indexer(hidden_states, q_c, positions, self.rotary_emb)
+diff --git a/vllm/model_executor/models/config.py b/vllm/model_executor/models/config.py
+index 3bd02121f018e6093a463fb9da51cbf476c84627..2ec9d0b55a8f3c12714a4f40b9336a0e5ecb4b8a 100644
+--- a/vllm/model_executor/models/config.py
++++ b/vllm/model_executor/models/config.py
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
+ from copy import deepcopy
++from math import lcm
+ from typing import TYPE_CHECKING
+ 
+ import vllm.envs as envs
+@@ -8,7 +9,7 @@ from vllm.logger import init_logger
+ from vllm.model_executor.models import ModelRegistry
+ from vllm.utils.math_utils import cdiv, round_up
+ from vllm.utils.torch_utils import STR_DTYPE_TO_TORCH_DTYPE
+-from vllm.v1.kv_cache_interface import FullAttentionSpec, MambaSpec
++from vllm.v1.kv_cache_interface import FullAttentionSpec, MambaSpec, MLAAttentionSpec
+ 
+ if TYPE_CHECKING:
+     from vllm.config import VllmConfig
+@@ -274,6 +275,17 @@ class GptOssForCausalLMConfig(VerifyAndUpdateConfig):
+             )
+ 
+ 
++def _supports_mamba_align_caching(model_config) -> bool:
++    """Whether the model supplies the Mamba state-copy functions that the
++    'align' cache mode needs to copy a checkpoint into the next writable
++    block."""
++    model_cls, _ = ModelRegistry.resolve_model_cls(
++        model_config.architecture,
++        model_config=model_config,
++    )
++    return callable(getattr(model_cls, "get_mamba_state_copy_func", None))
++
++
+ class MambaModelConfig(VerifyAndUpdateConfig):
+     @classmethod
+     def verify_and_update_config(cls, vllm_config: "VllmConfig") -> None:
+@@ -296,11 +308,30 @@ class MambaModelConfig(VerifyAndUpdateConfig):
+ 
+         if cache_config.enable_prefix_caching:
+             if model_config.supports_mamba_prefix_caching:
++                cache_config.mamba_cache_mode = "all"
+                 logger.info(
+                     "Warning: Prefix caching is currently enabled. "
+                     "Its support for Mamba2 layers is experimental. "
+                     "Please report any issues you may observe."
+                 )
++            elif _supports_mamba_align_caching(model_config):
++                # Cache the state only at block-aligned ends of scheduler steps.
++                # Selected only for models that supply the state-copy functions;
++                # other models without prefix-caching support are unchanged.
++                cache_config.mamba_cache_mode = "align"
++                assert vllm_config.scheduler_config.enable_chunked_prefill, (
++                    "Chunked prefill is required for mamba cache mode 'align'."
++                )
++                assert not vllm_config.speculative_config, (
++                    "Mamba cache mode 'align' is currently not compatible "
++                    "with speculative decoding."
++                )
++                logger.info(
++                    "Warning: Prefix caching in Mamba cache 'align' "
++                    "mode is currently enabled. "
++                    "Its support for Mamba layers is experimental. "
++                    "Please report any issues you may observe."
++                )
+             else:
+                 logger.info(
+                     "Hybrid or mamba-based model detected without "
+@@ -347,12 +378,28 @@ class HybridAttentionMambaModelConfig(VerifyAndUpdateConfig):
+             kv_cache_dtype = STR_DTYPE_TO_TORCH_DTYPE[cache_config.cache_dtype]
+ 
+         # get attention page size (for 1 token)
+-        attn_page_size_1_token = FullAttentionSpec(
+-            block_size=1,
+-            num_kv_heads=model_config.get_num_kv_heads(parallel_config),
+-            head_size=model_config.get_head_size(),
+-            dtype=kv_cache_dtype,
+-        ).page_size_bytes
++        # Attention backend constraints:
++        # - FlashAttention (FA) requires block size to be multiple of 16
++        # - MLA (Multi-head Latent Attention) requires larger alignment:
++        #   * CUTLASS_MLA backend: kernel_block_size 128 alignment
++        #   * Other MLA backends: kernel_block_size 64 alignment
++        if model_config.use_mla:
++            use_cutlass_mla = envs.VLLM_ATTENTION_BACKEND == "CUTLASS_MLA"
++            kernel_block_alignment_size = 128 if use_cutlass_mla else 64
++            attn_page_size_1_token = MLAAttentionSpec(
++                block_size=1,
++                num_kv_heads=model_config.get_num_kv_heads(parallel_config),
++                head_size=model_config.get_head_size(),
++                dtype=kv_cache_dtype,
++            ).page_size_bytes
++        else:
++            kernel_block_alignment_size = 16
++            attn_page_size_1_token = FullAttentionSpec(
++                block_size=1,
++                num_kv_heads=model_config.get_num_kv_heads(parallel_config),
++                head_size=model_config.get_head_size(),
++                dtype=kv_cache_dtype,
++            ).page_size_bytes
+ 
+         model_cls, _ = ModelRegistry.resolve_model_cls(
+             model_config.architecture,
+@@ -372,18 +419,7 @@ class HybridAttentionMambaModelConfig(VerifyAndUpdateConfig):
+         if mamba_page_size == 0:
+             return
+ 
+-        # Attention backend constraints:
+-        # - FlashAttention (FA) requires block size to be multiple of 16
+-        # - MLA (Multi-head Latent Attention) requires larger alignment:
+-        #   * CUTLASS_MLA backend: 128-byte alignment
+-        #   * Other MLA backends: 64-byte alignment
+-        if model_config.use_mla:
+-            use_cutlass_mla = envs.VLLM_ATTENTION_BACKEND == "CUTLASS_MLA"
+-            kernel_block_alignment_size = 128 if use_cutlass_mla else 64
+-        else:
+-            kernel_block_alignment_size = 16
+-
+-        if cache_config.enable_prefix_caching:
++        if cache_config.mamba_cache_mode == "all":
+             # With prefix caching, select attention block size to
+             # optimize for mamba kernel performance
+ 
+@@ -400,15 +436,8 @@ class HybridAttentionMambaModelConfig(VerifyAndUpdateConfig):
+             # easily by changing the way we layout chunks in the
+             # mamba2 kernels.
+ 
+-            from math import gcd
+-
+-            def lcm(a, b):
+-                return a * b // gcd(a, b)
+-
+-            base_chunk_size = mamba_block_size or model_config.get_mamba_chunk_size()
+-
++            base_chunk_size = model_config.get_mamba_chunk_size()
+             attn_tokens_per_mamba_state = cdiv(mamba_page_size, attn_page_size_1_token)
+-
+             chunk_size = lcm(base_chunk_size, kernel_block_alignment_size)
+             attn_block_size = chunk_size * cdiv(attn_tokens_per_mamba_state, chunk_size)
+             cache_config.mamba_block_size = attn_block_size
+@@ -434,6 +463,13 @@ class HybridAttentionMambaModelConfig(VerifyAndUpdateConfig):
+                 attn_block_size,
+             )
+ 
++        # By default, mamba block size will be set to max_model_len.
++        # When enabling prefix caching and using align mamba cache
++        # mode, we align mamba block size to the block size as the
++        # basic granularity for prefix caching.
++        if cache_config.mamba_cache_mode == "align":
++            cache_config.mamba_block_size = cache_config.block_size
++
+         # compute new attention page size
+         attn_page_size = cache_config.block_size * attn_page_size_1_token
+ 
+diff --git a/vllm/model_executor/models/kimi_linear.py b/vllm/model_executor/models/kimi_linear.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..70783075b032d8a61e4c18520ddfe3498b2e7462
+--- /dev/null
++++ b/vllm/model_executor/models/kimi_linear.py
+@@ -0,0 +1,673 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++from collections.abc import Iterable
++from typing import Any
++
++import torch
++from torch import nn
++
++from vllm.compilation.decorators import support_torch_compile
++from vllm.config import CacheConfig, ModelConfig, ParallelConfig, VllmConfig
++from vllm.distributed import (
++    get_pp_group,
++    get_tensor_model_parallel_world_size,
++    tensor_model_parallel_all_reduce,
++)
++from vllm.logger import init_logger
++from vllm.model_executor.layers.activation import SiluAndMul
++from vllm.model_executor.layers.fused_moe import FusedMoE
++from vllm.model_executor.layers.kda import KimiDeltaAttention
++from vllm.model_executor.layers.layernorm import RMSNorm
++from vllm.model_executor.layers.linear import (
++    ColumnParallelLinear,
++    MergedColumnParallelLinear,
++    QKVParallelLinear,
++    ReplicatedLinear,
++    RowParallelLinear,
++)
++from vllm.model_executor.layers.logits_processor import LogitsProcessor
++from vllm.model_executor.layers.mamba.mamba_utils import (
++    MambaStateCopyFunc,
++    MambaStateCopyFuncCalculator,
++    MambaStateDtypeCalculator,
++    MambaStateShapeCalculator,
++)
++from vllm.model_executor.layers.mla import MLAModules, MultiHeadLatentAttentionWrapper
++from vllm.model_executor.layers.quantization.base_config import QuantizationConfig
++from vllm.model_executor.layers.vocab_parallel_embedding import (
++    ParallelLMHead,
++    VocabParallelEmbedding,
++)
++from vllm.model_executor.model_loader.weight_utils import (
++    default_weight_loader,
++    maybe_remap_kv_scale_name,
++)
++from vllm.sequence import IntermediateTensors
++from vllm.transformers_utils.configs.kimi_linear import KimiLinearConfig
++
++from .interfaces import HasInnerState, IsHybrid, MixtureOfExperts, SupportsPP
++from .utils import (
++    PPMissingLayer,
++    is_pp_missing_parameter,
++    make_layers,
++    maybe_prefix,
++)
++
++logger = init_logger(__name__)
++
++
++class KimiMLP(nn.Module):
++    def __init__(
++        self,
++        hidden_size: int,
++        intermediate_size: int,
++        hidden_act: str,
++        quant_config: QKVParallelLinear | None = None,
++        reduce_results: bool = True,
++        prefix: str = "",
++    ) -> None:
++        super().__init__()
++
++        self.gate_up_proj = MergedColumnParallelLinear(
++            hidden_size,
++            [intermediate_size] * 2,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.gate_up_proj",
++        )
++        self.down_proj = RowParallelLinear(
++            intermediate_size,
++            hidden_size,
++            bias=False,
++            quant_config=quant_config,
++            reduce_results=reduce_results,
++            prefix=f"{prefix}.down_proj",
++        )
++        if hidden_act != "silu":
++            raise ValueError(
++                f"Unsupported activation: {hidden_act}. Only silu is supported for now."
++            )
++        self.act_fn = SiluAndMul()
++
++    def forward(self, x):
++        gate_up, _ = self.gate_up_proj(x)
++        x = self.act_fn(gate_up)
++        x, _ = self.down_proj(x)
++        return x
++
++
++class KimiMoE(nn.Module):
++    def __init__(
++        self,
++        config: KimiLinearConfig,
++        quant_config: QuantizationConfig | None = None,
++        prefix: str = "",
++        layer_idx: int = 0,
++    ):
++        super().__init__()
++        hidden_size = config.hidden_size
++        intermediate_size = config.intermediate_size
++        moe_intermediate_size = config.moe_intermediate_size
++        num_experts = config.num_experts
++        moe_renormalize = config.moe_renormalize
++        self.tp_size = get_tensor_model_parallel_world_size()
++        self.routed_scaling_factor = config.routed_scaling_factor
++        self.num_shared_experts = config.num_shared_experts
++        self.layer_idx = layer_idx
++
++        if config.hidden_act != "silu":
++            raise ValueError(
++                f"Unsupported activation: {config.hidden_act}. "
++                "Only silu is supported for now."
++            )
++
++        # Gate always runs at half / full precision for now.
++        self.gate = ReplicatedLinear(
++            hidden_size,
++            num_experts,
++            bias=False,
++            quant_config=None,
++            prefix=f"{prefix}.gate",
++        )
++
++        self.gate.e_score_correction_bias = nn.Parameter(torch.empty(num_experts))
++
++        self.experts = FusedMoE(
++            num_experts=num_experts,
++            top_k=config.num_experts_per_token,
++            hidden_size=hidden_size,
++            intermediate_size=moe_intermediate_size,
++            reduce_results=False,
++            renormalize=moe_renormalize,
++            quant_config=quant_config,
++            use_grouped_topk=config.use_grouped_topk,
++            num_expert_group=config.num_expert_group,
++            topk_group=config.topk_group,
++            prefix=f"{prefix}.experts",
++            scoring_func=config.moe_router_activation_func,
++            e_score_correction_bias=self.gate.e_score_correction_bias,
++        )
++
++        if self.num_shared_experts is not None:
++            intermediate_size = moe_intermediate_size * self.num_shared_experts
++            self.shared_experts = KimiMLP(
++                hidden_size=config.hidden_size,
++                intermediate_size=intermediate_size,
++                hidden_act=config.hidden_act,
++                quant_config=quant_config,
++                reduce_results=False,
++            )
++
++    def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
++        num_tokens, hidden_size = hidden_states.shape
++        hidden_states = hidden_states.view(-1, hidden_size)
++        if self.num_shared_experts is not None:
++            shared_output = self.shared_experts(hidden_states)
++        router_logits, _ = self.gate(hidden_states)
++        final_hidden_states = (
++            self.experts(hidden_states=hidden_states, router_logits=router_logits)
++            * self.routed_scaling_factor
++        )
++        if shared_output is not None:
++            final_hidden_states = final_hidden_states + shared_output
++
++        if self.tp_size > 1:
++            final_hidden_states = tensor_model_parallel_all_reduce(final_hidden_states)
++        return final_hidden_states.view(num_tokens, hidden_size)
++
++
++class KimiMLAAttention(nn.Module):
++    """
++    Main reference: DeepseekV2 vllm Implementation
++    """
++
++    def __init__(
++        self,
++        config: KimiLinearConfig,
++        hidden_size: int,
++        num_heads: int,
++        qk_nope_head_dim: int,
++        qk_rope_head_dim: int,
++        v_head_dim: int,
++        q_lora_rank: int | None,
++        kv_lora_rank: int,
++        rope_theta: float = 10000,
++        use_nope: bool = False,
++        rope_scaling: dict[str, Any] | None = None,
++        cache_config: CacheConfig | None = None,
++        quant_config: QuantizationConfig | None = None,
++        prefix: str = "",
++        **kwargs,
++    ) -> None:
++        super().__init__()
++        self.hidden_size = hidden_size
++        self.qk_nope_head_dim = qk_nope_head_dim
++        self.qk_rope_head_dim = qk_rope_head_dim
++        self.qk_head_dim = qk_nope_head_dim + qk_rope_head_dim
++        self.v_head_dim = v_head_dim
++        self.q_lora_rank = q_lora_rank
++        self.kv_lora_rank = kv_lora_rank
++        self.num_heads = num_heads
++        tp_size = get_tensor_model_parallel_world_size()
++        self.num_local_heads = num_heads // tp_size
++        self.scaling = self.qk_head_dim**-0.5
++        self.rope_theta = rope_theta
++        self.use_nope = use_nope
++        assert self.use_nope is True
++        assert self.q_lora_rank is None
++        assert rope_scaling is None
++        assert num_heads % tp_size == 0
++        self.kv_a_proj_with_mqa = ReplicatedLinear(
++            self.hidden_size,
++            self.kv_lora_rank + self.qk_rope_head_dim,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.kv_a_proj_with_mqa",
++        )
++        self.q_proj = ColumnParallelLinear(
++            self.hidden_size,
++            self.num_heads * self.qk_head_dim,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.q_proj",
++        )
++        self.kv_a_layernorm = RMSNorm(
++            self.kv_lora_rank,
++            eps=config.rms_norm_eps,
++        )
++        self.kv_b_proj = ColumnParallelLinear(
++            self.kv_lora_rank,
++            self.num_heads * (self.qk_nope_head_dim + self.v_head_dim),
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.kv_b_proj",
++        )
++        self.o_proj = RowParallelLinear(
++            self.num_heads * self.v_head_dim,
++            self.hidden_size,
++            bias=False,
++            quant_config=quant_config,
++            prefix=f"{prefix}.o_proj",
++        )
++
++        mla_modules = MLAModules(
++            kv_a_layernorm=self.kv_a_layernorm,
++            kv_b_proj=self.kv_b_proj,
++            rotary_emb=None,
++            o_proj=self.o_proj,
++            fused_qkv_a_proj=None,
++            kv_a_proj_with_mqa=self.kv_a_proj_with_mqa,
++            q_a_layernorm=None,
++            q_b_proj=None,
++            q_proj=self.q_proj,
++            indexer=None,
++            is_sparse=False,
++            topk_indices_buffer=None,
++        )
++        self.mla_attn = MultiHeadLatentAttentionWrapper(
++            self.hidden_size,
++            self.num_local_heads,
++            self.scaling,
++            self.qk_nope_head_dim,
++            self.qk_rope_head_dim,
++            self.v_head_dim,
++            self.q_lora_rank,
++            self.kv_lora_rank,
++            mla_modules,
++            cache_config,
++            quant_config,
++            prefix,
++        )
++
++    def forward(
++        self,
++        positions: torch.Tensor,
++        hidden_states: torch.Tensor,
++        output: torch.Tensor,
++    ) -> None:
++        output[:] = self.mla_attn(positions, hidden_states)
++
++
++class KimiDecoderLayer(nn.Module):
++    def __init__(
++        self,
++        config: KimiLinearConfig,
++        layer_idx: int,
++        cache_config: CacheConfig | None = None,
++        quant_config: QuantizationConfig | None = None,
++        parallel_config: ParallelConfig | None = None,
++        model_config: ModelConfig | None = None,
++        prefix: str = "",
++        **kwargs,
++    ) -> None:
++        super().__init__()
++        self.hidden_size = config.hidden_size
++
++        self.is_moe = config.is_moe
++
++        if config.is_kda_layer(layer_idx):
++            self.self_attn = KimiDeltaAttention(
++                layer_idx=layer_idx,
++                hidden_size=config.hidden_size,
++                quant_config=quant_config,
++                cache_config=cache_config,
++                model_config=config,
++                prefix=f"{prefix}.self_attn",
++            )
++        else:
++            self.self_attn = KimiMLAAttention(
++                layer_idx=layer_idx,
++                hidden_size=self.hidden_size,
++                num_heads=config.num_attention_heads,
++                quant_config=quant_config,
++                cache_config=cache_config,
++                model_config=model_config,
++                prefix=f"{prefix}.self_attn",
++                config=config,
++                qk_nope_head_dim=config.qk_nope_head_dim,
++                qk_rope_head_dim=config.qk_rope_head_dim,
++                v_head_dim=config.v_head_dim,
++                q_lora_rank=config.q_lora_rank,
++                kv_lora_rank=config.kv_lora_rank,
++                use_nope=config.mla_use_nope,
++            )
++
++        if (
++            self.is_moe
++            and config.num_experts is not None
++            and layer_idx >= config.first_k_dense_replace
++            and layer_idx % config.moe_layer_freq == 0
++        ):
++            self.block_sparse_moe = KimiMoE(
++                config=config,
++                quant_config=quant_config,
++                prefix=f"{prefix}.mlp",
++            )
++            self.mlp = self.block_sparse_moe
++        else:
++            self.mlp = KimiMLP(
++                hidden_size=self.hidden_size,
++                intermediate_size=config.intermediate_size,
++                hidden_act=config.hidden_act,
++                quant_config=quant_config,
++                prefix=f"{prefix}.mlp",
++            )
++        self.input_layernorm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
++        self.post_attention_layernorm = RMSNorm(
++            config.hidden_size, eps=config.rms_norm_eps
++        )
++
++    def forward(
++        self,
++        positions: torch.Tensor,
++        hidden_states: torch.Tensor,
++        residual: torch.Tensor | None,
++        **kwargs,
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        # Self Attention
++        if residual is None:
++            residual = hidden_states
++            hidden_states = self.input_layernorm(hidden_states)
++        else:
++            hidden_states, residual = self.input_layernorm(hidden_states, residual)
++
++        attn_output = torch.empty_like(hidden_states)
++        self.self_attn(
++            hidden_states=hidden_states,
++            positions=positions,
++            output=attn_output,
++        )
++        hidden_states = attn_output
++
++        # Fully Connected
++        hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
++        hidden_states = self.mlp(hidden_states)
++        return hidden_states, residual
++
++
++@support_torch_compile
++class KimiLinearModel(nn.Module):
++    def __init__(self, *, vllm_config: VllmConfig, prefix: str = ""):
++        super().__init__()
++
++        config = vllm_config.model_config.hf_text_config
++        model_config = vllm_config.model_config
++        cache_config = vllm_config.cache_config
++        quant_config = vllm_config.quant_config
++        parallel_config = vllm_config.parallel_config
++        self.config = config
++
++        self.padding_idx = config.pad_token_id
++        self.vocab_size = config.vocab_size
++
++        if get_pp_group().is_first_rank:
++            self.embed_tokens = VocabParallelEmbedding(
++                config.vocab_size,
++                config.hidden_size,
++                prefix=f"{prefix}.embed_tokens",
++            )
++        else:
++            self.embed_tokens = PPMissingLayer()
++
++        extra_kwargs = {}
++
++        def get_layer(prefix: str):
++            layer_idx = int(prefix.rsplit(".", 1)[1])
++            return KimiDecoderLayer(
++                config,
++                layer_idx,
++                cache_config,
++                quant_config,
++                parallel_config,
++                model_config,
++                prefix,
++                **extra_kwargs,
++            )
++
++        self.start_layer, self.end_layer, self.layers = make_layers(
++            config.num_hidden_layers,
++            get_layer,
++            prefix=f"{prefix}.layers",
++        )
++
++        if get_pp_group().is_last_rank:
++            self.norm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
++        else:
++            self.norm = PPMissingLayer()
++
++        world_size = get_tensor_model_parallel_world_size()
++        assert config.num_attention_heads % world_size == 0, (
++            "num_attention_heads must be divisible by world_size"
++        )
++
++    def get_input_embeddings(self, input_ids: torch.Tensor) -> torch.Tensor:
++        return self.embed_tokens(input_ids)
++
++    def forward(
++        self,
++        input_ids: torch.Tensor | None,
++        positions: torch.Tensor,
++        intermediate_tensors: IntermediateTensors | None,
++        inputs_embeds: torch.Tensor | None = None,
++        **kwargs,
++    ) -> torch.Tensor:
++        if get_pp_group().is_first_rank:
++            if inputs_embeds is not None:
++                hidden_states = inputs_embeds
++            else:
++                hidden_states = self.get_input_embeddings(input_ids)
++            residual = None
++        else:
++            assert intermediate_tensors is not None
++            hidden_states = intermediate_tensors["hidden_states"]
++            residual = intermediate_tensors["residual"]
++
++        for _, layer in enumerate(self.layers[self.start_layer : self.end_layer]):
++            hidden_states, residual = layer(
++                positions=positions,
++                hidden_states=hidden_states,
++                residual=residual,
++            )
++
++        if not get_pp_group().is_last_rank:
++            return IntermediateTensors(
++                {"hidden_states": hidden_states, "residual": residual}
++            )
++
++        hidden_states, _ = self.norm(hidden_states, residual)
++        return hidden_states
++
++
++class KimiLinearForCausalLM(
++    nn.Module, HasInnerState, SupportsPP, MixtureOfExperts, IsHybrid
++):
++    def __init__(self, *, vllm_config: VllmConfig, prefix: str = ""):
++        super().__init__()
++        self.model_config = vllm_config.model_config
++        self.vllm_config = vllm_config
++        self.config = self.model_config.hf_config
++        quant_config = vllm_config.quant_config
++        self.quant_config = quant_config
++        self.model = KimiLinearModel(
++            vllm_config=vllm_config, prefix=maybe_prefix(prefix, "model")
++        )
++        if get_pp_group().is_last_rank:
++            self.lm_head = ParallelLMHead(
++                self.config.vocab_size,
++                self.config.hidden_size,
++                quant_config=quant_config,
++                prefix=maybe_prefix(prefix, "lm_head"),
++            )
++        else:
++            self.lm_head = PPMissingLayer()
++        logit_scale = getattr(self.config, "logit_scale", 1.0)
++        self.logits_processor = LogitsProcessor(
++            self.config.vocab_size, scale=logit_scale
++        )
++
++    def get_input_embeddings(self, input_ids: torch.Tensor) -> torch.Tensor:
++        return self.model.get_input_embeddings(input_ids)
++
++    def forward(
++        self,
++        input_ids: torch.Tensor,
++        positions: torch.Tensor,
++        intermediate_tensors: IntermediateTensors | None = None,
++        inputs_embeds: torch.Tensor | None = None,
++        **kwargs,
++    ) -> torch.Tensor | IntermediateTensors:
++        hidden_states = self.model(
++            input_ids, positions, intermediate_tensors, inputs_embeds, **kwargs
++        )
++        return hidden_states
++
++    @classmethod
++    def get_mamba_state_dtype_from_config(
++        cls,
++        vllm_config: "VllmConfig",
++    ) -> tuple[torch.dtype, torch.dtype, torch.dtype, torch.dtype]:
++        return MambaStateDtypeCalculator.kda_state_dtype(
++            vllm_config.model_config.dtype, vllm_config.cache_config.mamba_cache_dtype
++        )
++
++    @classmethod
++    def get_mamba_state_shape_from_config(
++        cls, vllm_config: "VllmConfig"
++    ) -> tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...], tuple[int, ...]]:
++        parallel_config = vllm_config.parallel_config
++        hf_config = vllm_config.model_config.hf_config
++        tp_size = parallel_config.tensor_parallel_size
++        num_spec = (
++            vllm_config.speculative_config.num_speculative_tokens
++            if vllm_config.speculative_config
++            else 0
++        )
++        return MambaStateShapeCalculator.kda_state_shape(
++            tp_size,
++            hf_config.linear_attn_config["num_heads"],
++            hf_config.linear_attn_config["head_dim"],
++            conv_kernel_size=hf_config.linear_attn_config["short_conv_kernel_size"],
++            num_spec=num_spec,
++        )
++
++    @classmethod
++    def get_mamba_state_copy_func(
++        cls,
++    ) -> tuple[
++        MambaStateCopyFunc, MambaStateCopyFunc, MambaStateCopyFunc, MambaStateCopyFunc
++    ]:
++        return MambaStateCopyFuncCalculator.kda_state_copy_func()
++
++    def compute_logits(
++        self,
++        hidden_states: torch.Tensor,
++    ) -> torch.Tensor | None:
++        return self.logits_processor(self.lm_head, hidden_states)
++
++    def load_weights(self, weights: Iterable[tuple[str, torch.Tensor]]):
++        stacked_params_mapping = [
++            # (param_name, shard_name, shard_id)
++            (".gate_up_proj", ".gate_proj", 0),
++            (".gate_up_proj", ".up_proj", 1),
++        ]
++        if self.config.is_moe:
++            # Params for weights, fp8 weight scales, fp8 activation scales
++            # (param_name, weight_name, expert_id, shard_id)
++            expert_params_mapping = FusedMoE.make_expert_params_mapping(
++                ckpt_gate_proj_name="w1",
++                ckpt_down_proj_name="w2",
++                ckpt_up_proj_name="w3",
++                num_experts=self.config.num_experts,
++            )
++        else:
++            expert_params_mapping = []
++        params_dict = dict(self.named_parameters())
++        loaded_params: set[str] = set()
++        for args in weights:
++            name, loaded_weight = args[:2]
++            kwargs = args[2] if len(args) > 2 else {}
++            if "rotary_emb.inv_freq" in name:
++                continue
++
++            spec_layer = get_spec_layer_idx_from_weight_name(self.config, name)
++            if spec_layer is not None:
++                continue  # skip spec decode layers for main model
++            if "rotary_emb.cos_cached" in name or "rotary_emb.sin_cached" in name:
++                # Models trained using ColossalAI may include these tensors in
++                # the checkpoint. Skip them.
++                continue
++            for param_name, weight_name, shard_id in stacked_params_mapping:
++                if weight_name not in name:
++                    continue
++                # We have mlp.experts[0].gate_proj in the checkpoint.
++                # Since we handle the experts below in expert_params_mapping,
++                # we need to skip here BEFORE we update the name, otherwise
++                # name will be updated to mlp.experts[0].gate_up_proj, which
++                # will then be updated below in expert_params_mapping
++                # for mlp.experts[0].gate_gate_up_proj, which breaks load.
++                if ("mlp.experts." in name) and name not in params_dict:
++                    continue
++                name = name.replace(weight_name, param_name)
++                # Skip loading extra bias for GPTQ models.
++                if name.endswith(".bias") and name not in params_dict:
++                    continue
++                if is_pp_missing_parameter(name, self):
++                    continue
++                param = params_dict[name]
++                weight_loader = param.weight_loader
++                weight_loader(param, loaded_weight, shard_id)
++                break
++            else:
++                for idx, (param_name, weight_name, expert_id, shard_id) in enumerate(
++                    expert_params_mapping
++                ):
++                    if weight_name not in name:
++                        continue
++                    name = name.replace(weight_name, param_name)
++                    if is_pp_missing_parameter(name, self):
++                        continue
++                    param = params_dict[name]
++                    weight_loader = param.weight_loader
++                    weight_loader(
++                        param,
++                        loaded_weight,
++                        name,
++                        expert_id=expert_id,
++                        shard_id=shard_id,
++                    )
++                    break
++                else:
++                    # Skip loading extra bias for GPTQ models.
++                    if (
++                        name.endswith(".bias")
++                        and name not in params_dict
++                        and not self.config.is_linear_attn
++                    ):  # noqa: E501
++                        continue
++                    # Remapping the name of FP8 kv-scale.
++                    name = maybe_remap_kv_scale_name(name, params_dict)
++                    if name is None:
++                        continue
++                    if is_pp_missing_parameter(name, self):
++                        continue
++
++                    param = params_dict[name]
++                    weight_loader = getattr(
++                        param, "weight_loader", default_weight_loader
++                    )
++                    weight_loader(param, loaded_weight, **kwargs)
++            loaded_params.add(name)
++
++
++def get_spec_layer_idx_from_weight_name(
++    config: KimiLinearConfig, weight_name: str
++) -> int | None:
++    if hasattr(config, "num_nextn_predict_layers") and (
++        config.num_nextn_predict_layers > 0
++    ):
++        layer_idx = config.num_hidden_layers
++        for i in range(config.num_nextn_predict_layers):
++            if weight_name.startswith(f"model.layers.{layer_idx + i}."):
++                return layer_idx + i
++    return None
+diff --git a/vllm/model_executor/models/registry.py b/vllm/model_executor/models/registry.py
+index 0027954ac2771163c967a5909b98c8ce4df68833..8e4413c90cf6cad14220f99981d3764ac1a6e443 100644
+--- a/vllm/model_executor/models/registry.py
++++ b/vllm/model_executor/models/registry.py
+@@ -118,6 +118,7 @@ _TEXT_GENERATION_MODELS = {
+     "InternLM3ForCausalLM": ("llama", "LlamaForCausalLM"),
+     "JAISLMHeadModel": ("jais", "JAISLMHeadModel"),
+     "JambaForCausalLM": ("jamba", "JambaForCausalLM"),
++    "KimiLinearForCausalLM": ("kimi_linear", "KimiLinearForCausalLM"),  # noqa: E501
+     "Lfm2ForCausalLM": ("lfm2", "Lfm2ForCausalLM"),
+     "Lfm2MoeForCausalLM": ("lfm2_moe", "Lfm2MoeForCausalLM"),
+     "LlamaForCausalLM": ("llama", "LlamaForCausalLM"),
+diff --git a/vllm/transformers_utils/config.py b/vllm/transformers_utils/config.py
+index 34c0429a80679e6ebf15ee7b29801f7c9aae3546..b1f4e3e2a983190786dfc8118a00900f58d39def 100644
+--- a/vllm/transformers_utils/config.py
++++ b/vllm/transformers_utils/config.py
+@@ -79,6 +79,7 @@ _CONFIG_REGISTRY: dict[str, type[PretrainedConfig]] = LazyConfigDict(
+     deepseek_v3="DeepseekV3Config",
+     deepseek_v32="DeepseekV3Config",
+     flex_olmo="FlexOlmoConfig",
++    kimi_linear="KimiLinearConfig",
+     kimi_vl="KimiVLConfig",
+     Llama_Nemotron_Nano_VL="Nemotron_Nano_VL_Config",
+     RefinedWeb="RWConfig",  # For tiiuae/falcon-40b(-instruct)
+diff --git a/vllm/transformers_utils/configs/__init__.py b/vllm/transformers_utils/configs/__init__.py
+index befe9cdae76a16d07aab136627ce50712256eb06..663a8e44d71dddc9a661ff99aa14e6eb2739a664 100644
+--- a/vllm/transformers_utils/configs/__init__.py
++++ b/vllm/transformers_utils/configs/__init__.py
+@@ -19,6 +19,7 @@ from vllm.transformers_utils.configs.eagle import EAGLEConfig
+ from vllm.transformers_utils.configs.falcon import RWConfig
+ from vllm.transformers_utils.configs.flex_olmo import FlexOlmoConfig
+ from vllm.transformers_utils.configs.jais import JAISConfig
++from vllm.transformers_utils.configs.kimi_linear import KimiLinearConfig
+ from vllm.transformers_utils.configs.kimi_vl import KimiVLConfig
+ from vllm.transformers_utils.configs.lfm2_moe import Lfm2MoeConfig
+ from vllm.transformers_utils.configs.medusa import MedusaConfig
+@@ -54,6 +55,7 @@ __all__ = [
+     "MiDashengLMConfig",
+     "MLPSpeculatorConfig",
+     "MoonViTConfig",
++    "KimiLinearConfig",
+     "KimiVLConfig",
+     "NemotronConfig",
+     "NemotronHConfig",
+diff --git a/vllm/transformers_utils/configs/kimi_linear.py b/vllm/transformers_utils/configs/kimi_linear.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..65ddf48c5249b24ce83cace3dedd36e6c6b93fd9
+--- /dev/null
++++ b/vllm/transformers_utils/configs/kimi_linear.py
+@@ -0,0 +1,144 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++from transformers.configuration_utils import PretrainedConfig
++
++from vllm.logger import init_logger
++
++logger = init_logger(__name__)
++
++
++class KimiLinearConfig(PretrainedConfig):
++    model_type = "kimi_linear"
++    keys_to_ignore_at_inference = ["past_key_values"]
++
++    def __init__(
++        self,
++        model_type="kimi_linear",
++        vocab_size=163840,
++        hidden_size=4096,
++        head_dim=None,
++        intermediate_size=11008,
++        num_hidden_layers=32,
++        num_attention_heads=32,
++        num_key_value_heads=None,
++        hidden_act="silu",
++        initializer_range=0.02,
++        rms_norm_eps=1e-6,
++        use_cache=True,
++        pad_token_id=0,
++        bos_token_id=1,
++        eos_token_id=2,
++        rope_theta=10000.0,
++        rope_scaling=None,
++        tie_word_embeddings=False,
++        moe_intermediate_size: int | None = None,
++        moe_renormalize: bool = True,
++        moe_router_activation_func: str = "sigmoid",
++        num_experts: int | None = None,
++        num_experts_per_token: int | None = None,
++        num_shared_experts: int = 0,
++        routed_scaling_factor: float = 1.0,
++        first_k_dense_replace: int = 0,
++        moe_layer_freq: int = 1,
++        use_grouped_topk: bool = True,
++        num_expert_group: int = 1,
++        topk_group: int = 1,
++        q_lora_rank: int | None = None,
++        kv_lora_rank: int | None = None,
++        qk_nope_head_dim: int | None = None,
++        qk_rope_head_dim: int | None = None,
++        v_head_dim: int | None = None,
++        mla_use_nope: bool | None = False,
++        num_nextn_predict_layers: int = 0,
++        linear_attn_config: dict | None = None,
++        **kwargs,
++    ):
++        self.model_type = model_type
++        self.vocab_size = vocab_size
++        self.hidden_size = hidden_size
++        self.head_dim = (
++            head_dim if head_dim is not None else hidden_size // num_attention_heads
++        )
++        self.intermediate_size = intermediate_size
++        self.num_hidden_layers = num_hidden_layers
++        self.num_attention_heads = num_attention_heads
++
++        # for backward compatibility
++        if num_key_value_heads is None:
++            num_key_value_heads = num_attention_heads
++
++        self.num_key_value_heads = num_key_value_heads
++        self.hidden_act = hidden_act
++        self.initializer_range = initializer_range
++        self.rms_norm_eps = rms_norm_eps
++        self.use_cache = use_cache
++        self.rope_theta = rope_theta
++        self.rope_scaling = rope_scaling
++
++        self.q_lora_rank = q_lora_rank
++        self.kv_lora_rank = kv_lora_rank
++        self.qk_nope_head_dim = qk_nope_head_dim
++        self.qk_rope_head_dim = qk_rope_head_dim
++        self.v_head_dim = v_head_dim
++        self.mla_use_nope = mla_use_nope
++        # moe config
++        self.num_experts = num_experts
++        self.num_experts_per_token = num_experts_per_token
++        self.moe_renormalize = moe_renormalize
++        self.num_shared_experts = num_shared_experts
++        self.routed_scaling_factor = routed_scaling_factor
++        self.moe_router_activation_func = moe_router_activation_func
++        assert self.moe_router_activation_func in ("softmax", "sigmoid")
++        self.moe_intermediate_size = moe_intermediate_size
++        self.first_k_dense_replace = first_k_dense_replace
++        self.moe_layer_freq = moe_layer_freq
++        self.use_grouped_topk = use_grouped_topk
++        self.num_expert_group = num_expert_group
++        self.topk_group = topk_group
++        self.num_nextn_predict_layers = num_nextn_predict_layers
++
++        if linear_attn_config is not None:
++            assert linear_attn_config["kda_layers"] is not None
++            assert linear_attn_config["full_attn_layers"] is not None
++        self.linear_attn_config = linear_attn_config
++
++        super().__init__(
++            pad_token_id=pad_token_id,
++            bos_token_id=bos_token_id,
++            eos_token_id=eos_token_id,
++            tie_word_embeddings=tie_word_embeddings,
++            **kwargs,
++        )
++
++    @property
++    def is_mla(self):
++        return (
++            self.q_lora_rank is not None
++            or self.kv_lora_rank is not None
++            or self.qk_nope_head_dim is not None
++            or self.qk_rope_head_dim is not None
++            or self.v_head_dim is not None
++            or self.mla_use_nope is True
++        )
++
++    @property
++    def is_moe(self):
++        return self.num_experts is not None
++
++    @property
++    def is_linear_attn(self) -> bool:
++        return not (
++            self.linear_attn_config is None
++            or (
++                isinstance(self.linear_attn_config, dict)
++                and self.linear_attn_config["kda_layers"] is not None
++                and len(self.linear_attn_config["kda_layers"]) == 0
++            )
++        )
++
++    def is_kda_layer(self, layer_idx: int):
++        return (
++            self.linear_attn_config is not None
++            and (layer_idx + 1) in self.linear_attn_config["kda_layers"]
++        )
+diff --git a/vllm/v1/attention/backends/gdn_attn.py b/vllm/v1/attention/backends/gdn_attn.py
+index 2ca19646911ec9ff12e83c0d97e8583511d6d0c7..a78afafb80a43c4e436ebd9f9d510810af648d5f 100644
+--- a/vllm/v1/attention/backends/gdn_attn.py
++++ b/vllm/v1/attention/backends/gdn_attn.py
+@@ -14,6 +14,7 @@ from vllm.v1.attention.backends.utils import (
+     AttentionMetadataBuilder,
+     CommonAttentionMetadata,
+     compute_causal_conv1d_metadata,
++    mamba_get_block_table_tensor,
+     split_decodes_and_prefills,
+ )
+ from vllm.v1.kv_cache_interface import AttentionSpec, MambaSpec
+@@ -125,6 +126,12 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+             dtype=torch.int32,
+             device=device,
+         )
++        # Per-row state validity for the decode path (staged like the indices).
++        self.non_spec_has_initial_state = torch.ones(
++            (self.decode_cudagraph_max_bs,),
++            dtype=torch.bool,
++            device=device,
++        )
+         self.num_accepted_tokens = torch.empty(
+             (self.decode_cudagraph_max_bs,),
+             dtype=torch.int32,
+@@ -138,6 +145,7 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+         num_accepted_tokens: torch.Tensor | None = None,
+         num_decode_draft_tokens_cpu: torch.Tensor | None = None,
+         fast_build: bool = False,
++        _capture: bool = False,
+     ) -> GDNAttentionMetadata:
+         m = common_attn_metadata
+ 
+@@ -145,6 +153,12 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+         context_lens = m.num_computed_tokens_cpu
+         context_lens_tensor = context_lens.to(query_start_loc.device)
+         nums_dict, batch_ptr, token_chunk_offset_ptr = None, None, None
++        block_table_tensor = mamba_get_block_table_tensor(
++            m.block_table_tensor,
++            m.seq_lens,
++            self.kv_cache_spec,
++            self.vllm_config.cache_config.mamba_cache_mode,
++        )
+ 
+         if (
+             not self.use_spec_decode
+@@ -174,7 +188,7 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+             spec_token_indx = None
+             non_spec_token_indx = None
+             spec_state_indices_tensor = None
+-            non_spec_state_indices_tensor = m.block_table_tensor[:, 0]
++            non_spec_state_indices_tensor = block_table_tensor[:, 0]
+             spec_query_start_loc = None
+             non_spec_query_start_loc = query_start_loc
+             num_accepted_tokens = None
+@@ -203,7 +217,7 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+                 non_spec_token_indx = torch.empty(
+                     0, dtype=torch.int32, device=query_start_loc.device
+                 )
+-                spec_state_indices_tensor = m.block_table_tensor[:, : self.num_spec + 1]
++                spec_state_indices_tensor = block_table_tensor[:, : self.num_spec + 1]
+                 non_spec_state_indices_tensor = None
+                 spec_query_start_loc = query_start_loc
+                 non_spec_query_start_loc = None
+@@ -216,10 +230,10 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+                 non_spec_token_indx = index[:num_non_spec_tokens]
+                 spec_token_indx = index[num_non_spec_tokens:]
+ 
+-                spec_state_indices_tensor = m.block_table_tensor[
++                spec_state_indices_tensor = block_table_tensor[
+                     spec_sequence_masks, : self.num_spec + 1
+                 ]
+-                non_spec_state_indices_tensor = m.block_table_tensor[
++                non_spec_state_indices_tensor = block_table_tensor[
+                     ~spec_sequence_masks, 0
+                 ]
+ 
+@@ -252,6 +266,16 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+             nums_dict, batch_ptr, token_chunk_offset_ptr = (
+                 compute_causal_conv1d_metadata(non_spec_query_start_loc)
+             )
++        elif spec_sequence_masks is None and num_decodes > 0:
++            # One-token rows also need their state availability: a row whose
++            # request has no computed or restored tokens owns a recycled slot
++            # with no valid history (#51565's semantics). Rows without tokens
++            # (padding) need nothing; capture rows are not first chunks.
++            if _capture:
++                has_initial_state = torch.ones_like(context_lens_tensor, dtype=torch.bool)
++            else:
++                query_lens = query_start_loc[1:] - query_start_loc[:-1]
++                has_initial_state = (context_lens_tensor > 0) | (query_lens == 0)
+         else:
+             has_initial_state = None
+         num_actual_tokens = (
+@@ -322,20 +346,33 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+             num_actual_tokens = self.vllm_config.pad_for_cudagraph(m.num_actual_tokens)
+             batch_size = num_actual_tokens
+ 
++            # Initialize the full allocated capacity before taking the selected
++            # view: any row a replay of any captured size can read is either a
++            # row staged by this step or the PAD sentinel, never the tail of a
++            # previous (larger) local batch.
+             self.non_spec_state_indices_tensor[:num_decodes].copy_(
+                 non_spec_state_indices_tensor, non_blocking=True
+             )
++            self.non_spec_state_indices_tensor[num_decodes:].fill_(PAD_SLOT_ID)
+             non_spec_state_indices_tensor = self.non_spec_state_indices_tensor[
+                 :batch_size
+             ]
+-            non_spec_state_indices_tensor[num_decodes:].fill_(PAD_SLOT_ID)
+ 
+             self.non_spec_query_start_loc[: num_decodes + 1].copy_(
+                 non_spec_query_start_loc, non_blocking=True
+             )
+             non_spec_num_query_tokens = non_spec_query_start_loc[-1]  # type: ignore[index]
++            self.non_spec_query_start_loc[num_decodes + 1 :].fill_(
++                non_spec_num_query_tokens
++            )
+             non_spec_query_start_loc = self.non_spec_query_start_loc[: batch_size + 1]
+-            non_spec_query_start_loc[num_decodes + 1 :].fill_(non_spec_num_query_tokens)
++
++            if has_initial_state is not None:
++                self.non_spec_has_initial_state[:num_decodes].copy_(
++                    has_initial_state, non_blocking=True
++                )
++                self.non_spec_has_initial_state[num_decodes:].fill_(True)
++                has_initial_state = self.non_spec_has_initial_state[:batch_size]
+ 
+         attn_metadata = GDNAttentionMetadata(
+             num_prefills=num_prefills,
+@@ -384,4 +421,6 @@ class GDNAttentionMetadataBuilder(AttentionMetadataBuilder[GDNAttentionMetadata]
+         num_decode_draft_tokens_cpu = (num_accepted_tokens - 1).cpu()
+         m.num_computed_tokens_cpu = m.seq_lens_cpu - num_accepted_tokens.cpu()
+ 
+-        return self.build(0, m, num_accepted_tokens, num_decode_draft_tokens_cpu)
++        return self.build(
++            0, m, num_accepted_tokens, num_decode_draft_tokens_cpu, _capture=True
++        )
+diff --git a/vllm/v1/attention/backends/utils.py b/vllm/v1/attention/backends/utils.py
+index 07d62e9849e0000a709478f2cff2dabfa9dd5b7a..192fd4ec221b57f39851ad8d83b30e342bd1eb91 100644
+--- a/vllm/v1/attention/backends/utils.py
++++ b/vllm/v1/attention/backends/utils.py
+@@ -35,7 +35,7 @@ from vllm.distributed.kv_transfer.kv_connector.utils import (
+ )
+ from vllm.logger import init_logger
+ from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
+-from vllm.v1.kv_cache_interface import AttentionSpec
++from vllm.v1.kv_cache_interface import AttentionSpec, KVCacheSpec, MambaSpec
+ from vllm.v1.worker.ubatch_utils import UBatchSlice
+ 
+ logger = init_logger(__name__)
+@@ -769,7 +769,9 @@ def split_decodes_and_prefills(
+     if require_uniform:
+         is_prefill = query_lens != query_lens[0]
+     else:
+-        is_prefill = query_lens > decode_threshold
++        # 0-query len indicates a padded request; leave this at the back
++        # of the batch with the prefills
++        is_prefill = (query_lens > decode_threshold) | (query_lens == 0)
+ 
+     if not torch.any(is_prefill):
+         return num_reqs, 0, num_tokens, 0
+@@ -1000,3 +1002,40 @@ def compute_causal_conv1d_metadata(query_start_loc_p: torch.Tensor):
+         nums_dict[BLOCK_M]["token_chunk_offset_ptr"] = token_chunk_offset_ptr  # type: ignore
+ 
+     return nums_dict, batch_ptr, token_chunk_offset_ptr
++
++
++def mamba_get_block_table_tensor(
++    block_table: torch.Tensor,
++    seq_lens: torch.Tensor,
++    kv_cache_spec: KVCacheSpec,
++    mamba_cache_mode: str,
++) -> torch.Tensor:
++    """
++    Get the block table tensor for mamba kernels from the input
++    common_attn_metadata.block_table_tensor given different mamba cache modes.
++
++    - "all":   input  (#requests, cdiv(max_model_len, block_size));
++               output (#requests, cdiv(max_model_len, block_size)).
++
++    - "none":  input  (#requests, 1 + num_speculative_blocks);
++               output (#requests, 1 + num_speculative_blocks).
++
++    - "align": input  (#requests, cdiv(max_model_len, block_size));
++               output (#requests, 1 + num_speculative_blocks), which are the last
++               1 + num_speculative_blocks of each request.
++    """
++    if mamba_cache_mode in ("all", "none"):
++        return block_table
++    else:
++        assert isinstance(kv_cache_spec, MambaSpec)
++        # NOTE: For 0-length requests in CUDA graph, use a start_index of 0
++        # to handle the invalid block table.
++        start_indices = torch.clamp(
++            (seq_lens - 1) // kv_cache_spec.block_size,
++            min=0,
++        )
++        offsets = torch.arange(
++            1 + kv_cache_spec.num_speculative_blocks, device=block_table.device
++        )
++        indices_to_gather = start_indices.unsqueeze(1) + offsets
++        return torch.gather(block_table, 1, indices_to_gather)
+diff --git a/vllm/v1/core/block_pool.py b/vllm/v1/core/block_pool.py
+index 15c06a0b107d8cb9a556163988a37b629c6fffe2..ad7e4dfb851df02879c037fd2b7b8e0113ebb86c 100644
+--- a/vllm/v1/core/block_pool.py
++++ b/vllm/v1/core/block_pool.py
+@@ -229,6 +229,10 @@ class BlockPool:
+             [] if self.enable_kv_cache_events else None
+         )
+         for i, blk in enumerate(new_full_blocks):
++            # Some blocks may be null blocks when enabling Mamba models with
++            # prefix-caching in align mode. We skip null blocks here.
++            if blk.is_null:
++                continue
+             assert blk.block_hash is None
+             block_hash = new_block_hashes[i]
+ 
+diff --git a/vllm/v1/core/kv_cache_coordinator.py b/vllm/v1/core/kv_cache_coordinator.py
+index 137e5e0cdb6d24db46bd239cedfca6a2d7d704e8..9511e3dc2d405c8e1a52d47619a90bb026f28a5f 100644
+--- a/vllm/v1/core/kv_cache_coordinator.py
++++ b/vllm/v1/core/kv_cache_coordinator.py
+@@ -194,6 +194,11 @@ class KVCacheCoordinator(ABC):
+     ) -> tuple[tuple[list[KVCacheBlock], ...], int]:
+         pass
+ 
++    def new_step_starts(self) -> None:
++        """Called when a new step is started."""
++        for manager in self.single_type_managers:
++            manager.new_step_starts()
++
+ 
+ class KVCacheCoordinatorNoPrefixCache(KVCacheCoordinator):
+     """
+diff --git a/vllm/v1/core/kv_cache_manager.py b/vllm/v1/core/kv_cache_manager.py
+index bb8cec91f36dd36836128e2ac1ccd63bcaaea996..772dce9ea33ed8f85fa804e245418ce6030e922e 100644
+--- a/vllm/v1/core/kv_cache_manager.py
++++ b/vllm/v1/core/kv_cache_manager.py
+@@ -418,3 +418,7 @@ class KVCacheManager:
+     ) -> KVCacheBlocks:
+         # Only create new KVCacheBlocks for non-empty blocks
+         return KVCacheBlocks(blocks) if any(blocks) else self.empty_kv_cache_blocks
++
++    def new_step_starts(self) -> None:
++        """Called when a new step is started."""
++        self.coordinator.new_step_starts()
+diff --git a/vllm/v1/core/sched/scheduler.py b/vllm/v1/core/sched/scheduler.py
+index ad6fbee2ec083f0c9976919e60d6dc28e7e3c7cb..be5b4b93807fcafd1c089bbd4b66f15dbd24772f 100644
+--- a/vllm/v1/core/sched/scheduler.py
++++ b/vllm/v1/core/sched/scheduler.py
+@@ -28,7 +28,7 @@ from vllm.v1.core.sched.output import CachedRequestData, NewRequestData, Schedul
+ from vllm.v1.core.sched.request_queue import SchedulingPolicy, create_request_queue
+ from vllm.v1.core.sched.utils import check_stop, remove_all
+ from vllm.v1.engine import EngineCoreEventType, EngineCoreOutput, EngineCoreOutputs
+-from vllm.v1.kv_cache_interface import KVCacheConfig
++from vllm.v1.kv_cache_interface import KVCacheConfig, MambaSpec
+ from vllm.v1.metrics.stats import PrefixCacheStats, SchedulerStats
+ from vllm.v1.outputs import DraftTokenIds, KVConnectorOutput, ModelRunnerOutput
+ from vllm.v1.request import Request, RequestStatus
+@@ -175,6 +175,67 @@ class Scheduler(SchedulerInterface):
+         )
+         self.use_pp = self.parallel_config.pipeline_parallel_size > 1
+ 
++        def has_mamba_layers(kv_cache_config: KVCacheConfig) -> bool:
++            return any(
++                isinstance(group_spec.kv_cache_spec, MambaSpec)
++                for group_spec in kv_cache_config.kv_cache_groups
++            )
++
++        self.has_mamba_layers = has_mamba_layers(kv_cache_config)
++        self.need_mamba_block_aligned_split = (
++            self.has_mamba_layers and self.cache_config.mamba_cache_mode == "align"
++        )
++
++    def _mamba_block_aligned_split(
++        self,
++        request: Request,
++        num_new_tokens: int,
++        num_new_local_computed_tokens: int = 0,
++        num_external_computed_tokens: int = 0,
++    ) -> int:
++        assert num_external_computed_tokens == 0, (
++            "External KV connector is not verified yet"
++        )
++        num_computed_tokens = (
++            request.num_computed_tokens
++            + num_new_local_computed_tokens
++            + num_external_computed_tokens
++        )
++        # Perform block-aligned splitting at prefill phase, including:
++        # * non-resumed requests: num_computed_tokens < num_prompt_tokens + 0
++        # * resumed requests: num_computed_tokens < (
++        #                       num_prompt_tokens + num_output_tokens
++        #                     )
++        # NOTE: Use `request.num_tokens - 1` to bypass normal decoding.
++        if num_computed_tokens < max(request.num_prompt_tokens, request.num_tokens - 1):
++            # To enable block-aligned caching of the Mamba state, `num_new_tokens`
++            # must be a multiple of `block_size`.
++            # As an exception, if `num_new_tokens` is less than `block_size`, the
++            # state is simply not cached, requiring no special handling.
++            # Additionally, when Eagle mode is enabled, FullAttn prunes the last
++            # matching block. To prevent this from causing a Mamba cache miss, the
++            # last chunk must be not smaller than `block_size`.
++            block_size = self.cache_config.block_size
++            last_cache_position = request.num_tokens - request.num_tokens % block_size
++            # eagle prune
++            if self.use_eagle:
++                last_cache_position = max(last_cache_position - block_size, 0)
++            num_computed_tokens_after_sched = num_computed_tokens + num_new_tokens
++            if num_computed_tokens_after_sched < last_cache_position:
++                # align to block_size
++                num_new_tokens = num_new_tokens // block_size * block_size
++            elif (
++                num_computed_tokens
++                < last_cache_position
++                < num_computed_tokens_after_sched
++            ):
++                # force to cache the last chunk
++                num_new_tokens = last_cache_position - num_computed_tokens
++            else:
++                # prefill the last few tokens
++                pass
++        return num_new_tokens
++
+     def schedule(self) -> SchedulerOutput:
+         # NOTE(woosuk) on the scheduling algorithm:
+         # There's no "decoding phase" nor "prefill phase" in the scheduler.
+@@ -204,6 +265,8 @@ class Scheduler(SchedulerInterface):
+         # For logging.
+         scheduled_timestamp = time.monotonic()
+ 
++        self.kv_cache_manager.new_step_starts()
++
+         # First, schedule the RUNNING requests.
+         req_index = 0
+         while req_index < len(self.running) and token_budget > 0:
+@@ -239,6 +302,11 @@ class Scheduler(SchedulerInterface):
+                     encoder_compute_budget,
+                 )
+ 
++            if self.need_mamba_block_aligned_split:
++                num_new_tokens = self._mamba_block_aligned_split(
++                    request, num_new_tokens
++                )
++
+             if num_new_tokens == 0:
+                 # The request cannot be scheduled because one of the following
+                 # reasons:
+@@ -249,6 +317,8 @@ class Scheduler(SchedulerInterface):
+                 #    its max_total_tokens or max_model_len.
+                 # 2. The encoder budget is exhausted.
+                 # 3. The encoder cache is exhausted.
++                # 4. Insufficient budget for a block-aligned chunk in hybrid
++                #    models with mamba cache mode "align".
+                 # NOTE(woosuk): Here, by doing `continue` instead of `break`,
+                 # we do not strictly follow the FCFS scheduling policy and
+                 # allow the lower-priority requests to be scheduled.
+@@ -480,6 +550,16 @@ class Scheduler(SchedulerInterface):
+                             # The request cannot be scheduled.
+                             break
+ 
++                if self.need_mamba_block_aligned_split:
++                    num_new_tokens = self._mamba_block_aligned_split(
++                        request,
++                        num_new_tokens,
++                        num_new_local_computed_tokens,
++                        num_external_computed_tokens,
++                    )
++                    if num_new_tokens == 0:
++                        break
++
+                 # Handles an edge case when P/D Disaggregation
+                 # is used with Spec Decoding where an
+                 # extra block gets allocated which
+diff --git a/vllm/v1/core/single_type_kv_cache_manager.py b/vllm/v1/core/single_type_kv_cache_manager.py
+index 575ae3d7d83b64b3575b817726d7e5f3dc2ed1bd..23a5781cac0e3858b2f8acf7053f0659646f14c8 100644
+--- a/vllm/v1/core/single_type_kv_cache_manager.py
++++ b/vllm/v1/core/single_type_kv_cache_manager.py
+@@ -7,7 +7,7 @@ from collections.abc import Sequence
+ 
+ from vllm.utils.math_utils import cdiv
+ from vllm.v1.core.block_pool import BlockPool
+-from vllm.v1.core.kv_cache_utils import BlockHash, KVCacheBlock
++from vllm.v1.core.kv_cache_utils import BlockHash, BlockHashWithGroupId, KVCacheBlock
+ from vllm.v1.kv_cache_interface import (
+     ChunkedLocalAttentionSpec,
+     CrossAttentionSpec,
+@@ -256,6 +256,10 @@ class SingleTypeKVCacheManager(ABC):
+         """
+         raise NotImplementedError
+ 
++    def new_step_starts(self) -> None:
++        # do nothing by default
++        return None
++
+ 
+ class FullAttentionManager(SingleTypeKVCacheManager):
+     @classmethod
+@@ -554,6 +558,19 @@ class ChunkedLocalAttentionManager(SingleTypeKVCacheManager):
+ 
+ 
+ class MambaManager(SingleTypeKVCacheManager):
++    def __init__(self, kv_cache_spec: MambaSpec, **kwargs) -> None:
++        super().__init__(kv_cache_spec, **kwargs)
++        self.mamba_cache_mode = kv_cache_spec.mamba_cache_mode
++        if self.mamba_cache_mode == "align":
++            # Align mode is non-speculative: one writable block per request.
++            assert kv_cache_spec.num_speculative_blocks == 0
++            # Mapping from request ID to the index of the block
++            # allocated in the previous step
++            self.last_state_block_idx: dict[str, int] = {}
++            # Blocks cached during the current scheduling step: their state is
++            # written only when the step executes.
++            self.cached_blocks_this_step: set[BlockHashWithGroupId] = set()
++
+     @classmethod
+     def find_longest_cache_hit(
+         cls,
+@@ -594,7 +611,24 @@ class MambaManager(SingleTypeKVCacheManager):
+         # Here unused blocks may be freed up for running requests.
+         # TODO(@s3woz) Free up all blocks that aren't needed by Mamba2
+         #  (for which find_longest_cache_hit returns block_pool.null_block)
+-        pass
++        if self.mamba_cache_mode == "align":
++            # `last_state_block_idx` refers to the block index allocated two steps ago.
++            # The block allocated in the previous step is used to copy Mamba states
++            # into the block allocated in the current step; the earlier block is
++            # no longer needed and should be freed here.
++            last_state_block_idx = self.last_state_block_idx.get(request_id)
++            # Blocks allocated during prefill may be non-contiguous. Use
++            # `last_state_block_idx` to free the appropriate block and replace it
++            # with a null block.
++            if (
++                last_state_block_idx is not None
++                and last_state_block_idx
++                < cdiv(num_computed_tokens, self.block_size) - 1
++            ):
++                blocks = self.req_to_blocks[request_id]
++                if blocks[last_state_block_idx] != self._null_block:
++                    self.block_pool.free_blocks([blocks[last_state_block_idx]])
++                    blocks[last_state_block_idx] = self._null_block
+ 
+     def get_num_common_prefix_blocks(self, running_request_id: str) -> int:
+         """
+@@ -608,9 +642,33 @@ class MambaManager(SingleTypeKVCacheManager):
+         num_tokens: int,
+         new_computed_blocks: Sequence[KVCacheBlock],
+     ) -> int:
++        assert isinstance(self.kv_cache_spec, MambaSpec)
++        if self.mamba_cache_mode == "align":
++            if (
++                len(new_computed_blocks) > 0
++                and new_computed_blocks[-1].block_hash in self.cached_blocks_this_step
++            ):
++                # Mamba can't rely on blocks generated by other requests in the
++                # current step. To put it in the next step, we return
++                # num_gpu_blocks + 1 so that kv_cache_manager will think there
++                # is not enough blocks to allocate now and doesn't schedule it
++                # in the current step.
++                return self.block_pool.num_gpu_blocks + 1
++            num_new_blocks = (
++                cdiv(num_tokens, self.block_size)
++                - len(new_computed_blocks)
++                - len(self.req_to_blocks[request_id])
++            )
++            if num_new_blocks > 0:
++                # One writable block for the running state; the skipped
++                # positions before it are null blocks.
++                num_new_blocks = 1
++            num_evictable_computed_blocks = sum(
++                blk.ref_cnt == 0 and not blk.is_null for blk in new_computed_blocks
++            )
++            return num_new_blocks + num_evictable_computed_blocks
+         # Allocate extra `num_speculative_blocks` blocks for
+         # speculative decoding (MTP/EAGLE) with linear attention.
+-        assert isinstance(self.kv_cache_spec, MambaSpec)
+         if self.kv_cache_spec.num_speculative_blocks > 0:
+             num_tokens += (
+                 self.kv_cache_spec.block_size
+@@ -623,9 +681,30 @@ class MambaManager(SingleTypeKVCacheManager):
+     def allocate_new_blocks(
+         self, request_id: str, num_tokens: int
+     ) -> list[KVCacheBlock]:
++        assert isinstance(self.kv_cache_spec, MambaSpec)
++        if self.mamba_cache_mode == "align":
++            req_blocks: list[KVCacheBlock] = self.req_to_blocks[request_id]
++            num_required_blocks = cdiv(num_tokens, self.block_size)
++            if num_required_blocks == len(req_blocks):
++                return []
++            assert num_required_blocks > len(req_blocks), (
++                "num_required_blocks "
++                f"{num_required_blocks} < len(req_blocks) {len(req_blocks)}"
++            )
++            prev_block_len = len(req_blocks)
++            # Record the last state block: the running state of the previous
++            # step, or the hit state when a new request hits the prefix cache.
++            # It is copied into the new last block before execution.
++            if prev_block_len > 0:
++                self.last_state_block_idx[request_id] = prev_block_len - 1
++            # null blocks
++            req_blocks.extend(
++                [self._null_block] * (num_required_blocks - 1 - prev_block_len)
++            )
++            req_blocks.extend(self.block_pool.get_new_blocks(1))
++            return req_blocks[prev_block_len:]
+         # Allocate extra `num_speculative_blocks` blocks for
+         # speculative decoding (MTP/EAGLE) with linear attention.
+-        assert isinstance(self.kv_cache_spec, MambaSpec)
+         if self.kv_cache_spec.num_speculative_blocks > 0:
+             num_tokens += (
+                 self.kv_cache_spec.block_size
+@@ -633,6 +712,30 @@ class MambaManager(SingleTypeKVCacheManager):
+             )
+         return super().allocate_new_blocks(request_id, num_tokens)
+ 
++    def free(self, request_id: str) -> None:
++        if self.mamba_cache_mode == "align":
++            self.last_state_block_idx.pop(request_id, None)
++        super().free(request_id)
++
++    def cache_blocks(self, request: Request, num_tokens: int) -> None:
++        num_cached_blocks_before = self.num_cached_block.get(request.request_id, 0)
++        super().cache_blocks(request, num_tokens)
++        if self.mamba_cache_mode != "align":
++            return
++        num_cached_blocks_after = self.num_cached_block.get(request.request_id, 0)
++        if num_cached_blocks_after > num_cached_blocks_before:
++            for block in self.req_to_blocks[request.request_id][
++                num_cached_blocks_before:num_cached_blocks_after
++            ]:
++                if block.is_null:
++                    continue
++                assert block.block_hash is not None
++                self.cached_blocks_this_step.add(block.block_hash)
++
++    def new_step_starts(self) -> None:
++        if self.mamba_cache_mode == "align":
++            self.cached_blocks_this_step.clear()
++
+ 
+ class CrossAttentionManager(SingleTypeKVCacheManager):
+     """Manager for cross-attention KV cache in encoder-decoder models."""
+diff --git a/vllm/v1/kv_cache_interface.py b/vllm/v1/kv_cache_interface.py
+index 0f564fdb3b0805d6b2a96d10e739881ae2ec9880..1c9dfc7ec1435fad19d04bdd1c7cbd913ba8d158 100644
+--- a/vllm/v1/kv_cache_interface.py
++++ b/vllm/v1/kv_cache_interface.py
+@@ -239,6 +239,7 @@ class MambaSpec(KVCacheSpec):
+     dtypes: tuple[torch.dtype]
+     page_size_padded: int | None = None
+     mamba_type: str = "mamba2"
++    mamba_cache_mode: str = "none"
+     num_speculative_blocks: int = 0
+ 
+     @property
+@@ -253,6 +254,10 @@ class MambaSpec(KVCacheSpec):
+         return page_size
+ 
+     def max_memory_usage_bytes(self, vllm_config: VllmConfig) -> int:
++        if vllm_config.cache_config.mamba_cache_mode == "align":
++            # The running state plus the previous step's state (the source of
++            # the next copy); no state per historical token.
++            return self.page_size_bytes * (2 + self.num_speculative_blocks)
+         max_model_len = vllm_config.model_config.max_model_len
+         return cdiv(max_model_len, self.block_size) * self.page_size_bytes
+ 
+diff --git a/vllm/v1/worker/gpu_model_runner.py b/vllm/v1/worker/gpu_model_runner.py
+index 1fe749c614ccff053b6ec8647dcf86b7788c77c5..53e3166a4faf3ce7f582a3df4e05e5f4d8c7a840 100644
+--- a/vllm/v1/worker/gpu_model_runner.py
++++ b/vllm/v1/worker/gpu_model_runner.py
+@@ -8,6 +8,7 @@ from collections import defaultdict
+ from collections.abc import Iterator
+ from contextlib import contextmanager
+ from copy import deepcopy
++from functools import reduce
+ from itertools import product
+ from typing import TYPE_CHECKING, Any, NamedTuple, TypeAlias, cast
+ 
+@@ -125,6 +126,7 @@ from vllm.v1.spec_decode.metadata import SpecDecodeMetadata
+ from vllm.v1.spec_decode.ngram_proposer import NgramProposer
+ from vllm.v1.structured_output.utils import apply_grammar_bitmask
+ from vllm.v1.utils import CpuGpuBuffer, record_function_or_nullcontext
++from vllm.v1.worker import mamba_utils
+ from vllm.v1.worker.dp_utils import coordinate_batch_across_dp
+ from vllm.v1.worker.gpu_input_batch import CachedRequestState, InputBatch
+ from vllm.v1.worker.gpu_ubatch_wrapper import UBatchWrapper
+@@ -339,6 +341,9 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+ 
+         # Request states.
+         self.requests: dict[str, CachedRequestState] = {}
++        # Mamba cache align mode: request ID -> index of the block holding the
++        # request's running state after its last scheduled step.
++        self.mamba_state_idx: dict[str, int] = {}
+         self.comm_stream = torch.cuda.Stream()
+ 
+         # Input Batch
+@@ -1052,13 +1057,17 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+         UBatchSlices | None,
+         torch.Tensor | None,
+         bool,
++        int,
++        CUDAGraphMode,
++        BatchDescriptor | None,
+     ]:
+         """
+         :return: tuple[
+             attn_metadata: layer-to-attention_metadata mapping,
+             logits_indices, spec_decode_metadata,
+             num_scheduled_tokens, spec_decode_common_attn_metadata,
+-            max_num_scheduled_tokens, use_cascade_attn
++            max_num_scheduled_tokens, use_cascade_attn,
++            num_input_tokens, cudagraph_runtime_mode, batch_descriptor
+         ]
+         """
+         total_num_scheduled_tokens = scheduler_output.total_num_scheduled_tokens
+@@ -1283,14 +1292,81 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+         attn_metadata: PerLayerAttnMetadata = {}
+         if ubatch_slices is not None:
+             attn_metadata = [dict() for _ in range(len(ubatch_slices))]
+-        use_cascade_attn = False
++
++        # Adapted from #28579: decide the cascade prefixes, the execution extent
++        # and the cudagraph mode BEFORE building per-layer metadata, so that the
++        # metadata describes every row the selected graph replays (the DP-agreed
++        # padded size, not only this replica's local live batch).
++        common_prefix_lens: dict[tuple[int, int], int] = {}
++        if self.cascade_attn_enabled:
++            for kv_cache_group_id, kv_cache_group_spec in enumerate(
++                self.kv_cache_config.kv_cache_groups
++            ):
++                if isinstance(
++                    kv_cache_group_spec.kv_cache_spec, EncoderOnlyAttentionSpec
++                ):
++                    continue
++                num_common_prefix_blocks = scheduler_output.num_common_prefix_blocks[
++                    kv_cache_group_id
++                ]
++                for attn_group_idx, attn_group in enumerate(
++                    self.attn_groups[kv_cache_group_id]
++                ):
++                    common_prefix_lens[(kv_cache_group_id, attn_group_idx)] = (
++                        self._compute_cascade_attn_prefix_len(
++                            num_scheduled_tokens,
++                            num_common_prefix_blocks,
++                            attn_group.kv_cache_spec,
++                            attn_group.get_metadata_builder(),
++                        )
++                    )
++        # Cascade attention is disabled with DBO (as before).
++        use_cascade_attn = ubatch_slices is None and any(
++            v > 0 for v in common_prefix_lens.values()
++        )
++
++        dp_rank = self.parallel_config.data_parallel_rank
++        if num_tokens_across_dp is not None:
++            num_input_tokens = int(num_tokens_across_dp[dp_rank].item())
++        else:
++            num_input_tokens = num_tokens_padded
++        cudagraph_runtime_mode, batch_descriptor = self.cudagraph_dispatcher.dispatch(
++            BatchDescriptor(
++                num_tokens=num_input_tokens,
++                uniform_decode=uniform_decode,
++                has_lora=len(self.input_batch.lora_id_to_lora_request) > 0,
++            ),
++            use_cascade_attn,
++        )
++        # A uniform-decode batch replayed through a FULL graph executes every
++        # request row the graph was captured with. Describe the padded rows to
++        # the metadata builders as inactive requests (zero length, zero computed
++        # tokens, the PAD block id) so that no persistent graph buffer keeps a
++        # previous step's live rows beyond this step's local live batch.
++        num_reqs_padded = num_reqs
++        num_attn_tokens = total_num_scheduled_tokens
++        if (
++            cudagraph_runtime_mode == CUDAGraphMode.FULL
++            and batch_descriptor is not None
++            and batch_descriptor.uniform_decode
++            and ubatch_slices is None
++        ):
++            num_reqs_padded = num_input_tokens // self.uniform_decode_query_len
++            assert num_reqs_padded >= num_reqs
++            num_attn_tokens = num_input_tokens
+ 
+         # Used in the below loop.
+-        query_start_loc_cpu = self.query_start_loc.cpu[: num_reqs + 1]
+-        seq_lens_cpu = self.seq_lens.cpu[:num_reqs]
++        query_start_loc = self.query_start_loc.gpu[: num_reqs_padded + 1]
++        query_start_loc_cpu = self.query_start_loc.cpu[: num_reqs_padded + 1]
++        seq_lens = self.seq_lens.gpu[:num_reqs_padded]
++        seq_lens_cpu = self.seq_lens.cpu[:num_reqs_padded]
+         num_computed_tokens_cpu = self.input_batch.num_computed_tokens_cpu_tensor[
+-            :num_reqs
++            :num_reqs_padded
+         ]
++        if num_reqs_padded > num_reqs:
++            # Rows beyond the live batch hold departed requests' counts.
++            num_computed_tokens_cpu = num_computed_tokens_cpu.clone()
++            num_computed_tokens_cpu[num_reqs:] = 0
+         spec_decode_common_attn_metadata = None
+         if use_spec_decode:
+             self.num_accepted_tokens.np[:num_reqs] = (
+@@ -1324,12 +1400,14 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                 num_common_prefix_blocks = 0
+             else:
+                 blk_table = self.input_batch.block_table[kv_cache_group_id]
+-                blk_table_tensor = blk_table.get_device_tensor(num_reqs)
+-                slot_mapping = blk_table.slot_mapping.gpu[:total_num_scheduled_tokens]
++                blk_table_tensor = blk_table.get_device_tensor(num_reqs_padded)
++                slot_mapping = blk_table.slot_mapping.gpu[:num_attn_tokens]
+ 
+                 # Fill unused with -1. Needed for reshape_and_cache in full cuda
+                 # graph mode.
+                 blk_table.slot_mapping.gpu[total_num_scheduled_tokens:].fill_(-1)
++                # Padded request rows own no blocks: -1 matches mamba PAD_SLOT_ID.
++                blk_table_tensor[num_reqs:num_reqs_padded].fill_(-1)
+                 num_common_prefix_blocks = scheduler_output.num_common_prefix_blocks[
+                     kv_cache_group_id
+                 ]
+@@ -1340,8 +1418,8 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                 seq_lens=seq_lens,
+                 seq_lens_cpu=seq_lens_cpu,
+                 num_computed_tokens_cpu=num_computed_tokens_cpu,
+-                num_reqs=num_reqs,
+-                num_actual_tokens=total_num_scheduled_tokens,
++                num_reqs=num_reqs_padded,
++                num_actual_tokens=num_attn_tokens,
+                 max_query_len=max_num_scheduled_tokens,
+                 max_seq_len=max_seq_len,
+                 block_table_tensor=blk_table_tensor,
+@@ -1365,17 +1443,15 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                 else:
+                     spec_decode_common_attn_metadata = common_attn_metadata
+ 
+-            for attn_group in self.attn_groups[kv_cache_group_id]:
+-                # Prepare for cascade attention if enabled & beneficial.
+-                common_prefix_len = 0
++            for attn_group_idx, attn_group in enumerate(
++                self.attn_groups[kv_cache_group_id]
++            ):
++                # Prepare for cascade attention if enabled & beneficial (the
++                # lengths were decided before the cudagraph dispatch above).
+                 builder = attn_group.get_metadata_builder()
+-                if self.cascade_attn_enabled:
+-                    common_prefix_len = self._compute_cascade_attn_prefix_len(
+-                        num_scheduled_tokens,
+-                        num_common_prefix_blocks,
+-                        attn_group.kv_cache_spec,
+-                        builder,
+-                    )
++                common_prefix_len = common_prefix_lens.get(
++                    (kv_cache_group_id, attn_group_idx), 0
++                )
+ 
+                 extra_attn_metadata_args = {}
+                 if use_spec_decode and isinstance(builder, GDNAttentionMetadataBuilder):
+@@ -1409,14 +1485,12 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                         common_attn_metadata=common_attn_metadata,
+                         **extra_attn_metadata_args,
+                     )
+-                    use_cascade_attn |= getattr(attn_metadata_i, "use_cascade", False)
++                    assert use_cascade_attn or not getattr(
++                        attn_metadata_i, "use_cascade", False
++                    ), "cascade attention was not decided before dispatch"
+                     for layer_name in attn_group.layer_names:
+                         attn_metadata[layer_name] = attn_metadata_i
+ 
+-        # disable cascade attention when DBO
+-        if ubatch_slices is not None:
+-            use_cascade_attn = False
+-
+         # Hot-Swap lora model
+         if self.lora_config:
+             self.set_active_loras(self.input_batch, num_scheduled_tokens)
+@@ -1431,6 +1505,9 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+             ubatch_slices,
+             num_tokens_across_dp,
+             use_cascade_attn,
++            num_input_tokens,
++            cudagraph_runtime_mode,
++            batch_descriptor,
+         )
+ 
+     def _compute_cascade_attn_prefix_len(
+@@ -2427,6 +2504,20 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                 # Update persistent batch states.
+                 self._update_states(scheduler_output)
+ 
++                if self.cache_config.mamba_cache_mode == "align":
++                    # Copy each request's previous (or restored) state into its
++                    # current writable block before the model consumes it.
++                    mamba_utils.preprocess_mamba(
++                        scheduler_output,
++                        self.kv_cache_config,
++                        self.cache_config,
++                        self.mamba_state_idx,
++                        self.input_batch,
++                        self.requests,
++                        self.compilation_config.static_forward_context,
++                        self.get_model().get_mamba_state_copy_func(),
++                    )
++
+                 if not scheduler_output.total_num_scheduled_tokens:
+                     if not has_kv_transfer_group():
+                         # Return empty ModelRunnerOutput if no work to do.
+@@ -2452,19 +2543,16 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                     ubatch_slices,
+                     num_tokens_across_dp,
+                     use_cascade_attn,
++                    num_input_tokens,
++                    cudagraph_runtime_mode,
++                    batch_descriptor,
+                 ) = self._prepare_inputs(scheduler_output)
+ 
+-            dp_rank = self.parallel_config.data_parallel_rank
++            # The execution size and cudagraph mode were decided in
++            # _prepare_inputs, before the attention metadata was built.
+             if ubatch_slices:
+                 assert num_tokens_across_dp is not None
+-                num_input_tokens = int(num_tokens_across_dp[dp_rank].item())
+                 self.pad_out_ubatch_slice(ubatch_slices, num_input_tokens)
+-            elif num_tokens_across_dp is not None:
+-                num_input_tokens = int(num_tokens_across_dp[dp_rank].item())
+-            else:
+-                num_input_tokens = self._get_num_input_tokens(
+-                    scheduler_output.total_num_scheduled_tokens
+-                )
+ 
+             (
+                 num_scheduled_tokens,
+@@ -2477,18 +2565,6 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                 scheduler_output, num_input_tokens, intermediate_tensors
+             )
+ 
+-            uniform_decode = (max_query_len == self.uniform_decode_query_len) and (
+-                num_scheduled_tokens == self.input_batch.num_reqs * max_query_len
+-            )
+-            batch_descriptor = BatchDescriptor(
+-                num_tokens=num_input_tokens,
+-                uniform_decode=uniform_decode,
+-                has_lora=len(self.input_batch.lora_id_to_lora_request) > 0,
+-            )
+-            cudagraph_runtime_mode, batch_descriptor = (
+-                self.cudagraph_dispatcher.dispatch(batch_descriptor, use_cascade_attn)
+-            )
+-
+         # Set cudagraph mode to none if calc_kv_scales is true.
+         if attn_metadata is not None:
+             metadata_list = (
+@@ -3312,6 +3388,34 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+             dp_rank = self.parallel_config.data_parallel_rank
+             num_tokens_after_padding = int(num_tokens_across_dp[dp_rank])
+ 
++        # Adapted from #28579: resolve the cudagraph mode before deciding whether
++        # to build attention metadata, so that a FULL replay of a dummy batch
++        # (e.g. on a locally idle DP replica) never reads stale metadata.
++        # filter out the valid batch descriptor
++        _cg_mode, batch_descriptor = (
++            self.cudagraph_dispatcher.dispatch(
++                BatchDescriptor(
++                    num_tokens=num_tokens_after_padding,
++                    uniform_decode=uniform_decode,
++                    has_lora=activate_lora and self.lora_config is not None,
++                )
++            )
++            if not is_profile
++            else (CUDAGraphMode.NONE, None)
++        )
++        if cudagraph_runtime_mode is not None:
++            # we allow forcing NONE when the dispatcher disagrees to support
++            # warm ups for cudagraph capture
++            assert (
++                cudagraph_runtime_mode == CUDAGraphMode.NONE
++                or cudagraph_runtime_mode == _cg_mode
++            ), (
++                f"Cudagraph runtime mode mismatch at dummy_run. "
++                f"Expected {_cg_mode}, but got {cudagraph_runtime_mode}."
++            )
++        else:
++            cudagraph_runtime_mode = _cg_mode
++
+         attn_metadata: PerLayerAttnMetadata | None = None
+ 
+         # If force_attention is True, we always capture attention. Otherwise,
+@@ -3321,6 +3425,22 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+             if ubatch_slices is not None:
+                 attn_metadata = [dict() for _ in range(len(ubatch_slices))]
+ 
++            # As in _prepare_inputs: a uniform-decode FULL graph replays every
++            # request row it was captured with; rows beyond the dummy requests
++            # are padded rows (zero length, PAD block id).
++            num_reqs_padded = num_reqs
++            num_attn_tokens = num_tokens
++            if (
++                cudagraph_runtime_mode == CUDAGraphMode.FULL
++                and batch_descriptor is not None
++                and batch_descriptor.uniform_decode
++                and ubatch_slices is None
++            ):
++                num_reqs_padded = max(
++                    num_reqs, num_tokens_after_padding // self.uniform_decode_query_len
++                )
++                num_attn_tokens = num_tokens_after_padding
++
+             if create_mixed_batch:
+                 # In the mixed batch mode (used for FI warmup), we use
+                 # shorter sequence lengths to run faster.
+@@ -3334,29 +3454,39 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+ 
+             cum_num_tokens, _ = self._get_cumsum_and_arange(num_scheduled_tokens)
+             self.query_start_loc.np[1 : num_reqs + 1] = cum_num_tokens
++            self.query_start_loc.np[num_reqs + 1 :] = cum_num_tokens[-1]
+             self.query_start_loc.copy_to_gpu()
+ 
++            # A dummy batch owns no request's state or KV: its tokens write no
++            # KV (slot -1), its rows read and write only the null block (block
++            # 0, never allocated to a request), and padded rows hold the PAD id.
++            dummy_num_computed_tokens_cpu = torch.zeros_like(
++                self.input_batch.num_computed_tokens_cpu_tensor[:num_reqs_padded]
++            )
++
+             for kv_cache_group_id, kv_cache_group_spec in enumerate(
+                 self.kv_cache_config.kv_cache_groups
+             ):
++                blk_table = self.input_batch.block_table[kv_cache_group_id]
++                blk_table_tensor = blk_table.get_device_tensor(num_reqs_padded)
++                blk_table_tensor[:num_reqs].fill_(0)
++                blk_table_tensor[num_reqs:num_reqs_padded].fill_(-1)
++                slot_mapping = blk_table.slot_mapping.gpu[:num_attn_tokens]
++                slot_mapping.fill_(-1)
+                 common_attn_metadata = CommonAttentionMetadata(
+-                    query_start_loc=self.query_start_loc.gpu[: num_reqs + 1],
+-                    query_start_loc_cpu=self.query_start_loc.cpu[: num_reqs + 1],
+-                    seq_lens=self.seq_lens.gpu[:num_reqs],
+-                    seq_lens_cpu=self.seq_lens.cpu[:num_reqs],
+-                    num_computed_tokens_cpu=self.input_batch.num_computed_tokens_cpu_tensor[
+-                        :num_reqs
++                    query_start_loc=self.query_start_loc.gpu[: num_reqs_padded + 1],
++                    query_start_loc_cpu=self.query_start_loc.cpu[
++                        : num_reqs_padded + 1
+                     ],
+-                    num_reqs=num_reqs,
+-                    num_actual_tokens=num_tokens,
++                    seq_lens=self.seq_lens.gpu[:num_reqs_padded],
++                    seq_lens_cpu=self.seq_lens.cpu[:num_reqs_padded],
++                    num_computed_tokens_cpu=dummy_num_computed_tokens_cpu,
++                    num_reqs=num_reqs_padded,
++                    num_actual_tokens=num_attn_tokens,
+                     max_query_len=max_query_len,
+                     max_seq_len=self.max_model_len,
+-                    block_table_tensor=self.input_batch.block_table[
+-                        kv_cache_group_id
+-                    ].get_device_tensor(num_reqs),
+-                    slot_mapping=self.input_batch.block_table[
+-                        kv_cache_group_id
+-                    ].slot_mapping.gpu[:num_tokens],
++                    block_table_tensor=blk_table_tensor,
++                    slot_mapping=slot_mapping,
+                     causal=True,
+                     dcp_local_seq_lens=self.dcp_local_seq_lens.gpu[:num_reqs]
+                     if self.dcp_world_size > 1
+@@ -3428,31 +3558,6 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+                     num_tokens_after_padding, None, False
+                 )
+ 
+-            # filter out the valid batch descriptor
+-            _cg_mode, batch_descriptor = (
+-                self.cudagraph_dispatcher.dispatch(
+-                    BatchDescriptor(
+-                        num_tokens=num_tokens_after_padding,
+-                        uniform_decode=uniform_decode,
+-                        has_lora=activate_lora and self.lora_config is not None,
+-                    )
+-                )
+-                if not is_profile
+-                else (CUDAGraphMode.NONE, None)
+-            )
+-            if cudagraph_runtime_mode is not None:
+-                # we allow forcing NONE when the dispatcher disagrees to support
+-                # warm ups for cudagraph capture
+-                assert (
+-                    cudagraph_runtime_mode == CUDAGraphMode.NONE
+-                    or cudagraph_runtime_mode == _cg_mode
+-                ), (
+-                    f"Cudagraph runtime mode mismatch at dummy_run. "
+-                    f"Expected {_cg_mode}, but got {cudagraph_runtime_mode}."
+-                )
+-            else:
+-                cudagraph_runtime_mode = _cg_mode
+-
+             if ubatch_slices is not None:
+                 # Adjust values to reflect a single ubatch.
+                 # TODO(sage,lucas): this is cruft that should be addressed in
+@@ -4134,26 +4239,18 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
+ 
+     def calculate_reorder_batch_threshold(self) -> None:
+         """
+-        Check that if any backends reorder batches; that the reordering
+-        is compatible (e.g., decode threshold is the same)
++        Choose the minimum reorder batch threshold from all attention groups.
++        Backends should be able to support lower threshold then what they request
++        just may have a performance penalty due to that backend treating decodes
++        as prefills.
+         """
+-        for group in self._attn_group_iterator():
+-            attn_metadata_builder_i = group.get_metadata_builder()
+-
+-            # check that if any backends reorder batches; that the reordering
+-            # is compatible (e.g., decode threshold is the same)
+-            reorder_batch_threshold_i = attn_metadata_builder_i.reorder_batch_threshold
+-            if reorder_batch_threshold_i is not None:
+-                if self.reorder_batch_threshold is not None:
+-                    if reorder_batch_threshold_i != self.reorder_batch_threshold:
+-                        raise ValueError(
+-                            f"Attention backend reorders decodes with "
+-                            f"threshold {reorder_batch_threshold_i} but other "
+-                            f"backend uses threshold "
+-                            f"{self.reorder_batch_threshold}"
+-                        )
+-                else:
+-                    self.reorder_batch_threshold = reorder_batch_threshold_i
++        min_none_high = lambda a, b: a if b is None else b if a is None else min(a, b)
++
++        reorder_batch_thresholds = [
++            group.get_metadata_builder().reorder_batch_threshold
++            for group in self._attn_group_iterator()
++        ]
++        self.reorder_batch_threshold = reduce(min_none_high, reorder_batch_thresholds)
+ 
+     def _find_compatible_block_sizes(
+         self,
+diff --git a/vllm/v1/worker/mamba_utils.py b/vllm/v1/worker/mamba_utils.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..911e555da3442b6a57fb8c355cb396e913d7b410
+--- /dev/null
++++ b/vllm/v1/worker/mamba_utils.py
+@@ -0,0 +1,166 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""Mamba state copies for prefix caching in align mode (non-speculative).
++
++A request's running state lives in its last allocated block. When the scheduler
++gives the request a new last block (a new state checkpoint, or a new request
++that hit a cached checkpoint), the previous state is copied into the new block
++before the model consumes it, so retained checkpoints stay immutable.
++"""
++
++import itertools
++from typing import Any
++
++import torch
++
++from vllm.config import CacheConfig
++from vllm.model_executor.layers.mamba.mamba_utils import MambaStateCopyFunc
++from vllm.triton_utils import tl, triton
++from vllm.v1.core.sched.output import SchedulerOutput
++from vllm.v1.kv_cache_interface import KVCacheConfig, MambaSpec
++from vllm.v1.worker.gpu_input_batch import CachedRequestState, InputBatch
++
++
++@triton.jit
++def batch_memcpy_kernel(src_ptrs, dst_ptrs, sizes, BLOCK_SIZE: tl.constexpr):
++    pid = tl.program_id(0)
++
++    src_ptr = tl.load(src_ptrs + pid)
++    dst_ptr = tl.load(dst_ptrs + pid)
++    size = tl.load(sizes + pid)
++
++    offsets = tl.arange(0, BLOCK_SIZE)
++    for i in range(0, size, BLOCK_SIZE):
++        mask = (i + offsets) < size
++
++        curr_src_ptr = (src_ptr + i + offsets).to(tl.pointer_type(tl.uint8))
++        curr_dst_ptr = (dst_ptr + i + offsets).to(tl.pointer_type(tl.uint8))
++
++        data = tl.load(curr_src_ptr, mask=mask)
++        tl.store(curr_dst_ptr, data, mask=mask)
++
++
++def batch_memcpy(src_ptrs, dst_ptrs, sizes):
++    batch = src_ptrs.shape[0]
++    assert dst_ptrs.shape[0] == batch
++    assert sizes.shape[0] == batch
++
++    grid = (batch,)
++    BLOCK_SIZE = 1024
++    batch_memcpy_kernel[grid](src_ptrs, dst_ptrs, sizes, BLOCK_SIZE=BLOCK_SIZE)
++
++
++def get_mamba_groups(kv_cache_config: KVCacheConfig) -> tuple[list[int], MambaSpec]:
++    mamba_group_ids: list[int] = []
++    mamba_specs: list[MambaSpec] = []
++    for i in range(len(kv_cache_config.kv_cache_groups)):
++        kv_cache_spec = kv_cache_config.kv_cache_groups[i].kv_cache_spec
++        if isinstance(kv_cache_spec, MambaSpec):
++            mamba_group_ids.append(i)
++            mamba_specs.append(kv_cache_spec)
++    assert len(mamba_group_ids) > 0, "no mamba layers in the model"
++    assert all(mamba_specs[0] == spec for spec in mamba_specs)
++    return mamba_group_ids, mamba_specs[0]
++
++
++def collect_mamba_copy_meta(
++    src_state_list: list[int],
++    dest_state_list: list[int],
++    num_elements_list: list[int],
++    kv_cache_config: KVCacheConfig,
++    mamba_state_copy_funcs: tuple[MambaStateCopyFunc, ...],
++    mamba_group_ids: list[int],
++    src_block_idx: int,
++    dest_block_idx: int,
++    req_state: CachedRequestState,
++    forward_context: dict[str, Any],
++):
++    if src_block_idx == dest_block_idx:
++        return
++
++    for mamba_group_id in mamba_group_ids:
++        block_ids = req_state.block_ids[mamba_group_id]
++        dest_block_id = block_ids[dest_block_idx]
++        layer_names = kv_cache_config.kv_cache_groups[mamba_group_id].layer_names
++        for layer_name in layer_names:
++            attention = forward_context[layer_name]
++            kv_caches: list[torch.Tensor] = attention.kv_cache[0]
++            for state, state_copy_func in zip(kv_caches, mamba_state_copy_funcs):
++                # Without speculative decoding exactly one token is accepted.
++                copy_spec = state_copy_func(state, block_ids, src_block_idx, 1)
++
++                src_state_list.append(copy_spec.start_addr)
++                dest_state_list.append(state[dest_block_id].data_ptr())
++                num_elements_list.append(copy_spec.num_elements * state.element_size())
++
++
++def do_mamba_copy_block(
++    src_state_list: list[int],
++    dest_state_list: list[int],
++    num_elements_list: list[int],
++):
++    if len(src_state_list) == 0:
++        return
++    assert len(src_state_list) == len(dest_state_list)
++    assert len(src_state_list) == len(num_elements_list)
++    src_state_ptrs = torch.tensor(src_state_list, device="cuda", dtype=torch.int64)
++    dst_state_ptrs = torch.tensor(dest_state_list, device="cuda", dtype=torch.int64)
++    num_elements = torch.tensor(num_elements_list, device="cuda", dtype=torch.int32)
++
++    batch_memcpy(src_state_ptrs, dst_state_ptrs, num_elements)
++
++
++def preprocess_mamba(
++    scheduler_output: SchedulerOutput,
++    kv_cache_config: KVCacheConfig,
++    cache_config: CacheConfig,
++    mamba_state_idx: dict[str, int],
++    input_batch: InputBatch,
++    requests: dict[str, CachedRequestState],
++    forward_context: dict[str, Any],
++    mamba_state_copy_funcs: tuple[MambaStateCopyFunc, ...],
++):
++    """
++    Copy the mamba state of previous step to the last block.
++    """
++    mamba_group_ids, mamba_spec = get_mamba_groups(kv_cache_config)
++    assert cache_config.enable_prefix_caching
++    assert mamba_spec.num_speculative_blocks == 0
++    block_size = mamba_spec.block_size
++    # A finished request's index must not be inherited by a later request with
++    # the same ID; a resumed request restarts from its restored history.
++    finished_req_ids = scheduler_output.finished_req_ids
++    resumed_req_ids = scheduler_output.scheduled_cached_reqs.resumed_req_ids
++    for req_id in itertools.chain(finished_req_ids, resumed_req_ids):
++        mamba_state_idx.pop(req_id, None)
++
++    src_state_list: list[int] = []
++    dest_state_list: list[int] = []
++    num_elements_list: list[int] = []
++    for req_id in input_batch.req_ids:
++        req_state = requests[req_id]
++        prev_state_idx = mamba_state_idx.get(req_id)
++        if prev_state_idx is None:
++            # new / resumed request, no previous state
++            # if num_computed_tokens is 0, prev_state_idx will be -1
++            prev_state_idx = (req_state.num_computed_tokens - 1) // block_size
++
++        num_blocks = len(req_state.block_ids[mamba_group_ids[0]])
++
++        # We always save the current running state at the last block.
++        curr_state_idx = num_blocks - 1
++        mamba_state_idx[req_id] = curr_state_idx
++        if prev_state_idx != -1 and prev_state_idx != curr_state_idx:
++            collect_mamba_copy_meta(
++                src_state_list,
++                dest_state_list,
++                num_elements_list,
++                kv_cache_config,
++                mamba_state_copy_funcs,
++                mamba_group_ids,
++                prev_state_idx,
++                curr_state_idx,
++                req_state,
++                forward_context,
++            )
++    do_mamba_copy_block(src_state_list, dest_state_list, num_elements_list)

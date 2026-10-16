@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="160" viewBox="0 0 880 160" role="img" aria-label="tracks"><style>text{font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif}</style>
+<rect x="0" y="4" width="436" height="153.5" rx="16" fill="#f5f5f7"/>
+<svg x="16" y="19.6" width="20" height="20" viewBox="0 0 40 40" overflow="visible"><g fill="none" stroke="#1d1d1f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="15.5" y="8.5" width="20" height="23" rx="5"/><rect x="4.5" y="16" width="16" height="8" rx="2" fill="#1d1d1f" stroke="none"/></g></svg>
+<text x="44" y="35" font-size="15" font-weight="600" fill="#1d1d1f">Day-0 Model Support</text>
+<text x="420" y="34" font-size="12" fill="#86868b" text-anchor="end">10 tasks</text>
+<text x="16" y="74.6" font-size="20" fill="#1d1d1f" letter-spacing="-0.2">pass@1</text>
+<text x="16" y="99.7" font-size="13" fill="#6e6e73">Full passes over attempts on each task, averaged over the</text>
+<text x="16" y="119.9" font-size="13" fill="#6e6e73">tasks. A partial pass counts as a failure.</text>
+<rect x="444" y="4" width="436" height="153.5" rx="16" fill="#f5f5f7"/>
+<svg x="460" y="18.3" width="20" height="20" viewBox="0 0 40 40" overflow="visible"><g fill="none" stroke="#1d1d1f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 29a13.5 13.5 0 0 1 27 0"/><path d="M20 29l7.5-9.5"/><circle cx="20" cy="29" r="2.3" fill="#1d1d1f" stroke="none"/></g></svg>
+<text x="488" y="35" font-size="15" font-weight="600" fill="#1d1d1f">Inference Optimization &amp; Regression Fix</text>
+<text x="864" y="34" font-size="12" fill="#86868b" text-anchor="end">27 tasks</text>
+<text x="460" y="74.6" font-size="20" fill="#1d1d1f" letter-spacing="-0.2">speed-up</text>
+<text x="460" y="99.7" font-size="13" fill="#6e6e73">Each task's measured ratio against its baseline, as a</text>
+<text x="460" y="119.9" font-size="13" fill="#6e6e73">geometric mean over the tasks. A result that fails its</text>
+<text x="460" y="140" font-size="13" fill="#6e6e73">correctness check counts as 1.00×.</text>
+</svg>

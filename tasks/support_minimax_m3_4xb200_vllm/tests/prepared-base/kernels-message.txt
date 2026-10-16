@@ -1,0 +1,1 @@
+Extend generic kernels: FP32 router GEMM shapes, scaled clamped SwiGLU, fused all-reduce with Gemma RMSNorm

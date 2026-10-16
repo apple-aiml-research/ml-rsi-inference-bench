@@ -1,0 +1,141 @@
+{
+  "precision": {
+    "set_dtype": "mixed",
+    "components": {
+      "text_encoder": [
+        "torch.float16"
+      ],
+      "text_encoder_2": [
+        "torch.float16"
+      ],
+      "text_encoder_3": [
+        "torch.float32"
+      ],
+      "transformer": [
+        "torch.bfloat16"
+      ],
+      "vae": [
+        "torch.float32"
+      ]
+    },
+    "tf32": {
+      "matmul": false,
+      "cudnn": true
+    },
+    "convention": "mixed: encode outside autocast, denoise under bf16 autocast, fp32 VAE decode outside it"
+  },
+  "initial_noise": {
+    "astronaut": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "ea65aee5afa3e54530ffc77314ec197cec619fe32195d2c1266b25c25421f9d0"
+    },
+    "teapot": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "1585ca6572dff285152d528fdb6a58aa2c20482eacfbbac9ff43da65ea988195"
+    },
+    "redlacquer": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "b3312bdc2b4126cb30f22ce9a83d4bb658846b4a52285dbb1e1220d5b30ccfbb"
+    },
+    "ramen": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "ea65aee5afa3e54530ffc77314ec197cec619fe32195d2c1266b25c25421f9d0"
+    },
+    "mountain": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "ca8b51617094e965f69945cbfba532abd5773c721cc254f923a86acd95b72f78"
+    },
+    "stainedglass": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "91f1d5c0ebbd9dfd8a9c58205e7a863e477ff2ed2c89b8c839e0818dd56db35d"
+    },
+    "origami": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "2119ea211b6b2a9641862db443dc108123ed6c3e260a0336aae7fbb9800bc4a4"
+    },
+    "candles": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "c7f106a17b51c61b5487c066a921d5de8f58f9a5524e53846f1cadc3638b301b"
+    },
+    "astronaut_cfg1": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "ea65aee5afa3e54530ffc77314ec197cec619fe32195d2c1266b25c25421f9d0"
+    },
+    "stainedglass_cfg1": {
+      "dtype": "torch.float32",
+      "shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "sha256": "91f1d5c0ebbd9dfd8a9c58205e7a863e477ff2ed2c89b8c839e0818dd56db35d"
+    }
+  },
+  "sha256": {
+    "astronaut.npy": "396dfa2e3382478a1c6aab72b4d2fbb1bec2bb2bfc5a40a8b8b83177f02b7cc8",
+    "teapot.npy": "d73b1ee8a8b5f56d5765110fd0d45393e4a4817a748af410c00faca6f439cb53",
+    "redlacquer.npy": "156cd31a9d2ff0f8f44c5c01ea4c231d5dd87fa420f9d714970fb437fd4270e3",
+    "ramen.npy": "b373099d17cf5637a48e8214e64bf76767bc011449ee43cdf9860ea22aeb76da",
+    "mountain.npy": "2d2d19ff07347135105affb1cea6a4f501f0dceb1d1cc85291bcd8299a0ffbcc",
+    "stainedglass.npy": "f1d90544ab1f2ffcaecb5210d4e49da3eda69dc92d41434a9d3ad19b72e1f864",
+    "origami.npy": "4d1eb4d0fd9fb0966873f4710dbaf22d40227a390748aebe2e34cc346b5ba405",
+    "candles.npy": "6d8fda51b77511e63fa03cb83023c3323a7578d1e49d3ff52f96db5fc454059f",
+    "astronaut_cfg1.npy": "e7261c357c65316be9085c72dae5b2070899a605538963a7f39eba74f790cf12",
+    "stainedglass_cfg1.npy": "307e0ee328e06c0ffc516b1b8a157faaec1550d975500cd24dde0b80763033e8"
+  }
+}

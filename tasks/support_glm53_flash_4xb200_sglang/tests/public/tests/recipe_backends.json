@@ -1,0 +1,5 @@
+{
+ "what": "the attention backends each configuration serves with, which its launch flags leave to the engine's resolution; check_recipe.py reads them back beside the flags",
+ "high_throughput": {"attention_backend": "dsa", "linear_attn_backend": "triton"},
+ "low_latency": {"attention_backend": "dsa", "linear_attn_backend": "triton"}
+}

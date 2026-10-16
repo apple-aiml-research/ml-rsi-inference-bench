@@ -1,0 +1,12 @@
+Supplied prerequisites: DeepSeek-V4.1-Flash kernels
+
+The candidate-block selection kernel for two-level sparse attention indexing,
+the MXFP8 linear kernels (DeepGEMM and FlashInfer backends), the hyper-connection
+(mHC) kernels in TileLang, Triton and torch with their warmup, the routing-bias
+fields on the fused-MoE router, and kernel changes to three DeepSeek-V4 ops
+(inverse-RoPE FP8 quantization, the fused indexer query kernel and the grouped
+low-rank output projection).
+
+The task asks for the model, its configuration, the attention, compressor and
+indexer integration, Engram, DSpark and the runtime integration, not kernel
+authoring, so these kernels are supplied as a prerequisite.

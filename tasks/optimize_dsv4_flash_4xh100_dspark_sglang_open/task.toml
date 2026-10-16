@@ -1,0 +1,132 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+
+[task]
+name = "inference-bench/optimize_dsv4_flash_4xh100_dspark_sglang_open"
+description = "Optimize SGLang serving throughput for DeepSeek-V4-Flash-DSpark (284B total / 13B active MoE: 256 routed top-6 + 1 shared, hybrid Compressed Sparse Attention + Heavily Compressed Attention, MLA base, NVFP4/MXFP4 expert MLPs + fp8 everything else) on 4×H100 / SGLang 0.5.12.post1 (torch 2.10.0+cu128, sglang-kernel 0.4.2.post2 sm90/sm100) while preserving correctness. 4×H100 / TP=4 DeepSeek-V4-Flash-DSpark for studying MLA / hybrid CSA/HCA attention / MoE / fp4-expert / RadixAttention / scheduler-level levers in SGLang's srt runtime. On H100 (sm_90) the fp4 experts run through SGLang's non-Blackwell fallback (dequant / mixed-precision GEMM) since NVFP4 tensor cores are Blackwell-only — an emulation-bound regime."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "throughput-optimization", "deepseek-v4", "flash", "mla", "moe", "fp4", "fp8", "h100", "srt", "tp4", "hybrid-attention"]
+
+[agent]
+timeout_sec = 30000  # 8.33h
+
+[verifier]
+timeout_sec = 21600
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 393216
+storage_mb = 245760
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 4
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "sglang"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.speculative_config]
+method = "dspark"
+num_speculative_tokens = 1
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+commit = "v0.5.18"
+workdir = "/app/repo"
+edit_policies = ["python", "csrc:jit_kernel", "csrc:sgl-kernel"]
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.8"
+engine_install = "task_scoped_sglang_0_5_18_editable_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "deepseek-ai/DeepSeek-V4-Flash-DSpark"
+architecture = "DeepseekV4ForCausalLM"
+total_parameters = "284B"
+activated_parameters = "13B"
+context_window = 1000000
+dtype = "auto"
+tensor_parallel_size = 4
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.4
+rtol = 0.15
+min_pass_rate = 0.85
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "mtp_longctx_8k"
+input_len = 8192
+output_len = 4096
+num_prompts = 64
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_ENGINE = "sglang"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_SGLANG_PINNED_COMMIT = "v0.5.18"
+INFB_BUILD_SGL_KERNEL_SH = "/app/scripts/build_sgl_kernel.sh"
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+INFB_SGLKERNEL_BUILD_TIMEOUT_SEC = "14400"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_LIVE_REF_TIMEOUT_SEC = "7200"
+INFB_ACCEPT_RTOL = "0.04"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_ENGINE = "sglang"
+INFB_GEN_JUDGE_J1_EPS = "0.5"
+INFB_GEN_JUDGE_J1_MAX_EXCESS = "0.005"
+INFB_GEN_JUDGE_J1_Z = "4"
+INFB_GEN_JUDGE_J2_Z = "5"
+INFB_OFFICIAL = "1"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

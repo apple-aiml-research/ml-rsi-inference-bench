@@ -1,0 +1,4 @@
+Public Qwen38 evaluation resources
+
+Independent mathematics, serving observations and measurement protocols.
+These tools contain no optimized model implementation or private grading policy.

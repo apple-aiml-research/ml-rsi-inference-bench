@@ -1,0 +1,51 @@
+{
+  "_note": "The workload matrix. Upstream's own reproduction (1024 in / 1024 out, 1024 requests at concurrency 512, no output-length jitter) is the anchor; the two other scored points keep the same request shape at 384 and 256 concurrent requests, which is the range over which the regression is measurable. c=128, where a repair gains nothing, is the guard: measured and never averaged in, because a high-concurrency repair must not tax the lower-concurrency decode path. Concurrency is the engine's max_num_seqs, so every point is its own engine boot.",
+  "primary_workload": "in1024_out1024_c512",
+  "scored_workloads": [
+    "in1024_out1024_c256",
+    "in1024_out1024_c384",
+    "in1024_out1024_c512"
+  ],
+  "guard_workloads": [
+    "in1024_out1024_c128"
+  ],
+  "workloads": [
+    {
+      "name": "in1024_out1024_c512",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 1024,
+      "max_concurrency": 512,
+      "max_model_len": 2560
+    },
+    {
+      "name": "in1024_out1024_c256",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 512,
+      "max_concurrency": 256,
+      "max_model_len": 2560
+    },
+    {
+      "name": "in1024_out1024_c384",
+      "role": "scored",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 768,
+      "max_concurrency": 384,
+      "max_model_len": 2560
+    },
+    {
+      "name": "in1024_out1024_c128",
+      "role": "guard",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 256,
+      "max_concurrency": 128,
+      "max_model_len": 2560,
+      "min_ratio": 0.95
+    }
+  ]
+}

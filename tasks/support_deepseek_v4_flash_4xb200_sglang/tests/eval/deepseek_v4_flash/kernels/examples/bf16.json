@@ -1,0 +1,10 @@
+{
+ "what": "BF16 sparse attention: 16 queries, 64 heads, one shared KV head of 512 coordinates over 512 entries, 128 selected keys per query (two rows with invalid entries, two with shorter valid lengths), a per-head sink; expected output, max logits and LSE",
+ "sm_scale": 0.04419417382415922,
+ "tensors_sha256": "8fa0a4c4fa52000433e05d70a5e56ace613df159e45379a19ea4e1d47c0d8e54",
+ "generated": {
+  "label": "dsv4-public-kernel-examples",
+  "expected_from": "an independent float64 implementation of the equations in ../README.md",
+  "checked_against": "the restored human reference"
+ }
+}

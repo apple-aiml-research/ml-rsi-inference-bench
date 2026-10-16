@@ -1,0 +1,1485 @@
+{
+ "schema": "infb-sparse-indexer-adaptation/1",
+ "what": "the reference port: the support solution plus the scoped sparse-indexer backport, one record per changed source hunk of the port (git diff -U0 of the support solution and the port)",
+ "port": {
+  "from": "57669c02bf78b162fc846c3b8912bded56faeb75",
+  "to": "334eead880717fb5c46e686c536e949da886f901",
+  "hunks": 59,
+  "files": [
+   "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "third_party/deepgemm_v41_sparse/csrc/jit_kernels/impls/sm100_sparse_mqa_logits.hpp",
+   "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/impls/sm100_sparse_mqa_logits.cuh",
+   "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/layout/sparse_mqa_logits.cuh",
+   "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/scheduler/sm100_sparse_mqa_logits_metadata.cuh",
+   "vllm/model_executor/kernels/attention/dsa/sparse_mqa_logits.py",
+   "vllm/model_executor/layers/sparse_attn_indexer.py",
+   "vllm/model_executor/layers/sparse_indexer_eval.py",
+   "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "vllm/models/deepseek_v4_1/attention.py",
+   "vllm/utils/deep_gemm.py",
+   "vllm/v1/attention/backends/mla/indexer.py",
+   "vllm/v1/attention/backends/mla/sparse_indexer.py",
+   "vllm/v1/core/kv_cache_utils.py",
+   "vllm/v1/kv_cache_interface.py"
+  ]
+ },
+ "notes": {
+  "unaligned_ks": "use_unaligned_ks=True in both dependency calls is retained upstream behavior, no adaptation",
+  "weight_rounding": "the weight-rounding requirement is observed on production tensors in the serving-binding node"
+ },
+ "tests_mapping": {
+  "note": "the private corpus (tests/infb_verify/sparse_cases.py) adapts, and does not copy, these upstream tests",
+  "sources": [
+   {
+    "url": "https://github.com/deepseek-ai/DeepGEMM/blob/66081d4c9c7d7c44f13fea402e5b622aa0f409c2/tests/test_attention.py",
+    "covers": "sparse packed/paged compute, unaligned starts, scheduling boundaries and repeated work",
+    "cases": [
+     "packed-coord-*",
+     "packed-sched-*",
+     "paged-storage-*"
+    ]
+   },
+   {
+    "url": "https://github.com/vllm-project/vllm/blob/12575123059c2142e39c9af4e217a4792c3c8176/tests/model_executor/layers/test_mla_short_prefill_indexer.py",
+    "covers": "expansion, logical page construction, graph capture, schedule reuse and FP32 comparison",
+    "cases": [
+     "paged-storage-*",
+     "lifecycle",
+     "graphs"
+    ]
+   },
+   {
+    "url": "https://github.com/vllm-project/vllm/blob/12575123059c2142e39c9af4e217a4792c3c8176/tests/kernels/test_fused_indexer_q_rope_quant.py",
+    "covers": "FP32-to-BF16 head-weight output",
+    "cases": [
+     "test_sparse_indexer_serving_binding (weight rounding: observed on production tensors)"
+    ]
+   },
+   {
+    "url": "https://github.com/vllm-project/vllm/blob/e77daef89e18e08321ae7b8b24827eedd5fe8673/tests/model_executor/layers/test_mla_short_prefill_indexer.py",
+    "covers": "candidate/newest-block semantics and packed bounds",
+    "cases": [
+     "two-level-*",
+     "packed-bounds"
+    ]
+   },
+   {
+    "url": "https://github.com/vllm-project/vllm/blob/9ef37771beac1c1ce6a8b7ceae1f7ebeb6f51800/tests/model_executor/layers/test_mla_short_prefill_indexer.py",
+    "covers": "reference/dependency qualification of sentinel remap safety, not a new public helper ABI",
+    "cases": [
+     "reference-side qualification"
+    ]
+   }
+  ],
+  "declared_adaptations": [
+   "row lengths through six per verification group (spec-groups-*)",
+   "changed-input CUDA-graph replay (graphs)",
+   "accepted-prefix tail poisoning (spec-accepted-0..5)"
+  ]
+ },
+ "records": [
+  {
+   "n": 1,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "hunk": {
+    "old_start": 13,
+    "old_lines": 0,
+    "new_start": 14,
+    "new_lines": 1,
+    "context": ""
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/apis/attention.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 2,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "hunk": {
+    "old_start": 204,
+    "old_lines": 6,
+    "new_start": 205,
+    "new_lines": 17,
+    "context": "static torch::Tensor get_mqa_logits_metadata(const torch::Tensor& cu_seq_len_k_s"
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/apis/attention.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 3,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "hunk": {
+    "old_start": 222,
+    "old_lines": 1,
+    "new_start": 234,
+    "new_lines": 19,
+    "context": "static torch::Tensor get_sparse_mqa_logits_metadata(const torch::Tensor& cu_seq_"
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/apis/attention.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 4,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "hunk": {
+    "old_start": 235,
+    "old_lines": 1,
+    "new_start": 265,
+    "new_lines": 23,
+    "context": "static torch::Tensor get_paged_sparse_mqa_logits_metadata(const torch::Tensor& c"
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/apis/attention.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 5,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "hunk": {
+    "old_start": 246,
+    "old_lines": 1,
+    "new_start": 298,
+    "new_lines": 33,
+    "context": "static torch::Tensor fp8_fp4_sparse_mqa_logits(const std::tuple<torch::Tensor, s"
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/apis/attention.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 6,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "hunk": {
+    "old_start": 256,
+    "old_lines": 1,
+    "new_start": 340,
+    "new_lines": 34,
+    "context": "static torch::Tensor fp8_fp4_paged_sparse_mqa_logits(const std::tuple<torch::Ten"
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/apis/attention.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 7,
+   "destination": "third_party/deepgemm_v41_sparse/csrc/jit_kernels/impls/sm100_sparse_mqa_logits.hpp",
+   "hunk": {
+    "old_start": 0,
+    "old_lines": 0,
+    "new_start": 1,
+    "new_lines": 202,
+    "context": ""
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "csrc/jit_kernels/impls/sm100_sparse_mqa_logits.hpp"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 8,
+   "destination": "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/impls/sm100_sparse_mqa_logits.cuh",
+   "hunk": {
+    "old_start": 0,
+    "old_lines": 0,
+    "new_start": 1,
+    "new_lines": 627,
+    "context": ""
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "deep_gemm/include/deep_gemm/impls/sm100_sparse_mqa_logits.cuh"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 9,
+   "destination": "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/layout/sparse_mqa_logits.cuh",
+   "hunk": {
+    "old_start": 0,
+    "old_lines": 0,
+    "new_start": 1,
+    "new_lines": 146,
+    "context": ""
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "deep_gemm/include/deep_gemm/layout/sparse_mqa_logits.cuh"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 10,
+   "destination": "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/scheduler/sm100_sparse_mqa_logits_metadata.cuh",
+   "hunk": {
+    "old_start": 0,
+    "old_lines": 0,
+    "new_start": 1,
+    "new_lines": 468,
+    "context": ""
+   },
+   "source": {
+    "pr": "deepseek-ai/DeepGEMM#432",
+    "commit": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2",
+    "path": "deep_gemm/include/deep_gemm/scheduler/sm100_sparse_mqa_logits_metadata.cuh"
+   },
+   "behavior": "restored verbatim",
+   "reason": "one of the four withheld sparse MQA-logits targets (the sparse-indexer contract): the preparation removed or stubbed it; the held-out solution alone restores it from the pinned DeepGEMM source",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a stale product or a header change is rebuilt from the committed source"
+   ]
+  },
+  {
+   "n": 11,
+   "destination": "vllm/model_executor/kernels/attention/dsa/sparse_mqa_logits.py",
+   "hunk": {
+    "old_start": 0,
+    "old_lines": 0,
+    "new_start": 1,
+    "new_lines": 472,
+    "context": ""
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/model_executor/kernels/attention/dsa/sparse_mqa_logits.py"
+   },
+   "behavior": "adapted: the candidate expansion, the packed and paged pipelines and the remap, with #58215's bounds repair (9ef37771) applied; use_unaligned_ks=True in both dependency calls is the pinned upstream behavior, retained with no adaptation (unaligned ks: the pinned patch passes it at its lines 1755 and 1832)",
+   "reason": "the sparse-indexer contract (sparse_mqa_logits.py row; the unaligned-start paragraph as corrected by the unaligned-ks note)",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency",
+    "a start rounded down",
+    "the pre-#58215 unbounded remap",
+    "test_sparse_indexer_serving_binding"
+   ],
+   "source_also": {
+    "pr": "vllm-project/vllm#58215",
+    "commit": "9ef37771beac1c1ce6a8b7ceae1f7ebeb6f51800",
+    "path": "vllm/model_executor/kernels/attention/dsa/sparse_mqa_logits.py"
+   }
+  },
+  {
+   "n": 12,
+   "destination": "vllm/model_executor/layers/sparse_attn_indexer.py",
+   "hunk": {
+    "old_start": 21,
+    "old_lines": 0,
+    "new_start": 22,
+    "new_lines": 5,
+    "context": "from vllm.model_executor.kernels.attention.dsa.candidate_blocks import ("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/model_executor/layers/sparse_mqa_indexer.py"
+   },
+   "behavior": "adapted: #56254's candidate-consuming indexer (its dispatch and workspace) added to the old layers/sparse_attn_indexer.py as SparseMQAIndexer; the source indexer stays dense; the later rename is not imported",
+   "reason": "the sparse-indexer contract (layers/sparse_mqa_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 13,
+   "destination": "vllm/model_executor/layers/sparse_attn_indexer.py",
+   "hunk": {
+    "old_start": 30,
+    "old_lines": 0,
+    "new_start": 36,
+    "new_lines": 1,
+    "context": "from vllm.utils.deep_gemm import ("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/model_executor/layers/sparse_mqa_indexer.py"
+   },
+   "behavior": "adapted: #56254's candidate-consuming indexer (its dispatch and workspace) added to the old layers/sparse_attn_indexer.py as SparseMQAIndexer; the source indexer stays dense; the later rename is not imported",
+   "reason": "the sparse-indexer contract (layers/sparse_mqa_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 14,
+   "destination": "vllm/model_executor/layers/sparse_attn_indexer.py",
+   "hunk": {
+    "old_start": 40,
+    "old_lines": 0,
+    "new_start": 47,
+    "new_lines": 4,
+    "context": "from vllm.v1.attention.backends.mla.indexer import ("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/model_executor/layers/sparse_mqa_indexer.py"
+   },
+   "behavior": "adapted: #56254's candidate-consuming indexer (its dispatch and workspace) added to the old layers/sparse_attn_indexer.py as SparseMQAIndexer; the source indexer stays dense; the later rename is not imported",
+   "reason": "the sparse-indexer contract (layers/sparse_mqa_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 15,
+   "destination": "vllm/model_executor/layers/sparse_attn_indexer.py",
+   "hunk": {
+    "old_start": 1209,
+    "old_lines": 0,
+    "new_start": 1220,
+    "new_lines": 185,
+    "context": "class SparseAttnIndexer(CustomOp):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/model_executor/layers/sparse_mqa_indexer.py"
+   },
+   "behavior": "adapted: #56254's candidate-consuming indexer (its dispatch and workspace) added to the old layers/sparse_attn_indexer.py as SparseMQAIndexer; the source indexer stays dense; the later rename is not imported",
+   "reason": "the sparse-indexer contract (layers/sparse_mqa_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 16,
+   "destination": "vllm/model_executor/layers/sparse_indexer_eval.py",
+   "hunk": {
+    "old_start": 15,
+    "old_lines": 0,
+    "new_start": 16,
+    "new_lines": 1,
+    "context": "opaque workspace that the caller may pass back as ``workspace=`` on a later call"
+   },
+   "source": {
+    "task": "authored for this task"
+   },
+   "behavior": "task-authored: the reference's implementation of the two measurement entry points the preparation supplies as stubs, calling the production pipeline (one step of the four consumers over shared keys)",
+   "reason": "the sparse-indexer contract (the component-measurement interface); not an upstream hunk",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency"
+   ]
+  },
+  {
+   "n": 17,
+   "destination": "vllm/model_executor/layers/sparse_indexer_eval.py",
+   "hunk": {
+    "old_start": 19,
+    "old_lines": 0,
+    "new_start": 21,
+    "new_lines": 41,
+    "context": "import torch"
+   },
+   "source": {
+    "task": "authored for this task"
+   },
+   "behavior": "task-authored: the reference's implementation of the two measurement entry points the preparation supplies as stubs, calling the production pipeline (one step of the four consumers over shared keys)",
+   "reason": "the sparse-indexer contract (the component-measurement interface); not an upstream hunk",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency"
+   ]
+  },
+  {
+   "n": 18,
+   "destination": "vllm/model_executor/layers/sparse_indexer_eval.py",
+   "hunk": {
+    "old_start": 40,
+    "old_lines": 1,
+    "new_start": 82,
+    "new_lines": 31,
+    "context": "def prefill("
+   },
+   "source": {
+    "task": "authored for this task"
+   },
+   "behavior": "task-authored: the reference's implementation of the two measurement entry points the preparation supplies as stubs, calling the production pipeline (one step of the four consumers over shared keys)",
+   "reason": "the sparse-indexer contract (the component-measurement interface); not an upstream hunk",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency"
+   ]
+  },
+  {
+   "n": 19,
+   "destination": "vllm/model_executor/layers/sparse_indexer_eval.py",
+   "hunk": {
+    "old_start": 62,
+    "old_lines": 1,
+    "new_start": 134,
+    "new_lines": 42,
+    "context": "def decode("
+   },
+   "source": {
+    "task": "authored for this task"
+   },
+   "behavior": "task-authored: the reference's implementation of the two measurement entry points the preparation supplies as stubs, calling the production pipeline (one step of the four consumers over shared keys)",
+   "reason": "the sparse-indexer contract (the component-measurement interface); not an upstream hunk",
+   "verification": [
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency"
+   ]
+  },
+  {
+   "n": 20,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 311,
+    "old_lines": 0,
+    "new_start": 312,
+    "new_lines": 9,
+    "context": "class FusedIndexerQRopeQuantTritonKernel("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 21,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 317,
+    "old_lines": 0,
+    "new_start": 327,
+    "new_lines": 1,
+    "context": "class FusedIndexerQRopeMxFp4TritonKernel("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 22,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 436,
+    "old_lines": 0,
+    "new_start": 447,
+    "new_lines": 1,
+    "context": "class FusedIndexerQRopeMxFp4TritonKernel("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 23,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 442,
+    "old_lines": 0,
+    "new_start": 454,
+    "new_lines": 1,
+    "context": "class FusedIndexerQRopeMxFp4TritonKernel("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 24,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 458,
+    "old_lines": 0,
+    "new_start": 471,
+    "new_lines": 1,
+    "context": "class FusedIndexerQRopeMxFp4TritonKernel("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 25,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 494,
+    "old_lines": 1,
+    "new_start": 507,
+    "new_lines": 1,
+    "context": "class FusedIndexerQRopeMxFp4TritonKernel("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 26,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 542,
+    "old_lines": 0,
+    "new_start": 556,
+    "new_lines": 1,
+    "context": "def fused_indexer_q_rope_quant("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 27,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 548,
+    "old_lines": 0,
+    "new_start": 563,
+    "new_lines": 4,
+    "context": "def fused_indexer_q_rope_quant("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 28,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 580,
+    "old_lines": 1,
+    "new_start": 598,
+    "new_lines": 1,
+    "context": "def fused_indexer_q_rope_quant("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 29,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 615,
+    "old_lines": 0,
+    "new_start": 634,
+    "new_lines": 1,
+    "context": "def fused_indexer_q_rope_quant("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 30,
+   "destination": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "hunk": {
+    "old_start": 649,
+    "old_lines": 0,
+    "new_start": 669,
+    "new_lines": 1,
+    "context": "def fused_indexer_q_rope_quant("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py"
+   },
+   "behavior": "retained: the consumer head weights in BF16, the FP32 value rounded once, with the output dtype in the compile and cache keys",
+   "reason": "the sparse-indexer contract (fused_indexer_q row) and one rounding",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding: the weights observed on production tensors)"
+   ]
+  },
+  {
+   "n": 31,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 42,
+    "old_lines": 0,
+    "new_start": 43,
+    "new_lines": 3,
+    "context": "def fused_indexer_q_rope_quant_mxfp4_cutedsl("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 32,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 46,
+    "old_lines": 1,
+    "new_start": 49,
+    "new_lines": 3,
+    "context": "def fused_indexer_q_rope_quant_mxfp4_cutedsl("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 33,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 51,
+    "old_lines": 1,
+    "new_start": 56,
+    "new_lines": 1,
+    "context": "def fused_indexer_q_rope_quant_mxfp4_cutedsl("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 34,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 115,
+    "old_lines": 0,
+    "new_start": 121,
+    "new_lines": 1,
+    "context": "class IndexerQRopeQuantKernel:"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 35,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 117,
+    "old_lines": 0,
+    "new_start": 124,
+    "new_lines": 1,
+    "context": "class IndexerQRopeQuantKernel:"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 36,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 377,
+    "old_lines": 1,
+    "new_start": 384,
+    "new_lines": 1,
+    "context": "class IndexerQMxFp4Kernel(IndexerQRopeQuantKernel):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 37,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 386,
+    "old_lines": 0,
+    "new_start": 394,
+    "new_lines": 1,
+    "context": "class IndexerQMxFp4Kernel(IndexerQRopeQuantKernel):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 38,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 411,
+    "old_lines": 1,
+    "new_start": 419,
+    "new_lines": 3,
+    "context": "class IndexerQMxFp4Kernel(IndexerQRopeQuantKernel):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 39,
+   "destination": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "hunk": {
+    "old_start": 414,
+    "old_lines": 1,
+    "new_start": 424,
+    "new_lines": 1,
+    "context": "class IndexerQMxFp4Kernel(IndexerQRopeQuantKernel):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py"
+   },
+   "behavior": "retained: the CuTe DSL kernel writes the weights in the requested dtype (FP32 rounded once to BF16 for the sparse consumers), the dtype in its compile key",
+   "reason": "the sparse-indexer contract (fused_indexer_q row)",
+   "verification": [
+    "test_sparse_indexer_serving_binding (weight rounding)"
+   ]
+  },
+  {
+   "n": 40,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 6,
+    "old_lines": 0,
+    "new_start": 7,
+    "new_lines": 1,
+    "context": "DeepseekV4 MLA Attention Layer"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 41,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 27,
+    "old_lines": 1,
+    "new_start": 28,
+    "new_lines": 4,
+    "context": "from vllm.model_executor.layers.linear import ("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 42,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 64,
+    "old_lines": 0,
+    "new_start": 69,
+    "new_lines": 3,
+    "context": "from vllm.v1.attention.backends.mla.indexer import ("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 43,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 982,
+    "old_lines": 1,
+    "new_start": 989,
+    "new_lines": 3,
+    "context": "class DeepseekV4IndexerCache(torch.nn.Module, AttentionLayerBase):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 44,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 994,
+    "old_lines": 0,
+    "new_start": 1004,
+    "new_lines": 2,
+    "context": "class DeepseekV4IndexerCache(torch.nn.Module, AttentionLayerBase):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 45,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 1001,
+    "old_lines": 2,
+    "new_start": 1012,
+    "new_lines": 8,
+    "context": "class DeepseekV4IndexerCache(torch.nn.Module, AttentionLayerBase):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 46,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 1007,
+    "old_lines": 0,
+    "new_start": 1025,
+    "new_lines": 2,
+    "context": "class DeepseekV4IndexerCache(torch.nn.Module, AttentionLayerBase):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 47,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 1107,
+    "old_lines": 15,
+    "new_start": 1126,
+    "new_lines": 46,
+    "context": "class DeepseekV4Indexer(nn.Module):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 48,
+   "destination": "vllm/models/deepseek_v4_1/attention.py",
+   "hunk": {
+    "old_start": 1208,
+    "old_lines": 0,
+    "new_start": 1259,
+    "new_lines": 1,
+    "context": "class DeepseekV4Indexer(nn.Module):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/models/deepseek_v41/attention.py"
+   },
+   "behavior": "ported into vllm/models/deepseek_v4_1/attention.py without the rename refactor: the sparse-logits dispatch for candidate consumers (SparseMQAIndexer, BF16 weights), the indexer cache's sparse backend, the 512-byte page stride alignment; the old-format branch kept where upstream reads _use_v41_mxfp8_kv_record (576 bytes for the FlashMLA layout, 512 otherwise; #56893's record layout is not acquired)",
+   "reason": "the sparse-indexer contract (deepseek_v41/attention.py row; the old-format rule)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 49,
+   "destination": "vllm/utils/deep_gemm.py",
+   "hunk": {
+    "old_start": 676,
+    "old_lines": 0,
+    "new_start": 677,
+    "new_lines": 198,
+    "context": "def fp8_fp4_paged_mqa_logits("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/utils/deep_gemm.py"
+   },
+   "behavior": "adapted: only the four sparse functions resolve, to the isolated namespace vllm.third_party.deep_gemm_v41_sparse; the ordinary DeepGEMM provider is untouched",
+   "reason": "the sparse-indexer contract (utils/deep_gemm.py row)",
+   "verification": [
+    "infb_verify.test_l0.test_supplied_kernels_import",
+    "test_two_level_candidate_semantics",
+    "test_sparse_indexer_packed_correctness",
+    "test_sparse_indexer_paged_correctness",
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_prefill_efficiency",
+    "test_sparse_indexer_decode_efficiency"
+   ]
+  },
+  {
+   "n": 50,
+   "destination": "vllm/v1/attention/backends/mla/indexer.py",
+   "hunk": {
+    "old_start": 984,
+    "old_lines": 0,
+    "new_start": 985,
+    "new_lines": 5,
+    "context": "class DeepseekV32IndexerMetadataBuilder(AttentionMetadataBuilder):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/attention/backends/mla/indexer.py"
+   },
+   "behavior": "retained: the prefill chunker budgets the sparse rows' logits (its split lengths)",
+   "reason": "the sparse-indexer contract (indexer.py and sparse_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_serving_binding"
+   ]
+  },
+  {
+   "n": 51,
+   "destination": "vllm/v1/attention/backends/mla/indexer.py",
+   "hunk": {
+    "old_start": 1120,
+    "old_lines": 1,
+    "new_start": 1125,
+    "new_lines": 1,
+    "context": "class DeepseekV32IndexerMetadataBuilder(AttentionMetadataBuilder):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/attention/backends/mla/indexer.py"
+   },
+   "behavior": "retained: the prefill chunker budgets the sparse rows' logits (its split lengths)",
+   "reason": "the sparse-indexer contract (indexer.py and sparse_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_serving_binding"
+   ]
+  },
+  {
+   "n": 52,
+   "destination": "vllm/v1/attention/backends/mla/sparse_indexer.py",
+   "hunk": {
+    "old_start": 0,
+    "old_lines": 0,
+    "new_start": 1,
+    "new_lines": 235,
+    "context": ""
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/attention/backends/mla/sparse_indexer.py"
+   },
+   "behavior": "retained: packed chunks, row-wise decode metadata, per-row scratch and within-step schedule reuse across the four consumers",
+   "reason": "the sparse-indexer contract (indexer.py and sparse_indexer.py row)",
+   "verification": [
+    "test_sparse_indexer_replay_and_spec_rows",
+    "test_sparse_indexer_serving_binding"
+   ]
+  },
+  {
+   "n": 53,
+   "destination": "vllm/v1/core/kv_cache_utils.py",
+   "hunk": {
+    "old_start": 19,
+    "old_lines": 1,
+    "new_start": 19,
+    "new_lines": 1,
+    "context": "from vllm.utils.hashing import xxhash, xxhash_cbor"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/core/kv_cache_utils.py"
+   },
+   "behavior": "retained: the combined physical block stride rounded to the least common multiple of every group's alignment (the 576-byte main cache and the 512-byte indexer cache give 4,608 where both are active)",
+   "reason": "the sparse-indexer contract (the combined-stride paragraph)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 54,
+   "destination": "vllm/v1/core/kv_cache_utils.py",
+   "hunk": {
+    "old_start": 1577,
+    "old_lines": 0,
+    "new_start": 1578,
+    "new_lines": 9,
+    "context": "def _get_kv_cache_bytes_per_block("
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/core/kv_cache_utils.py"
+   },
+   "behavior": "retained: the combined physical block stride rounded to the least common multiple of every group's alignment (the 576-byte main cache and the 512-byte indexer cache give 4,608 where both are active)",
+   "reason": "the sparse-indexer contract (the combined-stride paragraph)",
+   "verification": [
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 55,
+   "destination": "vllm/v1/kv_cache_interface.py",
+   "hunk": {
+    "old_start": 561,
+    "old_lines": 0,
+    "new_start": 562,
+    "new_lines": 6,
+    "context": "class MLAAttentionSpec(FullAttentionSpec):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/kv_cache_interface.py"
+   },
+   "behavior": "retained: the optional MLA block-stride alignment in the cache spec and its merge",
+   "reason": "the sparse-indexer contract (kv_cache_interface.py and kv_cache_utils.py row)",
+   "verification": [
+    "test_sparse_indexer_paged_correctness (stride = round_up(page_bytes, 512) + 512)",
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 56,
+   "destination": "vllm/v1/kv_cache_interface.py",
+   "hunk": {
+    "old_start": 580,
+    "old_lines": 0,
+    "new_start": 587,
+    "new_lines": 1,
+    "context": "class MLAAttentionSpec(FullAttentionSpec):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/kv_cache_interface.py"
+   },
+   "behavior": "retained: the optional MLA block-stride alignment in the cache spec and its merge",
+   "reason": "the sparse-indexer contract (kv_cache_interface.py and kv_cache_utils.py row)",
+   "verification": [
+    "test_sparse_indexer_paged_correctness (stride = round_up(page_bytes, 512) + 512)",
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 57,
+   "destination": "vllm/v1/kv_cache_interface.py",
+   "hunk": {
+    "old_start": 585,
+    "old_lines": 0,
+    "new_start": 593,
+    "new_lines": 1,
+    "context": "class MLAAttentionSpec(FullAttentionSpec):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/kv_cache_interface.py"
+   },
+   "behavior": "retained: the optional MLA block-stride alignment in the cache spec and its merge",
+   "reason": "the sparse-indexer contract (kv_cache_interface.py and kv_cache_utils.py row)",
+   "verification": [
+    "test_sparse_indexer_paged_correctness (stride = round_up(page_bytes, 512) + 512)",
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 58,
+   "destination": "vllm/v1/kv_cache_interface.py",
+   "hunk": {
+    "old_start": 588,
+    "old_lines": 2,
+    "new_start": 596,
+    "new_lines": 2,
+    "context": "class MLAAttentionSpec(FullAttentionSpec):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/kv_cache_interface.py"
+   },
+   "behavior": "retained: the optional MLA block-stride alignment in the cache spec and its merge",
+   "reason": "the sparse-indexer contract (kv_cache_interface.py and kv_cache_utils.py row)",
+   "verification": [
+    "test_sparse_indexer_paged_correctness (stride = round_up(page_bytes, 512) + 512)",
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  },
+  {
+   "n": 59,
+   "destination": "vllm/v1/kv_cache_interface.py",
+   "hunk": {
+    "old_start": 603,
+    "old_lines": 0,
+    "new_start": 612,
+    "new_lines": 1,
+    "context": "class MLAAttentionSpec(FullAttentionSpec):"
+   },
+   "source": {
+    "pr": "vllm-project/vllm#56254",
+    "commit": "12575123059c2142e39c9af4e217a4792c3c8176",
+    "path": "vllm/v1/kv_cache_interface.py"
+   },
+   "behavior": "retained: the optional MLA block-stride alignment in the cache spec and its merge",
+   "reason": "the sparse-indexer contract (kv_cache_interface.py and kv_cache_utils.py row)",
+   "verification": [
+    "test_sparse_indexer_paged_correctness (stride = round_up(page_bytes, 512) + 512)",
+    "test_sparse_indexer_serving_binding",
+    "infb_verify.test_hidden (the session)",
+    "infb_verify.test_fidelity",
+    "infb_verify.test_text_semantics"
+   ]
+  }
+ ]
+}

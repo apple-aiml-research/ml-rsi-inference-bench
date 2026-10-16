@@ -1,0 +1,28 @@
+792fd5efbe65166fa6bb002e09f4db24ffff41fb7b6da61cb335b2ac1a73ad84  the tree that becomes repo/
+# THE AUTHORITY for the pristine arm of the scored ratio, and the one thing in this task the agent
+# cannot reach: `tests/` is staged separately at verify time and is not on the agent surface, while
+# /opt and the workspace are both writable by a trial that runs as root.
+#
+# tests/test.sh recomputes this over the staged baseline and FAILS CLOSED on a mismatch -- no
+# baseline, so the speedup gate reports baseline_tps_unavailable, which is classified `pristine_
+# failed`: an infra zero and a rerun, never a pass and never a model zero. It covers BOTH staging
+# routes (the runtime mount and the image archive) and, unlike an archive digest, it also covers
+# tampering AFTER extraction.
+#
+# DERIVED, not observed, and re-derivable by anyone from the pinned commit alone -- no image build.
+# Stage the pinned tree the way environment/Dockerfile stages it (the submodule init matters) and
+# digest it with this task's own script, which is also what test.sh calls -- one definition, no
+# reimplementation:
+#
+#     git init /tmp/x && git -C /tmp/x remote add origin https://github.com/sgl-project/sglang.git
+#     git -C /tmp/x fetch --depth 1 origin 163b97012707d712e141e7ee486b72e2b0d8e60d
+#     git -C /tmp/x checkout FETCH_HEAD
+#     git -C /tmp/x submodule update --init --recursive --depth 1
+#     python3 tests/_pristine_digest.py /tmp/x
+#
+# _pristine_digest.resolve_root() descends into python/ when it is handed a monorepo root, so either
+# the MONOREPO ROOT or the FLATTENED package root test.sh stages produces this same number.
+#
+# Verified here on 2026-09-15 for pin 163b970 by two independent extractions -- the tree the
+# calibration probes benched, and a fresh `git archive` of the commit -- which produced this
+# same digest.

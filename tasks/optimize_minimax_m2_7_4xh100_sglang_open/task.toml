@@ -1,0 +1,141 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+
+[task]
+name = "inference-bench/optimize_minimax_m2_7_4xh100_sglang_open"
+description = "Optimize SGLang serving throughput for MiniMaxAI/MiniMax-M2.7 (229B total / ~10B active sparse MoE: 256 experts top-8 routing, native FP8 weights, dense GQA full-attention) on 4×H100 / TP=4 / SGLang 0.5.10 (torch 2.9.1+cu12, sglang-kernel 0.4.1 sm90/sm100) while preserving correctness. 4×H100 MiniMax-M2.7 for studying MoE / FP8 expert / RadixAttention / scheduler-level levers in SGLang's srt runtime."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "throughput-optimization", "minimax", "minimax-m2", "moe", "fp8", "gqa", "h100", "srt", "tp4"]
+
+[agent]
+timeout_sec = 30000  # 8.33h
+
+[verifier]
+timeout_sec = 21600
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 1048576
+storage_mb = 327680  # 320 GB: ~230 GB model snapshot + repo overlay + bench scratch
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 4
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "sglang"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+commit = "v0.5.10"
+workdir = "/app/repo"
+edit_policies = ["python", "csrc:jit_kernel", "csrc:sgl-kernel"]
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.8"
+# Editable source overlay of sglang @ v0.5.10. Install recipe (the version pins are load-bearing
+# -- bare PyPI resolves to cu13/SM100-only kernels that ImportError on H100/sm90):
+#   pip install -e ".[srt]"  OR  sglang==0.5.10 + sglang-kernel==0.4.1 + einops
+#   apt-get install -y libnuma1   (sgl_kernel common_ops.so dlopens libnuma.so.1)
+engine_install = "task_scoped_sglang_0_5_10_editable_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "MiniMaxAI/MiniMax-M2.7"
+architecture = "MiniMaxM2ForCausalLM"
+total_parameters = "229B"
+activated_parameters = "10B"  # MoE: 256 experts, top-8 routing
+context_window = 204800  # 200K (max_position_embeddings)
+dtype = "auto"             # respects model card FP8 quantization_config
+tensor_parallel_size = 4
+
+[metadata.inference_bench.scoring]
+primary_metric = "tokens_per_second"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.52
+rtol = 0.1
+min_pass_rate = 0.95
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "decode_heavy"
+input_len = 1024
+output_len = 8192
+num_prompts = 4
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "prefill_heavy"
+input_len = 8192
+output_len = 1
+num_prompts = 256
+max_concurrency = 1
+
+[[metadata.inference_bench.workloads]]
+name = "high_load"
+input_len = 1024
+output_len = 1024
+num_prompts = 256
+
+[metadata.inference_bench.commands]
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_ENGINE = "sglang"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_BUILD_SGL_KERNEL_SH = "/app/scripts/build_sgl_kernel.sh"
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+INFB_SGLKERNEL_BUILD_TIMEOUT_SEC = "9000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_LIVE_REF_TIMEOUT_SEC = "7200"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_ENGINE = "sglang"
+INFB_OFFICIAL = "1"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+VLLM_USE_AOT_COMPILE = "0"

@@ -1,0 +1,317 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/sgl-project/sglang.git",
+ "base": "b525f9e2acb1af15ecf986c0f7539fcbf229c0e9",
+ "base_tree": "bd0c158688cdd163aabdfeb575d8eae49fd962c9",
+ "landing": {
+  "pr": 8824,
+  "sha": "c1d2061f97ae2facb8edbc188da5b719aaac2f09",
+  "pr_and_sha_note": "`pr` and `sha` name the INTEGRATION PR -- #8824, 'Add initial support for gpt-oss', the first of the three landing commits. This landing is three non-adjacent commits, so all three are in `commits` below, and none of the three PR numbers or SHAs is named on the agent surface -- not only the integration one's.",
+  "note": "This model landed over THREE non-adjacent upstream commits with seven unrelated PRs interleaved, so the reference is the composed diff of the three, not a commit range. Measured 2026-09-23.",
+  "commits": [
+   {
+    "order": 1,
+    "pr": 8824,
+    "sha": "c1d2061f97ae2facb8edbc188da5b719aaac2f09",
+    "parent": "556e4143f0ba8e480a73fc0e08f05d7ea83880cc",
+    "merged_at": "2025-08-05T20:42:00Z",
+    "files": 12,
+    "insertions": 1595,
+    "deletions": 47,
+    "patch_sha256": "a5c324669690086739574a4d59a2d74b968d50cb80340da377d4977ba1a626ab",
+    "patch_bytes": 86113
+   },
+   {
+    "order": 2,
+    "pr": 8839,
+    "sha": "8128e08d3652cef9821aac50a1f2ce99bb282c40",
+    "parent": "5d62b56f7e9b79e1fb5d00d50512da7e2d71d481",
+    "merged_at": "2025-08-06T01:53:00Z",
+    "files": 1,
+    "insertions": 1,
+    "deletions": 0,
+    "patch_sha256": "9c125030782608fa6c3edde1d1b47b73596fc70debf788b63b46ff3185efe704",
+    "patch_bytes": 553
+   },
+   {
+    "order": 3,
+    "pr": 8843,
+    "sha": "168033d5fb1ea1744cd82d9f42f732d2327337fd",
+    "parent": "cbbb738371a183f4a1eace147c9614ae6c8a2037",
+    "merged_at": "2025-08-06T07:05:00Z",
+    "files": 9,
+    "insertions": 791,
+    "deletions": 325,
+    "patch_sha256": "3fd1c5937999b874a73795e0f33ad6904ef6d14aada6247d2ac6075a4b1a5e5d",
+    "patch_bytes": 53362
+   }
+  ],
+  "interleaved_prs_not_in_the_task": [
+   8836,
+   8828,
+   8680,
+   8144,
+   8838,
+   8751,
+   8753
+  ],
+  "landing_oracle_tree": "7ed5622d4d3490032c75b5c43c2d9109a4efb8ab"
+ },
+ "reference_commit": "7b5bcb6e84f949362ed1b2b1e5f5a6f722f649e1",
+ "reference_tree": "d40e080282dc17e90a548a2605f97d78802b7ec6",
+ "reference_tree_note": "Prepared base plus the exact admitted closure, compact native experts, completed pinned kernels with Hopper padding, and bounded ordinary Harmony adaptations. No task-added speculation, custom-AR warmup or logit chunking.",
+ "registered_test_commit": "442534aa44b1269b4fcbd014e3912147d5fde195",
+ "registered_test_note": "The acceptance test was registered by #8851 THREE DAYS AFTER the reference, on a tree that already carried #8837. tests/test.patch therefore carries the two test modules AND the three kit modules #8851 changed, which is not this family's usual single-module shape. See tests/_upstream/PROVENANCE.md.",
+ "repairs_in_squash": [],
+ "post_merge_repairs": [
+  9433,
+  9469,
+  9473,
+  8837,
+  9043,
+  9190,
+  9146,
+  9657
+ ],
+ "criticality_candidates": [
+  8837,
+  9433,
+  9469,
+  9473,
+  9146,
+  9657
+ ],
+ "criticality_results": {
+  "method": "Current ordinary qualification of the admitted closure. Focused private predicates are not whole-task rewards.",
+  "retained_closure": {
+   "prs": [
+    9433,
+    9469,
+    9473,
+    8837,
+    9043,
+    9190
+   ],
+   "status": "retained; the admission evidence is not rescored"
+  },
+  "9146": {
+   "verdict": "ADAPTED for the scored compact-storage contract",
+   "what": "LazyValue releases pre-conversion expert tensors; the separate correction removes the extra doubling of native MXFP4 intermediate width.",
+   "compact_patch_sha256": "63b9d38e2e47103f4bc89716839bef59f652cfae5299052b213aa5e157602ba3",
+   "evidence": "Native production inventory: 17,316,052,992 expert bytes/rank. Correct complete experts occupy 481,739,264 bytes/rank in the unfused alternative. RetainFP8 occupies 1,294,958,592 bytes/rank and the private predicate rejects it against the 603,979,776-byte per-block bound."
+  },
+  "9657": {
+   "verdict": "BEHAVIOR ADAPTED; the upstream 23-line fallback is not retained",
+   "upstream_commit": "28c79dc84ab8d6f2a35dd00a543f7961e90c39c9",
+   "upstream_patch_sha256": "6ef45946d21d84981c7e0f9a3b20626c7de2a757e79eaced58cf8537e6803e74",
+   "source_boundary": "The task's scope permits the bounded ordinary-Harmony repair and the local adaptations it needs. The final implementation marks parsed final content and avoids parsing it a second time, preserving literal marker strings.",
+   "simple_no_call_before_after": {
+    "admitted_closure": {
+     "passed": 1,
+     "total": 4
+    },
+    "admitted_closure_plus_upstream_9657": {
+     "passed": 3,
+     "total": 4,
+     "remaining_failure": "response creation timestamp changes within the stream"
+    },
+    "final_local_adaptation": {
+     "passed": 4,
+     "total": 4
+    }
+   },
+   "complete_private_fixtures": {
+    "reference": "28/28",
+    "revert_serving_chat": "4/28",
+    "revert_function_detector": "24/28",
+    "revert_harmony_parser": "20/28",
+    "revert_reasoning_parser": "10/28"
+   },
+   "final_four_file_patch_sha256": "01043a20a0bdfd4e778b3827ae871a98b217373f4e7613409491206d658fd8a4",
+   "files": {
+    "python/sglang/srt/entrypoints/openai/serving_chat.py": "e84aa7c4fc0e740506e702ff73eaacd6e61b8f0243cc8c076615ec87613f2347",
+    "python/sglang/srt/function_call/gpt_oss_detector.py": "8f7000e71e27c13e10f0f88caf0823cd964b2479fbc52a4913ee1f30b8d5a7b0",
+    "python/sglang/srt/harmony_parser.py": "a85cdb98fbf838bbebfefe09f6aa52c20289b00b0cd76bb5a480db0b2bc117d0",
+    "python/sglang/srt/reasoning_parser.py": "375f25f6324efd172ce1a6b8d19fef171f16590f566cceaed065a301043ebd11"
+   }
+  }
+ },
+ "closure_oracle": "Current reference: the admitted closure plus #9146's compact-loading adaptation and the corrected native intermediate width, Triton kernels 8f9f695ea8fde23a0c7c88e4ab256634ca27789f with four-block Hopper scale padding, and four bounded Harmony adaptations. The #6744 request-table accounting exception is supplied equally in the prepared base.",
+ "closure_oracle_tree": "d40e080282dc17e90a548a2605f97d78802b7ec6",
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "51176e3d811d2702bea05f3945d5f2c148c73ac4d954779ec89304bdcd041c8f",
+  "bytes": 306714,
+  "produced_by": "prepared original base; the earlier closure patch; the compact-loading patch; four identified Harmony files; the complete kernel tree; exact-path commit and git diff --binary --full-index base HEAD",
+  "files": 44,
+  "applies_to_base": "b525f9e2acb1af15ecf986c0f7539fcbf229c0e9",
+  "applies_to_tree": "d40e080282dc17e90a548a2605f97d78802b7ec6",
+  "verified": "Independent prepared/reference reconstruction on two hosts yields the declared tree. The clean committed reference, an independently default-built bundle and a full harness run all pass the complete 18 F2P / 9 P2P task with reward 1; captures reproduce the exact 306714-byte patch. The Docker, Modal and Daytona backends and provider-capable offline isolation remain unverified."
+ },
+ "model": {
+  "repo": "openai/gpt-oss-120b",
+  "revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+  "files": 26,
+  "bytes": 65276859410,
+  "gated": false,
+  "excluded_from_the_image": {
+   "metal/model.bin": "65,238,253,568 bytes in the model author's Metal format, never read by SGLang and not in model.safetensors.index.json; shipping it would double the checkpoint layers",
+   "original/": "10 files, 65,248,927,631 bytes, the model-author checkpoint layout; used when recording the fidelity reference, never in the image"
+  }
+ },
+ "repairs_in_closure": [
+  {
+   "prs": [
+    9433,
+    9469,
+    9473
+   ],
+   "label": "adapted (ported; a verbatim apply needs twelve carrier commits and +481/-87 in mxfp4.py)",
+   "patch": "the port is folded into solution.patch; its standalone form is not shipped",
+   "port_patch_sha256": "9875591fa9b08a5972044758809f94ae2618d58d0290f699f1bb6f53949d1841",
+   "why_included": "it moves the scored fidelity observable far beyond its noise: the closure's median k3 against the model-author reference falls from 5.57645 (landing) to 0.79314 (landing+trio), a factor of 7.0, where the oracle's run-to-run noise is ZERO (five fresh runs gave 5.57645 to six significant figures every time). That is the closure rule's `adapted` branch exactly.",
+   "what_it_repairs": "at TP4 the landing's floor division loads 22 blocks of 32 columns per rank, so the ranks cover 0-2816 of 2880 and 64 columns of every expert (2.22%) are never loaded. math.ceil loads all 2880, and the buffer pad is what lets the 736-wide slice fit a kernel width of 720."
+  },
+  {
+   "prs": [
+    8837,
+    9043
+   ],
+   "label": "adapted (ported: #8837's stated behaviour on #9043's offline, deterministic mechanism)",
+   "patch": "folded into solution.patch; its standalone form is not shipped",
+   "port_patch_sha256": "a56629a3dfba2545d51e6d5f80791a9e9c3408bdf8767901d4959f130e377196",
+   "why_included": "the instruction's third item states the behaviour, and the reference must pass what the task grades"
+  },
+  {
+   "prs": [
+    9043,
+    9190
+   ],
+   "label": "adapted (ported: #9190's harmony_parser.py and gpt-oss tool-call detector verbatim, #9190's GptOss reasoning detector on the same parser, its kept special tokens and <|call|>, #9043's detector registration and --tool-call-parser choice; adapted: the architecture defaults tool_call_parser to gpt-oss when unset, as the closure defaults the reasoning parser, because the recipe passes neither)",
+   "patch": "folded into solution.patch; its standalone form is not shipped",
+   "port_patch_sha256": "2c43d56798ea30c637f169380bc38df28246f3c409a05c4d401d0a872885c178",
+   "why_included": "the instruction's third item states the behaviour, and the reference must pass what the task grades: the closure returns the expected tool call on every asking measured (108/108 plain, 72/72 streamed on the grader's questions) and keeps every earlier node"
+  },
+  {
+   "prs": [
+    9146
+   ],
+   "label": "adapted compact loading; separate native intermediate-width correction",
+   "port_patch_sha256": "63b9d38e2e47103f4bc89716839bef59f652cfae5299052b213aa5e157602ba3",
+   "why_included": "the declared compact native storage bound is scored; see criticality_results.9146"
+  },
+  {
+   "prs": [
+    9657
+   ],
+   "label": "bounded local alternative to the diagnosed no-call fallback, plus necessary complete-Harmony adaptations",
+   "port_patch_sha256": "01043a20a0bdfd4e778b3827ae871a98b217373f4e7613409491206d658fd8a4",
+   "why_included": "complete ordinary tool/history/stream behavior; see criticality_results.9657",
+   "upstream_fallback_retained": false
+  }
+ ],
+ "controls": {
+  "component_math_storage_binding": {
+   "count": 15,
+   "verdict": "all focused private predicates reject; speed controls additionally have complete paired records"
+  },
+  "component_speed": {
+   "blocks_each": 5,
+   "reference_health": "passes independent math/storage/workspace/binding predicates",
+   "verdict": "both 0; respective minimum ratios 0.11728587389606403 and 0.005575590853839245"
+  },
+  "harmony_protocol": {
+   "faults": 13,
+   "verdict": "all rejected in the production handler; complete reference and buffered-stream alternative each pass 28/28"
+  }
+ },
+ "post_merge_repairs_note": "Current admitted reference behaviors, including adapted #9146 and the bounded local alternative for #9657. These PR identities are withheld from the agent surface. #6744 is a separate preparation exception, supplied equally to the candidate and the reference.",
+ "historical_upstream_base": {
+  "commit": "556e4143f0ba8e480a73fc0e08f05d7ea83880cc",
+  "tree": "85bd0aca6e92e6c36430daddeab653768a72b2b3"
+ },
+ "prepared_exception": {
+  "source_pr": 6744,
+  "status": "closed unmerged for inactivity; a narrow preparation exception only",
+  "head": "2af13eb4bb66fca090a99eedcb4d5ec830b962cd",
+  "sha256": "767729d8e57d0deca7ce7e9d6487c09e3cfb57db78f1d5130aac56425c5f5fd6",
+  "scope": "request-table bytes before KV-cache division, inferred or explicit max requests, conservative extra row; same preparation for candidate and reference"
+ },
+ "qualification_status": "The complete ordinary author oracle/control ladder passes, 2026-09-26: prepared base reward 0; reference, genuine valid alternative, clean committed replay, exported default-build replay and a full harness run reward 1. The Docker, Modal and Daytona backends and provider-capable offline isolation are not qualified, and no difficulty claim is made.",
+ "kernel_source": {
+  "commit": "8f9f695ea8fde23a0c7c88e4ab256634ca27789f",
+  "adaptation": "Hopper scale layout uses four-block padding (90 logical blocks -> 92); no custom-AR warmup or logits-chunking repair",
+  "math_qualification": "Both the reference and the unfused alternative passed 8/8 families (66 cells)"
+ },
+ "qualification_20260926": {
+  "scope": "openai/gpt-oss-120b, ordinary serving only, TP4, 4xH100 80GB",
+  "complete_runs": [
+   {
+    "run": "prepared-base",
+    "runtime": "a sanitized author-built image",
+    "reward": 0,
+    "f2p_passed": 0,
+    "f2p_total": 18,
+    "p2p_passed": 9,
+    "p2p_total": 9,
+    "reason": "Prepared base lacks native mxfp4 support; preservation checks and environment preflight pass."
+   },
+   {
+    "run": "reference",
+    "runtime": "public-built agent and verifier",
+    "reward": 1,
+    "f2p_passed": 18,
+    "f2p_total": 18,
+    "p2p_passed": 9,
+    "p2p_total": 9,
+    "decode_ratio": 0.998258951,
+    "throughput_ratio": 1.077320068,
+    "capture_head": "22d5d9df79c5331dc9466598233c1bf9f4fb014f"
+   },
+   {
+    "run": "valid-alternative",
+    "runtime": "a sanitized author-built image",
+    "reward": 1,
+    "f2p_passed": 18,
+    "f2p_total": 18,
+    "p2p_passed": 9,
+    "p2p_total": 9,
+    "decode_ratio": 0.984666936,
+    "throughput_ratio": 1.049497654,
+    "tree": "dd852c173e3f0f5241807ad609608e552bc466e4",
+    "patch_sha256": "00112916bcb1d89778c2139b6d7099b2a6071aa53fa404786f4858be8c2e53e1",
+    "interpretation": "Genuinely unfused experts and buffered ordinary responses are valid. One CPU host-canary redraw is retained; no failed candidate speed was retried."
+   },
+   {
+    "run": "exported-reference",
+    "runtime": "fresh default builds from public bundle",
+    "reward": 1,
+    "f2p_passed": 18,
+    "f2p_total": 18,
+    "p2p_passed": 9,
+    "p2p_total": 9,
+    "decode_ratio": 1.001163818,
+    "throughput_ratio": 1.076218031,
+    "capture_head": "68b05590152d240a8f6556db37585843683bf548"
+   },
+   {
+    "run": "full-harness-reference",
+    "runtime": "the benchmark harness end to end, with a separate verifier",
+    "reward": 1,
+    "f2p_passed": 18,
+    "f2p_total": 18,
+    "p2p_passed": 9,
+    "p2p_total": 9,
+    "started_at": "2026-09-26T21:56:42.564910+00:00",
+    "finished_at": "2026-09-26T23:26:04.556902+00:00",
+    "capture_head": "1a0a3a06385828d6301773b8b48c4aa00431ba79",
+    "task_payload_sha256": "2291062282739ead115d52ec1fcfd9f56c2a2804a816c80bad40a6917f94fafe"
+   }
+  ],
+  "aimed_faults": "15 component, 3 attention and 13 protocol faults rejected by their intended focused private predicates; these are not complete 27-node rewards.",
+  "prior_failure": "An earlier reference run remains reward 0 (16/18 F2P, 9/9 P2P). The two efficiency setup errors were fixed by adding the protected evaluator to the subprocess search path, covered by an actual-import regression.",
+  "measurement_limits": "Deduplicated storage, PyTorch allocator peaks and device-use cross-checks cover surviving opaque allocations; exact high-water marks of every out-of-framework transient freed inside a call are not measured. Image audits cover named known answer carriers and bounded roots.",
+  "unverified": "Native Docker lacks a daemon on the qualifying hosts; Modal and Daytona lack configured authentication and the vendored Daytona backend lacks GPU support. Network isolation could not be exercised, so a host-network oracle pass is not proof of provider-capable agent isolation.",
+  "evidence_policy": "Raw records and all failed attempts are retained; no score is rescored or superseded in place."
+ }
+}

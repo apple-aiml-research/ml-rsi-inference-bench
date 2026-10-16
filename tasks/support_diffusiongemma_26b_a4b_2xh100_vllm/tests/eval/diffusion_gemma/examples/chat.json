@@ -1,0 +1,151 @@
+{
+ "reasoning": [
+  {
+   "prompt": "What is 21 times 19?",
+   "thinking": true
+  },
+  {
+   "prompt": "Name the longest river in Africa.",
+   "thinking": true
+  },
+  {
+   "prompt": "What is 21 times 19?",
+   "thinking": false
+  },
+  {
+   "prompt": "Name the longest river in Africa.",
+   "thinking": false
+  }
+ ],
+ "tools": [
+  {
+   "id": "single",
+   "expected_calls": 1,
+   "messages": [
+    {
+     "role": "user",
+     "content": "Convert 12 miles to kilometres."
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "convert",
+      "description": "Convert a quantity between units.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "value": {
+         "type": "number"
+        },
+        "from_unit": {
+         "type": "string"
+        },
+        "to_unit": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "value",
+        "from_unit",
+        "to_unit"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "two",
+   "expected_calls": 2,
+   "messages": [
+    {
+     "role": "user",
+     "content": "What time is it in Tokyo and in Lima?"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "local_time",
+      "description": "The local time in a city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "city"
+       ]
+      }
+     }
+    }
+   ]
+  }
+ ],
+ "first_token": [
+  {
+   "prompt": "Complete with one word: the capital of Italy is",
+   "answer": "Rome"
+  },
+  {
+   "prompt": "Answer with one word: what colour is grass?",
+   "answer": "Green"
+  }
+ ],
+ "semantic": [
+  {
+   "id": "public/sem/0",
+   "prompt": "Which is colder, ice or steam? Answer with one word.",
+   "answer": "ice",
+   "candidates": [
+    "ice",
+    "steam"
+   ]
+  },
+  {
+   "id": "public/sem/1",
+   "prompt": "What comes after Friday? Answer with one word.",
+   "answer": "Saturday",
+   "candidates": [
+    "Saturday",
+    "Thursday"
+   ]
+  },
+  {
+   "id": "public/sem/i/0",
+   "prompt": "What colour is the leftmost shape? Answer with one word.",
+   "image_seeds": [
+    1001
+   ],
+   "answer": "yellow",
+   "candidates": [
+    "orange",
+    "yellow"
+   ]
+  }
+ ],
+ "policy": {
+  "schedule": [
+   {
+    "id": "public/policy/0",
+    "prompt": "Which is heavier, a whale or a cat? Answer with one word.",
+    "answer": "whale",
+    "candidates": [
+     "whale",
+     "cat"
+    ]
+   }
+  ],
+  "adaptive": [
+   "What is 12 + 30?",
+   "Name two planets.",
+   "What is 9 * 8?",
+   "Say hello in French."
+  ]
+ }
+}

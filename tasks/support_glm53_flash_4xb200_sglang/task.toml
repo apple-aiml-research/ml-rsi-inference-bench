@@ -1,0 +1,67 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_glm53_flash_4xb200_sglang"
+description = "Day-0 model support: land reliable, numerically faithful and efficient native GLM-5.3-Flash serving in SGLang on four B200 GPUs at the HighThroughput and LowLatency deployments, preserving relevant existing engine behavior"
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "sglang", "b200", "moe", "sparse-attention", "linear-attention", "fp8", "dp-attention", "speculative"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+build_timeout_sec = 14400
+cpus = 32
+memory_mb = 524288
+storage_mb = 3145728
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/sglang/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 54300
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/sglang/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+build_timeout_sec = 3600
+cpus = 32
+memory_mb = 524288
+storage_mb = 3145728
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/sgl-project/sglang"
+base_commit_hash = "9f6b624b4b4460f4b62aed3297cd2574dbf02b92"
+reference_commit_hash = "97c6978369ac1e04c91fcc01c98acc25129a6000"
+model_repository = "zai-org/GLM-5.3-Flash"
+model_revision = "690b705278a3a58e538fcb37c2ca8b5f9511213c"
+
+[metadata.inference_bench]
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "sglang"
+score_profile = "model_support_upstream_acceptance_v62"

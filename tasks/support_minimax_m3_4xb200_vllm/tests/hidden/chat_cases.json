@@ -1,0 +1,1381 @@
+{
+ "schema": "infb-m3-chat-cases/1",
+ "rule": "Candidates in list order; the scored cases are the first two per thinking mode (reasoning) and the first per kind (tools) for which the reference, in all five calibration launches of both deployments, streaming and non-streaming, passes the node's checks with the expected structure: non-empty reasoning for thinking_mode enabled; the case's expected number of calls parsed from the generated text. Frozen in `selected` before any candidate evaluation.",
+ "sampling": {
+  "temperature": 0.0,
+  "max_tokens": 2048
+ },
+ "reasoning": {
+  "enabled": [
+   {
+    "id": "en-1",
+    "messages": [
+     {
+      "role": "user",
+      "content": "What is 48 plus 76? Reply with just the number."
+     }
+    ]
+   },
+   {
+    "id": "en-2",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Which is larger, 0.7 or 0.65? Answer in one word."
+     }
+    ]
+   },
+   {
+    "id": "en-3",
+    "messages": [
+     {
+      "role": "user",
+      "content": "How many days are there in a leap year?"
+     }
+    ]
+   },
+   {
+    "id": "en-4",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Spell the word 'orange' backwards."
+     }
+    ]
+   },
+   {
+    "id": "en-5",
+    "messages": [
+     {
+      "role": "user",
+      "content": "A train leaves at 3:15 pm and the trip takes 2 hours 50 minutes. When does it arrive?"
+     }
+    ]
+   },
+   {
+    "id": "en-6",
+    "messages": [
+     {
+      "role": "user",
+      "content": "What is the next number in the sequence 2, 4, 8, 16?"
+     }
+    ]
+   }
+  ],
+  "disabled": [
+   {
+    "id": "dis-1",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Write one sentence describing the ocean."
+     }
+    ]
+   },
+   {
+    "id": "dis-2",
+    "messages": [
+     {
+      "role": "user",
+      "content": "List the three primary colors of light, separated by commas."
+     }
+    ]
+   },
+   {
+    "id": "dis-3",
+    "messages": [
+     {
+      "role": "user",
+      "content": "What is 12 times 12?"
+     }
+    ]
+   },
+   {
+    "id": "dis-4",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Translate 'good morning' into French."
+     }
+    ]
+   },
+   {
+    "id": "dis-5",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Give one synonym for 'quick'."
+     }
+    ]
+   },
+   {
+    "id": "dis-6",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Name a mammal that can fly."
+     }
+    ]
+   }
+  ],
+  "adaptive": [
+   {
+    "id": "ad-1",
+    "messages": [
+     {
+      "role": "user",
+      "content": "What is the square root of 144?"
+     }
+    ]
+   },
+   {
+    "id": "ad-2",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Is 91 a prime number? Explain briefly."
+     }
+    ]
+   },
+   {
+    "id": "ad-3",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Explain in two sentences why the sky is blue."
+     }
+    ]
+   },
+   {
+    "id": "ad-4",
+    "messages": [
+     {
+      "role": "user",
+      "content": "Convert 5 kilometers to miles, rounded to two decimal places."
+     }
+    ]
+   },
+   {
+    "id": "ad-5",
+    "messages": [
+     {
+      "role": "user",
+      "content": "What day of the week comes two days after Friday?"
+     }
+    ]
+   },
+   {
+    "id": "ad-6",
+    "messages": [
+     {
+      "role": "user",
+      "content": "How many sides does a hexagon have?"
+     }
+    ]
+   }
+  ]
+ },
+ "tools": {
+  "single": [
+   {
+    "id": "single-1",
+    "expected_calls": 1,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "book_meeting_room",
+       "description": "Book a meeting room and optionally send calendar invites.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "title": {
+          "type": "string"
+         },
+         "attendees": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "duration_minutes": {
+          "type": "integer"
+         },
+         "send_invites": {
+          "type": "boolean"
+         },
+         "room": {
+          "type": "object",
+          "properties": {
+           "building": {
+            "type": "string"
+           },
+           "floor": {
+            "type": "integer"
+           }
+          },
+          "required": [
+           "building",
+           "floor"
+          ]
+         }
+        },
+        "required": [
+         "title",
+         "attendees",
+         "duration_minutes",
+         "send_invites",
+         "room"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Book a 45-minute meeting titled \"Budget review\" with alice@example.com and bob@example.com in building B, floor 3, and send the invites."
+     }
+    ]
+   },
+   {
+    "id": "single-2",
+    "expected_calls": 1,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "book_meeting_room",
+       "description": "Book a meeting room and optionally send calendar invites.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "title": {
+          "type": "string"
+         },
+         "attendees": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "duration_minutes": {
+          "type": "integer"
+         },
+         "send_invites": {
+          "type": "boolean"
+         },
+         "room": {
+          "type": "object",
+          "properties": {
+           "building": {
+            "type": "string"
+           },
+           "floor": {
+            "type": "integer"
+           }
+          },
+          "required": [
+           "building",
+           "floor"
+          ]
+         }
+        },
+        "required": [
+         "title",
+         "attendees",
+         "duration_minutes",
+         "send_invites",
+         "room"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Please reserve a room for a 30 minute meeting called \"Hiring sync\" on floor 7 of building North for carol@example.com, dan@example.com and erin@example.com. Do not send invites."
+     }
+    ]
+   },
+   {
+    "id": "single-3",
+    "expected_calls": 1,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "book_meeting_room",
+       "description": "Book a meeting room and optionally send calendar invites.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "title": {
+          "type": "string"
+         },
+         "attendees": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "duration_minutes": {
+          "type": "integer"
+         },
+         "send_invites": {
+          "type": "boolean"
+         },
+         "room": {
+          "type": "object",
+          "properties": {
+           "building": {
+            "type": "string"
+           },
+           "floor": {
+            "type": "integer"
+           }
+          },
+          "required": [
+           "building",
+           "floor"
+          ]
+         }
+        },
+        "required": [
+         "title",
+         "attendees",
+         "duration_minutes",
+         "send_invites",
+         "room"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Set up a 60-minute \"Quarterly planning\" meeting for frank@example.com in building 2, floor 1, and send invites."
+     }
+    ]
+   }
+  ],
+  "parallel": [
+   {
+    "id": "parallel-1",
+    "expected_calls": 2,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_forecast",
+       "description": "Get the weather forecast for one city.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string"
+         },
+         "days": {
+          "type": "integer"
+         },
+         "include_hourly": {
+          "type": "boolean"
+         },
+         "units": {
+          "type": "object",
+          "properties": {
+           "temperature": {
+            "type": "string",
+            "enum": [
+             "celsius",
+             "fahrenheit"
+            ]
+           },
+           "wind": {
+            "type": "string",
+            "enum": [
+             "kmh",
+             "mph"
+            ]
+           }
+          },
+          "required": [
+           "temperature",
+           "wind"
+          ]
+         },
+         "fields": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "city",
+         "days",
+         "include_hourly",
+         "units",
+         "fields"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Get the 3-day forecast for Paris and for Tokyo, with hourly data, temperatures in celsius and wind in kmh, fields temperature and precipitation. Call the tool once per city, both in one step."
+     }
+    ]
+   },
+   {
+    "id": "parallel-2",
+    "expected_calls": 2,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_forecast",
+       "description": "Get the weather forecast for one city.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string"
+         },
+         "days": {
+          "type": "integer"
+         },
+         "include_hourly": {
+          "type": "boolean"
+         },
+         "units": {
+          "type": "object",
+          "properties": {
+           "temperature": {
+            "type": "string",
+            "enum": [
+             "celsius",
+             "fahrenheit"
+            ]
+           },
+           "wind": {
+            "type": "string",
+            "enum": [
+             "kmh",
+             "mph"
+            ]
+           }
+          },
+          "required": [
+           "temperature",
+           "wind"
+          ]
+         },
+         "fields": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "city",
+         "days",
+         "include_hourly",
+         "units",
+         "fields"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "I need 5-day forecasts without hourly data for Chicago and for Denver, in fahrenheit with wind in mph, only the field humidity. Make one call per city at the same time."
+     }
+    ]
+   },
+   {
+    "id": "parallel-3",
+    "expected_calls": 2,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "get_forecast",
+       "description": "Get the weather forecast for one city.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "city": {
+          "type": "string"
+         },
+         "days": {
+          "type": "integer"
+         },
+         "include_hourly": {
+          "type": "boolean"
+         },
+         "units": {
+          "type": "object",
+          "properties": {
+           "temperature": {
+            "type": "string",
+            "enum": [
+             "celsius",
+             "fahrenheit"
+            ]
+           },
+           "wind": {
+            "type": "string",
+            "enum": [
+             "kmh",
+             "mph"
+            ]
+           }
+          },
+          "required": [
+           "temperature",
+           "wind"
+          ]
+         },
+         "fields": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "city",
+         "days",
+         "include_hourly",
+         "units",
+         "fields"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Fetch tomorrow's forecast (1 day, hourly) for Lisbon and for Madrid in celsius and kmh, fields wind and temperature; issue both calls together."
+     }
+    ]
+   }
+  ],
+  "tool_result": [
+   {
+    "id": "result-1",
+    "expected_calls": 1,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "lookup_customer",
+       "description": "Find a customer record by e-mail address.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "email": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "email"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "create_order",
+       "description": "Create an order for a customer.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "customer_id": {
+          "type": "integer"
+         },
+         "items": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "sku": {
+             "type": "string"
+            },
+            "quantity": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "sku",
+            "quantity"
+           ]
+          }
+         },
+         "gift_wrap": {
+          "type": "boolean"
+         },
+         "shipping": {
+          "type": "object",
+          "properties": {
+           "method": {
+            "type": "string",
+            "enum": [
+             "standard",
+             "express"
+            ]
+           },
+           "address": {
+            "type": "object",
+            "properties": {
+             "city": {
+              "type": "string"
+             },
+             "postal_code": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "city",
+             "postal_code"
+            ]
+           }
+          },
+          "required": [
+           "method",
+           "address"
+          ]
+         }
+        },
+        "required": [
+         "customer_id",
+         "items",
+         "gift_wrap",
+         "shipping"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Order two copies of sku BK-101 and one of sku PN-7 for jane@example.com, gift-wrapped, with express shipping to Lyon, postal code 69001."
+     },
+     {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+       {
+        "id": "call_0",
+        "type": "function",
+        "function": {
+         "name": "lookup_customer",
+         "arguments": "{\"email\": \"jane@example.com\"}"
+        }
+       }
+      ]
+     },
+     {
+      "role": "tool",
+      "tool_call_id": "call_0",
+      "content": "{\"customer_id\": 5812, \"name\": \"Jane Roe\"}"
+     }
+    ]
+   },
+   {
+    "id": "result-2",
+    "expected_calls": 1,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "lookup_customer",
+       "description": "Find a customer record by e-mail address.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "email": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "email"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "create_order",
+       "description": "Create an order for a customer.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "customer_id": {
+          "type": "integer"
+         },
+         "items": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "sku": {
+             "type": "string"
+            },
+            "quantity": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "sku",
+            "quantity"
+           ]
+          }
+         },
+         "gift_wrap": {
+          "type": "boolean"
+         },
+         "shipping": {
+          "type": "object",
+          "properties": {
+           "method": {
+            "type": "string",
+            "enum": [
+             "standard",
+             "express"
+            ]
+           },
+           "address": {
+            "type": "object",
+            "properties": {
+             "city": {
+              "type": "string"
+             },
+             "postal_code": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "city",
+             "postal_code"
+            ]
+           }
+          },
+          "required": [
+           "method",
+           "address"
+          ]
+         }
+        },
+        "required": [
+         "customer_id",
+         "items",
+         "gift_wrap",
+         "shipping"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Place an order of three units of sku MUG-3 for omar@example.com, no gift wrap, standard shipping to Porto, postal code 4000-001."
+     },
+     {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+       {
+        "id": "call_0",
+        "type": "function",
+        "function": {
+         "name": "lookup_customer",
+         "arguments": "{\"email\": \"omar@example.com\"}"
+        }
+       }
+      ]
+     },
+     {
+      "role": "tool",
+      "tool_call_id": "call_0",
+      "content": "{\"customer_id\": 907, \"name\": \"Omar Haddad\"}"
+     }
+    ]
+   },
+   {
+    "id": "result-3",
+    "expected_calls": 1,
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "lookup_customer",
+       "description": "Find a customer record by e-mail address.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "email": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "email"
+        ]
+       }
+      }
+     },
+     {
+      "type": "function",
+      "function": {
+       "name": "create_order",
+       "description": "Create an order for a customer.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "customer_id": {
+          "type": "integer"
+         },
+         "items": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "sku": {
+             "type": "string"
+            },
+            "quantity": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "sku",
+            "quantity"
+           ]
+          }
+         },
+         "gift_wrap": {
+          "type": "boolean"
+         },
+         "shipping": {
+          "type": "object",
+          "properties": {
+           "method": {
+            "type": "string",
+            "enum": [
+             "standard",
+             "express"
+            ]
+           },
+           "address": {
+            "type": "object",
+            "properties": {
+             "city": {
+              "type": "string"
+             },
+             "postal_code": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "city",
+             "postal_code"
+            ]
+           }
+          },
+          "required": [
+           "method",
+           "address"
+          ]
+         }
+        },
+        "required": [
+         "customer_id",
+         "items",
+         "gift_wrap",
+         "shipping"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "For li@example.com, order one sku LAMP-12 and four sku BULB-2, gift-wrapped, standard shipping to Osaka, postal code 530-0001."
+     },
+     {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+       {
+        "id": "call_0",
+        "type": "function",
+        "function": {
+         "name": "lookup_customer",
+         "arguments": "{\"email\": \"li@example.com\"}"
+        }
+       }
+      ]
+     },
+     {
+      "role": "tool",
+      "tool_call_id": "call_0",
+      "content": "{\"customer_id\": 44120, \"name\": \"Li Wei\"}"
+     }
+    ]
+   }
+  ],
+  "thinking": [
+   {
+    "id": "thinking-1",
+    "expected_calls": 1,
+    "thinking_mode": "enabled",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "convert_currency",
+       "description": "Convert an amount between currencies at a published reference rate.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "amount_cents": {
+          "type": "integer"
+         },
+         "from_currency": {
+          "type": "string"
+         },
+         "to_currency": {
+          "type": "string"
+         },
+         "round_result": {
+          "type": "boolean"
+         },
+         "rate": {
+          "type": "object",
+          "properties": {
+           "source": {
+            "type": "string"
+           },
+           "date": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "source",
+           "date"
+          ]
+         },
+         "also_show": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "amount_cents",
+         "from_currency",
+         "to_currency",
+         "round_result",
+         "rate",
+         "also_show"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Convert 12,500 cents from USD to EUR with rounding, at the ECB reference rate of 2026-06-01, and also show GBP and JPY."
+     }
+    ]
+   },
+   {
+    "id": "thinking-2",
+    "expected_calls": 1,
+    "thinking_mode": "enabled",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "convert_currency",
+       "description": "Convert an amount between currencies at a published reference rate.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "amount_cents": {
+          "type": "integer"
+         },
+         "from_currency": {
+          "type": "string"
+         },
+         "to_currency": {
+          "type": "string"
+         },
+         "round_result": {
+          "type": "boolean"
+         },
+         "rate": {
+          "type": "object",
+          "properties": {
+           "source": {
+            "type": "string"
+           },
+           "date": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "source",
+           "date"
+          ]
+         },
+         "also_show": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "amount_cents",
+         "from_currency",
+         "to_currency",
+         "round_result",
+         "rate",
+         "also_show"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Using the Fed rate published on 2026-05-15, convert 99,999 cents of CAD into USD without rounding; also show MXN."
+     }
+    ]
+   },
+   {
+    "id": "thinking-3",
+    "expected_calls": 1,
+    "thinking_mode": "enabled",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "convert_currency",
+       "description": "Convert an amount between currencies at a published reference rate.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "amount_cents": {
+          "type": "integer"
+         },
+         "from_currency": {
+          "type": "string"
+         },
+         "to_currency": {
+          "type": "string"
+         },
+         "round_result": {
+          "type": "boolean"
+         },
+         "rate": {
+          "type": "object",
+          "properties": {
+           "source": {
+            "type": "string"
+           },
+           "date": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "source",
+           "date"
+          ]
+         },
+         "also_show": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "amount_cents",
+         "from_currency",
+         "to_currency",
+         "round_result",
+         "rate",
+         "also_show"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "How much is 250,000 cents in CHF when converted to EUR (rounded) by the SNB rate of 2026-04-30? Also show USD and GBP."
+     }
+    ]
+   },
+   {
+    "id": "thinking-4",
+    "expected_calls": 1,
+    "thinking_mode": "enabled",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "convert_currency",
+       "description": "Convert an amount between currencies at a published reference rate.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "amount_cents": {
+          "type": "integer"
+         },
+         "from_currency": {
+          "type": "string"
+         },
+         "to_currency": {
+          "type": "string"
+         },
+         "round_result": {
+          "type": "boolean"
+         },
+         "rate": {
+          "type": "object",
+          "properties": {
+           "source": {
+            "type": "string"
+           },
+           "date": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "source",
+           "date"
+          ]
+         },
+         "also_show": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "amount_cents",
+         "from_currency",
+         "to_currency",
+         "round_result",
+         "rate",
+         "also_show"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Call convert_currency exactly once: convert 12,500 cents from USD to EUR with rounding, rate source ECB, date 2026-06-01, and put GBP and JPY in also_show."
+     }
+    ]
+   },
+   {
+    "id": "thinking-5",
+    "expected_calls": 1,
+    "thinking_mode": "enabled",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "convert_currency",
+       "description": "Convert an amount between currencies at a published reference rate.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "amount_cents": {
+          "type": "integer"
+         },
+         "from_currency": {
+          "type": "string"
+         },
+         "to_currency": {
+          "type": "string"
+         },
+         "round_result": {
+          "type": "boolean"
+         },
+         "rate": {
+          "type": "object",
+          "properties": {
+           "source": {
+            "type": "string"
+           },
+           "date": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "source",
+           "date"
+          ]
+         },
+         "also_show": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "amount_cents",
+         "from_currency",
+         "to_currency",
+         "round_result",
+         "rate",
+         "also_show"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "Make a single convert_currency call: 99,999 cents from CAD to USD, no rounding, rate source Fed, date 2026-05-15, also_show MXN."
+     }
+    ]
+   },
+   {
+    "id": "thinking-6",
+    "expected_calls": 1,
+    "thinking_mode": "enabled",
+    "tools": [
+     {
+      "type": "function",
+      "function": {
+       "name": "convert_currency",
+       "description": "Convert an amount between currencies at a published reference rate.",
+       "parameters": {
+        "type": "object",
+        "properties": {
+         "amount_cents": {
+          "type": "integer"
+         },
+         "from_currency": {
+          "type": "string"
+         },
+         "to_currency": {
+          "type": "string"
+         },
+         "round_result": {
+          "type": "boolean"
+         },
+         "rate": {
+          "type": "object",
+          "properties": {
+           "source": {
+            "type": "string"
+           },
+           "date": {
+            "type": "string"
+           }
+          },
+          "required": [
+           "source",
+           "date"
+          ]
+         },
+         "also_show": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        },
+        "required": [
+         "amount_cents",
+         "from_currency",
+         "to_currency",
+         "round_result",
+         "rate",
+         "also_show"
+        ]
+       }
+      }
+     }
+    ],
+    "messages": [
+     {
+      "role": "user",
+      "content": "One tool call only: convert_currency with amount_cents 250000, from_currency CHF, to_currency EUR, round_result true, rate source SNB on 2026-04-30, also_show USD and GBP."
+     }
+    ]
+   }
+  ]
+ },
+ "selected": {
+  "reasoning": [
+   "en-1",
+   "en-2",
+   "dis-1",
+   "dis-2",
+   "ad-1",
+   "ad-2"
+  ],
+  "tools": [
+   "single-1",
+   "parallel-1",
+   "result-1",
+   "thinking-4"
+  ]
+ },
+ "candidate_list_history": "thinking-4..6 appended (explicit single-call wording) before any selection was frozen, after the first three calibration launches showed no stable thinking-mode candidate (the model made 0 or 3 calls); order and earlier candidates unchanged",
+ "selected_status": "reasoning and the first three tool kinds from the five calibration launches (cal1..cal5); the thinking kind from five chat-only launches per deployment (c1..c5, 2026-09-29T19:50Z-20:05Z): thinking-4, -5 and -6 each held one call in all ten, thinking-4 first in pool order",
+ "thinking_1_to_3_failures": {
+  "thinking-2": [
+   "bf16kv/cal1/n: 0 calls",
+   "bf16kv/cal2/n: 0 calls",
+   "bf16kv/cal3/n: 0 calls",
+   "bf16kv/cal4/n: 0 calls",
+   "bf16kv/cal5/n: 0 calls"
+  ],
+  "thinking-1": [
+   "fp8kv/cal1/n: 3 calls",
+   "fp8kv/cal2/n: 3 calls",
+   "fp8kv/cal3/n: 3 calls",
+   "fp8kv/cal4/n: 3 calls",
+   "fp8kv/cal5/n: 3 calls"
+  ],
+  "thinking-3": [
+   "fp8kv/cal1/s: 3 calls",
+   "fp8kv/cal2/s: 3 calls",
+   "fp8kv/cal3/s: 3 calls",
+   "fp8kv/cal4/s: 3 calls",
+   "fp8kv/cal5/s: 3 calls"
+  ]
+ }
+}

@@ -1,0 +1,4 @@
+# No known_good patch for this task: there is no reference optimization to
+# replay, so the oracle path runs in baseline-reproduce mode instead. Set
+# INFB_ORACLE_PATCH=__vllm_noop__ (solve.sh's default) for a no-op run that
+# still exercises the end-to-end scoring path.

@@ -1,0 +1,6367 @@
+{
+"schema": "dgemma-attend-cases/1",
+"cases": [
+{
+"id": "EG1/sliding/tp1/rand",
+"geometry": "EG1",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 594498755293124799,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1,
+"spans": []
+}
+]
+},
+{
+"id": "EG2/sliding/tp1/rand",
+"geometry": "EG2",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 4078437741059092259,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 255,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/sliding/tp1/rand",
+"geometry": "EG3",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 2254930034654062599,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/sliding/tp1/probe",
+"geometry": "EG3",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 4056062077981051885,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG4/sliding/tp1/rand",
+"geometry": "EG4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 8318007073772005950,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/sliding/tp1/equal",
+"geometry": "EG4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "equal",
+"seed": 1387853981177896901,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/sliding/tp1/probe",
+"geometry": "EG4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 9065569001339903405,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG5/sliding/tp1/rand",
+"geometry": "EG5",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 5763766276764506323,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 8192,
+"spans": []
+}
+]
+},
+{
+"id": "EG6/sliding/tp1/rand",
+"geometry": "EG6",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 5483305768938389754,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/sliding/tp1/rand",
+"geometry": "EG7",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 7947943397699429158,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/sliding/tp1/probe",
+"geometry": "EG7",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 180593534964869843,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+150,
+126
+],
+[
+0,
+150,
+127
+],
+[
+0,
+150,
+1151
+]
+]
+},
+{
+"id": "EG8/sliding/tp1/rand",
+"geometry": "EG8",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 6282296254486330776,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG8/sliding/tp1/probe",
+"geometry": "EG8",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 526130880498966861,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+127
+],
+[
+0,
+128,
+128
+],
+[
+0,
+128,
+1152
+]
+]
+},
+{
+"id": "EG9/sliding/tp1/rand",
+"geometry": "EG9",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 8596581945518671213,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG9/sliding/tp1/probe",
+"geometry": "EG9",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 2475812102909078085,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+128
+],
+[
+0,
+128,
+129
+],
+[
+0,
+128,
+1153
+]
+]
+},
+{
+"id": "EG10/sliding/tp1/rand",
+"geometry": "EG10",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 7783071447422369035,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG11/sliding/tp1/rand",
+"geometry": "EG11",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3023638133603413295,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG12/sliding/tp1/rand",
+"geometry": "EG12",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 7001141410168619168,
+"sequences": [
+{
+"kind": "encode",
+"start": 260096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG13/sliding/tp1/rand",
+"geometry": "EG13",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3890669130138472443,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+]
+},
+{
+"id": "EG13/sliding/tp1/probe",
+"geometry": "EG13",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 5392575633065918479,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+],
+"probes": [
+[
+0,
+700,
+701
+],
+[
+0,
+379,
+379
+],
+[
+0,
+380,
+100
+],
+[
+0,
+99,
+100
+]
+]
+},
+{
+"id": "EG14/sliding/tp1/rand",
+"geometry": "EG14",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3889683662832764091,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/sliding/tp1/equal",
+"geometry": "EG14",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "equal",
+"seed": 2031375152880754250,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/sliding/tp1/probe",
+"geometry": "EG14",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 1614461251928606086,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+],
+"probes": [
+[
+0,
+750,
+226
+],
+[
+0,
+750,
+227
+],
+[
+0,
+750,
+1251
+],
+[
+0,
+1319,
+1819
+],
+[
+0,
+1320,
+700
+],
+[
+0,
+1224,
+700
+],
+[
+0,
+199,
+700
+]
+]
+},
+{
+"id": "EG15/sliding/tp1/rand",
+"geometry": "EG15",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 9156867943961882464,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+]
+},
+{
+"id": "EG15/sliding/tp1/probe",
+"geometry": "EG15",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 5536400740575889958,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+],
+"probes": [
+[
+0,
+1024,
+1000
+],
+[
+0,
+1024,
+1001
+],
+[
+0,
+1024,
+2025
+],
+[
+0,
+289,
+1289
+],
+[
+0,
+290,
+1010
+],
+[
+0,
+9,
+1010
+],
+[
+0,
+1779,
+2779
+],
+[
+0,
+1780,
+2500
+],
+[
+0,
+1499,
+2500
+]
+]
+},
+{
+"id": "DG1/sliding/tp1/rand",
+"geometry": "DG1",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 848077556282295763,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1,
+"m": 256
+}
+]
+},
+{
+"id": "DG2/sliding/tp1/rand",
+"geometry": "DG2",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 2607813917900454860,
+"sequences": [
+{
+"kind": "denoise",
+"c": 255,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/sliding/tp1/rand",
+"geometry": "DG3",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 9076531793866442445,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/sliding/tp1/probe",
+"geometry": "DG3",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 8585159777039168301,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+767
+],
+[
+0,
+255,
+0
+],
+[
+0,
+128,
+1023
+]
+]
+},
+{
+"id": "DG4/sliding/tp1/rand",
+"geometry": "DG4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3017026761201002824,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/sliding/tp1/equal",
+"geometry": "DG4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "equal",
+"seed": 6707859516905738145,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/sliding/tp1/probe",
+"geometry": "DG4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 8784022574875327063,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+768
+],
+[
+0,
+255,
+0
+],
+[
+0,
+255,
+1
+],
+[
+0,
+128,
+1024
+]
+]
+},
+{
+"id": "DG5/sliding/tp1/rand",
+"geometry": "DG5",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 5764399277219608701,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+]
+},
+{
+"id": "DG5/sliding/tp1/probe",
+"geometry": "DG5",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 7166449679760155534,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+1021
+],
+[
+0,
+255,
+253
+],
+[
+0,
+255,
+254
+],
+[
+0,
+128,
+1277
+]
+]
+},
+{
+"id": "DG6/sliding/tp1/rand",
+"geometry": "DG6",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 289859324002219265,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+]
+},
+{
+"id": "DG6/sliding/tp1/probe",
+"geometry": "DG6",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 2653422174154116909,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+0
+],
+[
+0,
+0,
+1022
+],
+[
+0,
+255,
+0
+],
+[
+0,
+255,
+254
+],
+[
+0,
+255,
+255
+],
+[
+0,
+128,
+1278
+],
+[
+0,
+128,
+0
+]
+]
+},
+{
+"id": "DG7/sliding/tp1/rand",
+"geometry": "DG7",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 4842424758659119099,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+]
+},
+{
+"id": "DG7/sliding/tp1/probe",
+"geometry": "DG7",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 3544737717433202214,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+0
+],
+[
+0,
+0,
+1
+],
+[
+0,
+0,
+1023
+],
+[
+0,
+255,
+1
+],
+[
+0,
+255,
+255
+],
+[
+0,
+255,
+256
+],
+[
+0,
+128,
+1279
+],
+[
+0,
+128,
+1
+]
+]
+},
+{
+"id": "DG8/sliding/tp1/rand",
+"geometry": "DG8",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 7273209829732138747,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/sliding/tp1/equal",
+"geometry": "DG8",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "equal",
+"seed": 7972253617216351869,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/sliding/tp1/probe",
+"geometry": "DG8",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 4348635144917075563,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+0
+],
+[
+0,
+0,
+1
+],
+[
+0,
+0,
+2
+],
+[
+0,
+0,
+1024
+],
+[
+0,
+255,
+2
+],
+[
+0,
+255,
+256
+],
+[
+0,
+255,
+257
+],
+[
+0,
+128,
+1280
+],
+[
+0,
+128,
+2
+]
+]
+},
+{
+"id": "DG9/sliding/tp1/rand",
+"geometry": "DG9",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3937803515490871642,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "DG9/sliding/tp1/probe",
+"geometry": "DG9",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 1151907153022091710,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+254
+],
+[
+0,
+0,
+255
+],
+[
+0,
+0,
+256
+],
+[
+0,
+0,
+1278
+],
+[
+0,
+255,
+256
+],
+[
+0,
+255,
+510
+],
+[
+0,
+255,
+511
+],
+[
+0,
+128,
+1534
+],
+[
+0,
+128,
+256
+]
+]
+},
+{
+"id": "DG10/sliding/tp1/rand",
+"geometry": "DG10",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3031914662135188875,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+]
+},
+{
+"id": "DG10/sliding/tp1/probe",
+"geometry": "DG10",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 6984954965050138425,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+255
+],
+[
+0,
+0,
+256
+],
+[
+0,
+0,
+257
+],
+[
+0,
+0,
+1279
+],
+[
+0,
+255,
+257
+],
+[
+0,
+255,
+511
+],
+[
+0,
+255,
+512
+],
+[
+0,
+128,
+1535
+],
+[
+0,
+128,
+257
+]
+]
+},
+{
+"id": "DG11/sliding/tp1/rand",
+"geometry": "DG11",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 3109264388400854241,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "DG12/sliding/tp1/rand",
+"geometry": "DG12",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 7506141089341705235,
+"sequences": [
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/sliding/tp1/rand",
+"geometry": "DG13",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 9048339661514671419,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/sliding/tp1/equal",
+"geometry": "DG13",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "equal",
+"seed": 3947514626907407501,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/sliding/tp1/probe",
+"geometry": "DG13",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 1633843178691239319,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+260863
+],
+[
+0,
+0,
+260864
+],
+[
+0,
+0,
+260865
+],
+[
+0,
+0,
+261887
+],
+[
+0,
+255,
+260865
+],
+[
+0,
+255,
+261119
+],
+[
+0,
+255,
+261120
+],
+[
+0,
+128,
+262143
+],
+[
+0,
+128,
+260865
+]
+]
+},
+{
+"id": "DG14/sliding/tp1/rand",
+"geometry": "DG14",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 422188396700472872,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+]
+},
+{
+"id": "DG14/sliding/tp1/probe",
+"geometry": "DG14",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 2506449893538285941,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+],
+"probes": [
+[
+0,
+0,
+261019
+],
+[
+0,
+0,
+261020
+],
+[
+0,
+0,
+261021
+],
+[
+0,
+0,
+262043
+]
+]
+},
+{
+"id": "MX1/sliding/tp1/rand",
+"geometry": "MX1",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 5930201651636317770,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "MX1/sliding/tp1/probe",
+"geometry": "MX1",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 6617471599200120918,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+150,
+126
+],
+[
+0,
+150,
+127
+],
+[
+0,
+150,
+1151
+],
+[
+1,
+0,
+0
+],
+[
+1,
+0,
+1
+],
+[
+1,
+0,
+1023
+],
+[
+1,
+255,
+1
+],
+[
+1,
+255,
+255
+],
+[
+1,
+255,
+256
+],
+[
+1,
+128,
+1279
+],
+[
+1,
+128,
+1
+],
+[
+2,
+128,
+127
+],
+[
+2,
+128,
+128
+],
+[
+2,
+128,
+1152
+],
+[
+3,
+0,
+3071
+],
+[
+3,
+0,
+3072
+],
+[
+3,
+0,
+3073
+],
+[
+3,
+0,
+4095
+],
+[
+3,
+255,
+3073
+],
+[
+3,
+255,
+3327
+],
+[
+3,
+255,
+3328
+],
+[
+3,
+128,
+4351
+],
+[
+3,
+128,
+3073
+]
+]
+},
+{
+"id": "MX2/sliding/tp1/rand",
+"geometry": "MX2",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 129144231864996536,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX2/sliding/tp1/equal",
+"geometry": "MX2",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "equal",
+"seed": 4405607729852537923,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX3/sliding/tp1/rand",
+"geometry": "MX3",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 1173500958542096730,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "MX4/sliding/tp1/rand",
+"geometry": "MX4",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 8965278648166407883,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/sliding/tp1/rand",
+"geometry": "MX5",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "rand",
+"seed": 808888223839006952,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/sliding/tp1/probe",
+"geometry": "MX5",
+"layer_kind": "sliding",
+"tp": 1,
+"values": "probe",
+"seed": 5714000202927460619,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+128,
+898
+],
+[
+1,
+0,
+768
+],
+[
+1,
+255,
+0
+],
+[
+1,
+255,
+1
+],
+[
+1,
+128,
+1024
+],
+[
+2,
+0,
+1021
+],
+[
+2,
+255,
+253
+],
+[
+2,
+255,
+254
+],
+[
+2,
+128,
+1277
+],
+[
+3,
+0,
+254
+],
+[
+3,
+0,
+255
+],
+[
+3,
+0,
+256
+],
+[
+3,
+0,
+1278
+],
+[
+3,
+255,
+256
+],
+[
+3,
+255,
+510
+],
+[
+3,
+255,
+511
+],
+[
+3,
+128,
+1534
+],
+[
+3,
+128,
+256
+]
+]
+},
+{
+"id": "EG1/sliding/tp2/rand",
+"geometry": "EG1",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 2031604259056393740,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1,
+"spans": []
+}
+]
+},
+{
+"id": "EG2/sliding/tp2/rand",
+"geometry": "EG2",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 167869291063550753,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 255,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/sliding/tp2/rand",
+"geometry": "EG3",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 7006300191513455669,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/sliding/tp2/probe",
+"geometry": "EG3",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 4492591384953105804,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG4/sliding/tp2/rand",
+"geometry": "EG4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 901353198512974072,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/sliding/tp2/equal",
+"geometry": "EG4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "equal",
+"seed": 549036897585038695,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/sliding/tp2/probe",
+"geometry": "EG4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 2098720896068040769,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG5/sliding/tp2/rand",
+"geometry": "EG5",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 5177562679955189525,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 8192,
+"spans": []
+}
+]
+},
+{
+"id": "EG6/sliding/tp2/rand",
+"geometry": "EG6",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 464833905134486704,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/sliding/tp2/rand",
+"geometry": "EG7",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 5032767525834796146,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/sliding/tp2/probe",
+"geometry": "EG7",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 7211746368342230151,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+150,
+126
+],
+[
+0,
+150,
+127
+],
+[
+0,
+150,
+1151
+]
+]
+},
+{
+"id": "EG8/sliding/tp2/rand",
+"geometry": "EG8",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 4490393706877314892,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG8/sliding/tp2/probe",
+"geometry": "EG8",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 343227481323833614,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+127
+],
+[
+0,
+128,
+128
+],
+[
+0,
+128,
+1152
+]
+]
+},
+{
+"id": "EG9/sliding/tp2/rand",
+"geometry": "EG9",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 177659233509411069,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG9/sliding/tp2/probe",
+"geometry": "EG9",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 1166393966585353597,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+128
+],
+[
+0,
+128,
+129
+],
+[
+0,
+128,
+1153
+]
+]
+},
+{
+"id": "EG10/sliding/tp2/rand",
+"geometry": "EG10",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 8491660442042613790,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG11/sliding/tp2/rand",
+"geometry": "EG11",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 7716020541849502942,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG12/sliding/tp2/rand",
+"geometry": "EG12",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 3233778524656361512,
+"sequences": [
+{
+"kind": "encode",
+"start": 260096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG13/sliding/tp2/rand",
+"geometry": "EG13",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 4411032426459021015,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+]
+},
+{
+"id": "EG13/sliding/tp2/probe",
+"geometry": "EG13",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 4713825582989818788,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+],
+"probes": [
+[
+0,
+700,
+701
+],
+[
+0,
+379,
+379
+],
+[
+0,
+380,
+100
+],
+[
+0,
+99,
+100
+]
+]
+},
+{
+"id": "EG14/sliding/tp2/rand",
+"geometry": "EG14",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 1098345141177421364,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/sliding/tp2/equal",
+"geometry": "EG14",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "equal",
+"seed": 6586424625792902158,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/sliding/tp2/probe",
+"geometry": "EG14",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 5794756091025068574,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+],
+"probes": [
+[
+0,
+750,
+226
+],
+[
+0,
+750,
+227
+],
+[
+0,
+750,
+1251
+],
+[
+0,
+1319,
+1819
+],
+[
+0,
+1320,
+700
+],
+[
+0,
+1224,
+700
+],
+[
+0,
+199,
+700
+]
+]
+},
+{
+"id": "EG15/sliding/tp2/rand",
+"geometry": "EG15",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 8876131125589219709,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+]
+},
+{
+"id": "EG15/sliding/tp2/probe",
+"geometry": "EG15",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 5965328891613412671,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+],
+"probes": [
+[
+0,
+1024,
+1000
+],
+[
+0,
+1024,
+1001
+],
+[
+0,
+1024,
+2025
+],
+[
+0,
+289,
+1289
+],
+[
+0,
+290,
+1010
+],
+[
+0,
+9,
+1010
+],
+[
+0,
+1779,
+2779
+],
+[
+0,
+1780,
+2500
+],
+[
+0,
+1499,
+2500
+]
+]
+},
+{
+"id": "DG1/sliding/tp2/rand",
+"geometry": "DG1",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 6851717071948258478,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1,
+"m": 256
+}
+]
+},
+{
+"id": "DG2/sliding/tp2/rand",
+"geometry": "DG2",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 1367500859365889453,
+"sequences": [
+{
+"kind": "denoise",
+"c": 255,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/sliding/tp2/rand",
+"geometry": "DG3",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 4942945821707214641,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/sliding/tp2/probe",
+"geometry": "DG3",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 2774987853481059051,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+767
+],
+[
+0,
+255,
+0
+],
+[
+0,
+128,
+1023
+]
+]
+},
+{
+"id": "DG4/sliding/tp2/rand",
+"geometry": "DG4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 2726746286042901669,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/sliding/tp2/equal",
+"geometry": "DG4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "equal",
+"seed": 6792347354552514245,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/sliding/tp2/probe",
+"geometry": "DG4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 8340456396481614196,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+768
+],
+[
+0,
+255,
+0
+],
+[
+0,
+255,
+1
+],
+[
+0,
+128,
+1024
+]
+]
+},
+{
+"id": "DG5/sliding/tp2/rand",
+"geometry": "DG5",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 484240437252307977,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+]
+},
+{
+"id": "DG5/sliding/tp2/probe",
+"geometry": "DG5",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 8096476494191899336,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+1021
+],
+[
+0,
+255,
+253
+],
+[
+0,
+255,
+254
+],
+[
+0,
+128,
+1277
+]
+]
+},
+{
+"id": "DG6/sliding/tp2/rand",
+"geometry": "DG6",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 9205662779318273426,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+]
+},
+{
+"id": "DG6/sliding/tp2/probe",
+"geometry": "DG6",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 1971140052968196636,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+0
+],
+[
+0,
+0,
+1022
+],
+[
+0,
+255,
+0
+],
+[
+0,
+255,
+254
+],
+[
+0,
+255,
+255
+],
+[
+0,
+128,
+1278
+],
+[
+0,
+128,
+0
+]
+]
+},
+{
+"id": "DG7/sliding/tp2/rand",
+"geometry": "DG7",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 425138538966909256,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+]
+},
+{
+"id": "DG7/sliding/tp2/probe",
+"geometry": "DG7",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 5361942642968668505,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+0
+],
+[
+0,
+0,
+1
+],
+[
+0,
+0,
+1023
+],
+[
+0,
+255,
+1
+],
+[
+0,
+255,
+255
+],
+[
+0,
+255,
+256
+],
+[
+0,
+128,
+1279
+],
+[
+0,
+128,
+1
+]
+]
+},
+{
+"id": "DG8/sliding/tp2/rand",
+"geometry": "DG8",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 8755325414965420830,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/sliding/tp2/equal",
+"geometry": "DG8",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "equal",
+"seed": 8901570385535952773,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/sliding/tp2/probe",
+"geometry": "DG8",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 8738136508859467435,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+0
+],
+[
+0,
+0,
+1
+],
+[
+0,
+0,
+2
+],
+[
+0,
+0,
+1024
+],
+[
+0,
+255,
+2
+],
+[
+0,
+255,
+256
+],
+[
+0,
+255,
+257
+],
+[
+0,
+128,
+1280
+],
+[
+0,
+128,
+2
+]
+]
+},
+{
+"id": "DG9/sliding/tp2/rand",
+"geometry": "DG9",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 4184545273690635570,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "DG9/sliding/tp2/probe",
+"geometry": "DG9",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 2521337481407207672,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+254
+],
+[
+0,
+0,
+255
+],
+[
+0,
+0,
+256
+],
+[
+0,
+0,
+1278
+],
+[
+0,
+255,
+256
+],
+[
+0,
+255,
+510
+],
+[
+0,
+255,
+511
+],
+[
+0,
+128,
+1534
+],
+[
+0,
+128,
+256
+]
+]
+},
+{
+"id": "DG10/sliding/tp2/rand",
+"geometry": "DG10",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 4854770229078563248,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+]
+},
+{
+"id": "DG10/sliding/tp2/probe",
+"geometry": "DG10",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 5093638987239196485,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+255
+],
+[
+0,
+0,
+256
+],
+[
+0,
+0,
+257
+],
+[
+0,
+0,
+1279
+],
+[
+0,
+255,
+257
+],
+[
+0,
+255,
+511
+],
+[
+0,
+255,
+512
+],
+[
+0,
+128,
+1535
+],
+[
+0,
+128,
+257
+]
+]
+},
+{
+"id": "DG11/sliding/tp2/rand",
+"geometry": "DG11",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 209121761721231106,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "DG12/sliding/tp2/rand",
+"geometry": "DG12",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 6832812688940722740,
+"sequences": [
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/sliding/tp2/rand",
+"geometry": "DG13",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 3889405300857078558,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/sliding/tp2/equal",
+"geometry": "DG13",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "equal",
+"seed": 5860423723490378895,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/sliding/tp2/probe",
+"geometry": "DG13",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 7428857210803485941,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+0,
+260863
+],
+[
+0,
+0,
+260864
+],
+[
+0,
+0,
+260865
+],
+[
+0,
+0,
+261887
+],
+[
+0,
+255,
+260865
+],
+[
+0,
+255,
+261119
+],
+[
+0,
+255,
+261120
+],
+[
+0,
+128,
+262143
+],
+[
+0,
+128,
+260865
+]
+]
+},
+{
+"id": "DG14/sliding/tp2/rand",
+"geometry": "DG14",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 413010311077653042,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+]
+},
+{
+"id": "DG14/sliding/tp2/probe",
+"geometry": "DG14",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 6930529405293023400,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+],
+"probes": [
+[
+0,
+0,
+261019
+],
+[
+0,
+0,
+261020
+],
+[
+0,
+0,
+261021
+],
+[
+0,
+0,
+262043
+]
+]
+},
+{
+"id": "MX1/sliding/tp2/rand",
+"geometry": "MX1",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 8771534358710053831,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "MX1/sliding/tp2/probe",
+"geometry": "MX1",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 5489680962332465173,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+150,
+126
+],
+[
+0,
+150,
+127
+],
+[
+0,
+150,
+1151
+],
+[
+1,
+0,
+0
+],
+[
+1,
+0,
+1
+],
+[
+1,
+0,
+1023
+],
+[
+1,
+255,
+1
+],
+[
+1,
+255,
+255
+],
+[
+1,
+255,
+256
+],
+[
+1,
+128,
+1279
+],
+[
+1,
+128,
+1
+],
+[
+2,
+128,
+127
+],
+[
+2,
+128,
+128
+],
+[
+2,
+128,
+1152
+],
+[
+3,
+0,
+3071
+],
+[
+3,
+0,
+3072
+],
+[
+3,
+0,
+3073
+],
+[
+3,
+0,
+4095
+],
+[
+3,
+255,
+3073
+],
+[
+3,
+255,
+3327
+],
+[
+3,
+255,
+3328
+],
+[
+3,
+128,
+4351
+],
+[
+3,
+128,
+3073
+]
+]
+},
+{
+"id": "MX2/sliding/tp2/rand",
+"geometry": "MX2",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 5731808716156503101,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX2/sliding/tp2/equal",
+"geometry": "MX2",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "equal",
+"seed": 662093007704755128,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX3/sliding/tp2/rand",
+"geometry": "MX3",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 3843154712179036243,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "MX4/sliding/tp2/rand",
+"geometry": "MX4",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 811814557830338224,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/sliding/tp2/rand",
+"geometry": "MX5",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "rand",
+"seed": 7403626447460898333,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/sliding/tp2/probe",
+"geometry": "MX5",
+"layer_kind": "sliding",
+"tp": 2,
+"values": "probe",
+"seed": 3162632984314006690,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+128,
+898
+],
+[
+1,
+0,
+768
+],
+[
+1,
+255,
+0
+],
+[
+1,
+255,
+1
+],
+[
+1,
+128,
+1024
+],
+[
+2,
+0,
+1021
+],
+[
+2,
+255,
+253
+],
+[
+2,
+255,
+254
+],
+[
+2,
+128,
+1277
+],
+[
+3,
+0,
+254
+],
+[
+3,
+0,
+255
+],
+[
+3,
+0,
+256
+],
+[
+3,
+0,
+1278
+],
+[
+3,
+255,
+256
+],
+[
+3,
+255,
+510
+],
+[
+3,
+255,
+511
+],
+[
+3,
+128,
+1534
+],
+[
+3,
+128,
+256
+]
+]
+},
+{
+"id": "EG1/full/tp1/rand",
+"geometry": "EG1",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 2314492181550050746,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1,
+"spans": []
+}
+]
+},
+{
+"id": "EG2/full/tp1/rand",
+"geometry": "EG2",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 385050264161313,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 255,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/full/tp1/rand",
+"geometry": "EG3",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 558330878335758767,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/full/tp1/probe",
+"geometry": "EG3",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 7485239753535017700,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG4/full/tp1/rand",
+"geometry": "EG4",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1534428774204431904,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/full/tp1/equal",
+"geometry": "EG4",
+"layer_kind": "full",
+"tp": 1,
+"values": "equal",
+"seed": 743323138181616633,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/full/tp1/probe",
+"geometry": "EG4",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 7917847194589340254,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG5/full/tp1/rand",
+"geometry": "EG5",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 3347325348240694620,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 8192,
+"spans": []
+}
+]
+},
+{
+"id": "EG6/full/tp1/rand",
+"geometry": "EG6",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1249927385992519309,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/full/tp1/rand",
+"geometry": "EG7",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1835503775999669128,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/full/tp1/probe",
+"geometry": "EG7",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 8422486533147197554,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+150,
+1151
+]
+]
+},
+{
+"id": "EG8/full/tp1/rand",
+"geometry": "EG8",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 529505533793444979,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG8/full/tp1/probe",
+"geometry": "EG8",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 959915484656385677,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+1152
+]
+]
+},
+{
+"id": "EG9/full/tp1/rand",
+"geometry": "EG9",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1146683329289922556,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG9/full/tp1/probe",
+"geometry": "EG9",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 5316316303603856416,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+1153
+]
+]
+},
+{
+"id": "EG10/full/tp1/rand",
+"geometry": "EG10",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 5499625875255606356,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG11/full/tp1/rand",
+"geometry": "EG11",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 7149426004551957436,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG12/full/tp1/rand",
+"geometry": "EG12",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 3649025205637757503,
+"sequences": [
+{
+"kind": "encode",
+"start": 260096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG13/full/tp1/rand",
+"geometry": "EG13",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 3608791413315977067,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+]
+},
+{
+"id": "EG13/full/tp1/probe",
+"geometry": "EG13",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 2000288043023950463,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+],
+"probes": [
+[
+0,
+700,
+701
+],
+[
+0,
+379,
+379
+],
+[
+0,
+380,
+100
+],
+[
+0,
+99,
+100
+]
+]
+},
+{
+"id": "EG14/full/tp1/rand",
+"geometry": "EG14",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 6872322945007527553,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/full/tp1/equal",
+"geometry": "EG14",
+"layer_kind": "full",
+"tp": 1,
+"values": "equal",
+"seed": 3279450958440367094,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/full/tp1/probe",
+"geometry": "EG14",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 790353582869468336,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+],
+"probes": [
+[
+0,
+750,
+1251
+],
+[
+0,
+1319,
+1819
+],
+[
+0,
+1320,
+700
+],
+[
+0,
+1224,
+700
+],
+[
+0,
+199,
+700
+]
+]
+},
+{
+"id": "EG15/full/tp1/rand",
+"geometry": "EG15",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 3471229866106276699,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+]
+},
+{
+"id": "EG15/full/tp1/probe",
+"geometry": "EG15",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 9172753199540689870,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+],
+"probes": [
+[
+0,
+1024,
+2025
+],
+[
+0,
+289,
+1289
+],
+[
+0,
+290,
+1010
+],
+[
+0,
+9,
+1010
+],
+[
+0,
+1779,
+2779
+],
+[
+0,
+1780,
+2500
+],
+[
+0,
+1499,
+2500
+]
+]
+},
+{
+"id": "DG1/full/tp1/rand",
+"geometry": "DG1",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 2718924912447084022,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1,
+"m": 256
+}
+]
+},
+{
+"id": "DG2/full/tp1/rand",
+"geometry": "DG2",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1464125916186683362,
+"sequences": [
+{
+"kind": "denoise",
+"c": 255,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/full/tp1/rand",
+"geometry": "DG3",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 3558719986873512573,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/full/tp1/probe",
+"geometry": "DG3",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 4338323297881706258,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG4/full/tp1/rand",
+"geometry": "DG4",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 4774890472888023629,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/full/tp1/equal",
+"geometry": "DG4",
+"layer_kind": "full",
+"tp": 1,
+"values": "equal",
+"seed": 7055449128679108519,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/full/tp1/probe",
+"geometry": "DG4",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 9169861583984049957,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG5/full/tp1/rand",
+"geometry": "DG5",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 8076675159344508561,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+]
+},
+{
+"id": "DG5/full/tp1/probe",
+"geometry": "DG5",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 5286812726813581180,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG6/full/tp1/rand",
+"geometry": "DG6",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 2984524484570149906,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+]
+},
+{
+"id": "DG6/full/tp1/probe",
+"geometry": "DG6",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 7814500684205801460,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG7/full/tp1/rand",
+"geometry": "DG7",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 8774010702312977842,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+]
+},
+{
+"id": "DG7/full/tp1/probe",
+"geometry": "DG7",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 6132513066922475656,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG8/full/tp1/rand",
+"geometry": "DG8",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 2604398940209602535,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/full/tp1/equal",
+"geometry": "DG8",
+"layer_kind": "full",
+"tp": 1,
+"values": "equal",
+"seed": 6430094446853588862,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/full/tp1/probe",
+"geometry": "DG8",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 7203468977813349468,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG9/full/tp1/rand",
+"geometry": "DG9",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1425036087572213559,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "DG9/full/tp1/probe",
+"geometry": "DG9",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 2704857889877304150,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG10/full/tp1/rand",
+"geometry": "DG10",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 8048529626935287853,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+]
+},
+{
+"id": "DG10/full/tp1/probe",
+"geometry": "DG10",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 1200804057842370531,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG11/full/tp1/rand",
+"geometry": "DG11",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 1236010201880063515,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "DG12/full/tp1/rand",
+"geometry": "DG12",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 4688542080957139283,
+"sequences": [
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/full/tp1/rand",
+"geometry": "DG13",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 5648299142674996617,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/full/tp1/equal",
+"geometry": "DG13",
+"layer_kind": "full",
+"tp": 1,
+"values": "equal",
+"seed": 9019903692303977356,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/full/tp1/probe",
+"geometry": "DG13",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 4564648795315381356,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG14/full/tp1/rand",
+"geometry": "DG14",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 676905178082361799,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+]
+},
+{
+"id": "DG14/full/tp1/probe",
+"geometry": "DG14",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 2314037817824240835,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+],
+"probes": [
+[
+0,
+99,
+0
+]
+]
+},
+{
+"id": "MX1/full/tp1/rand",
+"geometry": "MX1",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 705323863584932134,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "MX1/full/tp1/probe",
+"geometry": "MX1",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 4809029085155334986,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+150,
+1151
+],
+[
+1,
+255,
+0
+],
+[
+2,
+128,
+1152
+],
+[
+3,
+255,
+0
+]
+]
+},
+{
+"id": "MX2/full/tp1/rand",
+"geometry": "MX2",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 3166883142718502873,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX2/full/tp1/equal",
+"geometry": "MX2",
+"layer_kind": "full",
+"tp": 1,
+"values": "equal",
+"seed": 4188678449605884399,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX3/full/tp1/rand",
+"geometry": "MX3",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 4101740669672255179,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "MX4/full/tp1/rand",
+"geometry": "MX4",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 4885000677432001124,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/full/tp1/rand",
+"geometry": "MX5",
+"layer_kind": "full",
+"tp": 1,
+"values": "rand",
+"seed": 6043867706597168218,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/full/tp1/probe",
+"geometry": "MX5",
+"layer_kind": "full",
+"tp": 1,
+"values": "probe",
+"seed": 5322837155444995916,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+128,
+898
+],
+[
+1,
+255,
+0
+],
+[
+2,
+255,
+0
+],
+[
+3,
+255,
+0
+]
+]
+},
+{
+"id": "EG1/full/tp2/rand",
+"geometry": "EG1",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 2677823086367868125,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1,
+"spans": []
+}
+]
+},
+{
+"id": "EG2/full/tp2/rand",
+"geometry": "EG2",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 6103951798108375429,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 255,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/full/tp2/rand",
+"geometry": "EG3",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 2066834952618153652,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+]
+},
+{
+"id": "EG3/full/tp2/probe",
+"geometry": "EG3",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 8259922335887369033,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1024,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG4/full/tp2/rand",
+"geometry": "EG4",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 6730365862216872101,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/full/tp2/equal",
+"geometry": "EG4",
+"layer_kind": "full",
+"tp": 2,
+"values": "equal",
+"seed": 7547976343599102010,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+]
+},
+{
+"id": "EG4/full/tp2/probe",
+"geometry": "EG4",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 1817829335424084714,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1025,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+512,
+513
+]
+]
+},
+{
+"id": "EG5/full/tp2/rand",
+"geometry": "EG5",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 6920753786701507911,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 8192,
+"spans": []
+}
+]
+},
+{
+"id": "EG6/full/tp2/rand",
+"geometry": "EG6",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 5073345577340212216,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/full/tp2/rand",
+"geometry": "EG7",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 8164376853530991244,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+]
+},
+{
+"id": "EG7/full/tp2/probe",
+"geometry": "EG7",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 6904385441542557686,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+150,
+1151
+]
+]
+},
+{
+"id": "EG8/full/tp2/rand",
+"geometry": "EG8",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 2741813810000603004,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG8/full/tp2/probe",
+"geometry": "EG8",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 4614710472940995067,
+"sequences": [
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+1152
+]
+]
+},
+{
+"id": "EG9/full/tp2/rand",
+"geometry": "EG9",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 1137027852618660853,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "EG9/full/tp2/probe",
+"geometry": "EG9",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 8178138101591364336,
+"sequences": [
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+],
+"probes": [
+[
+0,
+128,
+1153
+]
+]
+},
+{
+"id": "EG10/full/tp2/rand",
+"geometry": "EG10",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 8878275555251183848,
+"sequences": [
+{
+"kind": "encode",
+"start": 4096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG11/full/tp2/rand",
+"geometry": "EG11",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 821935281275530388,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG12/full/tp2/rand",
+"geometry": "EG12",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 3434784663032104310,
+"sequences": [
+{
+"kind": "encode",
+"start": 260096,
+"m": 2048,
+"spans": []
+}
+]
+},
+{
+"id": "EG13/full/tp2/rand",
+"geometry": "EG13",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 4948977438449919630,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+]
+},
+{
+"id": "EG13/full/tp2/probe",
+"geometry": "EG13",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 1824302223860374507,
+"sequences": [
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+}
+],
+"probes": [
+[
+0,
+700,
+701
+],
+[
+0,
+379,
+379
+],
+[
+0,
+380,
+100
+],
+[
+0,
+99,
+100
+]
+]
+},
+{
+"id": "EG14/full/tp2/rand",
+"geometry": "EG14",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 3453942308547443440,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/full/tp2/equal",
+"geometry": "EG14",
+"layer_kind": "full",
+"tp": 2,
+"values": "equal",
+"seed": 626170173733164988,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+]
+},
+{
+"id": "EG14/full/tp2/probe",
+"geometry": "EG14",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 8044178667428510571,
+"sequences": [
+{
+"kind": "encode",
+"start": 500,
+"m": 1500,
+"spans": [
+[
+700,
+1820
+]
+]
+}
+],
+"probes": [
+[
+0,
+750,
+1251
+],
+[
+0,
+1319,
+1819
+],
+[
+0,
+1320,
+700
+],
+[
+0,
+1224,
+700
+],
+[
+0,
+199,
+700
+]
+]
+},
+{
+"id": "EG15/full/tp2/rand",
+"geometry": "EG15",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 6291841756152763723,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+]
+},
+{
+"id": "EG15/full/tp2/probe",
+"geometry": "EG15",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 8593768846117352840,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 2048,
+"spans": [
+[
+1010,
+1290
+],
+[
+2500,
+2780
+]
+]
+}
+],
+"probes": [
+[
+0,
+1024,
+2025
+],
+[
+0,
+289,
+1289
+],
+[
+0,
+290,
+1010
+],
+[
+0,
+9,
+1010
+],
+[
+0,
+1779,
+2779
+],
+[
+0,
+1780,
+2500
+],
+[
+0,
+1499,
+2500
+]
+]
+},
+{
+"id": "DG1/full/tp2/rand",
+"geometry": "DG1",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 3561569737503518420,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1,
+"m": 256
+}
+]
+},
+{
+"id": "DG2/full/tp2/rand",
+"geometry": "DG2",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 7179845560344224142,
+"sequences": [
+{
+"kind": "denoise",
+"c": 255,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/full/tp2/rand",
+"geometry": "DG3",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 9108215025560652538,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+]
+},
+{
+"id": "DG3/full/tp2/probe",
+"geometry": "DG3",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 8390381969853974596,
+"sequences": [
+{
+"kind": "denoise",
+"c": 768,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG4/full/tp2/rand",
+"geometry": "DG4",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 8840771175360817247,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/full/tp2/equal",
+"geometry": "DG4",
+"layer_kind": "full",
+"tp": 2,
+"values": "equal",
+"seed": 8247765254008696216,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+]
+},
+{
+"id": "DG4/full/tp2/probe",
+"geometry": "DG4",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 1191361109076525722,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG5/full/tp2/rand",
+"geometry": "DG5",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 1963346687417796055,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+]
+},
+{
+"id": "DG5/full/tp2/probe",
+"geometry": "DG5",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 1066921821391544726,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG6/full/tp2/rand",
+"geometry": "DG6",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 4801449925982496339,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+]
+},
+{
+"id": "DG6/full/tp2/probe",
+"geometry": "DG6",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 4685841438572408104,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG7/full/tp2/rand",
+"geometry": "DG7",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 7851923525629357424,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+]
+},
+{
+"id": "DG7/full/tp2/probe",
+"geometry": "DG7",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 7441166254887919707,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG8/full/tp2/rand",
+"geometry": "DG8",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 5091521292999082625,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/full/tp2/equal",
+"geometry": "DG8",
+"layer_kind": "full",
+"tp": 2,
+"values": "equal",
+"seed": 3532371927712665465,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+]
+},
+{
+"id": "DG8/full/tp2/probe",
+"geometry": "DG8",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 6912881298352310707,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG9/full/tp2/rand",
+"geometry": "DG9",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 3499114324550011123,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "DG9/full/tp2/probe",
+"geometry": "DG9",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 3537135154845044843,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG10/full/tp2/rand",
+"geometry": "DG10",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 4779170811370385195,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+]
+},
+{
+"id": "DG10/full/tp2/probe",
+"geometry": "DG10",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 9128412220142454400,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG11/full/tp2/rand",
+"geometry": "DG11",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 4447051659545511346,
+"sequences": [
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "DG12/full/tp2/rand",
+"geometry": "DG12",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 5354267162068234650,
+"sequences": [
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/full/tp2/rand",
+"geometry": "DG13",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 1776938020560889315,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/full/tp2/equal",
+"geometry": "DG13",
+"layer_kind": "full",
+"tp": 2,
+"values": "equal",
+"seed": 3920555434276442562,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "DG13/full/tp2/probe",
+"geometry": "DG13",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 5043108771506822523,
+"sequences": [
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+255,
+0
+]
+]
+},
+{
+"id": "DG14/full/tp2/rand",
+"geometry": "DG14",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 2530171002044042784,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+]
+},
+{
+"id": "DG14/full/tp2/probe",
+"geometry": "DG14",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 6322843048106312766,
+"sequences": [
+{
+"kind": "denoise",
+"c": 262044,
+"m": 100
+}
+],
+"probes": [
+[
+0,
+99,
+0
+]
+]
+},
+{
+"id": "MX1/full/tp2/rand",
+"geometry": "MX1",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 6720733185086633355,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+]
+},
+{
+"id": "MX1/full/tp2/probe",
+"geometry": "MX1",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 8293932126177216501,
+"sequences": [
+{
+"kind": "encode",
+"start": 1000,
+"m": 300,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1023,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 4096,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+150,
+1151
+],
+[
+1,
+255,
+0
+],
+[
+2,
+128,
+1152
+],
+[
+3,
+255,
+0
+]
+]
+},
+{
+"id": "MX2/full/tp2/rand",
+"geometry": "MX2",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 2827783376013346644,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX2/full/tp2/equal",
+"geometry": "MX2",
+"layer_kind": "full",
+"tp": 2,
+"values": "equal",
+"seed": 583969493835923219,
+"sequences": [
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1280,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 0,
+"m": 1400,
+"spans": [
+[
+100,
+380
+]
+]
+},
+{
+"kind": "denoise",
+"c": 700,
+"m": 0
+}
+]
+},
+{
+"id": "MX3/full/tp2/rand",
+"geometry": "MX3",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 5288960984395938072,
+"sequences": [
+{
+"kind": "encode",
+"start": 65536,
+"m": 2048,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 65536,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "encode",
+"start": 1024,
+"m": 256,
+"spans": []
+}
+]
+},
+{
+"id": "MX4/full/tp2/rand",
+"geometry": "MX4",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 8291361450063303058,
+"sequences": [
+{
+"kind": "denoise",
+"c": 1023,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1024,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1025,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 261888,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/full/tp2/rand",
+"geometry": "MX5",
+"layer_kind": "full",
+"tp": 2,
+"values": "rand",
+"seed": 2746172609253459746,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+]
+},
+{
+"id": "MX5/full/tp2/probe",
+"geometry": "MX5",
+"layer_kind": "full",
+"tp": 2,
+"values": "probe",
+"seed": 302371971580899017,
+"sequences": [
+{
+"kind": "encode",
+"start": 769,
+"m": 256,
+"spans": []
+},
+{
+"kind": "denoise",
+"c": 769,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1022,
+"m": 256
+},
+{
+"kind": "denoise",
+"c": 1279,
+"m": 256
+}
+],
+"probes": [
+[
+0,
+128,
+898
+],
+[
+1,
+255,
+0
+],
+[
+2,
+255,
+0
+],
+[
+3,
+255,
+0
+]
+]
+}
+]
+}

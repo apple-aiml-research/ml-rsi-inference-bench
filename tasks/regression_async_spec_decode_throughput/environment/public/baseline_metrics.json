@@ -1,0 +1,60 @@
+{
+  "_note": "There is deliberately NO committed baseline number. The scored baseline is re-benched from the pinned tree during verification, so a value here could only go stale and would then either flatter or penalise a candidate for a reason that has nothing to do with it. Use public/run_benchmark.py --with-baseline: it stages the pristine arm from the inference_base tag and benches it the same way, which is how you get a ratio before submitting.",
+  "schema_version": 1,
+  "model": "openai/gpt-oss-120b",
+  "gpu": "1xB200",
+  "bench_mode": "offline",
+  "metric": "throughput_total_tokens_per_second",
+  "primary_workload": "in1024_out1024_c512",
+  "baseline_source": "benched_live_at_scoring_time",
+  "scored_workloads": [
+    "in1024_out1024_c256",
+    "in1024_out1024_c384",
+    "in1024_out1024_c512"
+  ],
+  "guard_workloads": [
+    "in1024_out1024_c128"
+  ],
+  "baseline_workloads": {
+    "in1024_out1024_c512": {
+      "tokens_per_second": null,
+      "_workload": {
+        "input_len": 1024,
+        "output_len": 1024,
+        "num_prompts": 1024,
+        "max_concurrency": 512,
+        "max_model_len": 2560
+      }
+    },
+    "in1024_out1024_c256": {
+      "tokens_per_second": null,
+      "_workload": {
+        "input_len": 1024,
+        "output_len": 1024,
+        "num_prompts": 512,
+        "max_concurrency": 256,
+        "max_model_len": 2560
+      }
+    },
+    "in1024_out1024_c384": {
+      "tokens_per_second": null,
+      "_workload": {
+        "input_len": 1024,
+        "output_len": 1024,
+        "num_prompts": 768,
+        "max_concurrency": 384,
+        "max_model_len": 2560
+      }
+    },
+    "in1024_out1024_c128": {
+      "tokens_per_second": null,
+      "_workload": {
+        "input_len": 1024,
+        "output_len": 1024,
+        "num_prompts": 256,
+        "max_concurrency": 128,
+        "max_model_len": 2560
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_minimax_m3_4xb200_vllm"
+description = "Native MiniMax-M3-MXFP8 support on 4xB200 in vLLM: MiniMax Sparse Attention (index-branch block selection and block-sparse attention, prefill and decode, BF16 and FP8 KV) implemented through a public operator contract and served natively in both deployments, with reasoning and tool-call parsing, model quality, efficiency and engine regressions preserved."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "vllm", "b200", "moe", "sparse-attention", "mxfp8", "fp8-kv", "prefix-caching", "long-context", "tool-calls", "reasoning"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+build_timeout_sec = 12400
+cpus = 64
+memory_mb = 1048576
+storage_mb = 1048576
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/vllm/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 158330
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/vllm/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+build_timeout_sec = 4098
+cpus = 64
+memory_mb = 1048576
+storage_mb = 1048576
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/vllm-project/vllm"
+base_commit_hash = "138747893727914cd4f499376e82c3b4bf5f0bba"
+reference_commit_hash = "0a1c5034f5e4fe736db672010cda33d9d850f87e"
+model_repository = "MiniMaxAI/MiniMax-M3-MXFP8"
+model_revision = "1c4e6a69f3278df8dd6c9693fcca241efe439b7d"
+
+[metadata.inference_bench]
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "vllm"
+score_profile = "model_support_minimax_m3_v4"
+
+[metadata.inference_bench.edit_policy]
+csrc = true

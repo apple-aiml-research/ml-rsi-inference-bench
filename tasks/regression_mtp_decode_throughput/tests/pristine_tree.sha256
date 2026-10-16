@@ -1,0 +1,28 @@
+5e8655a9e879369942783cf3716903d4df5e2749b828d28b51e0e0afc78ce544  1806
+symlinks 446adf63b9a37685b11a779533094cd7bf249a41368f160d30eae280b8485595  11
+# THE AUTHORITY for the pristine arm of the scored ratio, and the one thing in this task the agent
+# cannot reach: tests/ is uploaded at verify time, after the agent's turn, while the tree this seals
+# sits at a path the trial owns as root for the whole turn.
+#
+# THE HOLE THIS CLOSES. tests/test.sh resolves the scored PRISTINE arm from `source_dir` in
+# ${workspace}/real_engine_source.json -- a file in the agent's own workspace. Editing the tree it
+# names does not require touching the JSON, and it moves the DENOMINATOR of the ratio being scored.
+#
+# FORMAT: `<sha256>  <*.py count>`, both compared.
+#
+# DERIVED FROM TWO INDEPENDENT RUNS THAT AGREED, which is what this task in particular needed. The
+# first run scored `real_engine_ready: 0.0`, so on its own it could not be trusted to have staged a
+# complete tree. A second run then reached the same value through the normal tests/test.sh staging
+# path with the engine up and 8/8 output equivalence:
+#
+#     [pristine-digest] tree=/app/baseline_repo files=1806 digest=5e8655a9...  match=True
+#
+# Both runs: 1806 regular non-symlink *.py, 11 symlinks. The first run's zero came from the JIT
+# cache filling the artifact upload, not from an incomplete tree.
+#
+# tests/ is staged at VERIFY time from the live worktree, so editing it mid-run changes the verifier
+# that run is scored by.
+#
+# THE CHANNEL THIS DOES NOT COVER: the content digest skips symlinks, and the staging overlay links
+# the compiled half of the engine in (11 links here). The inventory is recorded in
+# artifacts/raw/pristine_tree_check.json and is not sealed.

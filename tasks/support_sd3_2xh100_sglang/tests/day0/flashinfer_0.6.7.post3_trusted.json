@@ -1,0 +1,37 @@
+{
+  "schema": "sd3-day0-flashinfer-trusted/1",
+  "wheel": {
+    "name": "flashinfer_python-0.6.7.post3-py3-none-any.whl",
+    "sha256": "9d3f1aa0313cf9e5cf99f7560b8e003c57876088c8abfe7a3d330cccd4873052"
+  },
+  "entry": {
+    "module_file": "gemm/gemm_base.py",
+    "function": "fp8_blockscale_gemm_sm90",
+    "runner_getter": "get_fp8_blockscale_gemm_runner_sm90"
+  },
+  "jit_modules": [
+    "fp8_blockscale_gemm_90"
+  ],
+  "files": {
+    "__init__.py": "4f6b83f83c7751513704fa9a73166ce5ef48fad947af05cf2aae933545e67497",
+    "_build_meta.py": "b2467262f9c852f9654f7e8eafb4dcec8e74677b40785ccc39700b8e2e69ae21",
+    "api_logging.py": "4b9feb86e13b0a2ca6c88dbf056b9be6efc3a6fba9d074982a89babe178e0eb8",
+    "gemm/__init__.py": "0af22ba0cbafb98bc3ee1103c46d7c2c86ffc0c5d3e6b11e4c88ec08c371a7cc",
+    "gemm/gemm_base.py": "151300d7bbf482c61f22e40bc5216993d98e00d98d837a5880132a39e61e8c65",
+    "jit/__init__.py": "eb4911a854dd51dd3c9f80c2921cce13f571fcd7db09df2479f51a158e6f6668",
+    "jit/core.py": "85bd16ee3419aae04e85a556a7b8cae8d3356090f6c748d459de038dca07bb7d",
+    "jit/cpp_ext.py": "8f0d51dd2f8879195d110145af2bcb1409c248073052c2e3f7ec1b1eddfcd52e",
+    "jit/env.py": "f0ccf6265c3501b300312dfd3fede1e6509fc34a0ab8895b0222ebf2e30fb332",
+    "jit/gemm/__init__.py": "b29d6e579934dc4d11a49393e0a1d09679e3ce3f6e6262133dfe1c9eda3d0c7c",
+    "jit/gemm/fp8_blockscale.py": "e9782505b7357f3542aa9e38cbe5a719f9592b25e8522359d1d188daf6c73592",
+    "utils.py": "195cbffa0b7d0bf6be2a621cd06e5e979430027fb24ffb845826670cf942c51a",
+    "version.py": "16a9c0838806f01a878c745819ea7e9fa340372e7b229fac0d0521a900dd5242"
+  },
+  "trees": {
+    "data": "a3826116cd5e5fb7bf7f28e2fd906446d4e6ea2bed91e38898ee890a16d9f44c"
+  },
+  "tree_file_counts": {
+    "data": 2027
+  },
+  "not_covered": "flashinfer-cubin (the SM90 fp8_blockscale path builds its runner by JIT and compiles its DeepGEMM kernels with NVRTC; no cubin is read on it, located in jit/gemm/fp8_blockscale.py); the JIT .so itself (built at runtime; the tap records its sha256 and requires it fresh in the verifier's workspace)"
+}

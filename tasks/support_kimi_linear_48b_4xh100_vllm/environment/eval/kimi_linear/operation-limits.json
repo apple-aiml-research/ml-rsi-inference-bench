@@ -1,0 +1,26 @@
+{
+  "schema": "infb-operation-limits/1",
+  "note": "Wall-clock limits on single operations of this task's evaluation, on the declared hardware and deployment. They are resource limits, not throughput objectives or per-token service targets. An operation that exhausts its limit on a healthy host fails for lack of resources; a limit here is never shortened by an enclosing wrapper.",
+  "hardware": "eight NVIDIA H100 80GB GPUs; the TP4/BF16 deployments of launch.py (tp4, apc, apc-pressure) on the first four, dp2 on all eight",
+  "limits_s": {
+    "startup": 600,
+    "rebuild": 7900,
+    "http_workload": 900,
+    "http_workload_long": 1800,
+    "component_invocation": 1800,
+    "engine_test_file": 1800,
+    "action": 300,
+    "teardown": 180
+  },
+  "long_input_tokens": 64000,
+  "clocks": {
+    "startup": "server process spawn through a ready health response, including model load and startup compilation",
+    "rebuild": "start of the documented editable build (build.sh) through its successful completion",
+    "http_workload": "one request, or one explicitly submitted concurrent batch, whose largest input is below long_input_tokens: client dispatch through the complete response(s), including queueing and first-use compilation",
+    "http_workload_long": "the same, when any input is at least long_input_tokens",
+    "component_invocation": "one loaded-layer inspection, sample, timing or other instrumented runtime invocation: dispatch through every rank's record, including setup, warmup, compilation, prescribed repetitions, synchronization and readback",
+    "engine_test_file": "one existing-engine unit-test file process: collection and all selected cases in that file, including compilation",
+    "action": "one non-inference parser, configuration or identity action: dispatch through its complete record",
+    "teardown": "one server or worker group: TERM, then KILL after 10 s if needed, including reaping"
+  }
+}

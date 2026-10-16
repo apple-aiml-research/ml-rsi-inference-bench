@@ -1,0 +1,114 @@
+{
+ "schedule": [
+  {
+   "id": "sem/t/12",
+   "prompt": "Which is a fruit, an apple or a carrot? Answer with one word.",
+   "answer": "apple",
+   "candidates": [
+    "apple",
+    "carrot"
+   ]
+  },
+  {
+   "id": "sem/t/13",
+   "prompt": "What is 9 minus 4? Answer with a number.",
+   "answer": "5",
+   "candidates": [
+    "5",
+    "13"
+   ]
+  },
+  {
+   "id": "sem/t/14",
+   "prompt": "Which season follows winter? Answer with one word.",
+   "answer": "spring",
+   "candidates": [
+    "spring",
+    "autumn"
+   ]
+  },
+  {
+   "id": "sem/t/15",
+   "prompt": "What colour are ripe bananas? Answer with one word.",
+   "answer": "yellow",
+   "candidates": [
+    "yellow",
+    "purple"
+   ]
+  },
+  {
+   "id": "sem/t/0p",
+   "prompt": "Which is larger, an elephant or a mouse? Answer with one word.",
+   "answer": "elephant",
+   "candidates": [
+    "elephant",
+    "mouse"
+   ]
+  }
+ ],
+ "adaptive": [
+  "What is 17 * 23?",
+  "What is 12 + 30?",
+  "What is 9 * 8?",
+  "Name two planets.",
+  "What is 144 divided by 12?",
+  "List three primary colours.",
+  "What is the square of 15?",
+  "Name a mammal that lives in the ocean.",
+  "Give a synonym for 'happy'.",
+  "What is 100 minus 37?",
+  "Translate 'thank you' into Spanish.",
+  "Name the four seasons.",
+  "What is 2 to the power of 10?",
+  "What is 7 * 13?"
+ ],
+ "adaptive_drafted_first": [
+  "Which is larger, an elephant or a mouse? Answer with one word.",
+  "What comes after Monday? Answer with one word.",
+  "What is the chemical symbol for gold? Answer with the symbol only.",
+  "Which month comes before March? Answer with one word.",
+  "What do bees make? Answer with one word.",
+  "Which animal says moo? Answer with one word.",
+  "What is 7 plus 8? Answer with a number.",
+  "Which is colder, ice or steam? Answer with one word.",
+  "What is the first letter of the English alphabet? Answer with the letter.",
+  "Which ocean lies between Europe and America? Answer with one word.",
+  "How many days are in a week? Answer with a number.",
+  "What is the capital of Germany? Answer with one word.",
+  "Which is a fruit, an apple or a carrot? Answer with one word.",
+  "What is 9 minus 4? Answer with a number.",
+  "Which season follows winter? Answer with one word.",
+  "What colour are ripe bananas? Answer with one word."
+ ],
+ "adaptive_candidates": [
+  "What is 17 * 23?",
+  "What is 12 + 30?",
+  "What is 9 * 8?",
+  "Name two planets.",
+  "Say hello in French.",
+  "What is 144 divided by 12?",
+  "Write the word 'river' backwards.",
+  "List three primary colours.",
+  "What is the square of 15?",
+  "Name a mammal that lives in the ocean.",
+  "Give a synonym for 'happy'.",
+  "What is 100 minus 37?",
+  "Translate 'thank you' into Spanish.",
+  "Name the four seasons.",
+  "What is 2 to the power of 10?",
+  "Spell the word 'library'.",
+  "What is 7 * 13?",
+  "Name three fruits.",
+  "What is the capital of Canada?",
+  "Count from one to five in words.",
+  "What is 81 divided by 9?",
+  "Name two continents.",
+  "What is 45 + 55?",
+  "Give an antonym for 'cold'."
+ ],
+ "adaptive_selection": "Condition 1: prompts that answer whole with thinking disabled; one-word questions phrased for a single-token answer return end-of-sequence alone and are excluded. The first 16 whole-answer candidates are kept.",
+ "adaptive_dropped": [
+  "Say hello in French.",
+  "Spell the word 'library'."
+ ]
+}

@@ -1,0 +1,69 @@
+{
+ "schema": "inkling-small-policy/1",
+ "gsm8k_floor": 0.8,
+ "replay": {
+  "T_mean": 1.7043546158082281,
+  "T_max": 67.7475716471672
+ },
+ "prefix": {
+  "T_mean": 1.8634554399149088,
+  "T_max": 69.12183855241165,
+  "H": {
+   "P1+A": 4352,
+   "P2+A": 4352,
+   "P3+A": 4224,
+   "P4+A": 8448
+  }
+ },
+ "fidelity": {
+  "chaos_level": 16.085536923187668,
+  "trim": {
+   "1024": 111,
+   "8192": 930,
+   "32768": 3750
+  },
+  "T": {
+   "1024": 0.16195520652912104,
+   "8192": 0.3228284886327409,
+   "32768": 0.17937414335939128
+  },
+  "C": {
+   "1024": 0.9087594413076656,
+   "8192": 0.7645636683767195,
+   "32768": 0.5122747321397899
+  },
+  "outlier_rate": {
+   "1024": 0.039589442815249266,
+   "8192": 0.05841777560737395,
+   "32768": 0.058263649403363135
+  }
+ },
+ "long": {
+  "chaos_level": 16.085536923187668,
+  "trim": 41244,
+  "T": 0.774807050084185,
+  "outlier_rate": 0.09745862929252085,
+  "reference": "production launch 1",
+  "calibration": "the reference's deterministic launch against production launch 1"
+ },
+ "deterministic": {
+  "kl_div": {
+   "match": 0.31296353538861765,
+   "prefill_cache_hit": 0.30353202454355205,
+   "decode_cache_hit": 0.05474072733039009
+  },
+  "decode_cache_hit_ratio": 0.99
+ },
+ "conv_state": {
+  "B": 20,
+  "windows": 76,
+  "rule": "pass iff F <= B; B = max(8, 2 x the largest F over the five calibration launches)"
+ },
+ "conv_state_history": {
+  "differing_windows": 0,
+  "windows": 76,
+  "grade_cold_pair": false,
+  "rule": "pass iff no window's restored pair differs and no window is structurally invalid. Exact and not calibrated: at the deterministic launch an identical request must return identical tokens and log-probabilities whatever ran before it, so any difference is a failure of the contract.",
+  "cold_pair": "measured and recorded, not graded. The registered control for it, C-stalefresh (the deferred conv-state clear skipped for requests that do not restore), is a null mutation on this engine: with the clear provably skipped, 1212 of 1228 batches held a nonzero conv state at the slot (median max abs 64768, median 94.4 percent of elements nonzero) and the output was still identical to the reference's, flip set included. The reference's convolution masks a fresh request's initial state, so the cold pair has no control that separates and is not graded."
+ }
+}

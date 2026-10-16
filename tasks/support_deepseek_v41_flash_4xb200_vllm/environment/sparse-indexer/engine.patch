@@ -1,0 +1,624 @@
+diff --git a/.gitignore b/.gitignore
+index 46418c03924e67bfa3c9c3e295ddd5e85fd53c98..20dfd2098c9662be9146ab405dac242f71c82c6c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -15,6 +15,11 @@ vllm/third_party/flashmla/flash_mla_interface.py
+ # DeepGEMM vendored package built from source
+ vllm/third_party/deep_gemm/
+ 
++# The sparse MQA-logits runtime's build products (tools/build_deepgemm_v41_sparse.py); its initializer is tracked
++vllm/third_party/deep_gemm_v41_sparse/include/
++vllm/third_party/deep_gemm_v41_sparse/build-manifest.json
++vllm/third_party/deep_gemm_v41_sparse/_C*.so
++
+ # fmha_sm100 vendored package built from source
+ vllm/third_party/fmha_sm100/
+ 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a7d40ae586037a69fa6a9a0d9c22b6bfcc84b3e5..d84b31db2b15424831878467e1cbf547590e2e19 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1571,6 +1571,7 @@ endif()
+ # For CUDA we also build and ship some external projects.
+ if (VLLM_GPU_LANG STREQUAL "CUDA")
+     include(cmake/external_projects/deepgemm.cmake)
++    include(cmake/external_projects/deepselect.cmake)
+     include(cmake/external_projects/fmha_sm100.cmake)
+     include(cmake/external_projects/flashmla.cmake)
+     include(cmake/external_projects/flashkda.cmake)
+diff --git a/cmake/external_projects/deepselect.cmake b/cmake/external_projects/deepselect.cmake
+new file mode 100644
+index 0000000000000000000000000000000000000000..e2a5592e6167a9008cc6a88922324a13a872bdc8
+--- /dev/null
++++ b/cmake/external_projects/deepselect.cmake
+@@ -0,0 +1,97 @@
++include(FetchContent)
++
++# If DEEPSELECT_SRC_DIR is set, DeepSelect is built from that directory
++# instead of downloading.
++# It can be set as an environment variable or passed as a cmake argument.
++# The environment variable takes precedence.
++if (DEFINED ENV{DEEPSELECT_SRC_DIR})
++  set(DEEPSELECT_SRC_DIR $ENV{DEEPSELECT_SRC_DIR})
++endif()
++
++if(DEEPSELECT_SRC_DIR)
++  FetchContent_Declare(
++        deepselect
++        SOURCE_DIR ${DEEPSELECT_SRC_DIR}
++        CONFIGURE_COMMAND ""
++        BUILD_COMMAND ""
++  )
++else()
++  FetchContent_Declare(
++        deepselect
++        GIT_REPOSITORY https://github.com/vllm-project/DeepSelect.git
++        GIT_TAG d96d33afe1fab0d6066da49cdc91e64c2bee65ea
++        GIT_PROGRESS TRUE
++        CONFIGURE_COMMAND ""
++        BUILD_COMMAND ""
++  )
++endif()
++
++FetchContent_MakeAvailable(deepselect)
++message(STATUS "DeepSelect is available at ${deepselect_SOURCE_DIR}")
++
++# DeepSelect kernels require CUDA 12.9+; 10.0f (family) covers SM100 and SM103.
++set(DEEPSELECT_SUPPORT_ARCHS)
++if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL 12.9)
++    list(APPEND DEEPSELECT_SUPPORT_ARCHS "10.0f")
++endif()
++
++cuda_archs_loose_intersection(DEEPSELECT_ARCHS "${DEEPSELECT_SUPPORT_ARCHS}" "${CUDA_ARCHS}")
++if(DEEPSELECT_ARCHS)
++    message(STATUS "DeepSelect CUDA architectures: ${DEEPSELECT_ARCHS}")
++
++    # All explicit template instantiations must be compiled: api.cpp
++    # references every dispatch combination.
++    file(GLOB DeepSelect_SOURCES CONFIGURE_DEPENDS
++        ${deepselect_SOURCE_DIR}/csrc/cuda_kernels/v3/instantiations/*.cu
++        ${deepselect_SOURCE_DIR}/csrc/cuda_kernels/v3_fp32/instantiations/*.cu
++        ${deepselect_SOURCE_DIR}/csrc/cuda_kernels/v3_cluster/instantiations/*.cu
++    )
++    list(PREPEND DeepSelect_SOURCES ${deepselect_SOURCE_DIR}/csrc/api.cpp)
++
++    set(DeepSelect_INCLUDES
++        ${deepselect_SOURCE_DIR}/csrc
++        ${deepselect_SOURCE_DIR}/csrc/3rdparty/cutlass/include
++        ${deepselect_SOURCE_DIR}/csrc/3rdparty/kerutils/include
++    )
++
++    set_gencode_flags_for_srcs(
++        SRCS "${DeepSelect_SOURCES}"
++        CUDA_ARCHS "${DEEPSELECT_ARCHS}")
++
++    set(VLLM_DEEPSELECT_GPU_FLAGS ${VLLM_GPU_FLAGS})
++    list(APPEND VLLM_DEEPSELECT_GPU_FLAGS
++        "-O3" "--expt-relaxed-constexpr" "--expt-extended-lambda"
++        "--use_fast_math" "--ftz=false"
++        "-U__CUDA_NO_HALF_OPERATORS__" "-U__CUDA_NO_HALF_CONVERSIONS__"
++        "-U__CUDA_NO_HALF2_OPERATORS__" "-U__CUDA_NO_BFLOAT16_CONVERSIONS__")
++
++    define_extension_target(
++        _deepselect_C
++        DESTINATION vllm
++        LANGUAGE ${VLLM_GPU_LANG}
++        SOURCES ${DeepSelect_SOURCES}
++        COMPILE_FLAGS ${VLLM_DEEPSELECT_GPU_FLAGS}
++        ARCHITECTURES ${VLLM_GPU_ARCHES}
++        INCLUDE_DIRECTORIES ${DeepSelect_INCLUDES}
++        USE_SABI 3
++        WITH_SOABI)
++
++    # Only use C-shim APIs available in PyTorch 2.10.
++    # _deepselect_C is abi compatible with PyTorch >= TORCH_TARGET_VERSION.
++    target_compile_definitions(_deepselect_C PRIVATE
++        TORCH_TARGET_VERSION=0x020A000000000000ULL)
++
++    # Needed to use cuda APIs from C-shim
++    if(VLLM_GPU_LANG STREQUAL "CUDA")
++        target_compile_definitions(_deepselect_C PRIVATE USE_CUDA)
++    endif()
++
++    # DeepSelect requires C++20
++    target_compile_options(_deepselect_C PRIVATE
++        $<$<COMPILE_LANGUAGE:CXX>:-std=c++20>
++        $<$<COMPILE_LANGUAGE:CUDA>:-std=c++20>)
++else()
++    message(STATUS "DeepSelect will not compile: unsupported CUDA architecture ${CUDA_ARCHS}")
++    # Create an empty target for setup.py on unsupported systems
++    add_custom_target(_deepselect_C)
++endif()
+diff --git a/setup.py b/setup.py
+index 81ff499be4d5189de8dc6a414e2ef0c25af6f2fa..13692f3d20ca3ed8c030e32b3b4916e7c93f0e6a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -1015,6 +1015,7 @@ class precompiled_wheel_utils:
+                             "vllm/_flashmla_extension_C.abi3.so",
+                             "vllm/_flashkda_C.abi3.so",
+                             "vllm/_sparse_flashmla_C.abi3.so",
++                            "vllm/_deepselect_C.abi3.so",
+                             "vllm/vllm_flash_attn/_vllm_fa2_C.abi3.so",
+                             "vllm/vllm_flash_attn/_vllm_fa3_C.abi3.so",
+                             "vllm/cumem_allocator.abi3.so",
+@@ -1381,6 +1382,9 @@ if _is_cuda():
+         ext_modules.append(
+             CMakeExtension(name="vllm._flashmla_extension_C", optional=True)
+         )
++        # DeepSelect requires CUDA 12.9 or later (SM100a/SM103a only)
++        # Optional since it won't build on unsupported architectures
++        ext_modules.append(CMakeExtension(name="vllm._deepselect_C", optional=True))
+     if USE_PRECOMPILED_EXTENSIONS or (
+         CUDA_HOME and get_nvcc_cuda_version() >= Version("12.0")
+     ):
+diff --git a/vllm/config/attention.py b/vllm/config/attention.py
+index d5a150c92a31ea33a4a12bd1c8e05ccd64c5202e..6556b9fe78e7ced5bc0fe4cb99fa77c038f93388 100644
+--- a/vllm/config/attention.py
++++ b/vllm/config/attention.py
+@@ -74,6 +74,15 @@ class AttentionConfig:
+     indexer). Quantized formats (fp8, mxfp4, nvfp4) require indexer kernel
+     support in the backend."""
+ 
++    indexer_sparse_logits: bool = False
++    """DeepSeek V4.1 two-level indexer: score only the candidate blocks with
++    DeepGEMM's sparse MQA-logits kernels instead of computing dense logits over
++    the whole context and masking them. Requires `indexer_kv_dtype="mxfp4"`,
++    an SM100-class GPU, DeepGEMM >= 2.8 and the DeepSelect top-k extension
++    (the top-k runs on the kernels' bf16 logits). The sparse path costs
++    O(candidate blocks) per query regardless of context length, so it pays off
++    for long contexts (roughly 32K tokens and beyond) and is slower below."""
++
+     use_non_causal: bool = False
+     """Whether to use non-causal (bidirectional) attention."""
+ 
+diff --git a/vllm/config/kernel.py b/vllm/config/kernel.py
+index 1312cbb241574eb5fab96bdbcf52e5cdbdbdd12a..d92cbb519b56e0cee759ad1d5e2db2ef987a7eb9 100644
+--- a/vllm/config/kernel.py
++++ b/vllm/config/kernel.py
+@@ -159,6 +159,16 @@ FLASHINFER_MOE_EP_BACKENDS = frozenset(
+ # moe_ep variants.
+ MEGA_MOE_BACKENDS = frozenset({"deep_gemm_mega_moe"}) | FLASHINFER_MOE_EP_BACKENDS
+ 
++SparseIndexerTopkBackend = Literal[
++    "auto",
++    "deep_select",
++    "cooperative",
++    "persistent",
++    "per_row",
++    "flashinfer",
++    "torch",
++]
++
+ # Architectures whose model code wires up the flashinfer moe_ep experts. MTP
+ # and DSpark draft variants inherit the setting from these target models.
+ FLASHINFER_MOE_EP_ARCHITECTURES = frozenset(
+@@ -266,6 +276,21 @@ class KernelConfig:
+                    running QDQ on activations.
+     """
+ 
++    sparse_indexer_topk_backend: SparseIndexerTopkBackend = "auto"
++    """Backend for the DSA sparse indexer decode top-k kernel. Available options:
++
++    - "auto": The pre-existing chain (cooperative -> persistent -> per_row);
++      the other backends are opt-in
++    - "deep_select": Use DeepSelect kernels (SM100a/SM103a only)
++    - "cooperative": Use vLLM's cooperative_topk kernel
++    - "persistent": Use vLLM's persistent_topk kernel
++    - "per_row": Use vLLM's top_k_per_row_decode kernel
++    - "flashinfer": Use FlashInfer's top_k_ragged_transform kernel
++    - "torch": Use a plain torch.topk implementation (debug reference)
++
++    Explicit values raise RuntimeError when their constraints are not met.
++    """
++
+     linear_backend: LinearBackend = "auto"
+     """Backend for linear layer GEMM kernels. Available options:
+ 
+@@ -309,6 +334,13 @@ class KernelConfig:
+             return value.lower().replace("-", "_")
+         return value
+ 
++    @field_validator("sparse_indexer_topk_backend", mode="before")
++    @classmethod
++    def _normalize_sparse_indexer_topk_backend(cls, value: Any) -> Any:
++        if isinstance(value, str):
++            return value.lower().replace("-", "_")
++        return value
++
+     def compute_hash(self) -> str:
+         """
+         Produces a hash unique to the pass configuration.
+diff --git a/vllm/engine/arg_utils.py b/vllm/engine/arg_utils.py
+index bf5cc62d367da340569432cc07afa3d1aff4b7de..9c02c4d162ec7581cd6d373609dafccb5f80baf5 100644
+--- a/vllm/engine/arg_utils.py
++++ b/vllm/engine/arg_utils.py
+@@ -76,7 +76,12 @@ from vllm.config.cache import (
+     PrefixCachingHashAlgo,
+ )
+ from vllm.config.device import Device
+-from vllm.config.kernel import IrOpPriorityConfig, LinearBackend, MoEBackend
++from vllm.config.kernel import (
++    IrOpPriorityConfig,
++    LinearBackend,
++    MoEBackend,
++    SparseIndexerTopkBackend,
++)
+ from vllm.config.load import SafetensorsLoadStrategy
+ from vllm.config.lora import MaxLoRARanks
+ from vllm.config.mamba import MambaBackendEnum, MambaSSUAlgorithm
+@@ -505,6 +510,9 @@ class EngineArgs:
+     enable_ep_weight_filter: bool = ParallelConfig.enable_ep_weight_filter
+     moe_backend: MoEBackend = KernelConfig.moe_backend
+     linear_backend: LinearBackend = KernelConfig.linear_backend
++    sparse_indexer_topk_backend: SparseIndexerTopkBackend = (
++        KernelConfig.sparse_indexer_topk_backend
++    )
+     all2all_backend: All2AllBackend = ParallelConfig.all2all_backend
+     enable_elastic_ep: bool = ParallelConfig.enable_elastic_ep
+     enable_dbo: bool = ParallelConfig.enable_dbo
+@@ -1662,6 +1670,11 @@ class EngineArgs:
+         linear_backend_kwargs = kernel_kwargs["linear_backend"]
+         linear_backend_kwargs["type"] = lambda s: s.lower().replace("-", "_")
+         kernel_group.add_argument("--linear-backend", **linear_backend_kwargs)
++        sparse_indexer_topk_kwargs = kernel_kwargs["sparse_indexer_topk_backend"]
++        sparse_indexer_topk_kwargs["type"] = lambda s: s.lower().replace("-", "_")
++        kernel_group.add_argument(
++            "--sparse-indexer-topk-backend", **sparse_indexer_topk_kwargs
++        )
+ 
+         # vLLM arguments
+         vllm_kwargs = get_kwargs(VllmConfig)
+@@ -2532,6 +2545,8 @@ class EngineArgs:
+             kernel_config.moe_backend = self.moe_backend
+         if self.linear_backend != "auto":
+             kernel_config.linear_backend = self.linear_backend
++        if self.sparse_indexer_topk_backend != "auto":
++            kernel_config.sparse_indexer_topk_backend = self.sparse_indexer_topk_backend
+ 
+         # Transfer top-level ir_op_priority into KernelConfig.ir_op_priority
+         for op_name, op_priority in asdict(self.ir_op_priority).items():
+diff --git a/vllm/model_executor/layers/indexer_topk.py b/vllm/model_executor/layers/indexer_topk.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..a3b9da4e1ead190d8f409eff387c9f5ed056dcb7
+--- /dev/null
++++ b/vllm/model_executor/layers/indexer_topk.py
+@@ -0,0 +1,339 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""Top-k kernels for the DSA sparse attention indexer."""
++
++import functools
++
++import torch
++
++from vllm import _custom_ops as ops
++from vllm.config import get_current_vllm_config
++from vllm.platforms import current_platform
++from vllm.utils.flashinfer import has_flashinfer
++from vllm.v1.worker.workspace import current_workspace_manager
++
++RADIX_TOPK_WORKSPACE_SIZE = 1024 * 1024
++
++# ---------------------------------------------------------------------------
++# DeepSelect (vllm._deepselect_C)
++# ---------------------------------------------------------------------------
++
++# Matches the -1 fill convention used for topk_indices_buffer elsewhere.
++IDX_OOB_FILL_VALUE = -1
++
++try:
++    import vllm._deepselect_C  # noqa: F401  (registers torch.ops.deep_select)
++except ImportError as e:
++    from vllm.logger import init_logger
++
++    init_logger(__name__).warning(
++        "Failed to import the DeepSelect extension (vllm._deepselect_C): %s", e
++    )
++
++
++@functools.lru_cache(maxsize=1)
++def get_deep_select_stride_requirement() -> tuple[int, int]:
++    """Stride alignment requirement (input, output) in bytes."""
++    return torch.ops.deep_select.get_alignment_requirement()
++
++
++def is_deep_select_supported(input: torch.Tensor, topk: int) -> bool:
++    """Whether the kernel accepts this input (dtype/stride/topk constraints)."""
++    return (
++        topk <= 4096
++        and input.shape[1] < 2**23
++        and input.dtype in (torch.float32, torch.bfloat16)
++        and input.stride(1) == 1
++        and input.stride(0)
++        * input.element_size()
++        % get_deep_select_stride_requirement()[0]
++        == 0
++    )
++
++
++def _get_empty_and_aligned_tensor(
++    dim0: int, dim1: int, device: torch.device, dtype: torch.dtype
++) -> torch.Tensor:
++    """Tensor with shape (dim0, dim1) whose stride(0) is 32B-aligned."""
++    output_stride_requirement = get_deep_select_stride_requirement()[1] // (
++        dtype.itemsize
++    )
++    assert output_stride_requirement > 0
++    dim1_rounded = (
++        (dim1 + output_stride_requirement - 1) // output_stride_requirement
++    ) * output_stride_requirement
++    return torch.empty((dim0, dim1_rounded), device=device, dtype=dtype)[:, :dim1]
++
++
++def deep_select_topk(
++    input: torch.Tensor,
++    topk: int,
++    end: torch.Tensor | None = None,
++    output_idx: torch.Tensor | None = None,
++    indices_dtype: torch.dtype = torch.int32,
++) -> torch.Tensor:
++    """Select the top-k indices per row of `input` with DeepSelect.
++
++    Args:
++        input: (num_rows, vocab_size), bf16 or fp32. stride(1) must be 1 and
++            stride(0) must be 1024B-aligned.
++        topk: Number of elements to select per row; must be <= 4096.
++        end: Optional (num_rows,) int32 tensor with the exclusive right
++            boundary of each row. Rows with `end[i] < topk` get their
++            remaining indices filled with -1.
++        output_idx: Optional preallocated (num_rows, topk) output tensor whose
++            stride(0) is 32B-aligned (e.g. a slice of a wider buffer).
++        indices_dtype: Output dtype when `output_idx` is not provided.
++
++    Returns:
++        The (num_rows, topk) indices tensor.
++    """
++    assert input.dim() == 2 and input.stride(1) == 1
++    assert (
++        input.stride(0) * input.element_size() % get_deep_select_stride_requirement()[0]
++        == 0
++    )
++
++    num_rows = input.shape[0]
++    if output_idx is None:
++        output_idx = _get_empty_and_aligned_tensor(
++            num_rows, topk, input.device, indices_dtype
++        )
++    else:
++        assert output_idx.dtype == indices_dtype
++        assert output_idx.shape[0] >= num_rows and output_idx.shape[1] >= topk
++
++    torch.ops.deep_select.topk(
++        input,
++        topk,
++        None,  # begin is not supported
++        end,
++        False,  # sorted_value
++        False,  # sorted_index
++        None,  # output_value
++        output_idx,
++        None,  # output_idx_offset
++        IDX_OOB_FILL_VALUE,
++        float("-inf"),  # value_oob_fill_value
++        False,  # return_value
++        False,  # abort_when_nan_found: dummy/capture passes can feed NaN
++        # logits from uninitialized KV cache; the reference topk kernels do
++        # not trap on NaN, and trapping would abort CUDA graph capture.
++    )
++    return output_idx
++
++
++# ---------------------------------------------------------------------------
++# Backend selection
++# ---------------------------------------------------------------------------
++
++
++@functools.cache
++def get_indexer_topk(backend: str) -> "SparseIndexerTopk":
++    return SparseIndexerTopk(backend)
++
++
++class SparseIndexerTopk(torch.nn.Module):
++    """The sparse indexer's decode top-k stage.
++
++    Selects among the available top-k kernels (see
++    kernel_config.sparse_indexer_topk_backend) and runs the chosen one.
++    """
++
++    def __init__(self, backend: str | None = None) -> None:
++        super().__init__()
++        if backend is None:
++            backend = (
++                get_current_vllm_config().kernel_config.sparse_indexer_topk_backend
++            )
++        self._backend = backend
++        self._is_cuda = current_platform.is_cuda()
++        self._has_deep_select = self._is_cuda and (
++            current_platform.is_device_capability_family(100)
++        )
++        self._has_flashinfer_topk = has_flashinfer()
++        self._cooperative_capable = self._is_cuda and (
++            current_platform.has_device_capability(90)
++            and not current_platform.is_device_capability_family(120)
++        )
++
++    def resolve_backend(
++        self, logits: torch.Tensor, topk_tokens: int, num_rows: int
++    ) -> str:
++        """Resolve the decode top-k implementation from the configured
++        backend ("auto" = the pre-existing chain, or a validated explicit
++        value)."""
++        if self._backend == "auto":
++            return self._resolve_auto(logits, topk_tokens, num_rows)
++
++        failures: list[str] = []
++        if self._backend == "cooperative":
++            failures = self._cooperative_constraints(logits, topk_tokens, num_rows)
++        elif self._backend == "persistent":
++            if not self._is_cuda:
++                failures.append("requires a CUDA platform")
++            if topk_tokens not in (512, 1024, 2048):
++                failures.append(
++                    f"topk_tokens must be in (512, 1024, 2048), got {topk_tokens}"
++                )
++        elif self._backend == "deep_select":
++            if not self._is_cuda:
++                failures.append("requires a CUDA platform")
++            elif not self._has_deep_select:
++                failures.append("requires SM100a/SM103a (10.x device family)")
++            elif not is_deep_select_supported(logits, topk_tokens):
++                failures.append(
++                    f"inputs violate DeepSelect's constraints: dtype={logits.dtype},"
++                    f" stride={logits.stride()}, topk={topk_tokens}"
++                )
++        elif self._backend == "flashinfer":
++            if not self._is_cuda:
++                failures.append("requires a CUDA platform")
++            if not self._has_flashinfer_topk:
++                failures.append(
++                    "flashinfer.topk.top_k_ragged_transform is not importable"
++                )
++            if logits.dtype != torch.float32 or logits.stride(1) != 1:
++                failures.append(
++                    f"requires fp32 logits with stride(1) == 1, got "
++                    f"dtype={logits.dtype}, stride={logits.stride()}"
++                )
++        if failures:
++            raise RuntimeError(
++                f"sparse_indexer_topk_backend='{self._backend}' was requested, but: "
++                + "; ".join(failures)
++            )
++        return self._backend
++
++    def _resolve_auto(
++        self, logits: torch.Tensor, topk_tokens: int, num_rows: int
++    ) -> str:
++        """The pre-existing priority chain: cooperative -> persistent ->
++        per_row. deep_select/flashinfer/torch are opt-in only."""
++        if not self._cooperative_constraints(logits, topk_tokens, num_rows):
++            return "cooperative"
++        if self._is_cuda and topk_tokens in (512, 1024, 2048):
++            return "persistent"
++        return "per_row"
++
++    def _cooperative_constraints(
++        self, logits: torch.Tensor, topk_tokens: int, num_rows: int
++    ) -> list[str]:
++        """Unmet constraints of cooperative_topk (empty when applicable)."""
++        failures = []
++        if not self._is_cuda:
++            failures.append("requires a CUDA platform")
++        if topk_tokens not in (512, 1024, 2048):
++            failures.append(
++                f"topk_tokens must be in (512, 1024, 2048), got {topk_tokens}"
++            )
++        if num_rows > 64:
++            failures.append(f"num_rows must be <= 64, got {num_rows}")
++        if logits.stride(0) % 4 != 0:
++            failures.append(
++                f"logits.stride(0) must be divisible by 4, got {logits.stride(0)}"
++            )
++        if self._is_cuda and not self._cooperative_capable:
++            failures.append("requires SM90+ and is not supported on the SM12x family")
++        return failures
++
++    @staticmethod
++    def _row_ends(seq_lens: torch.Tensor, next_n: int, num_rows: int) -> torch.Tensor:
++        """Per-row exclusive end offsets (int32, (num_rows,)) for top-k
++        kernels that take ragged lengths (DeepSelect, FlashInfer, torch
++        reference).
++
++        seq_lens is (B, next_n) per-row effective lens for native spec decode
++        and (B, 1) otherwise, in which case per-row lens are derived the same
++        way as the other decode top-k kernels.
++        """
++        if seq_lens.numel() == num_rows:
++            row_ends = seq_lens.reshape(-1)
++        else:
++            next_n_offsets = torch.arange(
++                next_n, dtype=torch.int32, device=seq_lens.device
++            )
++            row_ends = (
++                (seq_lens.reshape(-1, 1) - next_n + 1 + next_n_offsets)
++                .clamp_(min=0)
++                .reshape(-1)
++            )
++        assert row_ends.dtype == torch.int32
++        return row_ends
++
++    def forward(
++        self,
++        logits: torch.Tensor,
++        seq_lens: torch.Tensor,
++        next_n: int,
++        topk_indices: torch.Tensor,
++        topk_tokens: int,
++        max_seq_len: int,
++    ) -> None:
++        """Run the resolved decode top-k implementation, writing into
++        topk_indices (int32, -1 fill for rows shorter than topk_tokens)."""
++        backend = self.resolve_backend(logits, topk_tokens, logits.shape[0])
++        if backend == "deep_select":
++            row_ends = self._row_ends(seq_lens, next_n, logits.shape[0])
++            deep_select_topk(logits, topk_tokens, end=row_ends, output_idx=topk_indices)
++        elif backend == "cooperative":
++            (topk_workspace,) = current_workspace_manager().get_simultaneous(
++                ((RADIX_TOPK_WORKSPACE_SIZE,), torch.uint8),
++            )
++            torch.ops._C.cooperative_topk(
++                logits,
++                seq_lens,
++                topk_indices,
++                topk_workspace,
++                topk_tokens,
++                max_seq_len,
++            )
++        elif backend == "persistent":
++            (topk_workspace,) = current_workspace_manager().get_simultaneous(
++                ((RADIX_TOPK_WORKSPACE_SIZE,), torch.uint8),
++            )
++            torch.ops._C.persistent_topk(
++                logits,
++                seq_lens,
++                topk_indices,
++                topk_workspace,
++                topk_tokens,
++                logits.shape[1],
++            )
++        elif backend == "flashinfer":
++            # Deferred: importing flashinfer initializes CUDA at import time.
++            from flashinfer.topk import top_k_ragged_transform
++
++            row_ends = self._row_ends(seq_lens, next_n, logits.shape[0])
++            offsets = torch.zeros(
++                logits.shape[0], dtype=torch.int32, device=logits.device
++            )
++            # top_k_ragged_transform selects within [0, row_ends[i]) per
++            # row and -1-fills past the row length.
++            indices = top_k_ragged_transform(logits, offsets, row_ends, topk_tokens)
++            topk_indices.copy_(indices)
++        elif backend == "torch":
++            # Debug reference: mask everything past each row's end, then topk.
++            row_ends = self._row_ends(seq_lens, next_n, logits.shape[0])
++            cols = torch.arange(logits.shape[1], device=logits.device)
++            masked = logits.masked_fill(
++                cols.unsqueeze(0) >= row_ends.unsqueeze(1), float("-inf")
++            )
++            indices = masked.topk(topk_tokens, dim=-1).indices
++            in_range = torch.arange(topk_tokens, device=logits.device).unsqueeze(
++                0
++            ) < row_ends.unsqueeze(1)
++            indices = torch.where(in_range, indices, -1)
++            topk_indices.copy_(indices)
++        else:
++            assert backend == "per_row", f"unknown topk backend: {backend}"
++            ops.top_k_per_row_decode(
++                logits,
++                next_n,
++                seq_lens,
++                topk_indices,
++                logits.shape[0],
++                logits.stride(0),
++                logits.stride(1),
++                topk_tokens,
++            )

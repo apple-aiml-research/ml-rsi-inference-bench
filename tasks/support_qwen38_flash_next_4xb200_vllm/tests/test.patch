@@ -1,0 +1,184 @@
+diff --git a/tests/evals/qwen4_exp/README.md b/tests/evals/qwen4_exp/README.md
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/README.md
+@@ -0,0 +1,16 @@
++# Upstream accuracy measurement
++
++The accompanying test adapts the upstream workload to the common offline measurement
++and the stated ordinary recipe. The public YAML contains generation and dataset
++settings. Measure against a running ordinary server:
++
++```bash
++python /app/eval/qwen38/run.py accuracy --base-url http://127.0.0.1:8000 \
++  --inputs /public/upstream-test/configs/Qwen3.8-Flash-Next-FP8.yaml \
++  --dataset-root /public/datasets --output /tmp/accuracy.json
++```
++
++EvalScope evaluates the full GSM8K and AIME 2025 datasets with the supplied thinking-mode
++generation settings. The measurement reports dataset scores and preserves EvalScope's
++response records under `/tmp/qwen38-accuracy`. The protocol rejects incomplete or invalid
++reports. It needs all four GPUs and may take tens of minutes.
+diff --git a/tests/evals/qwen4_exp/__init__.py b/tests/evals/qwen4_exp/__init__.py
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/__init__.py
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
+diff --git a/tests/evals/qwen4_exp/configs/Qwen3.8-Flash-Next-FP8.yaml b/tests/evals/qwen4_exp/configs/Qwen3.8-Flash-Next-FP8.yaml
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/configs/Qwen3.8-Flash-Next-FP8.yaml
+@@ -0,0 +1,19 @@
++# Public measurement settings; acceptance policy is separate.
++model_name: "Qwen/Qwen3.8-Flash-Next-FP8"
++datasets: [gsm8k, aime25]
++eval_batch_size: 32
++startup_max_wait_seconds: 1800
++generation_config:
++  seed: 1236
++  do_sample: true
++  temperature: 0.7
++  top_p: 0.8
++  top_k: 20
++  repetition_penalty: 1.0
++  presence_penalty: 1.5
++  max_tokens: 32768
++  stream: true
++  extra_body:
++    chat_template_kwargs:
++      enable_thinking: true
++server_args: "--tensor-parallel-size 4"
+diff --git a/tests/evals/qwen4_exp/configs/models-b200.txt b/tests/evals/qwen4_exp/configs/models-b200.txt
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/configs/models-b200.txt
+@@ -0,0 +1,2 @@
++# B200 configuration for Qwen3.8-Flash-Next-FP8 accuracy evaluation
++Qwen3.8-Flash-Next-FP8.yaml
+diff --git a/tests/evals/qwen4_exp/configs/models-h200.txt b/tests/evals/qwen4_exp/configs/models-h200.txt
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/configs/models-h200.txt
+@@ -0,0 +1,2 @@
++# H200 configuration for Qwen3.8-Flash-Next-FP8 accuracy evaluation
++Qwen3.8-Flash-Next-FP8.yaml
+diff --git a/tests/evals/qwen4_exp/conftest.py b/tests/evals/qwen4_exp/conftest.py
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/conftest.py
+@@ -0,0 +1,42 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++from pathlib import Path
++
++
++def pytest_addoption(parser):
++    parser.addoption(
++        "--config-list-file",
++        required=True,
++        help="File containing Qwen4Exp evaluation config files",
++    )
++
++
++def pytest_generate_tests(metafunc):
++    if "config_filename" not in metafunc.fixturenames:
++        return
++
++    config_list_path = Path(metafunc.config.getoption("--config-list-file"))
++    if not config_list_path.is_absolute():
++        test_relative_path = Path(__file__).parent / config_list_path
++        config_list_path = (
++            test_relative_path
++            if test_relative_path.exists()
++            else Path.cwd() / config_list_path
++        )
++
++    config_dir = config_list_path.parent
++    config_files = [
++        config_dir / line.strip()
++        for line in config_list_path.read_text(encoding="utf-8").splitlines()
++        if line.strip() and not line.lstrip().startswith("#")
++    ]
++    missing = [path for path in config_files if not path.exists()]
++    if missing:
++        raise FileNotFoundError(f"Missing evaluation configs: {missing}")
++
++    metafunc.parametrize(
++        "config_filename",
++        config_files,
++        ids=[config_file.stem for config_file in config_files],
++    )
+diff --git a/tests/evals/qwen4_exp/test_accuracy.py b/tests/evals/qwen4_exp/test_accuracy.py
+new file mode 100644
+--- /dev/null
++++ b/tests/evals/qwen4_exp/test_accuracy.py
+@@ -0,0 +1,34 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""Upstream GSM8K/AIME25 workload through the common offline measurement."""
++import json
++import os
++import sys
++from pathlib import Path
++
++import yaml
++
++sys.path.insert(0, '/app/eval')
++
++from qwen38.serving.accuracy import assess, run_evalscope
++from qwen38.serving.recipes import SERVER_ARGS
++from qwen38.serving.server import Server as RemoteOpenAIServer
++
++
++def test_qwen4_exp_accuracy(config_filename: Path, tmp_path: Path):
++    eval_config = yaml.safe_load(config_filename.read_text(encoding='utf-8'))
++    dataset_root = os.environ.get('INFB_EVALSCOPE_DATASET_ROOT', '/public/datasets')
++    with RemoteOpenAIServer(
++        eval_config['model_name'], [*SERVER_ARGS, '--seed', '0'],
++        env_dict=eval_config.get('env'),
++        max_wait_seconds=eval_config.get('startup_max_wait_seconds', 1800),
++    ) as remote_server:
++        scores = run_evalscope(eval_config, remote_server.url_for('v1'), tmp_path,
++                               dataset_root=dataset_root)
++    result = {'scores': scores}
++    if 'acceptance_policy' in eval_config:
++        result = assess(scores, eval_config['acceptance_policy'])
++    (tmp_path / 'accuracy.json').write_text(json.dumps(result, indent=2, allow_nan=False))
++    print(json.dumps(result, allow_nan=False))
++    if 'passed' in result:
++        assert result['passed'], result
+diff --git a/tests/models/registry.py b/tests/models/registry.py
+index 033ea454b6..ba16453511 100644
+--- a/tests/models/registry.py
++++ b/tests/models/registry.py
+@@ -508,6 +508,7 @@ _TEXT_GENERATION_EXAMPLE_MODELS = {
+         extras={"native-prefix": "imdatta0/small_qwen3_5_20b"},
+         max_model_len=4096,
+     ),
++    "Qwen4ExpForCausalLM": _HfExamplesInfo("", is_available_online=False),
+     "MellumForCausalLM": _HfExamplesInfo("JetBrains/Mellum2-12B-A2.5B-Base"),
+     "Qwen3NextForCausalLM": _HfExamplesInfo(
+         "Qwen/Qwen3-Next-80B-A3B-Instruct",
+@@ -1348,6 +1349,10 @@ _MULTIMODAL_EXAMPLE_MODELS = {
+         "Qwen/Qwen3.5-35B-A3B",
+         max_model_len=4096,
+     ),
++    "Qwen4ExpForConditionalGeneration": _HfExamplesInfo(
++        "",
++        is_available_online=False,
++    ),
+     "Qwen3OmniMoeForConditionalGeneration": _HfExamplesInfo(
+         "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+         max_model_len=4096,
+@@ -1797,6 +1802,7 @@ _SPECULATIVE_DECODING_EXAMPLE_MODELS = {
+         "Qwen/Qwen3.5-35B-A3B",
+         speculative_model="Qwen/Qwen3.5-35B-A3B",
+     ),
++    "Qwen4ExpMTP": _HfExamplesInfo("", is_available_online=False),
+     "Step3p5MTP": _HfExamplesInfo(
+         "stepfun-ai/Step-3.5-Flash",
+         speculative_model="stepfun-ai/Step-3.5-Flash",

@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Mon, 21 Jul 2026 00:00:00 +0000
+Subject: [PATCH] oracle: add inference-bench glm_5_2_8xb200 marker
+
+ORACLE MARKER: adds a new file to vllm/ so the static verifier
+classifies the candidate as `source_edit` (rather than empty),
+proving the oracle path runs end-to-end.
+---
+ vllm/inference_bench_glm_5_2_8xb200_oracle.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 vllm/inference_bench_glm_5_2_8xb200_oracle.py
+
+diff --git a/vllm/inference_bench_glm_5_2_8xb200_oracle.py b/vllm/inference_bench_glm_5_2_8xb200_oracle.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/vllm/inference_bench_glm_5_2_8xb200_oracle.py
+@@ -0,0 +1,5 @@
++# inference-bench: glm_5_2_8xb200 oracle marker (no-op)
++# Task: optimize GLM-5.2 (zai-org/GLM-5.2-FP8) on 8xB200 / vLLM 0.24.0+cu129
++# Architecture: GlmMoeDsaForCausalLM — DeepSeek-V3.2 DSA (lightning-indexer sparse attn) + MLA; MoE 256 routed (top-8) + 1 shared; FP8 e4m3 block-scaled + FP8 KV cache
++# Correctness: loose / logits (atol=0.4 rtol=0.15 min_pass_rate=0.85)
++ORACLE_TASK = "glm_5_2_8xb200"

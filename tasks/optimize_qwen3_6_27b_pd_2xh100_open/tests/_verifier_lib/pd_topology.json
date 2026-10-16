@@ -1,0 +1,27 @@
+{
+  "_why": "The verifier cannot always read task.toml: when it is mounted at /tests, Path(__file__).parents[1] is / and /task.toml does not exist. This file is the same table, beside the verifier, where _verifier_lib reaches it on every backend.",
+  "_task": "optimize_qwen3_6_27b_pd_2xh100_open",
+  "pd": {
+    "connector": "NixlConnector",
+    "conversation_turns": 8,
+    "conversations": 16,
+    "decode_gpus": 1,
+    "discovery_port": 30001,
+    "first_turn_prefix_tokens": 8000,
+    "new_tokens_per_turn": 12000,
+    "prefill_gpus": 1,
+    "reply_tokens": 512,
+    "router_port": 10001
+  },
+  "sections": {
+    "model": {
+      "activated_parameters": "27B",
+      "architecture": "Qwen3_5ForConditionalGeneration",
+      "context_window": 65536,
+      "dtype": "auto",
+      "hf_model_id": "Qwen/Qwen3.6-27B",
+      "tensor_parallel_size": 1,
+      "total_parameters": "27B"
+    }
+  }
+}

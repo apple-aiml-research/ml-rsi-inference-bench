@@ -1,0 +1,842 @@
+diff --git a/csrc/libtorch_stable/gdn/fused_gdn_decode_kernel.cu b/csrc/libtorch_stable/gdn/fused_gdn_decode_kernel.cu
+index 1166b41868e01369cb58c8fb30836cb51273cb7e..1229404dc63421d0cd58fae3cfb8d68e1b65eabb 100644
+--- a/csrc/libtorch_stable/gdn/fused_gdn_decode_kernel.cu
++++ b/csrc/libtorch_stable/gdn/fused_gdn_decode_kernel.cu
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <cstdint>
++#include <string>
+ #include <cuda_bf16.h>
+ #include <cuda_fp16.h>
+ #include <cuda_runtime.h>
+@@ -146,7 +147,7 @@ __device__ __forceinline__ Sum2 warp_reduce_sum_pair(float x, float y) {
+   return {x, y};
+ }
+ 
+-template <typename StateT, int ValueHeadsPerKeyHead>
++template <typename StateT, int ValueHeadsPerKeyHead, bool SigmoidGate>
+ __global__ __launch_bounds__(kThreads, 2) void gdn_decode_post_conv_mtp_kernel(
+     const __nv_bfloat16* __restrict__ mixed_qkv,
+     const __nv_bfloat16* __restrict__ a, const __nv_bfloat16* __restrict__ b,
+@@ -354,9 +355,11 @@ __global__ __launch_bounds__(kThreads, 2) void gdn_decode_post_conv_mtp_kernel(
+ #pragma unroll
+     for (int i = 0; i < 4; ++i) {
+       const int value = lane + i * 32;
+-      const float gate = silu_fast(__bfloat162float(
++      const float gate_input = __bfloat162float(
+           output_gate[static_cast<int64_t>(token) * strides.gate_row +
+-                      value_head * kDimV + value]));
++                      value_head * kDimV + value]);
++      const float gate =
++          SigmoidGate ? sigmoid_fast(gate_input) : silu_fast(gate_input);
+       const float weight =
+           norm_weight_is_bf16
+               ? __bfloat162float(
+@@ -370,7 +373,7 @@ __global__ __launch_bounds__(kThreads, 2) void gdn_decode_post_conv_mtp_kernel(
+   }
+ }
+ 
+-template <typename StateT, int ValueHeadsPerKeyHead>
++template <typename StateT, int ValueHeadsPerKeyHead, bool SigmoidGate>
+ void launch_gdn_decode_post_conv_mtp(
+     torch::stable::Tensor const& mixed_qkv, torch::stable::Tensor const& a_log,
+     torch::stable::Tensor const& dt_bias,
+@@ -395,7 +398,7 @@ void launch_gdn_decode_post_conv_mtp(
+       get_current_cuda_stream(mixed_qkv.get_device_index());
+   const int num_requests = static_cast<int>(state_indices.size(0));
+   const dim3 grid(num_requests, num_value_heads);
+-  gdn_decode_post_conv_mtp_kernel<StateT, ValueHeadsPerKeyHead>
++  gdn_decode_post_conv_mtp_kernel<StateT, ValueHeadsPerKeyHead, SigmoidGate>
+       <<<grid, kThreads, 0, stream>>>(
+           static_cast<const __nv_bfloat16*>(mixed_qkv.data_ptr()), a, b,
+           static_cast<const float*>(a_log.data_ptr()), dt_bias.data_ptr(),
+@@ -425,7 +428,7 @@ void fused_gdn_decode_post_conv_mtp(
+     torch::stable::Tensor const& num_accepted_tokens,
+     torch::stable::Tensor& state, torch::stable::Tensor const& output_gate,
+     torch::stable::Tensor const& norm_weight, torch::stable::Tensor& out,
+-    double scale, double norm_eps) {
++    double scale, double norm_eps, const std::string& output_gate_activation) {
+   using torch::headeronly::ScalarType;
+ 
+   STD_TORCH_CHECK(
+@@ -466,6 +469,9 @@ void fused_gdn_decode_post_conv_mtp(
+                   "norm_weight must be a CUDA float32 or bfloat16 tensor");
+   STD_TORCH_CHECK(out.is_cuda() && out.scalar_type() == ScalarType::BFloat16,
+                   "out must be a CUDA bfloat16 tensor");
++  STD_TORCH_CHECK(
++      output_gate_activation == "silu" || output_gate_activation == "sigmoid",
++      "output_gate_activation must be 'silu' or 'sigmoid'");
+ 
+   STD_TORCH_CHECK(mixed_qkv.dim() == 2,
+                   "mixed_qkv must have shape [L, 2 * H * 128 + HV * 128]");
+@@ -547,8 +553,9 @@ void fused_gdn_decode_post_conv_mtp(
+   const auto* b_ptr = static_cast<const __nv_bfloat16*>(b.data_ptr());
+   const auto* output_gate_ptr =
+       static_cast<const __nv_bfloat16*>(output_gate.data_ptr());
+-  const auto launch = [&]<typename StateT, int ValueHeadsPerKeyHead>() {
+-    launch_gdn_decode_post_conv_mtp<StateT, ValueHeadsPerKeyHead>(
++  const auto launch = [&]<typename StateT, int ValueHeadsPerKeyHead,
++                          bool SigmoidGate>() {
++    launch_gdn_decode_post_conv_mtp<StateT, ValueHeadsPerKeyHead, SigmoidGate>(
+         mixed_qkv, a_log, dt_bias, state_indices, cu_seqlens,
+         num_accepted_tokens, state, norm_weight, out, a_ptr, b_ptr,
+         output_gate_ptr, num_key_heads, num_value_heads, scale, norm_eps,
+@@ -556,9 +563,18 @@ void fused_gdn_decode_post_conv_mtp(
+   };
+   const auto dispatch_state_type = [&]<int ValueHeadsPerKeyHead>() {
+     if (state_scalar_type == ScalarType::Float) {
+-      launch.template operator()<float, ValueHeadsPerKeyHead>();
++      if (output_gate_activation == "sigmoid") {
++        launch.template operator()<float, ValueHeadsPerKeyHead, true>();
++      } else {
++        launch.template operator()<float, ValueHeadsPerKeyHead, false>();
++      }
+     } else {
+-      launch.template operator()<__nv_bfloat16, ValueHeadsPerKeyHead>();
++      if (output_gate_activation == "sigmoid") {
++        launch.template operator()<__nv_bfloat16, ValueHeadsPerKeyHead, true>();
++      } else {
++        launch
++            .template operator()<__nv_bfloat16, ValueHeadsPerKeyHead, false>();
++      }
+     }
+   };
+   switch (value_heads_per_key_head) {
+diff --git a/csrc/libtorch_stable/ops.h b/csrc/libtorch_stable/ops.h
+index 31983fc372e9fc4ec17e0b42682218157111022c..75f95e4bfd4d8c77c7c1c286f5e798c34f914440 100644
+--- a/csrc/libtorch_stable/ops.h
++++ b/csrc/libtorch_stable/ops.h
+@@ -405,7 +405,7 @@ void fused_gdn_decode_post_conv_mtp(
+     torch::stable::Tensor const& num_accepted_tokens,
+     torch::stable::Tensor& state, torch::stable::Tensor const& output_gate,
+     torch::stable::Tensor const& norm_weight, torch::stable::Tensor& out,
+-    double scale, double norm_eps);
++    double scale, double norm_eps, const std::string& output_gate_activation);
+ 
+ #endif
+ 
+diff --git a/csrc/libtorch_stable/torch_bindings.cpp b/csrc/libtorch_stable/torch_bindings.cpp
+index c9bcba1549a3d7d6fe42768e1a7f20da8b6ee4c1..ec1963b8a91eb6ae06f7b78cb058f4378f81a349 100644
+--- a/csrc/libtorch_stable/torch_bindings.cpp
++++ b/csrc/libtorch_stable/torch_bindings.cpp
+@@ -535,7 +535,8 @@ STABLE_TORCH_LIBRARY_FRAGMENT(_C, ops) {
+       "Tensor mixed_qkv, Tensor a, Tensor b, Tensor A_log, Tensor dt_bias, "
+       "Tensor state_indices, Tensor cu_seqlens, Tensor num_accepted_tokens, "
+       "Tensor! state, Tensor output_gate, Tensor norm_weight, Tensor! out, "
+-      "float scale, float norm_eps=1e-5) -> ()");
++      "float scale, float norm_eps=1e-5, "
++      "str output_gate_activation='silu') -> ()");
+ #endif
+ 
+ #ifdef VLLM_ENABLE_KIMI_K3_ATTN_RES
+diff --git a/vllm/models/qwen4_exp/__init__.py b/vllm/models/qwen4_exp/__init__.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..3d8c3e8b2ede0ded4b9ddd001a149d62dd469ad4
+--- /dev/null
++++ b/vllm/models/qwen4_exp/__init__.py
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""Qwen4Exp model package."""
+diff --git a/vllm/models/qwen4_exp/nvidia/__init__.py b/vllm/models/qwen4_exp/nvidia/__init__.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..208f01a7cb5ee04c88d276fec2082cd4e830884b
+--- /dev/null
++++ b/vllm/models/qwen4_exp/nvidia/__init__.py
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
+diff --git a/vllm/models/qwen4_exp/nvidia/low_latency_gemm.py b/vllm/models/qwen4_exp/nvidia/low_latency_gemm.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..43b7a76bc5d8282eac12ce2ab2ea4a794aa5cfec
+--- /dev/null
++++ b/vllm/models/qwen4_exp/nvidia/low_latency_gemm.py
+@@ -0,0 +1,185 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""Qwen4Exp decode GEMM selection on Blackwell.
++
++Dispatch follows Kimi-K3 and uses the local ``(N, K)`` shape and token count.
++Plans contain measured CUDA graph capture sizes; other token counts use the
++standard linear implementation.
++"""
++
++import torch
++from torch import nn
++
++import vllm.envs as envs
++from vllm.model_executor.kernels.linear.cute_dsl.skinny_gemm import (
++    SkinnyGemmConfig,
++    shape_dynamic_skinny_gemm,
++)
++from vllm.model_executor.layers.linear import LinearBase, UnquantizedLinearMethod
++from vllm.model_executor.layers.vocab_parallel_embedding import (
++    ParallelLMHead,
++    UnquantizedEmbeddingMethod,
++)
++from vllm.platforms import current_platform
++from vllm.utils.torch_utils import direct_register_custom_op
++
++QWEN4_EXP_GEMM_PLANS: dict[tuple[int, int], dict[int, SkinnyGemmConfig]] = {
++    # GDN fused QKVZ projection, TP=4.
++    (4096, 2560): {
++        1: SkinnyGemmConfig(1, 64, 4, k_unroll=4),
++        2: SkinnyGemmConfig(2, 64, 4, k_unroll=4),
++    },
++    # GDN and QSA output projections, TP=4.
++    (2560, 1536): {
++        1: SkinnyGemmConfig(1, 128, 2, k_unroll=2, vector_width=4),
++        2: SkinnyGemmConfig(2, 128, 2, k_unroll=2, vector_width=4),
++        4: SkinnyGemmConfig(4, 64, 2, k_unroll=2),
++    },
++    # GDN fused B/A projection, TP=4.
++    (24, 2560): {
++        1: SkinnyGemmConfig(1, 128, 2, k_unroll=4, vector_width=4),
++        2: SkinnyGemmConfig(2, 128, 2, k_unroll=4, vector_width=4),
++        4: SkinnyGemmConfig(4, 128, 2, k_unroll=4, vector_width=4),
++        8: SkinnyGemmConfig(8, 128, 1, k_unroll=4, vector_width=4),
++        16: SkinnyGemmConfig(16, 128, 1, k_unroll=4, vector_width=4),
++    },
++    # QSA fused QKV/gate projection, TP=4.
++    (3584, 2560): {
++        1: SkinnyGemmConfig(1, 128, 4, k_unroll=4, vector_width=4),
++        2: SkinnyGemmConfig(2, 64, 2, k_unroll=2),
++        4: SkinnyGemmConfig(4, 64, 2, k_unroll=2),
++    },
++    # QSA indexer Q/K projection, replicated in a TP=4 deployment.
++    (640, 2560): {
++        1: SkinnyGemmConfig(1, 128, 1, k_unroll=4, vector_width=4),
++        2: SkinnyGemmConfig(2, 128, 1, k_unroll=4, vector_width=4),
++        4: SkinnyGemmConfig(4, 128, 1, k_unroll=4, vector_width=4),
++        8: SkinnyGemmConfig(8, 128, 1, k_unroll=4, vector_width=4),
++    },
++    # Shared-expert fused gate/up projection, TP=4.
++    (320, 2560): {
++        1: SkinnyGemmConfig(1, 128, 2, k_unroll=4, vector_width=4),
++        2: SkinnyGemmConfig(2, 128, 2, k_unroll=4, vector_width=4),
++        4: SkinnyGemmConfig(4, 128, 2, k_unroll=4, vector_width=4),
++        8: SkinnyGemmConfig(8, 64, 1, k_unroll=4),
++        16: SkinnyGemmConfig(16, 128, 2, k_unroll=4, vector_width=4),
++    },
++    # LM head, TP=4.
++    (62080, 2560): {
++        1: SkinnyGemmConfig(1, 64, 4, k_unroll=2),
++        2: SkinnyGemmConfig(2, 32, 4, k_unroll=2),
++    },
++    # HC merged down/injection projection, replicated in a TP=4 deployment.
++    (336, 10240): {
++        1: SkinnyGemmConfig(1, 128, 1, static_k=10240),
++        2: SkinnyGemmConfig(2, 128, 1, static_k=10240),
++        4: SkinnyGemmConfig(4, 128, 2, static_k=10240),
++        8: SkinnyGemmConfig(8, 128, 1, k_unroll=4),
++    },
++}
++
++
++def _is_sm103() -> bool:
++    return current_platform.is_device_capability((10, 3))
++
++
++def _is_packed_row_major(tensor: torch.Tensor) -> bool:
++    return tensor.dim() == 2 and tensor.stride() == (tensor.shape[1], 1)
++
++
++def _runtime_ok(x: torch.Tensor, weight: torch.Tensor) -> bool:
++    return (
++        not envs.VLLM_BATCH_INVARIANT
++        and _is_packed_row_major(x)
++        and _is_packed_row_major(weight)
++        and x.dtype == torch.bfloat16
++        and weight.dtype == torch.bfloat16
++        and x.is_cuda
++        and weight.is_cuda
++        and x.device == weight.device
++        and x.shape[1] == weight.shape[1]
++    )
++
++
++class _Qwen4ExpLowLatencyApply:
++    def apply(
++        self,
++        layer: nn.Module,
++        x: torch.Tensor,
++        bias: torch.Tensor | None = None,
++    ) -> torch.Tensor:
++        if bias is None and not envs.VLLM_BATCH_INVARIANT:
++            return torch.ops.vllm.qwen4_exp_low_latency_gemm(x, layer.weight)
++        return super().apply(layer, x, bias)  # type: ignore[misc]
++
++
++class Qwen4ExpLowLatencyLinearMethod(_Qwen4ExpLowLatencyApply, UnquantizedLinearMethod):
++    pass
++
++
++class Qwen4ExpLowLatencyEmbeddingMethod(
++    _Qwen4ExpLowLatencyApply, UnquantizedEmbeddingMethod
++):
++    pass
++
++
++def _qwen4_exp_low_latency_gemm(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:
++    plan = QWEN4_EXP_GEMM_PLANS.get((weight.shape[0], weight.shape[1]))
++    config = None if plan is None else plan.get(x.shape[0])
++    if (
++        config is not None
++        and _runtime_ok(x, weight)
++        and shape_dynamic_skinny_gemm.is_available()
++    ):
++        return shape_dynamic_skinny_gemm(x, weight, config)
++    return torch.nn.functional.linear(x, weight)
++
++
++def _qwen4_exp_low_latency_gemm_fake(
++    x: torch.Tensor, weight: torch.Tensor
++) -> torch.Tensor:
++    return x.new_empty((*x.shape[:-1], weight.shape[0]))
++
++
++direct_register_custom_op(
++    op_name="qwen4_exp_low_latency_gemm",
++    op_func=_qwen4_exp_low_latency_gemm,
++    fake_impl=_qwen4_exp_low_latency_gemm_fake,
++)
++
++
++def enable_qwen4_exp_low_latency_gemm(
++    module: nn.Module,
++    dtype: torch.dtype,
++) -> None:
++    if dtype != torch.bfloat16 or not _is_sm103():
++        return
++    if not shape_dynamic_skinny_gemm.is_available():
++        return
++
++    warmup_configs: set[SkinnyGemmConfig] = set()
++    for child in module.modules():
++        is_linear = (
++            isinstance(child, LinearBase)
++            and type(child.quant_method) is UnquantizedLinearMethod
++        )
++        is_head = (
++            isinstance(child, ParallelLMHead)
++            and type(child.quant_method) is UnquantizedEmbeddingMethod
++        )
++        if not (is_linear or is_head):
++            continue
++        weight = getattr(child, "weight", None)
++        if weight is None or weight.dim() != 2:
++            continue
++        plan = QWEN4_EXP_GEMM_PLANS.get((weight.shape[0], weight.shape[1]))
++        if plan is None:
++            continue
++        if is_linear:
++            child.quant_method = Qwen4ExpLowLatencyLinearMethod()
++        else:
++            child.quant_method = Qwen4ExpLowLatencyEmbeddingMethod()
++        warmup_configs.update(plan.values())
++
++    if warmup_configs:
++        shape_dynamic_skinny_gemm.request_warmup_configs(dtype, warmup_configs)
+diff --git a/vllm/models/qwen4_exp/nvidia/ops/__init__.py b/vllm/models/qwen4_exp/nvidia/ops/__init__.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..779c57191da35574cec3affca17409029e29e7ec
+--- /dev/null
++++ b/vllm/models/qwen4_exp/nvidia/ops/__init__.py
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""NVIDIA-only Qwen4Exp kernels; import leaf modules directly."""
+diff --git a/vllm/models/qwen4_exp/nvidia/ops/hc.py b/vllm/models/qwen4_exp/nvidia/ops/hc.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..a3487b916ec775dc81000a2c3afc9bd58e780cd5
+--- /dev/null
++++ b/vllm/models/qwen4_exp/nvidia/ops/hc.py
+@@ -0,0 +1,487 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""NVIDIA HyperConnection kernels for Qwen4Exp."""
++
++import torch
++
++from vllm.platforms import current_platform
++from vllm.triton_utils import tl, triton
++from vllm.utils.torch_utils import direct_register_custom_op
++
++
++@triton.jit
++def _grouped_gemma_rmsnorm_kernel(
++    x_ptr,
++    w_ptr,
++    y_ptr,
++    stride_x,
++    stride_y,
++    DIM: tl.constexpr,
++    NUM_GROUPS: tl.constexpr,
++    W_SHARED: tl.constexpr,
++    EPS: tl.constexpr,
++    launch_pdl: tl.constexpr,
++) -> None:
++    GROUP_DIM: tl.constexpr = DIM // NUM_GROUPS
++    BLOCK_SIZE: tl.constexpr = triton.next_power_of_2(GROUP_DIM)
++
++    pid = tl.program_id(0)
++    group_id = pid % NUM_GROUPS
++    row = pid // NUM_GROUPS
++
++    offs_g = tl.arange(0, BLOCK_SIZE)
++    offsets = group_id * GROUP_DIM + offs_g
++    mask = offs_g < GROUP_DIM
++    # A [GROUP_DIM] affine is shared; a [DIM] affine follows the grouped
++    # checkpoint layout.
++    w_offs = offs_g if W_SHARED else offsets
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_wait()
++
++    x = tl.load(x_ptr + row * stride_x + offsets, mask, other=0.0).to(tl.float32)
++    w = tl.load(w_ptr + w_offs, mask, other=0.0)
++
++    rrms = tl.rsqrt(tl.sum(x * x) / GROUP_DIM + EPS)
++    # Gemma's (1 + w) affine is written this way to lower to an FMA.
++    y = x * rrms
++    y += y * w.to(tl.float32)
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_launch_dependents()
++    tl.store(y_ptr + row * stride_y + offsets, y, mask)
++
++
++def _grouped_gemma_rmsnorm(
++    x: torch.Tensor, weight: torch.Tensor, eps: float, num_groups: int
++) -> torch.Tensor:
++    N, DIM = x.shape
++    assert x.stride(1) == 1, "grouped Gemma RMSNorm requires unit inner stride"
++    assert weight.is_contiguous(), "grouped Gemma RMSNorm weight must be contiguous"
++    assert DIM % num_groups == 0
++    group_dim = DIM // num_groups
++    assert weight.numel() in (group_dim, DIM)
++
++    y = x.new_empty(x.shape)
++    _grouped_gemma_rmsnorm_kernel[(N * num_groups,)](
++        x,
++        weight,
++        y,
++        x.stride(0),
++        y.stride(0),
++        DIM,
++        num_groups,
++        W_SHARED=weight.numel() == group_dim,
++        EPS=eps,
++        launch_pdl=current_platform.is_arch_support_pdl(),
++    )
++    return y
++
++
++@triton.jit
++def _hc_silu_kernel(
++    x_ptr,
++    y_ptr,
++    stride_x,
++    stride_y,
++    DIM: tl.constexpr,
++    HC: tl.constexpr,
++    launch_pdl: tl.constexpr,
++) -> None:
++    BLOCK_SIZE: tl.constexpr = triton.next_power_of_2(DIM)
++
++    row = tl.program_id(0)
++    offs = tl.arange(0, BLOCK_SIZE)
++    mask = offs < DIM
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_wait()
++
++    x = tl.load(x_ptr + row * stride_x + offs, mask).to(tl.float32) / HC
++    y = x * tl.sigmoid(x)
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_launch_dependents()
++    tl.store(y_ptr + row * stride_y + offs, y, mask)
++
++
++def _hc_silu(x: torch.Tensor, hc_count: int) -> torch.Tensor:
++    num_tokens, DIM = x.shape
++    assert x.stride(1) == 1
++
++    output = x.new_empty(x.shape)
++    _hc_silu_kernel[(num_tokens,)](
++        x,
++        output,
++        x.stride(0),
++        output.stride(0),
++        DIM=DIM,
++        HC=hc_count,
++        launch_pdl=current_platform.is_arch_support_pdl(),
++    )
++    return output
++
++
++@triton.jit
++def _hc_gate_mix_kernel(
++    x_ptr,
++    g_ptr,
++    y_ptr,
++    stride_x,
++    stride_g,
++    stride_y,
++    DIM: tl.constexpr,
++    HC: tl.constexpr,
++    BLOCK_SIZE: tl.constexpr,
++    launch_pdl: tl.constexpr,
++) -> None:
++    HC_DIM: tl.constexpr = DIM // HC
++
++    row = tl.program_id(0)
++    tile_id = tl.program_id(1)
++    offs_inner = tile_id * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
++    mask = offs_inner < HC_DIM
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_wait()
++
++    # The constexpr loop is unrolled and keeps one stream live at a time.
++    # Materializing [HC, BLOCK_SIZE] more than doubles latency at large M.
++    acc = tl.zeros([BLOCK_SIZE], dtype=tl.float32)
++    for stream in tl.static_range(HC):
++        offsets = stream * HC_DIM + offs_inner
++        g = tl.load(g_ptr + row * stride_g + offsets, mask, other=0.0)
++        x = tl.load(x_ptr + row * stride_x + offsets, mask, other=0.0)
++        acc += tl.sigmoid(g.to(tl.float32)) * x.to(tl.float32)
++    acc /= HC
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_launch_dependents()
++    tl.store(y_ptr + row * stride_y + offs_inner, acc, mask)
++
++
++def _hc_gate_mix(x: torch.Tensor, gate: torch.Tensor, hc_count: int) -> torch.Tensor:
++    N, DIM = gate.shape
++    assert x.shape == gate.shape
++    assert DIM % hc_count == 0
++    assert x.stride(1) == 1
++    assert gate.stride(1) == 1
++
++    HC_DIM = DIM // hc_count
++    out = x.new_empty(N, HC_DIM)
++    BLOCK_SIZE = 512
++    _hc_gate_mix_kernel[(N, triton.cdiv(HC_DIM, BLOCK_SIZE))](
++        x,
++        gate,
++        out,
++        x.stride(0),
++        gate.stride(0),
++        out.stride(0),
++        DIM,
++        hc_count,
++        BLOCK_SIZE,
++        launch_pdl=current_platform.is_arch_support_pdl(),
++    )
++    return out
++
++
++@triton.jit
++def _hc_combine_kernel(
++    block_ptr,
++    res_ptr,
++    inj_ptr,
++    out_ptr,
++    stride_block,
++    stride_res,
++    stride_inj,
++    stride_out,
++    HC_DIM: tl.constexpr,
++    HC: tl.constexpr,
++    BLOCK_SIZE: tl.constexpr,
++    launch_pdl: tl.constexpr,
++) -> None:
++    HC_PAD: tl.constexpr = triton.next_power_of_2(HC)
++
++    row = tl.program_id(0)
++    tile_id = tl.program_id(1)
++
++    offs_inner = tile_id * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
++    mask_inner = offs_inner < HC_DIM
++    offs_hc = tl.arange(0, HC_PAD)
++    mask_hc = offs_hc < HC
++    offs = offs_hc[:, None] * HC_DIM + offs_inner[None, :]
++    mask = mask_hc[:, None] & mask_inner[None, :]
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_wait()
++
++    inj = tl.load(inj_ptr + row * stride_inj + offs_hc, mask_hc, other=0.0)
++    block = tl.load(block_ptr + row * stride_block + offs_inner, mask_inner, other=0.0)
++    res = tl.load(res_ptr + row * stride_res + offs, mask, other=0.0)
++
++    # Keeping HC as a broadcast dimension is faster here than four separate
++    # residual load/store sequences.
++    inj = 2.0 * tl.sigmoid(inj.to(tl.float32) / HC)
++    out = res.to(tl.float32) + block.to(tl.float32)[None, :] * inj[:, None]
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_launch_dependents()
++    tl.store(out_ptr + row * stride_out + offs, out, mask=mask)
++
++
++def _hc_combine(
++    residual: torch.Tensor,
++    block_output: torch.Tensor,
++    injection_logits: torch.Tensor,
++    hc_count: int,
++) -> torch.Tensor:
++    N, DIM = residual.shape
++    assert DIM % hc_count == 0
++    hc_dim = DIM // hc_count
++    assert block_output.shape == (N, hc_dim)
++    assert injection_logits.shape == (N, hc_count)
++    assert residual.stride(1) == 1
++    assert block_output.stride(1) == 1
++    assert injection_logits.stride(1) == 1
++
++    out = residual.new_empty(residual.shape)
++    BLOCK_SIZE = 512
++    _hc_combine_kernel[(N, triton.cdiv(hc_dim, BLOCK_SIZE))](
++        block_output,
++        residual,
++        injection_logits,
++        out,
++        block_output.stride(0),
++        residual.stride(0),
++        injection_logits.stride(0),
++        out.stride(0),
++        hc_dim,
++        hc_count,
++        BLOCK_SIZE,
++        launch_pdl=current_platform.is_arch_support_pdl(),
++    )
++    return out
++
++
++@triton.jit
++def _hc_combine_norm_kernel(
++    block_ptr,
++    res_ptr,
++    inj_ptr,
++    w_ptr,
++    out_ptr,
++    y_ptr,
++    stride_block,
++    stride_res,
++    stride_inj,
++    stride_out,
++    stride_y,
++    HC_DIM: tl.constexpr,
++    HC: tl.constexpr,
++    W_SHARED: tl.constexpr,
++    EPS: tl.constexpr,
++    BLOCK_SIZE: tl.constexpr,
++    launch_pdl: tl.constexpr,
++) -> None:
++    HC_PAD: tl.constexpr = triton.next_power_of_2(HC)
++    NUM_TILES: tl.constexpr = triton.cdiv(HC_DIM, BLOCK_SIZE)
++    NUM_TILES_PAD: tl.constexpr = triton.next_power_of_2(NUM_TILES)
++
++    row = tl.program_id(0)
++    stream = tl.program_id(1)
++    offs_hc = tl.arange(0, HC_PAD)
++    mask_hc = offs_hc < HC
++    tile_ids = tl.arange(0, NUM_TILES_PAD)
++    offs_inner = tile_ids[:, None] * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)[None, :]
++    mask_inner = offs_inner < HC_DIM
++    offs = stream * HC_DIM + offs_inner
++    # Shared norm weights repeat across streams; per-branch weights use the
++    # same flattened HC layout as the residual.
++    w_offs = offs_inner if W_SHARED else offs
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_wait()
++
++    # Start the uncached residual load first, then issue the other combine
++    # loads before consuming any of them.
++    res = tl.load(res_ptr + row * stride_res + offs, mask_inner, other=0.0)
++    inj = tl.load(inj_ptr + row * stride_inj + offs_hc, mask_hc, other=0.0)
++    block = tl.load(block_ptr + row * stride_block + offs_inner, mask_inner, other=0.0)
++    inj = 2.0 * tl.sigmoid(inj.to(tl.float32) / HC)
++    inj = tl.sum(tl.where(offs_hc == stream, inj, 0.0))
++    # Round the materialized combine result before normalization. This matches
++    # the unfused combine -> RMSNorm boundary.
++    out = (res.to(tl.float32) + block.to(tl.float32) * inj).to(out_ptr.dtype.element_ty)
++    tl.store(out_ptr + row * stride_out + offs, out, mask=mask_inner)
++
++    out = out.to(tl.float32)
++    # Keep the two-axis reduction: flattening the padded tile is ~40% slower
++    # at decode sizes.
++    sum_sq = tl.sum(tl.sum(out * out, axis=1), axis=0)
++    rrms = tl.rsqrt(sum_sq / HC_DIM + EPS)
++
++    if launch_pdl:
++        tl.extra.cuda.gdc_launch_dependents()
++
++    # Loading the weight earlier helps decode but keeps the tile live across
++    # the reduction and regresses larger batches, so defer it to the norm.
++    w = tl.load(w_ptr + w_offs, mask_inner, other=0.0)
++    y = out * rrms
++    y += y * w.to(tl.float32)
++    tl.store(y_ptr + row * stride_y + offs, y, mask_inner)
++
++
++def _hc_combine_norm(
++    residual: torch.Tensor,
++    block_output: torch.Tensor,
++    injection_logits: torch.Tensor,
++    norm_weight: torch.Tensor,
++    eps: float,
++    hc_count: int,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    N, DIM = residual.shape
++    assert DIM % hc_count == 0
++    hc_dim = DIM // hc_count
++    assert block_output.shape == (N, hc_dim)
++    assert injection_logits.shape == (N, hc_count)
++    assert residual.stride(1) == 1
++    assert block_output.stride(1) == 1
++    assert injection_logits.stride(1) == 1
++    assert norm_weight.is_contiguous()
++    assert norm_weight.numel() in (hc_dim, DIM)
++
++    out = residual.new_empty(residual.shape)
++    y = residual.new_empty(residual.shape)
++    BLOCK_SIZE = 512
++    _hc_combine_norm_kernel[(N, hc_count)](
++        block_output,
++        residual,
++        injection_logits,
++        norm_weight,
++        out,
++        y,
++        block_output.stride(0),
++        residual.stride(0),
++        injection_logits.stride(0),
++        out.stride(0),
++        y.stride(0),
++        hc_dim,
++        hc_count,
++        W_SHARED=norm_weight.numel() == hc_dim,
++        EPS=eps,
++        BLOCK_SIZE=BLOCK_SIZE,
++        launch_pdl=current_platform.is_arch_support_pdl(),
++    )
++    return out, y
++
++
++def _same_shape_fake(x: torch.Tensor, *args) -> torch.Tensor:
++    return x.new_empty(x.shape)
++
++
++def _hc_gate_mix_fake(
++    x: torch.Tensor, gate: torch.Tensor, hc_count: int
++) -> torch.Tensor:
++    del gate
++    return x.new_empty((x.shape[0], x.shape[1] // hc_count))
++
++
++def _hc_combine_fake(
++    residual: torch.Tensor,
++    block_output: torch.Tensor,
++    injection_logits: torch.Tensor,
++    hc_count: int,
++) -> torch.Tensor:
++    del block_output, injection_logits, hc_count
++    return residual.new_empty(residual.shape)
++
++
++def _hc_combine_norm_fake(
++    residual: torch.Tensor,
++    block_output: torch.Tensor,
++    injection_logits: torch.Tensor,
++    norm_weight: torch.Tensor,
++    eps: float,
++    hc_count: int,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    del block_output, injection_logits, norm_weight, eps, hc_count
++    return residual.new_empty(residual.shape), residual.new_empty(residual.shape)
++
++
++direct_register_custom_op(
++    op_name="qwen4_exp_grouped_gemma_rmsnorm",
++    op_func=_grouped_gemma_rmsnorm,
++    fake_impl=_same_shape_fake,
++)
++direct_register_custom_op(
++    op_name="qwen4_exp_hc_silu",
++    op_func=_hc_silu,
++    fake_impl=_same_shape_fake,
++)
++direct_register_custom_op(
++    op_name="qwen4_exp_hc_gate_mix",
++    op_func=_hc_gate_mix,
++    fake_impl=_hc_gate_mix_fake,
++)
++direct_register_custom_op(
++    op_name="qwen4_exp_hc_combine",
++    op_func=_hc_combine,
++    fake_impl=_hc_combine_fake,
++)
++direct_register_custom_op(
++    op_name="qwen4_exp_hc_combine_norm",
++    op_func=_hc_combine_norm,
++    fake_impl=_hc_combine_norm_fake,
++)
++
++
++def grouped_gemma_rmsnorm(
++    x: torch.Tensor, weight: torch.Tensor, eps: float, num_groups: int
++) -> torch.Tensor:
++    return torch.ops.vllm.qwen4_exp_grouped_gemma_rmsnorm(x, weight, eps, num_groups)
++
++
++def hc_silu(x: torch.Tensor, hc_count: int) -> torch.Tensor:
++    return torch.ops.vllm.qwen4_exp_hc_silu(x, hc_count)
++
++
++def hc_gate_mix(x: torch.Tensor, gate: torch.Tensor, hc_count: int) -> torch.Tensor:
++    return torch.ops.vllm.qwen4_exp_hc_gate_mix(x, gate, hc_count)
++
++
++def hc_combine(
++    residual: torch.Tensor,
++    block_output: torch.Tensor,
++    injection_logits: torch.Tensor,
++    hc_count: int,
++) -> torch.Tensor:
++    return torch.ops.vllm.qwen4_exp_hc_combine(
++        residual, block_output, injection_logits, hc_count
++    )
++
++
++def hc_combine_norm(
++    residual: torch.Tensor,
++    block_output: torch.Tensor,
++    injection_logits: torch.Tensor,
++    norm_weight: torch.Tensor,
++    eps: float,
++    hc_count: int,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    return torch.ops.vllm.qwen4_exp_hc_combine_norm(
++        residual,
++        block_output,
++        injection_logits,
++        norm_weight,
++        eps,
++        hc_count,
++    )
++
++
++__all__ = [
++    "grouped_gemma_rmsnorm",
++    "hc_combine",
++    "hc_combine_norm",
++    "hc_gate_mix",
++    "hc_silu",
++]

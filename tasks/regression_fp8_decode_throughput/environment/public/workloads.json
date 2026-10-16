@@ -1,0 +1,50 @@
+{
+  "_note": "The scored shapes and the guard shape, fixed. Every point is scored on mean time per output token (lower is faster) measured on both trees in the same run; the score is the geometric mean, over the scored points, of pristine over candidate mean TPOT, and the guard point must not read slower on the candidate. Do not change this file: the verifier benches its own copy, and a candidate measured on a different shape is not comparable to the baseline it is scored against.",
+  "primary_workload": "in2_out1000_c8196",
+  "scored_workloads": [
+    "in2_out1000_c2048",
+    "in2_out1000_c4096",
+    "in2_out1000_c8196"
+  ],
+  "guard_workloads": [
+    "in2_out1000_c64"
+  ],
+  "workloads": [
+    {
+      "name": "in2_out1000_c8196",
+      "role": "scored",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 8196,
+      "max_concurrency": 8196,
+      "max_model_len": 1280
+    },
+    {
+      "name": "in2_out1000_c2048",
+      "role": "scored",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 2048,
+      "max_concurrency": 2048,
+      "max_model_len": 1280
+    },
+    {
+      "name": "in2_out1000_c4096",
+      "role": "scored",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 4096,
+      "max_concurrency": 4096,
+      "max_model_len": 1280
+    },
+    {
+      "name": "in2_out1000_c64",
+      "role": "guard",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 64,
+      "max_concurrency": 64,
+      "max_model_len": 1280
+    }
+  ]
+}

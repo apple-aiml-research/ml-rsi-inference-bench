@@ -1,0 +1,510 @@
+{
+  "generated_from": "Pinned SGLang baseline; engine_source is scrubbed before candidate_repo is initialized.",
+  "pattern_set_sha256": "df5ec2664018be94d8c9193bf2023caa0266b70a5f20d611e5dc73b35a091489",
+  "pattern_set_version": "2026-09-29.1",
+  "schema": "infb-agent-surface-scrub/1",
+  "scrubber_sha256": "8211882a868a1fa00625450b15f556c0f0c52255f27b8416d4217e79b396decd",
+  "trees": {
+    "candidate_repo": {
+      "action": "deleted",
+      "removed": [],
+      "surviving": 0
+    },
+    "engine_source": {
+      "action": "deleted",
+      "removed": [
+        {
+          "bytes": 25117,
+          "kind": "file",
+          "path": ".claude/skills/add-jit-kernel/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "e801f7f7a0345dc61f798a3aa7278dbba0e4a28e857cd5051cfa80630ef6fe77"
+        },
+        {
+          "bytes": 11676,
+          "kind": "file",
+          "path": ".claude/skills/add-sgl-kernel/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "dfdb7914cc0c9fd1ca15d397445a5266f00c4728a0b84a92b42a62d8eddf89e8"
+        },
+        {
+          "bytes": 20857,
+          "kind": "file",
+          "path": ".claude/skills/ci-workflow-guide/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "b91ddf2d8011a6ac0e4b23f63015bdbe046c10bfcfa67c646ea04fb7a7de5991"
+        },
+        {
+          "bytes": 19737,
+          "kind": "file",
+          "path": ".claude/skills/debug-cuda-crash/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "748f8a4449b43db6036f485195ec35be6ebf8aaa97382648fd1fc352e0e66f9c"
+        },
+        {
+          "bytes": 9504,
+          "kind": "file",
+          "path": ".claude/skills/debug-distributed-hang/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "b2287588e589b9c698392d89e2ebc2c6d88228d62639946cbc39c3f77dfb78c1"
+        },
+        {
+          "bytes": 4346,
+          "kind": "file",
+          "path": ".claude/skills/generate-profile/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "43c9ca3b0a727994140d8c36786ba2831fc3bfa5d558bb6d641393ef907c93f6"
+        },
+        {
+          "bytes": 18568,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "e12d3a8204365df715f6a780fb538ede3ceee0af7eff023115a1b6c7785e1011"
+        },
+        {
+          "bytes": 3022,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/README.md",
+          "rule": "dir:.claude",
+          "sha256": "91be81189c2e485ac10cf0faa4f504092796cf9546bcf988fbf0aef07eafb3dd"
+        },
+        {
+          "bytes": 1968,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/deepseek-math-v2.yaml",
+          "rule": "dir:.claude",
+          "sha256": "d0011d2b475a9dceeb50ef3572a6c1c4adebf07ace6b538ba8350e195e7efee4"
+        },
+        {
+          "bytes": 1943,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/deepseek-r1-0528.yaml",
+          "rule": "dir:.claude",
+          "sha256": "cd0117d68e8c4bdda5721627d79bc29cc2cb19073cb99bc53950c038c06a18f1"
+        },
+        {
+          "bytes": 1925,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/deepseek-v3.1.yaml",
+          "rule": "dir:.claude",
+          "sha256": "27e576447dfed75336060d64969da7d49db2363e4598d14be42e1a0b01c60ba6"
+        },
+        {
+          "bytes": 1902,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/deepseek-v3.2.yaml",
+          "rule": "dir:.claude",
+          "sha256": "8212523fbdf0f13d817334c455784779aafb467a7e3e8831f7d357c1853bbf01"
+        },
+        {
+          "bytes": 1942,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/deepseek-v3.yaml",
+          "rule": "dir:.claude",
+          "sha256": "8af50684474fabfbca30468257cafed3a3ac1b44b1b3ac10af8ff416849a52d3"
+        },
+        {
+          "bytes": 1943,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/devstral-small-2-24b-instruct-2512.yaml",
+          "rule": "dir:.claude",
+          "sha256": "015b7d1483c96d49b54ec4c518dc89bc6e889f02a6f74db9507e071c26cc795b"
+        },
+        {
+          "bytes": 1892,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/ernie-4.5-21b-a3b-pt.yaml",
+          "rule": "dir:.claude",
+          "sha256": "c3e7137cdff09e2d7881d4941881c8cd7e9353dbe939788cc8f56e7c42e40925"
+        },
+        {
+          "bytes": 1822,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/glm-4.5.yaml",
+          "rule": "dir:.claude",
+          "sha256": "4c8f7726b8f30aaa62116206e8ecbcca5834edf9c8fd6cce88ae8d750bbff27e"
+        },
+        {
+          "bytes": 1867,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/glm-4.6.yaml",
+          "rule": "dir:.claude",
+          "sha256": "85b475af6cba8c04b7605c60b33c91804090f6875b60d320fdaebec5f8ed39c1"
+        },
+        {
+          "bytes": 1856,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/glm-4.7-flash.yaml",
+          "rule": "dir:.claude",
+          "sha256": "f79df186c0557e2cbed1e2861a242b7589e3748e5868c522d4bb7b66afea1d37"
+        },
+        {
+          "bytes": 1859,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/glm-4.7.yaml",
+          "rule": "dir:.claude",
+          "sha256": "8223d51aba0feac23d625491a05eaba435a38b9c4bdbb26721c485f68787ffe5"
+        },
+        {
+          "bytes": 1874,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/glm-5-fp8.yaml",
+          "rule": "dir:.claude",
+          "sha256": "6caf36373ee5fcffc9d9b91ce159349a305500bc9882873e4ce5af1fe8331c09"
+        },
+        {
+          "bytes": 1892,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/glyph.yaml",
+          "rule": "dir:.claude",
+          "sha256": "3c2d737ebe39c08e41d50202dbcdd6b31d58325fd74460097c044cdeaa0a41de"
+        },
+        {
+          "bytes": 1887,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/gpt-oss-120b.yaml",
+          "rule": "dir:.claude",
+          "sha256": "0185c0d47d98e7646c42ac982379d198e1c30321fa630b07728f5237d6dae9d4"
+        },
+        {
+          "bytes": 1909,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/intern-s1.yaml",
+          "rule": "dir:.claude",
+          "sha256": "58c4c2af8759c5f5d1255aba53df3c0b5d06bf3d4d06dc755c08fa8f5f2c9bec"
+        },
+        {
+          "bytes": 1931,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/kimi-k2-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "a6cc83942fcdd5c341279a61aaec63991550f5a1118cbc7617a8fbe519e4687d"
+        },
+        {
+          "bytes": 1875,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/kimi-k2.5.yaml",
+          "rule": "dir:.claude",
+          "sha256": "40c4211d0e6c72133fd3c66d16e563c953edc5b44c9cf488d037329eb5e358b9"
+        },
+        {
+          "bytes": 2022,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/kimi-linear-48b-a3b-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "ea2dbc214c95907a5bff4a9a1eaf3b744465736aeb440e8540406f1f1a7d8737"
+        },
+        {
+          "bytes": 2184,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/ling-2.5-1t.yaml",
+          "rule": "dir:.claude",
+          "sha256": "45dac272fe2606b0edadb1c3e697ca7bb21e9d128ed1d3c787c0937ecccceff6"
+        },
+        {
+          "bytes": 1971,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/llada2-1-mini.yaml",
+          "rule": "dir:.claude",
+          "sha256": "7dc0413e8e3b64c27119666ebce851c5fd9af176e46917392714945d9ce19ae0"
+        },
+        {
+          "bytes": 1893,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/llama-3.1-70b-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "79c885d4a75fc8e5ea0d23965d195f163820c443703db5f64d2effad029a83f4"
+        },
+        {
+          "bytes": 1877,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/llama-3.3-70b-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "4c6f5a86a456ca6579363377249bf8963f6eb44114890efd47a332dd19f81698"
+        },
+        {
+          "bytes": 2092,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/llama-4-maverick-17b-128e-instruct-fp8.yaml",
+          "rule": "dir:.claude",
+          "sha256": "bf20140e44869a6ffa76e8926a3b8c1c80231fe241592ef765ce0a77e9897c9e"
+        },
+        {
+          "bytes": 2087,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/llama-4-scout-17b-16e-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "308f134847b159d44c190aec7342c8d66193c40c0ceef8e89ef0bda1355c1f34"
+        },
+        {
+          "bytes": 2206,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/mimo-v2-flash.yaml",
+          "rule": "dir:.claude",
+          "sha256": "a05f3a7832c801186df414dd8752cd58165b20d7313ff5a0f0a854dfdfbe1886"
+        },
+        {
+          "bytes": 1892,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/minimax-m2.1.yaml",
+          "rule": "dir:.claude",
+          "sha256": "cb9f18a343c80d0f4b7513cb8b2c29142a33803f400e4aae339fb0a7ee845196"
+        },
+        {
+          "bytes": 1930,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/minimax-m2.5.yaml",
+          "rule": "dir:.claude",
+          "sha256": "0df9fd7377a55d84fcb349d2e7c2237aa990c71107ba1d7cc0c008cbc73abae9"
+        },
+        {
+          "bytes": 1970,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/ministral-3-8b-instruct-2512.yaml",
+          "rule": "dir:.claude",
+          "sha256": "a9f5bac106ac449f519609db2008f0374c84406b0f1112b25f825f642c3448ea"
+        },
+        {
+          "bytes": 1906,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/mistral-small-4-119b-2603.yaml",
+          "rule": "dir:.claude",
+          "sha256": "1fc8fccb6984640a942a2fb80595463483253aa5ca7dc1ca39461241452e4af1"
+        },
+        {
+          "bytes": 1978,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/nemotron-3-nano-30b-a3b-bf16.yaml",
+          "rule": "dir:.claude",
+          "sha256": "585d53a4686a634b298ab22091dea96be4da4b9987a72e628d86a71bcadd22aa"
+        },
+        {
+          "bytes": 1998,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/nemotron-3-super-120b-a12b-bf16.yaml",
+          "rule": "dir:.claude",
+          "sha256": "4a8bfd6af49a3891096fbba70c523558d215d09f49ad18157c3088ba15b20195"
+        },
+        {
+          "bytes": 1892,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/qwen3-235b-a22b.yaml",
+          "rule": "dir:.claude",
+          "sha256": "e07832b765e21759212287ab0ecaeb1e2fa3d3b34151cf1168837f208dcf37ec"
+        },
+        {
+          "bytes": 2062,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/qwen3-coder-480b-a35b-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "365ca57204d3c585178e1ee9f33b5fe0a170bb53937902ac0ddd8e74b52dbd64"
+        },
+        {
+          "bytes": 1860,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/qwen3-coder-next.yaml",
+          "rule": "dir:.claude",
+          "sha256": "d4e253fbca724f2a9be146bbc582463cd9cc9aed7123b3e65410ddda370629cf"
+        },
+        {
+          "bytes": 1928,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/qwen3-next-80b-a3b-instruct.yaml",
+          "rule": "dir:.claude",
+          "sha256": "1b8b3a1f91f7c1235813c89dc0d7b51abd32a887dc0ed24a60be0ae4599c022f"
+        },
+        {
+          "bytes": 1908,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/qwen35-397b-a17b-fp8.yaml",
+          "rule": "dir:.claude",
+          "sha256": "722ed568d87b89bd6b47f52a7ba337434333a2917e186d118e5b229c7b615ef8"
+        },
+        {
+          "bytes": 1855,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/ring-2.5-1t.yaml",
+          "rule": "dir:.claude",
+          "sha256": "2ef262dca0bebc218797fb32efe7776f203093ad155a4db29cb1ceecfbd7ab91"
+        },
+        {
+          "bytes": 1916,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/cookbook-llm/step-3.5-flash.yaml",
+          "rule": "dir:.claude",
+          "sha256": "7c1006c2a91b8dabcf511072c76d3d6fc4e07d5f91912a43acff9f07e764689e"
+        },
+        {
+          "bytes": 1633,
+          "kind": "file",
+          "path": ".claude/skills/sglang-auto-benchmark/references/qwen3-32b.yaml",
+          "rule": "dir:.claude",
+          "sha256": "5e3c8fbc007c5e05d2614176e0e24f86b26d1e87a3d36f326b28b391b0fcb47f"
+        },
+        {
+          "bytes": 9684,
+          "kind": "file",
+          "path": ".claude/skills/sglang-bisect-ci-regression/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "d584a0a561e954c1da2d9877a6504e5c61d0cbeaef39c73297b60c474dfb1f86"
+        },
+        {
+          "bytes": 7701,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "396b102b615c4718ed72ad29d5d36ec853aff24860ec293f3480af12f0368995"
+        },
+        {
+          "bytes": 77665,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/references/fuse-overlap-catalog.md",
+          "rule": "dir:.claude",
+          "sha256": "c58fdb62de9181fe835e4dda5fb6fc302c6e85ad4138b187fd76f71b458527fe"
+        },
+        {
+          "bytes": 3874,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/references/heuristics.md",
+          "rule": "dir:.claude",
+          "sha256": "10782cfa954be4fdb49d78e066462939857152936db38dc9b65d239a4504e6f9"
+        },
+        {
+          "bytes": 23740,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/references/overlap-catalog.md",
+          "rule": "dir:.claude",
+          "sha256": "05bcb79bf7e0e19c81fe4ba3a79716c4cd10f09a106093217c5dbf9b3a5964ee"
+        },
+        {
+          "bytes": 1447,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/references/source-map.md",
+          "rule": "dir:.claude",
+          "sha256": "bbd8f37905da2675e7591a7669129271e1bf3d5e6f0c04148798ae2e5742d337"
+        },
+        {
+          "bytes": 22139,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/scripts/analyze_sglang_torch_profile.py",
+          "rule": "dir:.claude",
+          "sha256": "01fc08d942cc87d828b08ef3a1d504d656a219e38ded183c64141009d84ad790"
+        },
+        {
+          "bytes": 10490,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/scripts/profile_common.py",
+          "rule": "dir:.claude",
+          "sha256": "bf731da208f24c71bf116385cd0f903cb72fff71bafac208a564dcfdc90c9401"
+        },
+        {
+          "bytes": 70947,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/scripts/triage_kernel_helpers.py",
+          "rule": "dir:.claude",
+          "sha256": "186716fafe3fdb8b4463223198b987a321bd9f3103ac439a8ff383a7c2c9f8bd"
+        },
+        {
+          "bytes": 51357,
+          "kind": "file",
+          "path": ".claude/skills/sglang-torch-profiler-analysis/scripts/triage_overlap_helpers.py",
+          "rule": "dir:.claude",
+          "sha256": "3cdab07cb1564ebd8125fc7f7c376d2eaf0e8af881e79080ee421af2c4c72989"
+        },
+        {
+          "bytes": 20223,
+          "kind": "file",
+          "path": ".claude/skills/write-sglang-test/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "b494bedfa506500bdd7963ca367b4f080f6802cba99ae9a408c65fd57a5f655c"
+        },
+        {
+          "bytes": 4635,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/CLAUDE.md",
+          "rule": "dir:.claude",
+          "sha256": "3da0db1401eef176fe5e50189b6af0f894be536d8caddc5e01a11591a12c320e"
+        },
+        {
+          "bytes": 31035,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-add-model/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "146bac81d2bbcc5f903fae1b4072f2f14fcb263fc42a7c40999a616c9dc23408"
+        },
+        {
+          "bytes": 5882,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-ako4all-kernel/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "576d5f791c03bae8b7c811439c95994cfab162725b531d76718ec7b3dca7164c"
+        },
+        {
+          "bytes": 1433,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-ako4all-kernel/references/ako-loop.md",
+          "rule": "dir:.claude",
+          "sha256": "4dc4b3397952da1767f1b01d28ed476312bdeaa48813b86b3778eb20d51df963"
+        },
+        {
+          "bytes": 2456,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-ako4all-kernel/scripts/ensure_ako4all_clean.sh",
+          "rule": "dir:.claude",
+          "sha256": "a1786ec80cf7c123c69de9a2aa8346de6cc2472630ae2a323d0ff4c745d37d30"
+        },
+        {
+          "bytes": 2699,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "1b232c864e252ae397c4e04aafeba981e7bc77a578cf97a1f5380fc90fe1bbae"
+        },
+        {
+          "bytes": 14842,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/benchmark-and-profile.md",
+          "rule": "dir:.claude",
+          "sha256": "ef94841a44f92341a77a1c0d1ac74f97f0c9b7c34913749d50ac326c304362e8"
+        },
+        {
+          "bytes": 10939,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/existing-fast-paths.md",
+          "rule": "dir:.claude",
+          "sha256": "4fbf626927f6b3206f10576da8fca0678e404e5bae8536d601f52066f6b1eb48"
+        },
+        {
+          "bytes": 20216,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
+          "rule": "dir:.claude",
+          "sha256": "172197bd6a329abeb6eb6f5d0d393866a504faeb0c9c092ada13290bfaefa06c"
+        },
+        {
+          "bytes": 5109,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/diffusion_skill_env.py",
+          "rule": "dir:.claude",
+          "sha256": "6e33eceb3f170aec98937c63a7815d8132c0fc3565b20f5a6dee4ed5a8e3f050"
+        },
+        {
+          "bytes": 12712,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-modelopt-quant/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "bc01dea7ec90b6968be4a52decd0e24019d23e263b045530bc3153862f2ad3a5"
+        },
+        {
+          "bytes": 15369,
+          "kind": "file",
+          "path": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-performance/SKILL.md",
+          "rule": "dir:.claude",
+          "sha256": "3a97b3d2d0397a5a1a068029105343cc6b1ae7015fce8625b80b46096731d75f"
+        }
+      ],
+      "surviving": 0
+    }
+  }
+}

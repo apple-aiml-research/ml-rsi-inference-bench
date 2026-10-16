@@ -1,0 +1,64 @@
+{
+ "schema": "diffusion-gemma-budgets/1",
+ "note": "Public operation limits of the verifier (seconds). Each formerly provisional value carries the rule that sets it.",
+ "operations": {
+  "server_launch": {
+   "cap_s": 1800,
+   "clock": "spawn to healthy, including load, compilation, graph capture and JIT",
+   "final": "max(1,800, 300*ceil(2W/300)) with W the worst reference spawn-to-serving over the calibration launches (TP2)"
+  },
+  "server_cleanup": {
+   "cap_s": 180,
+   "clock": "TERM, KILL after 10 s, reap"
+  },
+  "offline_rebuild": {
+   "cap_s": 7200,
+   "clock": "build.sh, start to completion",
+   "final": "the budget instruction.md states: the verifier allows a rebuild the 7,200 s the agent is told it has. The calibration rule max(3,600, 300*ceil(2F/300)) = 5,700 s, with F the prepared base's build_ext from an empty build directory, is kept as the floor this value must clear"
+  },
+  "http_workload": {
+   "cap_s": 900,
+   "clock": "one request or one submitted concurrent batch, all inputs below 64,000 tokens; dispatch to complete response(s)"
+  },
+  "http_workload_long": {
+   "cap_s": 1800,
+   "clock": "the same, with any input of at least 64,000 tokens"
+  },
+  "preemption_workload": {
+   "cap_s": 6300,
+   "clock": "each request of the preemption load of record (four requests submitted together, any input of at least 64,000 tokens, prompts plus outputs at least 1.10 times the reference's KV pool, so that the reference preempts); dispatch to complete response",
+   "final": "max(1,800, 4W) with W the reference's largest request wall at the load of record (53,248 output tokens, the lowest ladder rung meeting the ladder rule) under the deterministic compile, over the TP1 calibration-form launches"
+  },
+  "preemption_rerun": {
+   "cap_s": 9195,
+   "clock": "each request of the heavier preemption load (the same four prompts, longer outputs), submitted once and only when the run at the load of record completes and records no preemption; a run there that records none either fails the node as not exercised; dispatch to complete response",
+   "final": "max(1,800, 4W) with W the reference's largest request wall at the heavier load (69,632 output tokens) under the deterministic compile, over the TP1 calibration launches"
+  },
+  "gsm8k_run": {
+   "cap_s": 900,
+   "clock": "first request to last response",
+   "final": "max(900, 300*ceil(2G/300)) with G the reference's worst GSM8K node wall over the TP1 calibration launches"
+  },
+  "component_invocation": {
+   "cap_s": 1800,
+   "clock": "one correctness collection, or one timing and identity collection; dispatch to record, including JIT, warm-up and allocation"
+  },
+  "measurement_invocation": {
+   "cap_s": 1800,
+   "clock": "one whole-serving efficiency node's draws, including C1's bounded attempts"
+  },
+  "l3_regression_group": {
+   "cap_s": 8400,
+   "clock": "the selected existing-engine tests in one pytest process",
+   "final": "max(1,800, 300*ceil(2L/300)) with L the reference's worst L3 wall over the six differential runs of record"
+  },
+  "identity_action": {
+   "cap_s": 300,
+   "clock": "import, registry resolution, configuration parse, served-configuration read, the parser node"
+  },
+  "component_verdict": {
+   "cap_s": 60,
+   "clock": "turning an already collected record into one verdict"
+  }
+ }
+}

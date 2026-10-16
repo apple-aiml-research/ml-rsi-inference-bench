@@ -1,0 +1,59 @@
+{
+  "primary_workload": "in2048_out1024_s256",
+  "scored_workloads": [
+    "in2048_out1024_s256",
+    "in2048_out1024_c192_n750",
+    "in2048_out1024_c128_n500"
+  ],
+  "guard_workloads": [
+    "in2048_out1024_c64_n250",
+    "in2048_out1024_c8_n64"
+  ],
+  "workloads": [
+    {
+      "name": "in2048_out1024_s256",
+      "role": "scored",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 1000,
+      "max_concurrency": 256,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c192_n750",
+      "role": "scored",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 750,
+      "max_concurrency": 192,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c128_n500",
+      "role": "scored",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 500,
+      "max_concurrency": 128,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c64_n250",
+      "role": "guard",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 250,
+      "max_concurrency": 64,
+      "max_model_len": 4096
+    },
+    {
+      "name": "in2048_out1024_c8_n64",
+      "role": "guard",
+      "input_len": 2048,
+      "output_len": 1024,
+      "num_prompts": 64,
+      "max_concurrency": 8,
+      "max_model_len": 4096
+    }
+  ]
+}

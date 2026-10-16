@@ -1,0 +1,5 @@
+Supplied model prerequisites
+
+Hyper-connection operations, the low-latency GEMM helper, and the sigmoid
+output gate and bindings for GDN decode. Package headers carry no model
+implementation. Native model support, QSA and PLE remain the task.

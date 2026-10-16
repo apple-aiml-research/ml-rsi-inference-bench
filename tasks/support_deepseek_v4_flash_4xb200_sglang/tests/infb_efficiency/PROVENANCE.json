@@ -1,0 +1,84 @@
+{
+ "schema": "dsv4-efficiency-provenance/1",
+ "task": "support_deepseek_v4_flash_4xb200_sglang",
+ "owned_from": "owned and tested by this task; the shared Day-0 efficiency harness is its origin, not its contract",
+ "source": {
+  "kit": "infb-day0-efficiency-kit/1",
+  "files": [
+   "__init__.py",
+   "_paired_helper.py",
+   "canary.py",
+   "client.py",
+   "deadline.py",
+   "efficiency.schema.json",
+   "nodes.py",
+   "pool.jsonl.xz",
+   "pool.provenance.json",
+   "reference.py",
+   "schema_check.py",
+   "snapshot.py"
+  ],
+  "note": "the harness files this task drew from; each shipped file's own digest is below"
+ },
+ "files": {
+  "__init__.py": {
+   "sha256": "ed97ad41221ce384d76a51ba0ce289e5be4e1d82c05bab2fb9b49dcaafc35295",
+   "what": "rewritten: the package's contents and ownership"
+  },
+  "_paired_helper.py": {
+   "sha256": "39ac779435d2cfa1bfed514ae63fe554e66b63aae904aaa44bfaf28cbae02393",
+   "what": "customized: the six functions the reference launch and the deadline runner call (cleanup_stale_ipc, spawn_with_retry, _gpu_pids_via_proc, kill_stray_gpu_processes, wait_for_gpu_free_memory, teardown_and_confirm_free), byte for byte from the shared harness under a new header; the rest of the module is not carried"
+  },
+  "client.py": {
+   "sha256": "5963ab96b244056b61531a52c59a22f8d0027f789468a28ade1478e9915c939a",
+   "what": "customized: the vLLM adapter and its server-counter flag, the task-bar and ratio-of-medians alternatives of the summary, and the illustrative bar in the help are not carried; the docstring names this task's two copies; byte-identical to /app/eval/deepseek_v4_flash/serving/client.py"
+  },
+  "deadline.py": {
+   "sha256": "803bac8365be20acdafecf06e448cf039e73cc9544fc502384907794856a76b2",
+   "what": "customized: the relaunch ordering, node deselection, the verifier clock (end-by, END_BY) and the relaunch kill are not carried; the alarm, the plugin's per-node deadlines and report file, and the group runner are the shared harness's: an expiring wall is attributed from the operation registry -- candidate_fail when a running operation is past its public limit, verifier_fault (censored) otherwise -- recorded with the node's report; the group runner marks the running node censored and the rest blocked_by it."
+  },
+  "efficiency.schema.json": {
+   "sha256": "18da03f8955a5e0f8bbd75aae09d2a2389c9d989af605e355af46088ab02eacb",
+   "what": "verbatim, with internal comments removed for this release"
+  },
+  "nodes.py": {
+   "sha256": "2cdb18dcbc842c406d85640538f3e66fc23514cc84df6dda9954028e8de4b576",
+   "what": "customized: the environment canary, the flush between draws, the task bars, the candidate-only best-of attempts and the relaunch are not carried; the axis loop, the median draw, the sizing and the client invocation are the shared harness's: one axis's draws are one 1,800 s measurement invocation (limits.json), every prescribed draw attempted with the remaining allowance; the pace-derived ATTEMPT_HEADROOM stop and the per-node deadline read are not carried; a median is never taken from a subset; the sizing reads the invocation limit."
+  },
+  "pool.jsonl.xz": {
+   "sha256": "fc9428a776ecc030c4b0eeb6b5aea3c7425052913acb3d880b4b0cb4190cd472",
+   "what": "verbatim"
+  },
+  "pool.provenance.json": {
+   "sha256": "fdc3b328a67e7e26d38b041e278c43738dea30ff1d333db67f1cf2880229a40d",
+   "what": "verbatim"
+  },
+  "reference.py": {
+   "sha256": "5d6100285b9bf4e1ac720575658d1e1f3af3c695b2f3d3408808ff48fc000121",
+   "what": "customized: the relaunch and host-state modes and the host-check dispatch are not carried; the identity checks, argv capture, bounded launch with its startup-crash retry, the draws and the teardown are the shared harness's: each axis's reference draws are one 1,800 s measurement invocation, the launch the public 1,360 s startup limit, teardown the public 180 s limit, all from limits.json. Added for this task: the arm-private JIT cache roots (Triton, PyTorch extensions, TileLang) beside TVM-FFI's and FlashInfer's, the snapshot's vendored FlashMLA products checked, and the vendored modules' origins asserted inside the reference tree before it serves"
+  },
+  "schema_check.py": {
+   "sha256": "6995ae1b20dbec565f795b2ca73b8187d435541c3e0e855a1d68538d1770f3d7",
+   "what": "verbatim, with internal comments removed for this release"
+  },
+  "snapshot.py": {
+   "sha256": "8eb416aab281f48f8b46b23e0895f70de015677e00bbcfc68edae91e24390f8f",
+   "what": "customized: the reference's vendored FlashMLA built in its own tree after reconstruction by the task's build helper (build_vendor), its products hashed into snapshot.json; otherwise the shared harness's verbatim"
+  },
+  "operations.py": {
+   "sha256": "ed5825356640d9e57a13c16f601f4ac4dfd96577ee95c37067b9dd2a67bb59bc",
+   "what": "task-original: the operation registry -- every request, invocation, test file and action with its public limit (limits.json), and the attribution of an expiring wall"
+  }
+ },
+ "not_carried": {
+  "canary.py": "the environment canary: this task never set infb.efficiency.canary",
+  "KIT_MANIFEST.json": "the shared harness's release manifest; replaced by this file"
+ },
+ "public_copy": {
+  "client.py": "environment/eval/deepseek_v4_flash/serving/client.py"
+ },
+ "note": "Every file above is held to its sha256 here by the task's own repository tests; no shared harness release manifest or vendoring tool is read at verify time.",
+ "task_original": [
+  "operations.py"
+ ]
+}

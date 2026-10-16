@@ -1,0 +1,54 @@
+{
+ "candidates": [
+  {
+   "prompt": "Complete with one word: the capital of France is",
+   "answer": "Paris"
+  },
+  {
+   "prompt": "Complete with one word: the capital of Japan is",
+   "answer": "Tokyo"
+  },
+  {
+   "prompt": "Answer with one word: what colour is the sky on a clear day?",
+   "answer": "Blue"
+  },
+  {
+   "prompt": "Answer with one word: what is frozen water called?",
+   "answer": "Ice"
+  },
+  {
+   "prompt": "Answer with one word: which planet is known as the Red Planet?",
+   "answer": "Mars"
+  },
+  {
+   "prompt": "Answer with one word: what is the opposite of hot?",
+   "answer": "Cold"
+  },
+  {
+   "prompt": "Answer with one word: how many legs does a spider have? Spell the number.",
+   "answer": "Eight"
+  },
+  {
+   "prompt": "Complete with one word: the capital of Italy is",
+   "answer": "Rome"
+  }
+ ],
+ "cases": [
+  {
+   "prompt": "Complete with one word: the capital of Japan is",
+   "answer": "Tokyo"
+  },
+  {
+   "prompt": "Answer with one word: what colour is the sky on a clear day?",
+   "answer": "Blue"
+  },
+  {
+   "prompt": "Answer with one word: what is frozen water called?",
+   "answer": "Ice"
+  },
+  {
+   "prompt": "Answer with one word: which planet is known as the Red Planet?",
+   "answer": "Mars"
+  }
+ ]
+}

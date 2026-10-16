@@ -1,0 +1,38 @@
+{
+  "precision": {
+    "set_dtype": "float32",
+    "components": {
+      "text_encoder": [
+        "torch.float32"
+      ],
+      "text_encoder_2": [
+        "torch.float32"
+      ],
+      "text_encoder_3": [
+        "torch.float32"
+      ],
+      "transformer": [
+        "torch.float32"
+      ],
+      "vae": [
+        "torch.float32"
+      ]
+    },
+    "tf32": {
+      "matmul": false,
+      "cudnn": false
+    }
+  },
+  "sha256": {
+    "astronaut.npy": "0de7553664ecc876b0b525f66cc5533c5e5f47910128be979101c0022e04ff2e",
+    "teapot.npy": "f0e39a8ef5537da444628976fac805422c9d37d6e508ead0da9c7f29160108f1",
+    "redlacquer.npy": "a08cc44e98f617e25d0bf0b2ef988acd725e37a9ecc92ffb1c7f177b39410c10",
+    "ramen.npy": "d4a32bbe65a2623566631ceed7799ab961a96b7771f2cf11e8c165378d2be1df",
+    "mountain.npy": "6ac54b70f51fc7dee946be01a127764cb7e99a88fd1671a604d56dba827a0705",
+    "stainedglass.npy": "ee95ae32091fa377cac6be929c627e9ef72cba8783ffb9570fb8d3c2c3331a61",
+    "origami.npy": "28c75a2b3d5d11a6d3930f3cc501eb66223c81c6deb5f96bfb4b936743ad3381",
+    "candles.npy": "540146287d78b209a23bf01f1625d4890feab34dc4492fb9adb7728ff0369945",
+    "astronaut_cfg1.npy": "21d572112b4f7ca678b33fe321de404185c89e03b39ebd9109e513fb520c70be",
+    "stainedglass_cfg1.npy": "7dc768ed3044360e11de48c6d6898c679ea4456d68a8b24b41ce2dd4f6b8ee0a"
+  }
+}

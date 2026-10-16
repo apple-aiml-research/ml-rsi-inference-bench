@@ -1,0 +1,103 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/regression_mtp_decode_throughput"
+description = "Recover a decode-throughput regression that only appears when Qwen3-Next's own multi-token-prediction speculator is enabled (4xH100, TP=4). The engine serves correctly and the generated text is unchanged; the loss is a per-step host-side stall whose frequency tracks how often the running batch changes shape, which is why the scored workload runs 1000 requests at high concurrency rather than at a fixed batch size."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "regression", "speculative-decoding", "mtp", "decode", "throughput"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+env = { INFB_OFFICIAL = "1", INFB_REAL_ENGINE = "1" }
+timeout_sec = 18000
+
+[environment]
+build_timeout_sec = 7200
+cpus = 32
+memory_mb = 393216
+storage_mb = 307200
+gpus = 4
+gpu_types = ["H100"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[metadata.inference_bench]
+tier = "lite"
+category = "regression"
+engine = "vllm"
+score_profile = "regression_recovery_v2"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "c30b405b8f022d41f57042cad7032256d4831355"
+
+[metadata.inference_bench.model]
+architecture = "Qwen3NextForCausalLM"
+model_type = "qwen3_next"
+feature = "Hybrid linear/full attention with a built-in MTP head; the speculator is what puts the defective path on the hot loop"
+hf_model_family = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+hf_model_id = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "task_scoped_vllm_c30b405b8_per_commit_wheel"
+
+[metadata.inference_bench.commands]
+public_check = "python public/check_candidate.py"
+
+[metadata.inference_bench.oracle]
+oracle_id = "gdn_decode_kernel_shape_specialisation"
+source = "upstream_merged_diff"
+oracle_scope = "Upstream's merged shape: stop the two batch-shape arguments of the GDN decode kernel from keying Triton's compile cache."
+
+[metadata.inference_bench.scoring]
+kind = "regression_recovery"
+metric = "throughput"
+measured_key = "throughput.total_tokens_per_sec"
+higher_is_better = true
+noise_floor = 1.03
+oracle_speedup = 1.216
+oracle_speedup_per_workload = { in2048_out1024_s256 = 1.248, in2048_out1024_c192_n750 = 1.230, in2048_out1024_c128_n500 = 1.173 }
+oracle_measured_on = "4xH100 (geomean of three scored points, each on its own `vllm serve` with a cold compile cache; warmed rotated rounds)"
+
+[metadata.inference_bench.real_engine_thresholds.latency]
+max_e2e_mean_ms = 120000.0
+
+[metadata.inference_bench.real_engine_thresholds.throughput]
+min_request_per_sec = 0.1
+min_total_tokens_per_sec = 1.0
+
+[metadata.inference_bench.real_engine_thresholds.serve]
+min_request_per_sec = 0.1
+min_total_tokens_per_sec = 1.0
+max_ttft_mean_ms = 60000.0
+
+[metadata.inference_bench.workloads]
+in2048_out1024_s256 = { input_len = 2048, output_len = 1024, num_prompts = 1000, max_concurrency = 256 }
+in2048_out1024_c192_n750 = { input_len = 2048, output_len = 1024, num_prompts = 750, max_concurrency = 192 }
+in2048_out1024_c128_n500 = { input_len = 2048, output_len = 1024, num_prompts = 500, max_concurrency = 128 }
+in2048_out1024_c64_n250 = { input_len = 2048, output_len = 1024, num_prompts = 250, max_concurrency = 64, role = "guard", min_ratio = 0.95 }
+in2048_out1024_c8_n64 = { input_len = 2048, output_len = 1024, num_prompts = 64, max_concurrency = 8, role = "guard", min_ratio = 0.90 }
+
+[metadata.inference_bench.runtime]
+model = "Qwen/Qwen3-Next-80B-A3B-Instruct"
+serve_args = "--tensor-parallel-size 4 --max-model-len 4096 --max-num-seqs 256 -O.cudagraph_mode=PIECEWISE --cuda-graph-sizes 768 --gpu-memory-utilization 0.90 --no-enable-chunked-prefill --speculative-config '{\"method\":\"qwen3_next_mtp\",\"num_speculative_tokens\":2}'"
+
+[metadata.inference_bench.artifacts]
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"

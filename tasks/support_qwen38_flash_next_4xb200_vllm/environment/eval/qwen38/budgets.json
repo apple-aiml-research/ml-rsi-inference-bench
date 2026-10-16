@@ -1,0 +1,32 @@
+{
+ "schema": "qwen38-budgets/1",
+ "meaning": "Wall-clock allowances, in seconds, for the complete named evaluation workloads. Each applies to the whole operation, including its allowed numerical repeats, attempts and rereads; server startup is separate unless the operation says it includes its own launch. A request or subprocess inside an operation receives the operation's remaining allowance, never a longer independent timeout. Public examples may run fewer cases than an operation's maximum extent; their elapsed time is not the graded workload's size.",
+ "operations": {
+  "server_launch": {"seconds": 1800, "meaning": "one server launch at either recipe until its health endpoint answers, graph capture and compilation included"},
+  "server_cleanup": {"seconds": 180, "meaning": "stopping one server and releasing its GPUs"},
+  "offline_rebuild": {"seconds": 4640, "meaning": "build.sh on the committed tree, offline"},
+  "post_build_import": {"seconds": 60, "meaning": "importing the rebuilt engine"},
+  "registry_resolution": {"seconds": 108, "meaning": "resolving the checkpoint's declared architecture through the engine's native registry"},
+  "config_parse": {"seconds": 60, "meaning": "parsing the checkpoint configuration through the engine"},
+  "supplied_import": {"seconds": 60, "meaning": "importing the supplied helper modules from the built tree"},
+  "served_configuration_read": {"seconds": 60, "meaning": "reading a launch log's served configuration"},
+  "ordinary_c1_draw": {"seconds": 230, "meaning": "one ordinary-recipe per-user decode measurement at concurrency 1, its bounded attempts included"},
+  "ordinary_c32_draw": {"seconds": 350, "meaning": "one ordinary-recipe output-throughput measurement at concurrency 32"},
+  "mtp3_c1_draw": {"seconds": 150, "meaning": "one MTP3 per-user decode measurement at concurrency 1, its bounded attempts included"},
+  "mtp3_c32_draw": {"seconds": 330, "meaning": "one MTP3 output-throughput measurement at concurrency 32"},
+  "api_observation_batch": {"seconds": 60, "meaning": "the API observations of serving/api.py on one prompt: two greedy chat requests, one streamed, one length-capped and eight concurrent"},
+  "fidelity_evaluation": {"seconds": 570, "meaning": "the complete independent-fidelity evaluation of up to 40 sequences at either recipe, its bounded rereads included"},
+  "prefix_agreement": {"seconds": 150, "meaning": "the ordinary warm-versus-cold prefix-reuse agreement over its cases"},
+  "prefix_reuse_witness": {"seconds": 60, "meaning": "the ordinary prefix-cache reuse witness over its prefixes"},
+  "fresh_state_evaluation": {"seconds": 330, "meaning": "the ordinary fresh-request state evaluation, its bounded redraws included"},
+  "comparison_series_recording": {"seconds": 220, "meaning": "recording the ordinary greedy series against which MTP3 generation is compared"},
+  "mtp_equivalence": {"seconds": 140, "meaning": "MTP3 greedy-generation equivalence, its bounded redraw included"},
+  "mtp_acceptance": {"seconds": 180, "meaning": "MTP3 draft acceptance from the server's own counters, its bounded redraw included"},
+  "component_matrix": {"seconds": 600, "meaning": "one complete component matrix of up to 32 cases: three warm-ups and nine validated timed draws per case"},
+  "component_collection": {"seconds": 1800, "meaning": "one recipe's complete component collection: capture of every case, three matrices, PLE memory evidence and use evidence"},
+  "component_verdict": {"seconds": 60, "meaning": "turning an already collected component record into one verdict; never applies to collection"},
+  "mtp3_production_state": {"seconds": 600, "meaning": "the MTP3 native production and state evaluation on its own launch"},
+  "accuracy_including_launch": {"seconds": 3600, "meaning": "the complete ordinary-recipe accuracy evaluation, its own server launch included"},
+  "l3_regression_group": {"seconds": 1900, "meaning": "the applicable base-engine regression tests, as one group"}
+ }
+}

@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Mon, 19 May 2026 00:00:00 +0000
+Subject: [PATCH] oracle: annotate the inference-bench qwen3_6_27b oracle entry
+
+PLACEHOLDER: this patch adds a marker comment into vllm/__init__.py so the
+static verifier classifies the candidate as `source_edit` (rather than empty
+/ config_default_flip), proving the broad-variant oracle path runs end-to-end.
+
+Default-value flips are not a substitute: async scheduling, forced PIECEWISE
+cudagraphs and disabling prefix caching are priors this pin has already
+absorbed. A working oracle therefore needs code-level work (multi-stream MLA
+overlap, MoE kernel tuning, custom Triton fusion), and such a patch is left as
+future work.
+
+For now the oracle is a pipeline integration test -- expect reward=0, because
+the speedup is ~1.0x and the linear-reward gate produces 0 there.
+
+This placeholder is intentionally a no-op at runtime -- it only adds a
+comment line -- so applying it on a real vllm tree will not change behavior.
+---
+ vllm/__init__.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/vllm/__init__.py b/vllm/__init__.py
+index 0000000..0000001 100644
+--- a/vllm/__init__.py
++++ b/vllm/__init__.py
+@@ -4,6 +4,8 @@
+
+ # The version.py should be independent library, and we always import the
+ # version library first.  Such assumption is critical for some customization.
++# inference-bench qwen3_6_27b_1xh100 oracle marker: no runtime effect.
++#   A placeholder; a measurement-validated patch would replace it.
+ from .version import __version__, __version_tuple__  # isort:skip
+
+ import typing

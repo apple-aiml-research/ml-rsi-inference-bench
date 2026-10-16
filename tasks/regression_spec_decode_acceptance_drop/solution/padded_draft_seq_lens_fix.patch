@@ -1,0 +1,121 @@
+diff -urN a/vllm/v1/spec_decode/eagle.py b/vllm/v1/spec_decode/eagle.py
+--- a/vllm/v1/spec_decode/eagle.py
++++ b/vllm/v1/spec_decode/eagle.py
+@@ -236,6 +236,7 @@
+         common_attn_metadata: CommonAttentionMetadata,
+         sampling_metadata: SamplingMetadata,
+         mm_embed_inputs: tuple[list[torch.Tensor], torch.Tensor] | None = None,
++        num_rejected_tokens_gpu: torch.Tensor | None = None,
+     ) -> torch.Tensor:
+         num_tokens = target_token_ids.shape[0]
+         batch_size = next_token_ids.shape[0]
+@@ -414,6 +415,12 @@
+         common_attn_metadata.query_start_loc_cpu = torch.from_numpy(
+             self.token_arange_np[: batch_size + 1]
+         ).clone()
++
++        if self.num_speculative_tokens > 1 and num_rejected_tokens_gpu is not None:
++            common_attn_metadata.seq_lens -= num_rejected_tokens_gpu
++            common_attn_metadata._seq_lens_cpu = None
++            common_attn_metadata._num_computed_tokens_cpu = None
++
+         for token_index in range(self.num_speculative_tokens - 1):
+             # Update the inputs.
+             # cast to int32 is crucial when eagle model is compiled.
+@@ -628,7 +635,7 @@
+         common_attn_metadata: CommonAttentionMetadata,
+         spec_decode_metadata: SpecDecodeMetadata,
+         valid_sampled_tokens_count: torch.Tensor,
+-    ) -> tuple[CommonAttentionMetadata, torch.Tensor]:
++    ) -> tuple[CommonAttentionMetadata, torch.Tensor, torch.Tensor]:
+         """
+         This function is used to prepare the inputs for speculative decoding
+         It updates the common_attn_metadata for speculative decoding,
+@@ -642,6 +649,7 @@
+         token_indices_to_sample = torch.empty(
+             (num_reqs,), dtype=torch.int32, device=device
+         )
++        num_rejected_tokens_gpu = torch.empty_like(token_indices_to_sample)
+ 
+         # Kernel grid: one program per request (row)
+         grid = (num_reqs,)
+@@ -650,6 +658,7 @@
+             valid_sampled_tokens_count,
+             common_attn_metadata.query_start_loc,
+             token_indices_to_sample,
++            num_rejected_tokens_gpu,
+             num_reqs,
+         )
+ 
+@@ -674,7 +683,11 @@
+             dcp_local_seq_lens=common_attn_metadata.dcp_local_seq_lens,
+         )
+ 
+-        return spec_common_attn_metadata, token_indices_to_sample
++        return (
++            spec_common_attn_metadata,
++            token_indices_to_sample,
++            num_rejected_tokens_gpu,
++        )
+ 
+     def propose_tree(
+         self,
+diff -urN a/vllm/v1/spec_decode/utils.py b/vllm/v1/spec_decode/utils.py
+--- a/vllm/v1/spec_decode/utils.py
++++ b/vllm/v1/spec_decode/utils.py
+@@ -23,6 +23,7 @@
+     valid_sampled_tokens_count_ptr,  # [num_reqs]
+     query_start_loc_gpu_ptr,  # [num_reqs + 1]
+     token_indices_to_sample_ptr,  # [num_reqs] (output)
++    num_rejected_tokens_gpu_ptr,
+     num_reqs,  # tl.int32
+ ):
+     """
+@@ -56,6 +57,7 @@
+ 
+     index_to_sample = q_last_tok_idx - num_rejected_tokens
+     tl.store(token_indices_to_sample_ptr + req_idx, index_to_sample)
++    tl.store(num_rejected_tokens_gpu_ptr + req_idx, num_rejected_tokens)
+ 
+ 
+ @triton.jit
+diff -urN a/vllm/v1/worker/gpu_model_runner.py b/vllm/v1/worker/gpu_model_runner.py
+--- a/vllm/v1/worker/gpu_model_runner.py
++++ b/vllm/v1/worker/gpu_model_runner.py
+@@ -3534,6 +3534,7 @@
+                     next_token_ids, valid_sampled_tokens_count
+                 )
+ 
++            num_rejected_tokens_gpu = None
+             if spec_decode_metadata is None:
+                 token_indices_to_sample = None
+                 # input_ids can be None for multimodal models.
+@@ -3564,12 +3565,14 @@
+                     else:
+                         target_hidden_states = hidden_states[token_indices]
+                 else:
+-                    common_attn_metadata, token_indices_to_sample = (
+-                        self.drafter.prepare_inputs_padded(
+-                            common_attn_metadata,
+-                            spec_decode_metadata,
+-                            valid_sampled_tokens_count,
+-                        )
++                    (
++                        common_attn_metadata,
++                        token_indices_to_sample,
++                        num_rejected_tokens_gpu,
++                    ) = self.drafter.prepare_inputs_padded(
++                        common_attn_metadata,
++                        spec_decode_metadata,
++                        valid_sampled_tokens_count,
+                     )
+                     total_num_tokens = common_attn_metadata.num_actual_tokens
+                     # When padding the batch, token_indices is just a range
+@@ -3600,6 +3603,7 @@
+                 sampling_metadata=sampling_metadata,
+                 common_attn_metadata=common_attn_metadata,
+                 mm_embed_inputs=mm_embed_inputs,
++                num_rejected_tokens_gpu=num_rejected_tokens_gpu,
+             )
+ 
+         return draft_token_ids

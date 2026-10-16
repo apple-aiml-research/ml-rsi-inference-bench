@@ -1,0 +1,715 @@
+{
+ "schema": "infb-kernel-materials/1",
+ "why": "The optimized sparse attention and the original compression/cache kernels become solver work; this manifest enumerates every transformation of supplied material, with its pinned preimage and its output, and prepare_kernel_materials.py implements exactly these and nothing else",
+ "flashmla": {
+  "repo": "https://github.com/deepseek-ai/FlashMLA.git",
+  "commit": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+  "tree": "4c88a1b466511b2c91033f985e745aac34ef3295",
+  "vendored_at": "/app/third_party/flash_mla",
+  "build_env": {
+   "FLASH_MLA_DISABLE_SM90": "1",
+   "MAX_JOBS": "8",
+   "NVCC_THREADS": "4"
+  },
+  "version": "1.0.0+9241ae3.day0",
+  "withheld_subtrees": [
+   {
+    "path": "csrc/sm100/decode/head64",
+    "tree": "24d92ea75549b0bce8bd31c84a932bde00c4f575",
+    "files": {
+     "csrc/sm100/decode/head64/config.h": "401f3acf84fd0788b86135dbd187bce8c58fed86",
+     "csrc/sm100/decode/head64/instantiations/model1.cu": "868ff0c8d6011401ddd5aa24a02948b420b562ce",
+     "csrc/sm100/decode/head64/instantiations/v32.cu": "08ce093fcc5c1560e14a4a7ffd44bf5794dbb4e3",
+     "csrc/sm100/decode/head64/kernel.cuh": "7c46921ccf62ded66930975c1a7178940fa5fff4",
+     "csrc/sm100/decode/head64/kernel.h": "0b3c63c07722dabb34ce2619cf86bbbcebd7b68e"
+    }
+   },
+   {
+    "path": "csrc/sm100/prefill/sparse",
+    "tree": "2a320e0f9a97e3614c23f27a98d1cc18e46b1c1f",
+    "files": {
+     "csrc/sm100/prefill/sparse/common_subroutine.h": "36ddab4ced43626cbbf18ab99c6aaed8fd60b880",
+     "csrc/sm100/prefill/sparse/fwd/head128/config.h": "6c846bb4f93681d443786a2e860b126060c2dc72",
+     "csrc/sm100/prefill/sparse/fwd/head128/instantiations/phase1_k512.cu": "5dcec83b41e5f9415fd7d37f70b87ca91b011323",
+     "csrc/sm100/prefill/sparse/fwd/head128/instantiations/phase1_k576.cu": "bfd01ced02e049760baff375aeb5a0a8763653c0",
+     "csrc/sm100/prefill/sparse/fwd/head128/phase1.cuh": "ec1192b984e61e7afe2b4548d6cd1b2c3504b1aa",
+     "csrc/sm100/prefill/sparse/fwd/head128/phase1.h": "b105780977e07a6aff5542353d35e574435dd873",
+     "csrc/sm100/prefill/sparse/fwd/head64/config.h": "8d6eb77acfdfd345291ad83f77598b4625165f4a",
+     "csrc/sm100/prefill/sparse/fwd/head64/instantiations/phase1_k512.cu": "e1c87be9787966401a8cf386aefa6c7678223aa1",
+     "csrc/sm100/prefill/sparse/fwd/head64/instantiations/phase1_k576.cu": "1bd214ee2abc2552a276ca7e4ed68092291f78b3",
+     "csrc/sm100/prefill/sparse/fwd/head64/phase1.cuh": "b510b27f0c4b7172bf2fa23e4d9c46be9d9be42e",
+     "csrc/sm100/prefill/sparse/fwd/head64/phase1.h": "2962389d8281164256278ba936e46cc224a2aa26",
+     "csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/config.h": "e48800781bbc11f6b95a5f5fe93b12ab41a4f66a",
+     "csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/instantiations/phase1_decode_k512.cu": "a8b489561310ea0e6d10d3adb52a95a3f22ec2c9",
+     "csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/instantiations/phase1_prefill_k512.cu": "2f17fed93a357158a1bb748aeb7126a709471099",
+     "csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/phase1.cuh": "388abc8776bc9dcbc724ec44a66914e119210178",
+     "csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/phase1.h": "d1a092a397f8a3bffca1d617cdc83433956f7ef9"
+    }
+   },
+   {
+    "path": "csrc/sm90/decode/sparse_fp8",
+    "tree": "d0164e0ffc4bf9763079f7c3b8f69d7e8d2a410f",
+    "files": {
+     "csrc/sm90/decode/sparse_fp8/components/config.h": "f38915ba52e7251780a498cc76564f7e7c47537d",
+     "csrc/sm90/decode/sparse_fp8/components/dequant.h": "0c4022d66fa184545798bf5c84bfbe796a2013cb",
+     "csrc/sm90/decode/sparse_fp8/components/helpers.h": "d47e49226e4138144c59e1423bac3aaa93a775b1",
+     "csrc/sm90/decode/sparse_fp8/config.h": "e5631f31131732cec82515a3602fae8683245394",
+     "csrc/sm90/decode/sparse_fp8/instantiations/model1_persistent_h128.cu": "af5058f75b41d4ef92f6c1590e279aed6b0846d0",
+     "csrc/sm90/decode/sparse_fp8/instantiations/model1_persistent_h64.cu": "902a591006a26e26f2e230b37744c48046ca8459",
+     "csrc/sm90/decode/sparse_fp8/instantiations/v32_persistent_h128.cu": "972764263cdf90b16d2d3db9745932dd445a8cf0",
+     "csrc/sm90/decode/sparse_fp8/instantiations/v32_persistent_h64.cu": "f7a3f19aa33d2eb9ae192227dcad8684e199877c",
+     "csrc/sm90/decode/sparse_fp8/splitkv_mla.cuh": "99945689b30ec057a79432ff1dec40f71a1d25dc",
+     "csrc/sm90/decode/sparse_fp8/splitkv_mla.h": "13b659be4bdf6e0522c780a12331142a6e1a8035"
+    }
+   },
+   {
+    "path": "csrc/sm90/prefill/sparse",
+    "tree": "8e7d02645271b97cd24c4c114f254a00925aaeea",
+    "files": {
+     "csrc/sm90/prefill/sparse/config.h": "75005664024b49d69da3cbaf003525cc6358d55f",
+     "csrc/sm90/prefill/sparse/fwd.cu": "eb62b5d39b8938e41bc58942e31d43ae086fa1c1",
+     "csrc/sm90/prefill/sparse/fwd.h": "1c26d688cb1922d3d79c6f70c40c3661f0f40410",
+     "csrc/sm90/prefill/sparse/instantiations/phase1_k512.cu": "046cfb39e04c8f3900a3ad105ae04f3d4e9fcc07",
+     "csrc/sm90/prefill/sparse/instantiations/phase1_k512_topklen.cu": "45da9955ea474ef2697cc07826e89dbd5209123d",
+     "csrc/sm90/prefill/sparse/instantiations/phase1_k576.cu": "f35db00623679dc4789360cd26637a1915fb535b",
+     "csrc/sm90/prefill/sparse/instantiations/phase1_k576_topklen.cu": "bd0f0ca6539501e4f1aac383fec725a5ddcc5a58",
+     "csrc/sm90/prefill/sparse/phase1.cuh": "bf2fff84eeb877c00cb743db6ad7027cd99e997a",
+     "csrc/sm90/prefill/sparse/phase1.h": "c315b2b6dc6a314c6781e5d78ecf38bac94a0a3f"
+    }
+   }
+  ],
+  "withheld_files": [
+   {
+    "path": "csrc/api/sparse_fwd.h",
+    "blob": "66d7111e5e2591b25580ae5c3ac3ca2c798fa6a4"
+   },
+   {
+    "path": "csrc/api/sparse_decode.h",
+    "blob": "6df5c841ad4e8fca669edd19cd1d2dba2c7df6c0"
+   }
+  ],
+  "output_tree": {
+   "supplied": "ce8fe42fdcaf4bf385318c186c2edf1a47614aaa",
+   "reference": "eb6708178d4d3fd0eae7ad3cf6681155d603088f"
+  }
+ },
+ "cutlass": {
+  "repo": "https://github.com/NVIDIA/cutlass.git",
+  "commit": "147f5673d0c1c3dcf66f78d677fd647e4a020219",
+  "tree": "67435e0794c3c8d340bc0c9592952cddde20c875",
+  "submodule_path": "csrc/cutlass",
+  "install_path": "/opt/infb-deps/flashmla-cutlass"
+ },
+ "transforms": {
+  "csrc/api/api.cpp": {
+   "preimage_blob": "f43f2a09f5f7f0fd1ef3d1ab671240a229828d36",
+   "operation": "supplied: the two sparse registrations become import-safe pybind11 callables raising NotImplementedError, the sparse headers' includes are removed; reference: unchanged",
+   "supplied": {
+    "includes_old": "#include \"sparse_fwd.h\"\n#include \"sparse_decode.h\"\n#include \"dense_decode.h\"\n#include \"dense_fwd.h\"\n",
+    "includes_new": "#include \"dense_decode.h\"\n#include \"dense_fwd.h\"\n\n// Inference-Bench (the DeepSeek-V4 kernel/state revision): the optimized sparse attention implementation is not\n// supplied in this starting tree. The two sparse entry points stay registered, so the extension imports, and raise\n// NotImplementedError when called; their contract is /app/eval/deepseek_v4_flash/kernels/README.md.\nnamespace {\n[[noreturn]] void infb_sparse_unavailable(const char *name) {\n    PyErr_Format(PyExc_NotImplementedError,\n                 \"flash_mla.cuda.%s: the sparse attention implementation is not supplied in this starting tree \"\n                 \"(its contract: /app/eval/deepseek_v4_flash/kernels/README.md)\", name);\n    throw pybind11::error_already_set();\n}\n}  // namespace\n",
+    "registrations": [
+     [
+      "    m.def(\"sparse_decode_fwd\", &sparse_attn_decode_interface);\n",
+      "    m.def(\"sparse_decode_fwd\", [](const pybind11::args &, const pybind11::kwargs &) { infb_sparse_unavailable(\"sparse_decode_fwd\"); });\n"
+     ],
+     [
+      "    m.def(\"sparse_prefill_fwd\", &sparse_attn_prefill_interface);\n",
+      "    m.def(\"sparse_prefill_fwd\", [](const pybind11::args &, const pybind11::kwargs &) { infb_sparse_unavailable(\"sparse_prefill_fwd\"); });\n"
+     ]
+    ]
+   },
+   "output_sha256": {
+    "supplied": "01d49fcce49b84f835b9f724f2e0b72218ee3cfb2edc0d2e79fb451f8227d733",
+    "reference": "2984a034be9ded097f5a48cd81e89f62eb59aa397198948bf1f3608d5f4db499"
+   }
+  },
+  "setup.py": {
+   "preimage_blob": "513b435514874c851157442ed51bd093de305b81",
+   "operation": "both: no git-submodule call and the fixed local version (offline packaging); supplied only: the source list without the entries under the withheld subtrees",
+   "packaging": [
+    [
+     "subprocess.run([\"git\", \"submodule\", \"update\", \"--init\", \"csrc/cutlass\"])\n",
+     "# Inference-Bench: CUTLASS is supplied at csrc/cutlass, a symlink to the generic checkout at\n# /opt/infb-deps/flashmla-cutlass; nothing is fetched at build time.\n"
+    ],
+    [
+     "try:\n    cmd = ['git', 'rev-parse', '--short', 'HEAD']\n    rev = '+' + subprocess.check_output(cmd).decode('ascii').rstrip()\nexcept Exception as _:\n    now = datetime.now()\n    date_time_str = now.strftime(\"%Y-%m-%d-%H-%M-%S\")\n    rev = '+' + date_time_str\n",
+     "# Inference-Bench: a fixed local version, never the enclosing repository's revision or the clock.\nrev = '+9241ae3.day0'\n"
+    ]
+   ],
+   "supplied": {
+    "sources": [
+     "        sources=[\n            # API\n            \"csrc/api/api.cpp\",\n\n            # Misc kernels for decoding\n            \"csrc/smxx/decode/get_decoding_sched_meta/get_decoding_sched_meta.cu\",\n            \"csrc/smxx/decode/combine/combine.cu\",\n\n            # sm90 dense decode\n            \"csrc/sm90/decode/dense/instantiations/fp16.cu\",\n            \"csrc/sm90/decode/dense/instantiations/bf16.cu\",\n\n            # sm90 sparse decode\n            \"csrc/sm90/decode/sparse_fp8/instantiations/model1_persistent_h64.cu\",\n            \"csrc/sm90/decode/sparse_fp8/instantiations/model1_persistent_h128.cu\",\n            \"csrc/sm90/decode/sparse_fp8/instantiations/v32_persistent_h64.cu\",\n            \"csrc/sm90/decode/sparse_fp8/instantiations/v32_persistent_h128.cu\",\n\n            # sm90 sparse prefill\n            \"csrc/sm90/prefill/sparse/fwd.cu\",\n            \"csrc/sm90/prefill/sparse/instantiations/phase1_k512.cu\",\n            \"csrc/sm90/prefill/sparse/instantiations/phase1_k512_topklen.cu\",\n            \"csrc/sm90/prefill/sparse/instantiations/phase1_k576.cu\",\n            \"csrc/sm90/prefill/sparse/instantiations/phase1_k576_topklen.cu\",\n\n            # sm100 dense prefill & backward\n            \"csrc/sm100/prefill/dense/fmha_cutlass_fwd_sm100.cu\",\n            \"csrc/sm100/prefill/dense/fmha_cutlass_bwd_sm100.cu\",\n\n            # sm100 sparse prefill\n            \"csrc/sm100/prefill/sparse/fwd/head64/instantiations/phase1_k512.cu\",\n            \"csrc/sm100/prefill/sparse/fwd/head64/instantiations/phase1_k576.cu\",\n            \"csrc/sm100/prefill/sparse/fwd/head128/instantiations/phase1_k512.cu\",\n            \"csrc/sm100/prefill/sparse/fwd/head128/instantiations/phase1_k576.cu\",\n            \"csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/instantiations/phase1_prefill_k512.cu\",\n\n            # sm100 sparse decode\n            \"csrc/sm100/decode/head64/instantiations/v32.cu\",\n            \"csrc/sm100/decode/head64/instantiations/model1.cu\",\n            \"csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/instantiations/phase1_decode_k512.cu\",\n        ],\n",
+     "        sources=[\n            # API\n            \"csrc/api/api.cpp\",\n\n            # Misc kernels for decoding\n            \"csrc/smxx/decode/get_decoding_sched_meta/get_decoding_sched_meta.cu\",\n            \"csrc/smxx/decode/combine/combine.cu\",\n\n            # sm90 dense decode\n            \"csrc/sm90/decode/dense/instantiations/fp16.cu\",\n            \"csrc/sm90/decode/dense/instantiations/bf16.cu\",\n\n            # sm100 dense prefill & backward\n            \"csrc/sm100/prefill/dense/fmha_cutlass_fwd_sm100.cu\",\n            \"csrc/sm100/prefill/dense/fmha_cutlass_bwd_sm100.cu\",\n        ],\n"
+    ]
+   },
+   "output_sha256": {
+    "supplied": "8a0f95225defb64d8de2022f18c9f8a154c125cfc00d38cb41f705e71e59fcdd",
+    "reference": "917ab6979c93137dc96a50220d16f906694c72fd1e8af7d648905f8e7c32fc4b"
+   }
+  }
+ },
+ "sglang": {
+  "parent": "55224fff08518b2402680a5b1b9189dcc5b27dda",
+  "withheld": [
+   {
+    "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c4.cuh",
+    "source": "sglang",
+    "blob": "145ab1fb081e879959bde07bbc838bcc1744a98c",
+    "sha256": "03e9e65f8f9aaeed57be6645bb7b70e4aeb92fddc9b70e0c48253d3ca7e35d68",
+    "bytes": 20770,
+    "operation": "withheld from environment/kernel-prereq.patch",
+    "supplied": null,
+    "reference_only": true
+   },
+   {
+    "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c128.cuh",
+    "source": "sglang",
+    "blob": "3a89e8114ce58b35776bfde401a0596fe83508dc",
+    "sha256": "b8fe10888559c27c423f9930882673e3827e723998ad2eca9c772b3a50ee17ff",
+    "bytes": 19877,
+    "operation": "withheld from environment/kernel-prereq.patch",
+    "supplied": null,
+    "reference_only": true
+   },
+   {
+    "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c128_v2.cuh",
+    "source": "sglang",
+    "blob": "498f2601eeaa1756cde5911141121a15aa1feeb9",
+    "sha256": "a0d38166f88399fb7efc8535aa7077ca0b61c5a42ce8f37cda604659d320a1c5",
+    "bytes": 20421,
+    "operation": "withheld from environment/kernel-prereq.patch",
+    "supplied": null,
+    "reference_only": true
+   },
+   {
+    "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c128_online.cuh",
+    "source": "sglang",
+    "blob": "b497470606cfe86ef17056606d5a346295d60c58",
+    "sha256": "8c46f72a6efc603867b530712893d3ed0288b3bdff81b7433f1fb66603993c27",
+    "bytes": 31206,
+    "operation": "withheld from environment/kernel-prereq.patch",
+    "supplied": null,
+    "reference_only": true
+   },
+   {
+    "path": "python/sglang/jit_kernel/csrc/deepseek_v4/fused_norm_rope.cuh",
+    "source": "sglang",
+    "blob": "d3953578b925b8c1eac2e82f84d77077601479ce",
+    "sha256": "273e5149d61b7596ca70653a31a0455187ff5c53574181fb4d27e5ae9aa21473",
+    "bytes": 8429,
+    "operation": "withheld from environment/kernel-prereq.patch",
+    "supplied": null,
+    "reference_only": true
+   },
+   {
+    "path": "python/sglang/jit_kernel/csrc/deepseek_v4/store.cuh",
+    "source": "sglang",
+    "blob": "49f6f5596377f87863c4216109757a666c54182c",
+    "sha256": "5d6146f6defd76fdcbc3885fa687498d06249752e2a02d81e548dd424b23d0d6",
+    "bytes": 7873,
+    "operation": "withheld from environment/kernel-prereq.patch",
+    "supplied": null,
+    "reference_only": true
+   }
+  ]
+ },
+ "entries": [
+  {
+   "path": "third_party/flash_mla/csrc/sm100/decode/head64/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "401f3acf84fd0788b86135dbd187bce8c58fed86",
+   "operation": "withheld (subtree csrc/sm100/decode/head64)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/decode/head64/instantiations/model1.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "868ff0c8d6011401ddd5aa24a02948b420b562ce",
+   "operation": "withheld (subtree csrc/sm100/decode/head64)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/decode/head64/instantiations/v32.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "08ce093fcc5c1560e14a4a7ffd44bf5794dbb4e3",
+   "operation": "withheld (subtree csrc/sm100/decode/head64)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/decode/head64/kernel.cuh",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "7c46921ccf62ded66930975c1a7178940fa5fff4",
+   "operation": "withheld (subtree csrc/sm100/decode/head64)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/decode/head64/kernel.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "0b3c63c07722dabb34ce2619cf86bbbcebd7b68e",
+   "operation": "withheld (subtree csrc/sm100/decode/head64)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/common_subroutine.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "36ddab4ced43626cbbf18ab99c6aaed8fd60b880",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head128/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "6c846bb4f93681d443786a2e860b126060c2dc72",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head128/instantiations/phase1_k512.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "5dcec83b41e5f9415fd7d37f70b87ca91b011323",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head128/instantiations/phase1_k576.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "bfd01ced02e049760baff375aeb5a0a8763653c0",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head128/phase1.cuh",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "ec1192b984e61e7afe2b4548d6cd1b2c3504b1aa",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head128/phase1.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "b105780977e07a6aff5542353d35e574435dd873",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head64/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "8d6eb77acfdfd345291ad83f77598b4625165f4a",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head64/instantiations/phase1_k512.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "e1c87be9787966401a8cf386aefa6c7678223aa1",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head64/instantiations/phase1_k576.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "1bd214ee2abc2552a276ca7e4ed68092291f78b3",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head64/phase1.cuh",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "b510b27f0c4b7172bf2fa23e4d9c46be9d9be42e",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd/head64/phase1.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "2962389d8281164256278ba936e46cc224a2aa26",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "e48800781bbc11f6b95a5f5fe93b12ab41a4f66a",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/instantiations/phase1_decode_k512.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "a8b489561310ea0e6d10d3adb52a95a3f22ec2c9",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/instantiations/phase1_prefill_k512.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "2f17fed93a357158a1bb748aeb7126a709471099",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/phase1.cuh",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "388abc8776bc9dcbc724ec44a66914e119210178",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm100/prefill/sparse/fwd_for_small_topk/head128/phase1.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "d1a092a397f8a3bffca1d617cdc83433956f7ef9",
+   "operation": "withheld (subtree csrc/sm100/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/components/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "f38915ba52e7251780a498cc76564f7e7c47537d",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/components/dequant.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "0c4022d66fa184545798bf5c84bfbe796a2013cb",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/components/helpers.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "d47e49226e4138144c59e1423bac3aaa93a775b1",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "e5631f31131732cec82515a3602fae8683245394",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/instantiations/model1_persistent_h128.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "af5058f75b41d4ef92f6c1590e279aed6b0846d0",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/instantiations/model1_persistent_h64.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "902a591006a26e26f2e230b37744c48046ca8459",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/instantiations/v32_persistent_h128.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "972764263cdf90b16d2d3db9745932dd445a8cf0",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/instantiations/v32_persistent_h64.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "f7a3f19aa33d2eb9ae192227dcad8684e199877c",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/splitkv_mla.cuh",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "99945689b30ec057a79432ff1dec40f71a1d25dc",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/decode/sparse_fp8/splitkv_mla.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "13b659be4bdf6e0522c780a12331142a6e1a8035",
+   "operation": "withheld (subtree csrc/sm90/decode/sparse_fp8)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/config.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "75005664024b49d69da3cbaf003525cc6358d55f",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/fwd.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "eb62b5d39b8938e41bc58942e31d43ae086fa1c1",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/fwd.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "1c26d688cb1922d3d79c6f70c40c3661f0f40410",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/instantiations/phase1_k512.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "046cfb39e04c8f3900a3ad105ae04f3d4e9fcc07",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/instantiations/phase1_k512_topklen.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "45da9955ea474ef2697cc07826e89dbd5209123d",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/instantiations/phase1_k576.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "f35db00623679dc4789360cd26637a1915fb535b",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/instantiations/phase1_k576_topklen.cu",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "bd0f0ca6539501e4f1aac383fec725a5ddcc5a58",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/phase1.cuh",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "bf2fff84eeb877c00cb743db6ad7027cd99e997a",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/sm90/prefill/sparse/phase1.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "c315b2b6dc6a314c6781e5d78ecf38bac94a0a3f",
+   "operation": "withheld (subtree csrc/sm90/prefill/sparse)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/api/sparse_fwd.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "66d7111e5e2591b25580ae5c3ac3ca2c798fa6a4",
+   "operation": "withheld (sparse API header)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/api/sparse_decode.h",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "6df5c841ad4e8fca669edd19cd1d2dba2c7df6c0",
+   "operation": "withheld (sparse API header)",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "third_party/flash_mla/csrc/api/api.cpp",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "f43f2a09f5f7f0fd1ef3d1ab671240a229828d36",
+   "operation": "supplied: the two sparse registrations become import-safe pybind11 callables raising NotImplementedError, the sparse headers' includes are removed; reference: unchanged",
+   "supplied": {
+    "sha256": "01d49fcce49b84f835b9f724f2e0b72218ee3cfb2edc0d2e79fb451f8227d733"
+   },
+   "reference": {
+    "sha256": "2984a034be9ded097f5a48cd81e89f62eb59aa397198948bf1f3608d5f4db499"
+   },
+   "reference_only": false
+  },
+  {
+   "path": "third_party/flash_mla/setup.py",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "513b435514874c851157442ed51bd093de305b81",
+   "operation": "both: no git-submodule call and the fixed local version (offline packaging); supplied only: the source list without the entries under the withheld subtrees",
+   "supplied": {
+    "sha256": "8a0f95225defb64d8de2022f18c9f8a154c125cfc00d38cb41f705e71e59fcdd"
+   },
+   "reference": {
+    "sha256": "917ab6979c93137dc96a50220d16f906694c72fd1e8af7d648905f8e7c32fc4b"
+   },
+   "reference_only": false
+  },
+  {
+   "path": "third_party/flash_mla/csrc/cutlass",
+   "source": "flashmla",
+   "revision": "9241ae3ef9bac614dd25e45e507e089f888280e0",
+   "preimage_blob": "147f5673d0c1c3dcf66f78d677fd647e4a020219",
+   "operation": "gitlink replaced by a symlink to /opt/infb-deps/flashmla-cutlass",
+   "supplied": {
+    "symlink": "/opt/infb-deps/flashmla-cutlass"
+   },
+   "reference_only": false
+  },
+  {
+   "path": "/opt/infb-deps/flashmla-cutlass",
+   "source": "cutlass",
+   "revision": "147f5673d0c1c3dcf66f78d677fd647e4a020219",
+   "preimage_tree": "67435e0794c3c8d340bc0c9592952cddde20c875",
+   "operation": "exported without Git history",
+   "supplied": {
+    "tree": "67435e0794c3c8d340bc0c9592952cddde20c875"
+   },
+   "reference_only": false
+  },
+  {
+   "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c4.cuh",
+   "source": "sglang",
+   "preimage_blob": "145ab1fb081e879959bde07bbc838bcc1744a98c",
+   "operation": "withheld from environment/kernel-prereq.patch",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c128.cuh",
+   "source": "sglang",
+   "preimage_blob": "3a89e8114ce58b35776bfde401a0596fe83508dc",
+   "operation": "withheld from environment/kernel-prereq.patch",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c128_v2.cuh",
+   "source": "sglang",
+   "preimage_blob": "498f2601eeaa1756cde5911141121a15aa1feeb9",
+   "operation": "withheld from environment/kernel-prereq.patch",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "python/sglang/jit_kernel/csrc/deepseek_v4/c128_online.cuh",
+   "source": "sglang",
+   "preimage_blob": "b497470606cfe86ef17056606d5a346295d60c58",
+   "operation": "withheld from environment/kernel-prereq.patch",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "python/sglang/jit_kernel/csrc/deepseek_v4/fused_norm_rope.cuh",
+   "source": "sglang",
+   "preimage_blob": "d3953578b925b8c1eac2e82f84d77077601479ce",
+   "operation": "withheld from environment/kernel-prereq.patch",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "python/sglang/jit_kernel/csrc/deepseek_v4/store.cuh",
+   "source": "sglang",
+   "preimage_blob": "49f6f5596377f87863c4216109757a666c54182c",
+   "operation": "withheld from environment/kernel-prereq.patch",
+   "supplied": null,
+   "reference_only": true
+  },
+  {
+   "path": "/model/deepseek-ai/DeepSeek-V4-Flash/inference/kernel.py",
+   "source": "huggingface",
+   "revision": "60d8d70770c6776ff598c94bb586a859a38244f1",
+   "preimage_sha256": "59b325083d7103975cba025bd0d60ea343bb82d8fff53088afb7c04bd380c0c2",
+   "operation": "stub sparse_attn_kernel and the sparse_attn wrapper body, applied by environment/fetch_model.py in its download step",
+   "supplied": {
+    "sha256": "8726d5a7250bb2934be70c0ffe85422252547ead75ca718cea9420239efab9fb",
+    "size": 19265
+   },
+   "reference_only": false,
+   "original_is_reference_only": true
+  },
+  {
+   "path": "/opt/sglang/lib/python3.12/site-packages/sgl_kernel/flashmla_ops.abi3.so",
+   "source": "pypi sglang-kernel (environment/lock/requirements.lock)",
+   "revision": "0.4.2.post1",
+   "operation": "removed in the layer that installs sglang-kernel (the alternate installed FlashMLA copy)",
+   "supplied": null,
+   "reference_only": false
+  }
+ ]
+}

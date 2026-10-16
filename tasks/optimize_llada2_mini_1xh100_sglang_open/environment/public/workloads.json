@@ -1,0 +1,39 @@
+{
+  "workloads": [
+    {
+      "name": "dllm_concurrency_sweep",
+      "_comment": "One workload, swept over four concurrencies. NOT three shapes. Under the `custom` dataset loader INPUT LENGTH IS NOT A FLAG -- it is whatever the bank's text tokenizes to -- so a prefill-heavy variant would mean shipping a SECOND bank at a higher shot count rather than changing a flag. Concurrency, by contrast, IS a flag, and on this model it is where the headroom is. One bank, one shape, four concurrencies, one server boot for all four. NOT named `high_load`, and that is forced rather than chosen: `high_load` carries a contract that its profiles are EXACTLY c16/c32/c64, and this sweep adds c1. The escape hatch for a different shape is a distinct workload name -- mtp_longctx_8k does the same -- which makes that check skip this task instead of being widened for everyone. The metric follows the name, so _paired_helper.PRIMARY_METRIC carries an explicit `dllm_concurrency_sweep -> request_throughput` entry.",
+      "input_len": 866,
+      "output_len": 448,
+      "num_prompts": 192,
+      "dataset": "custom",
+      "prompt_bank": "gsm8k_bench_bank.jsonl",
+      "profiles": [
+        {
+          "name": "c1",
+          "pattern": "closed_loop",
+          "concurrency": 1,
+          "num_prompts": 32
+        },
+        {
+          "name": "c16",
+          "pattern": "closed_loop",
+          "concurrency": 16,
+          "num_prompts": 192
+        },
+        {
+          "name": "c32",
+          "pattern": "closed_loop",
+          "concurrency": 32,
+          "num_prompts": 192
+        },
+        {
+          "name": "c64",
+          "pattern": "closed_loop",
+          "concurrency": 64,
+          "num_prompts": 192
+        }
+      ]
+    }
+  ]
+}

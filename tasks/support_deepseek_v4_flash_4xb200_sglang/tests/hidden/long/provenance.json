@@ -1,0 +1,3884 @@
+{
+ "what": "per-token log-probabilities of the MODEL-AUTHOR implementation on the eight held-out long sequences",
+ "reference": {
+  "implementation": "inference/model.py from the checkpoint deepseek-ai/DeepSeek-V4-Flash at revision 60d8d70770c6776ff598c94bb586a859a38244f1, as for the 32 hidden sequences (tests/hidden/fidelity/provenance.json): model parallel 4, the checkpoint converted by the author's inference/convert.py, the one patched line in ParallelHead.get_logits",
+  "hardware": "4 x NVIDIA B200",
+  "procedure": "ONE model load per sequence, so each sequence is recorded at exactly its own length (max_seq_len = the sequence's length): the author implementation is not prefix-consistent across lengths (its 32k and 64k runs of one text agree at 3,745 of 32,767 positions). One prefill, model.forward(tokens[:, :-1], 0); log_softmax in float32 in chunks of 4,096 positions (per-position identical to the whole-sequence softmax)",
+  "harness": "the recording harness: the 32-sequence script with a chunked log-softmax and a per-sequence peak-memory record",
+  "proof": "run first in the same session: hidden prose-8192-00 reproduced 8,191 of 8,191 recorded values, max |diff| 0",
+  "recorded": "2026-09-25T01:24Z-01:42Z, 88-101 s per sequence"
+ },
+ "sequences": {
+  "count": 8,
+  "lengths": [
+   32768,
+   65536
+  ],
+  "kinds": [
+   "prose",
+   "code",
+   "math",
+   "structured"
+  ],
+  "seed": 20260925,
+  "draw": "a seeded draw over the source documents listed below",
+  "disjointness": "no 32-token window shared with the 32 hidden sequences or the four public examples (asserted on the token ids)",
+  "shared_windows_within": {
+   "long-prose-32768|long-prose-65536": 115,
+   "long-prose-32768|prefix-prose-1": 18,
+   "long-prose-65536|prefix-prose-0": 6,
+   "long-prose-65536|prefix-prose-1": 582,
+   "long-code-32768|long-code-65536": 105,
+   "long-code-32768|prefix-code-0": 106,
+   "long-code-65536|prefix-code-0": 154,
+   "long-code-65536|prefix-code-1": 13,
+   "long-structured-32768|long-structured-65536": 7436,
+   "long-structured-32768|prefix-structured-0": 2498,
+   "long-structured-32768|prefix-structured-1": 2987,
+   "long-structured-65536|prefix-structured-0": 2732,
+   "long-structured-65536|prefix-structured-1": 2724,
+   "prefix-code-0|prefix-code-1": 10,
+   "prefix-structured-0|prefix-structured-1": 1068
+  },
+  "skipped_documents": {
+   "prose": 1,
+   "code": 13,
+   "math": 0,
+   "structured": 0
+  },
+  "per_sequence": [
+   {
+    "id": "long-prose-32768",
+    "kind": "prose",
+    "n_tokens": 32768,
+    "ids_sha256": "f44f624e3813ac53a37e5ff9188fd6acda5e7218ad3491e71c7a7cfc3b64b637",
+    "source_documents": [
+     {
+      "source": "docs/platforms/ascend/ascend_npu_quantization.md",
+      "text_sha256": "1cfd5816c81ed8954b6613f7547f77514aa6d1344993810cb8b2b0cbe67c908c",
+      "tokens_taken": 3754
+     },
+     {
+      "source": "docs/references/multi_node_deployment/multi_node.md",
+      "text_sha256": "3d926a2066bbd8555eb58fe41ef6d59a2c3cfdea901fb637bcc07517ba108c90",
+      "tokens_taken": 1015
+     },
+     {
+      "source": "docs/advanced_features/speculative_decoding.md",
+      "text_sha256": "24f129094a00c59091e5fc75c0600543f5d9a5feb97fdae70d68f9cc2384ad77",
+      "tokens_taken": 7298
+     },
+     {
+      "source": "docs/advanced_features/epd_disaggregation.md",
+      "text_sha256": "8ae9a242802c85ceeeb4b5bba1ac16c766e0251ee4bdedc54859a5d17f3edb1f",
+      "tokens_taken": 2002
+     },
+     {
+      "source": "docs/diffusion/installation.md",
+      "text_sha256": "cb6090056078247689f653245c447966b1e8976877f2e3ffc3f90b606626d298",
+      "tokens_taken": 1072
+     },
+     {
+      "source": "docs/developer_guide/development_guide_using_docker.md",
+      "text_sha256": "4b2087e891d781216fe267b0f710c75e6870ee271bc0728d279e09621291a32f",
+      "tokens_taken": 1626
+     },
+     {
+      "source": "docs/platforms/ascend/ascend_npu_support_features.md",
+      "text_sha256": "09395c9dad5698d2307f0c648a3cb22423245481eb7b1e28f4a8f5537c1c84fe",
+      "tokens_taken": 12093
+     },
+     {
+      "source": "docs/platforms/ascend/ascend_npu_deepseek_example.md",
+      "text_sha256": "c8b5bcbe178b69393c7af32a6801e644e1dca4443aee5797bc1a24397ce12807",
+      "tokens_taken": 3116
+     },
+     {
+      "source": "docs/platforms/ascend_npu_ring_sp_performance.md",
+      "text_sha256": "bad05241c42696694c4fabec0d8fe6d4082c161d388d708aad631fcb7163d29e",
+      "tokens_taken": 640
+     },
+     {
+      "source": "docs/supported_models/text_generation/multimodal_language_models.md",
+      "text_sha256": "94d670f22ee105dec3f4e7ade1cce6bb45a4c3b09c0783d0878400dcbe664ae8",
+      "tokens_taken": 152
+     }
+    ],
+    "author_run_seconds": 93.886,
+    "author_run_peak_gib": 77.01
+   },
+   {
+    "id": "long-prose-65536",
+    "kind": "prose",
+    "n_tokens": 65536,
+    "ids_sha256": "24abd5b3347152e360f35f64db955886cfda0149e1d9b97e10ca41a48c45d972",
+    "source_documents": [
+     {
+      "source": "docs/advanced_features/sglang_for_rl.md",
+      "text_sha256": "1f0f961e443726f916e6b82253ae9c1299bb7204a8e657c06467a4b840d2f244",
+      "tokens_taken": 3787
+     },
+     {
+      "source": "docs/references/custom_chat_template.md",
+      "text_sha256": "fcb2f0054532fe47597ae6ed322d7fbd0ff172f16862860905eecebe262c4d04",
+      "tokens_taken": 516
+     },
+     {
+      "source": "docs/developer_guide/msprobe_debugging_guide.md",
+      "text_sha256": "92d8ff3314ca8b22159bd1ba7117e024cc60c436719bf098f44d18a1f3fda70c",
+      "tokens_taken": 6159
+     },
+     {
+      "source": "docs/advanced_features/quantization.md",
+      "text_sha256": "92c507232f85034bc14c02f24c4c86dd86d3d29becfb70af44540bb0076959bc",
+      "tokens_taken": 7967
+     },
+     {
+      "source": "docs/references/production_metrics.md",
+      "text_sha256": "c4d99b4adb42f144b9accaab1883649a967be2217e6e0fed07e7a60b6b0b514b",
+      "tokens_taken": 5846
+     },
+     {
+      "source": "docs/references/frontend/choices_methods.md",
+      "text_sha256": "82e2e82eaae3dc646fd4ab29cae97038519e75196dff71e8b234774e468cb993",
+      "tokens_taken": 663
+     },
+     {
+      "source": "docs/platforms/cpu_server.md",
+      "text_sha256": "61fcf4107b8893a3de90592393bb64f2025340671cef7956fda043d26b06b878",
+      "tokens_taken": 3893
+     },
+     {
+      "source": "docs/platforms/amd_gpu.md",
+      "text_sha256": "f47c4c79c9ea2c9eca4724004478cea18f0618a4b9d2c9490e1afb8427648f0f",
+      "tokens_taken": 2234
+     },
+     {
+      "source": "docs/advanced_features/dp_dpa_smg_guide.md",
+      "text_sha256": "24c01c66bb5347b2396427be820c0043ad586a1ad921950c13af3fe9ad5bb628",
+      "tokens_taken": 3748
+     },
+     {
+      "source": "docs/supported_models/text_generation/diffusion_language_models.md",
+      "text_sha256": "c7a9f6a31e3f633cd89a4195e89a03406cfe87c707ba75dc702e307e653ec540",
+      "tokens_taken": 1038
+     },
+     {
+      "source": "docs/supported_models/extending/modelscope.md",
+      "text_sha256": "a7f3f8e4eeac4d917671f33319c42541f248ee4fabbb2cabc394ea7f9829daf6",
+      "tokens_taken": 278
+     },
+     {
+      "source": "docs/supported_models/retrieval_ranking/rerank_models.md",
+      "text_sha256": "4b2556f06654a62d1e0d9013cbb73237e942eaeed20a6599ffc0b15682dbbd46",
+      "tokens_taken": 3100
+     },
+     {
+      "source": "docs/diffusion/environment_variables.md",
+      "text_sha256": "f59ca37919f9928d95560ba31fc5ed8176cd137b36364e927df93611a9cd2f56",
+      "tokens_taken": 1824
+     },
+     {
+      "source": "docs/developer_guide/evaluating_new_models.md",
+      "text_sha256": "ef22621fa4d027b99a4789910c6fb38b03b8c7708709dd499d1ef2d3b26ec231",
+      "tokens_taken": 977
+     },
+     {
+      "source": "docs/references/faq.md",
+      "text_sha256": "1e6bce58d96c855bd3e2589b42666066adc66386a5386b572f91a7efce764870",
+      "tokens_taken": 748
+     },
+     {
+      "source": "docs/advanced_features/hicache_design.md",
+      "text_sha256": "60134a62895e5f535e120447ee7b283616252b356bfbac9e7600860eacba8c02",
+      "tokens_taken": 4076
+     },
+     {
+      "source": "docs/supported_models/retrieval_ranking/embedding_models.md",
+      "text_sha256": "8179776fe5b2fd867eb491e7463772cd507deb2161b51defe71be96e62b18ac1",
+      "tokens_taken": 1276
+     },
+     {
+      "source": "docs/platforms/ascend/ascend_npu_glm5_examples.md",
+      "text_sha256": "332392a1d3266507a6da098359e1e9a0f337381d16ebb04ee3f5c0fe431e671b",
+      "tokens_taken": 2249
+     },
+     {
+      "source": "docs/advanced_features/pipeline_parallelism.md",
+      "text_sha256": "c76a4eadf43e9782edc9c121ebeea042c4bff594d5a6ade0006ae784c29a2662",
+      "tokens_taken": 2991
+     },
+     {
+      "source": "docs/diffusion/contributing.md",
+      "text_sha256": "feff7df391443e6c9784135524239ab70a60b79324431e4c838b1428596c7130",
+      "tokens_taken": 711
+     },
+     {
+      "source": "docs/references/post_training_integration.md",
+      "text_sha256": "3a578aeba550a824ed71c2b1dd7276232080482c30b623927e721dd1cdbf765c",
+      "tokens_taken": 736
+     },
+     {
+      "source": "docs/supported_models/specialized/reward_models.md",
+      "text_sha256": "fb7bb144fd5137c8cadcd0d0c22ad9c77122f1496253b29e8aec784d26c68c3e",
+      "tokens_taken": 523
+     },
+     {
+      "source": "docs/platforms/ascend/mindspore_backend.md",
+      "text_sha256": "4442d4db4647d8885ea2df398c0b6eb33a39beb92410a4ed4d2984a343ad979c",
+      "tokens_taken": 1062
+     },
+     {
+      "source": "docs/basic_usage/qwen3_vl.md",
+      "text_sha256": "6949c3a46809a535545d84b07b7202c2f9afb7d50b75c0f2010fc4f6de1dcb2d",
+      "tokens_taken": 1196
+     },
+     {
+      "source": "docs/advanced_features/cuda_graph_for_multi_modal_encoder.md",
+      "text_sha256": "bd1532dd18f624894091b330f49831cda84268908436d5ca0031e312d420522b",
+      "tokens_taken": 910
+     },
+     {
+      "source": "docs/basic_usage/qwen3_5.md",
+      "text_sha256": "6e59c2122094beb23876e37a68677268777c4ab0fe762fa763494569928d035a",
+      "tokens_taken": 826
+     },
+     {
+      "source": "docs/advanced_features/deterministic_inference.md",
+      "text_sha256": "5251f06ae93450f60a714982d40fc781da61dbfed64c5c7659365b6e28338c06",
+      "tokens_taken": 1320
+     },
+     {
+      "source": "docs/diffusion/performance/profiling.md",
+      "text_sha256": "9bf5dc11db86ae5b36e65a356e7fcdb6eb8917f65ae496af5692f91b746223c5",
+      "tokens_taken": 1128
+     },
+     {
+      "source": "docs/advanced_features/pd_disaggregation.md",
+      "text_sha256": "ec81f056192a82b038249b6e3317a807f3102f42e3032624a3ccbeede0b6eccc",
+      "tokens_taken": 3754
+     }
+    ],
+    "author_run_seconds": 98.958,
+    "author_run_peak_gib": 114.63
+   },
+   {
+    "id": "long-code-32768",
+    "kind": "code",
+    "n_tokens": 32768,
+    "ids_sha256": "ce6577a14a8f8b2b76adc5cb14f365f866d72c6c686382c6a5416fac0e1c6b47",
+    "source_documents": [
+     {
+      "source": "python/sglang/srt/layers/quantization/compressed_tensors/schemes/__init__.py",
+      "text_sha256": "0942398e23c6397e2485f1294f186cce10f1d7e7f7118f72203cf3975311bc0f",
+      "tokens_taken": 644
+     },
+     {
+      "source": "python/sglang/srt/lora/backend/lmhead_mixing.py",
+      "text_sha256": "8b8aec15cfd36a3515b146fbb6ca214e168e1ea7081fa450505bdc69121b9b0a",
+      "tokens_taken": 676
+     },
+     {
+      "source": "python/sglang/srt/function_call/pythonic_detector.py",
+      "text_sha256": "1cd3ddce7ad310c782f79876e55cbe767acdec7cfca1cae3419a7847132c3944",
+      "tokens_taken": 1926
+     },
+     {
+      "source": "python/sglang/srt/layers/attention/mamba/ops/ssd_combined.py",
+      "text_sha256": "0f98cd2e9a9d6f743d7d334ccd89b18f2336dbbaa5665bdbe4cd4d08024d9648",
+      "tokens_taken": 2645
+     },
+     {
+      "source": "python/sglang/srt/compilation/compile.py",
+      "text_sha256": "1e4e67073f20cca1ceb1d1d56ceed4667561e8a8b5b029483c4b4a3aa071a603",
+      "tokens_taken": 1745
+     },
+     {
+      "source": "python/sglang/srt/debug_utils/schedule_simulator/__main__.py",
+      "text_sha256": "6a22701f5fa52c27ffba46d8ed6f00c6588cee1189cac2b6eac09fd7d63d13e4",
+      "tokens_taken": 53
+     },
+     {
+      "source": "python/sglang/srt/lora/triton_ops/__init__.py",
+      "text_sha256": "586852dfde99e8f2c980c4974585b0fe70deb78316dbeae2e6b3e1d9685972a5",
+      "tokens_taken": 314
+     },
+     {
+      "source": "python/sglang/srt/models/registry.py",
+      "text_sha256": "ecd264ebeb3d3fc49de63b077ed6e024b4e48f62f5ba9baf16113dab0d82b717",
+      "tokens_taken": 1077
+     },
+     {
+      "source": "python/sglang/srt/entrypoints/context.py",
+      "text_sha256": "7b9b802d3b9a435b7af2e6a74f624886937b1a4c6ddde63e619ef34222f67a65",
+      "tokens_taken": 1891
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/utils.py",
+      "text_sha256": "46776d5cd84eb1468d010225f625bd086e6798c5ad219f91100d1ee94f32f73d",
+      "tokens_taken": 4866
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/awq/schemes/awq_linear.py",
+      "text_sha256": "f8f3f116fbef71ef8fb95eae4de7d28f1fa645b9943707bb003cba06d3fd5515",
+      "tokens_taken": 865
+     },
+     {
+      "source": "python/sglang/srt/compilation/compiler_interface.py",
+      "text_sha256": "c6b043f29919ce89e8aa3f543f883a0464c238443f7d7e451ab5406e4ede93d4",
+      "tokens_taken": 4296
+     },
+     {
+      "source": "python/sglang/srt/batch_overlap/operations_strategy.py",
+      "text_sha256": "845dbcd2354e6b312c1a43c23db676b84710842bf65a6f95ae626818870ed100",
+      "tokens_taken": 2432
+     },
+     {
+      "source": "python/sglang/srt/mem_cache/allocator.py",
+      "text_sha256": "98d2123a255702e2ba5309157f669a1a82739a3045d638ca992b2fc531a44875",
+      "tokens_taken": 4464
+     },
+     {
+      "source": "python/sglang/srt/layers/attention/triton_ops/aiter_unified_attention.py",
+      "text_sha256": "4b295eeb1d77a7e40b3aae690ebdbfbe46258c90525317994a2b6f3164243a8b",
+      "tokens_taken": 835
+     },
+     {
+      "source": "python/sglang/srt/mem_cache/storage/hf3fs/hf3fs_usrbio_client.py",
+      "text_sha256": "dcdc16ae6f9b1c3307afcbc6af17cbfd1a0cebe1e538b03ebfcf4755fc53c2b5",
+      "tokens_taken": 1624
+     },
+     {
+      "source": "python/sglang/srt/connector/__init__.py",
+      "text_sha256": "680fc1e7349e490510f9a404a42850b72c57bbfe05357799f9036bdb242d1b26",
+      "tokens_taken": 409
+     },
+     {
+      "source": "python/sglang/srt/lora/triton_ops/kernel_utils.py",
+      "text_sha256": "cdafe7d0763c7baeeabf141bbe9d38ee75ea3631dc157d9263097bf37c1db6f4",
+      "tokens_taken": 169
+     },
+     {
+      "source": "python/sglang/srt/mem_cache/utils.py",
+      "text_sha256": "01d6be9bcb06905950f8e70b172ab61f322f96db64bf3c67f7fdb427a759c208",
+      "tokens_taken": 1837
+     }
+    ],
+    "author_run_seconds": 88.085,
+    "author_run_peak_gib": 77.01
+   },
+   {
+    "id": "long-code-65536",
+    "kind": "code",
+    "n_tokens": 65536,
+    "ids_sha256": "9d8e48b8e8ceba4c94a6dba47abb0d61649b115ff0dff147f4264ee16004a06e",
+    "source_documents": [
+     {
+      "source": "python/sglang/srt/models/glm4v_moe.py",
+      "text_sha256": "1168bfbe4a74541a9b9d77b65fefb99e50773d9ba843dcaa36ec6be96afd8f8e",
+      "tokens_taken": 2688
+     },
+     {
+      "source": "python/sglang/srt/layers/attention/linear/kernels/kernel_backend.py",
+      "text_sha256": "5f234522876ec8d3543488ccef1e4adca62c66b37ea4d742316412887e89914d",
+      "tokens_taken": 393
+     },
+     {
+      "source": "python/sglang/srt/debug_utils/comparator/aligner/reorderer/planner.py",
+      "text_sha256": "706bdd7b9ad08ba66229438196cf430d7e981c9454b2f82414c66acd978cdfd2",
+      "tokens_taken": 596
+     },
+     {
+      "source": "python/sglang/srt/speculative/dflash_utils.py",
+      "text_sha256": "c7afffb573d33c32f59a48960bdc53391553e802f31c90af37128a9b8a9cece8",
+      "tokens_taken": 5955
+     },
+     {
+      "source": "python/sglang/srt/compilation/piecewise_context_manager.py",
+      "text_sha256": "fdc49d733eb2ef500aa7b78e05d83d1cf4c4f4ea4e5910584d45fb90da65bed4",
+      "tokens_taken": 836
+     },
+     {
+      "source": "python/sglang/srt/entrypoints/openai/transcription_adapters/__init__.py",
+      "text_sha256": "9e3b6a9a62982d61f0e3749c71d26d3a158331103aa1d6e0b19eeb12a6f4b5cf",
+      "tokens_taken": 216
+     },
+     {
+      "source": "python/sglang/srt/sampling/custom_logit_processor.py",
+      "text_sha256": "43cb66560af2d9c60b03735833923f0ec322386870ab5a70478f5a9bb42d2bd4",
+      "tokens_taken": 1683
+     },
+     {
+      "source": "python/sglang/srt/debug_utils/schedule_simulator/gpu_state.py",
+      "text_sha256": "14b3a6961c92dbd7e12c7378e8fb3cb271f1d656d9691e2c5e2cee6fc8148f6f",
+      "tokens_taken": 604
+     },
+     {
+      "source": "python/sglang/srt/models/deepseek_common/deepseek_weight_loader.py",
+      "text_sha256": "7f6b2d9aab743eec0314f39107b0788be0675e819cf72190a89fca7925e35ee1",
+      "tokens_taken": 6922
+     },
+     {
+      "source": "python/sglang/srt/layers/attention/merge_state.py",
+      "text_sha256": "3a75a6355e8b613523d32f120b2fc82bb03dababfd6d9c11e3f5e22ce22f6eb9",
+      "tokens_taken": 410
+     },
+     {
+      "source": "python/sglang/srt/model_executor/input_buffers.py",
+      "text_sha256": "b913bd043ac84c1d87deebb4b6c32fd066e9a97491548acc27853fb648ad5289",
+      "tokens_taken": 491
+     },
+     {
+      "source": "python/sglang/srt/layers/dp_attention.py",
+      "text_sha256": "e848211138c738f300855277457d76e7241c80f42a37eae254674881b5ddbccf",
+      "tokens_taken": 5704
+     },
+     {
+      "source": "python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py",
+      "text_sha256": "ad4a253e12406cdc51d723fac5261e7e4255d71bd5c551ec355889d84a68f17f",
+      "tokens_taken": 9422
+     },
+     {
+      "source": "python/sglang/srt/batch_overlap/single_batch_overlap.py",
+      "text_sha256": "3c23bcfe109466ca63b46a925ac1ae1711c8d0703683673b3982c41b732f56df",
+      "tokens_taken": 1234
+     },
+     {
+      "source": "python/sglang/srt/utils/hf_transformers_patches.py",
+      "text_sha256": "f0dc7a542117fc79ea273d80821cc0f40ca71041ca1948fbc6785ac1791bd74f",
+      "tokens_taken": 4175
+     },
+     {
+      "source": "python/sglang/srt/speculative/spec_registry.py",
+      "text_sha256": "13aa555e7bb70f14eb8c6715f1b9dacfde48138fee1301aeba2e1fa75ce5cea7",
+      "tokens_taken": 951
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/quark/schemes/quark_w4a4_mxfp4.py",
+      "text_sha256": "d49ce04db8440e23a7979168f05643716dbf37f665e74a473d06dd7403ba1053",
+      "tokens_taken": 1332
+     },
+     {
+      "source": "python/sglang/srt/hardware_backend/gpu/quantization/awq_kernels.py",
+      "text_sha256": "9b2d1ac0e41510ef9086cd1bdff29f4b8a943c20e8199bba24e31773581f21eb",
+      "tokens_taken": 2428
+     },
+     {
+      "source": "python/sglang/srt/constrained/torch_ops/token_filter_torch_ops.py",
+      "text_sha256": "019bb1e4b1c1f9d133f4fcd3849c81f58677e6b6fe21c697828c8e3e71753041",
+      "tokens_taken": 522
+     },
+     {
+      "source": "python/sglang/srt/hardware_backend/npu/attention/ascend_backend.py",
+      "text_sha256": "cecee1f4e992ca43b06ec28a5b822631c4968509616b3e5ec057b374e28fb634",
+      "tokens_taken": 18974
+     }
+    ],
+    "author_run_seconds": 100.627,
+    "author_run_peak_gib": 114.63
+   },
+   {
+    "id": "long-math-32768",
+    "kind": "math",
+    "n_tokens": 32768,
+    "ids_sha256": "3cd6e3670adb5cca8dd49a9f9164b02b4156af206df928ae86136d568cdac7fc",
+    "source_documents": [
+     {
+      "source": "/public/gsm8k/test.jsonl:1027",
+      "text_sha256": "230101740d3e72139fe1a8a1551be24610919fff9b9adbf37f2e9ae28f04ed19",
+      "tokens_taken": 247
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1033",
+      "text_sha256": "890a87c99e44db782cb30444b470114611ac5d28b8660cc588d7764fc94cb274",
+      "tokens_taken": 167
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:326",
+      "text_sha256": "42a1498d9b474917474acbaea9dad074f15c771913fa1dfc59e55a8e35980683",
+      "tokens_taken": 247
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:990",
+      "text_sha256": "a4570adb1a8aa01145d190181d42e9b895a7b376d5af35d600fc40b292606be9",
+      "tokens_taken": 173
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1106",
+      "text_sha256": "ef3a213be7d52703b5b209a8c5dbccf0a7fbb2728af02a4363dde228989f4cce",
+      "tokens_taken": 235
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:235",
+      "text_sha256": "2a53332268f8bff20acbea36ec7acea047b9af1a17ddd7c886a7467f4ec08fc9",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1113",
+      "text_sha256": "0a49abe7e74be35f0760d4f27c438fb1382112a0b9ce2b569ec5fcb9d0683222",
+      "tokens_taken": 140
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:59",
+      "text_sha256": "649113821d462dcd4ad6e73f2e14e7c2a92aec4c851664e1eedba8bdedac6ecb",
+      "tokens_taken": 216
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:570",
+      "text_sha256": "3df5515e7068cc546de1411bc5f3445ae772d722ebb590b77cc211f7f72dcde5",
+      "tokens_taken": 121
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:729",
+      "text_sha256": "c053b6cc92a6829503c4d84a5d150c975309c78710b1e3907cc62af64e0b81a8",
+      "tokens_taken": 169
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1315",
+      "text_sha256": "91f1ce73b2323fc689b17888a21db1a7333d72c14e2d6d3eca5db36622c237b5",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:870",
+      "text_sha256": "2bc8153047ca231efd0019512b345b0a476b4a5259927958c1372af29e44ae9e",
+      "tokens_taken": 90
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1214",
+      "text_sha256": "b856a02b160f948b8b19d020ae58fc8005c4ce102ae27a5178cef3bf05a3516e",
+      "tokens_taken": 169
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1281",
+      "text_sha256": "8eed599d50a60d772adb23fa5b990c4560f8f38be95566d21bfe4b4b87aecba4",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:208",
+      "text_sha256": "5d904bdefcb1c59eb9fed654a21be08a9ee9c1a989f0520fdc382c4be7fb4fd0",
+      "tokens_taken": 155
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:37",
+      "text_sha256": "77d4329e9f8ec8d4d737438167eab023d2d70fc609c5c5762f8d52187e0cb98a",
+      "tokens_taken": 169
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:745",
+      "text_sha256": "2194c93ac1248bbcf4001d975b2d96ef2601b7a906a518657a07774c0786ae8e",
+      "tokens_taken": 139
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:629",
+      "text_sha256": "070100ee0dfd6ff53ecbf0ad9af2ca04c5c425b58c9b0b817aa94f0c5ea1f1b0",
+      "tokens_taken": 105
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:248",
+      "text_sha256": "27618da2d817a05c8b6c889c4959b5f0de758cb1ab3f939c5c9837b476ae49f8",
+      "tokens_taken": 144
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:722",
+      "text_sha256": "41098299978bdc41c8a6b9ced27932d04d18a08b072efd7a990c31b9dc28ac3e",
+      "tokens_taken": 278
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1267",
+      "text_sha256": "5c3df04fa772d25cc1ea4f77d898e65d6dcd342a0756cab29af4979333fbcd4f",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:329",
+      "text_sha256": "9c29bc18337754107a35eac556a70b3379e7e41beded1ab71fb234bad26df025",
+      "tokens_taken": 104
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:794",
+      "text_sha256": "e1493b67d883e6c17cbd26efd2a361005477d08da97d1cb4726065d566d21e38",
+      "tokens_taken": 173
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:985",
+      "text_sha256": "4951857cd870567e6d72bb1db1d1c69e880ac1fd3e6ff9d7f9842ffafdb6c8fe",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:275",
+      "text_sha256": "b4088ab3a0a48ee0c5239f5d3a72619fb82aaf7a8973310f38888d6fa6bd0014",
+      "tokens_taken": 169
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:738",
+      "text_sha256": "31550e2f782d898e091606162267b5e601531af3a4b997e06dc491663e820149",
+      "tokens_taken": 208
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:330",
+      "text_sha256": "ee2973f080d756ed27a783850fdf83836192d299ea3d44c1f32d75c81181878d",
+      "tokens_taken": 107
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:212",
+      "text_sha256": "12648602391a3b04bceea448811d8095e48e8b0bd2afc258f744ee04c355c00d",
+      "tokens_taken": 242
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:429",
+      "text_sha256": "5f412029da7f168d6df668ee01f832a357aaccc157e2662a6207077f5f5a005d",
+      "tokens_taken": 173
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:488",
+      "text_sha256": "b673d1760281a3c038d1bd154b01db83fbb40153d2c044fcb7a9d29b100c98bb",
+      "tokens_taken": 166
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1037",
+      "text_sha256": "f8cc7b2fedf7e0e6f3c315cce055ecf26c10083307ec9bb98cb3f1bf664a5395",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:811",
+      "text_sha256": "460efcc3da57e6c8fdaab5b8a6d1903619c8be37b8a918db2743ad9cc886e8b6",
+      "tokens_taken": 233
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:151",
+      "text_sha256": "f11405aa4322f928e440bc911086385dac539111bd3eb250efeaa68a3f159302",
+      "tokens_taken": 250
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:543",
+      "text_sha256": "2e8bec4234c2ebb0e85baff30c87c413cff55b87cf628e4246dcd2b4cda41e75",
+      "tokens_taken": 194
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:276",
+      "text_sha256": "62c1da96e0a5b6df52c58c49844ac1bede7346491c89c37779099930a989201d",
+      "tokens_taken": 265
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1189",
+      "text_sha256": "d260cec49fac120fecd8507d0dd1dbc1b4bf535fac9dba0649d1f7f88403b7b6",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1095",
+      "text_sha256": "05f86ed476a4b0db5e1285a85c5092ebde8a556bf38fce37103e3b7fad26bce3",
+      "tokens_taken": 351
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:358",
+      "text_sha256": "33dffbc76b2316c444ecf2bf99c686c90552224b15b304cb235de28392fb380a",
+      "tokens_taken": 184
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:732",
+      "text_sha256": "62b963a2ed631bed1617f227f4e8132b2c0c691e17055c0777f113ace21580ec",
+      "tokens_taken": 249
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:580",
+      "text_sha256": "1c64f58157bf0957ee155d62447b92b7276521a1eb48d1c6bb6cae31a4292002",
+      "tokens_taken": 73
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:196",
+      "text_sha256": "2a617d67738de480623eacf0550cdd865d40f8928d47c871e73b7fc9154ca7b5",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:507",
+      "text_sha256": "624e7e1cd9f3c477040133a9716a33ebde2b66e663cd4a2e4d8c6236b84d305e",
+      "tokens_taken": 167
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:213",
+      "text_sha256": "76d6773206e65128f1806c4847c3a47d4514bf95da75c1d18b5fa2167b5d7559",
+      "tokens_taken": 187
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:972",
+      "text_sha256": "3bfa733b173540b6df6c2cd08994eb673cb333666b058c0cf85ad8ca19bab277",
+      "tokens_taken": 197
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:384",
+      "text_sha256": "caf51010263c69c97c139d1e0ba564b9f493c5939813a00b3d3de32125121c38",
+      "tokens_taken": 228
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:165",
+      "text_sha256": "58dd82e08f0332b79145d9a84675f24ea4649054de8ed2cd59e3e6eb50d3d46e",
+      "tokens_taken": 133
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:200",
+      "text_sha256": "851a8f3538a13550a9695c5ed8b03e56a60b25c54e5653bc787b965feefa1b74",
+      "tokens_taken": 239
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1",
+      "text_sha256": "ec0d446f339a56572c833e15e14cb344798617c6a7a7369455741ed5a161cdf5",
+      "tokens_taken": 123
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:659",
+      "text_sha256": "8c2a49788f832f4f7ceb2892097130f0e69c73d4bb453b5835647ac718616d99",
+      "tokens_taken": 183
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:237",
+      "text_sha256": "38dabdcfa8ccb3e72b2b87e21c16a9a1867dd426bf6c136fa2fd0717f4caa271",
+      "tokens_taken": 154
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:933",
+      "text_sha256": "c0055d3c94e1a25dcebdc9d6eb76b3da97b9a466c17d606b272041ea645c938a",
+      "tokens_taken": 181
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:277",
+      "text_sha256": "612a0ee28e2892c6632317656c014ce0554afc52f694e92a951cc893e45e76f5",
+      "tokens_taken": 253
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:822",
+      "text_sha256": "0e7bf1cad809ebc62e60136a81e114b7cbf835be88ed6fc59059ab83b10bb54e",
+      "tokens_taken": 151
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:680",
+      "text_sha256": "b9ad21a9bbed1e8a953ef305dfbd4cb1d9f9df11c4399056a511321457f7041d",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1157",
+      "text_sha256": "b914e72366b36ede688b773d3834df648ab359656fd85d93ab887a62907001fc",
+      "tokens_taken": 265
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1063",
+      "text_sha256": "f161ff029eae5070918ce7d9e0deaa16b5ce70730c9a2db66420c5b9e5d5a5cc",
+      "tokens_taken": 226
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1102",
+      "text_sha256": "6d9f296f4b09e16fe9024863d074ac8471b4a95aa193ea6c66bd742b931db1ec",
+      "tokens_taken": 121
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:684",
+      "text_sha256": "6ba8bcc6bc3142b84d8d605de5fe232cf95eb02e770d1412f0e6637c7ca7ec6c",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:215",
+      "text_sha256": "4b550957d6e9eb6f48165c8dbe7587a5b5bec91a1845c540ae7503ee9bfcc176",
+      "tokens_taken": 256
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:28",
+      "text_sha256": "a80f25b23ac1c7469ba6ad5c29de010fe150ed2205b4694e8f26decee312947f",
+      "tokens_taken": 139
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:946",
+      "text_sha256": "109f05d6f90a184b3ae525514cf57b666092158f3279d6138784ecc3e6f19522",
+      "tokens_taken": 230
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:606",
+      "text_sha256": "c8c3454807b61ffa0a2f0b9a83097a4714420de4226c5fa1010d1f04c6119af4",
+      "tokens_taken": 238
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:716",
+      "text_sha256": "ab6316145667f314afb1dc840bf598633bae1af1b5e12698c2cbb2ec96687608",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:36",
+      "text_sha256": "4eb7a1c3a073843f5f963b7408dffea9356673c56e2b3d3bb04f4de33db05fbb",
+      "tokens_taken": 131
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1066",
+      "text_sha256": "aad72546b52143f397dcca31585b78f4c8ac059786e3626489db067ed4973f29",
+      "tokens_taken": 87
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1043",
+      "text_sha256": "4ff7e0646c71037068bd386eb0d55a0b120a6363a1820e7fc8f03af8c5d608a5",
+      "tokens_taken": 218
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:800",
+      "text_sha256": "3a45daae28b0009c929a3bc318b44a669274a0a8e62abcc9d21e53a14bc9d141",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:997",
+      "text_sha256": "e6e77da77b86ad4998d9e07859f7bd36688fdfb7ae852eeb04b5dba8cc6a9df6",
+      "tokens_taken": 199
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:412",
+      "text_sha256": "a506ad52d7f6227a44678be537b30164d8a2ee518e18b3ac0a9a26d9dca7f470",
+      "tokens_taken": 179
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:589",
+      "text_sha256": "74d39305b2b14aea8faa3f98085344590a09a9ff0fd40f4e4601d3cfb12ad47a",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1138",
+      "text_sha256": "c6f6559beaac11eb803074c8207f2843f6de45f17523846727308729e44df195",
+      "tokens_taken": 188
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:56",
+      "text_sha256": "d5489cf4bdad93fa2a60da4b995489b1e7925fc798afb3089ee383bbce52fe6a",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:152",
+      "text_sha256": "0a327ff66c3a6822ee953193164b6508f0e3fb7533fd6b4d459dba2a35e0e5e0",
+      "tokens_taken": 218
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:246",
+      "text_sha256": "4983ecb6e740cf7996ebc1b24571cce0e959fa8269c4adf4d4422cf440eea10b",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:766",
+      "text_sha256": "c112efca2717bba97d9ff73d657221b9941d0a68d375c0c78f6342ae81c8d2e8",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:5",
+      "text_sha256": "d3fc1d627c4e246b0011b90f2027af757178ede1e11901e32adbc44ecde56a74",
+      "tokens_taken": 204
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:124",
+      "text_sha256": "34f3b6a716d681f096c396a09bb41ec1fda0d1272efb9be2ddd25ac349ab5815",
+      "tokens_taken": 151
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1071",
+      "text_sha256": "3144457870f31663c9db604cbfada996fcf1b06ed7a2a230e73de42b03063819",
+      "tokens_taken": 267
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:33",
+      "text_sha256": "673f0cf77ff4d75b61f745b16cac2a292a5d8a5d91ad602802035d1f17eb36a7",
+      "tokens_taken": 88
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:613",
+      "text_sha256": "04af0fc7b9782f6ffa26ea307a33c272eee1af6fd6748b64cf6267969f47e3b2",
+      "tokens_taken": 184
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1312",
+      "text_sha256": "3a673d9a740d1300a890cfdfffd786891673429b4e31e7097fce35436f6ca4da",
+      "tokens_taken": 108
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:891",
+      "text_sha256": "32c4f8fa3414f1dada14a9dcd7471727edad5202b3b5ffc4e99c79e10cd51c4b",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1253",
+      "text_sha256": "f740198959beefa91104979fb64a586333fa5ffe3a5326369bfacdd58d0ded4d",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1210",
+      "text_sha256": "6b8fc94ef71b3357afd18c961c99ffce0679a6a3a8e0dc929d59893e35482ac7",
+      "tokens_taken": 352
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:428",
+      "text_sha256": "23508d575657095f5604311e25857d6cc8ae91fce1f9700b651d562a782f1b83",
+      "tokens_taken": 179
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:948",
+      "text_sha256": "a5386b97bcdd15417229c74e1a9c926d9ff6e7f382e60898c68c845e2799dac3",
+      "tokens_taken": 112
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1099",
+      "text_sha256": "f03b6509de322cfa79a3fe27bed7c8a606f3c45315471213c6b9bfb38d70a66f",
+      "tokens_taken": 90
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:885",
+      "text_sha256": "3f0c97e8be5a5a03e846e36348b122dc1b680ac80ac78118b26eacfc439a5246",
+      "tokens_taken": 130
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:694",
+      "text_sha256": "bdf4f9a8e2d466b2777fd919535fa6b1eab07b7f36095b5f552279696a2d4d3e",
+      "tokens_taken": 220
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:206",
+      "text_sha256": "d9876e191345de1ac1b0ed2a9d8a672c3d04aec9667c6e09002963fad769b096",
+      "tokens_taken": 199
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:244",
+      "text_sha256": "4fe5536fbe7d150a0df9e3d1227d297c2bfd85aa108283c30fae4ab728ca4d24",
+      "tokens_taken": 139
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:743",
+      "text_sha256": "7965f981d440e8cde67bec745e5865804b69cd7b1a57a7cf625042cc5c0c2ea0",
+      "tokens_taken": 155
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:599",
+      "text_sha256": "7f7c367fc18fdce4f8b84a05f5aaa81dd556c079fb77b7a216246acf0d76685d",
+      "tokens_taken": 194
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1122",
+      "text_sha256": "c346be8b51d133af46b62845c07d645f73bd7dff937b374251e465cc01f26a33",
+      "tokens_taken": 108
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1059",
+      "text_sha256": "0fbedf2840122767cbbf2ac9f823f2d9b8dd89160d1ee6c9fc54d2a3ce2fe1d5",
+      "tokens_taken": 121
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:681",
+      "text_sha256": "19c79bdaefb4e8dddec4330a64f1355d42dd73dbc400ead358690a8fe926dbd6",
+      "tokens_taken": 143
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:332",
+      "text_sha256": "1127f3f24d6e55b56dd94f01245f9b0dc7f17dd21c3c4a84b83c09826b7ad2b4",
+      "tokens_taken": 410
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:385",
+      "text_sha256": "3b49cbdcfe870d1a71241b04f6abb9785b6d0ad9413d5564ac66391283b4917d",
+      "tokens_taken": 137
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:942",
+      "text_sha256": "ea4e99037d423940595b094e6c15a7ed788c0e76f8dcd3808f3bb694a7579054",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:976",
+      "text_sha256": "73abe9da70fa457bd402f3e61badc6259f56e2cc4d6f8c3735b4da057f570585",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1035",
+      "text_sha256": "94915507c4505bbb2fdcbc934e95e2752a15af2b305dceaeb68cc910ce6aa9c7",
+      "tokens_taken": 105
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:598",
+      "text_sha256": "1239cf9c3e5a2a007d23b958a81aa1d4db0e066fc90ec4fb79bf55914c35b36c",
+      "tokens_taken": 108
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:88",
+      "text_sha256": "727efa6dba1b1cabb221134f0d18617b84d84256522edf19a5f69e83564468c6",
+      "tokens_taken": 211
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1171",
+      "text_sha256": "4b33d2aa9b38c636bd3a1175055e64d4903de91592bf832251d7a30d99f2d844",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:690",
+      "text_sha256": "8ba5f5320fcb6af284822c600c7104b0aacec4ca17cb4de5f00237c50942ed61",
+      "tokens_taken": 202
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:203",
+      "text_sha256": "9173ae5560af5011a2fd82246a529d184e123d6ef37d92f533ad664b04a3ed98",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:865",
+      "text_sha256": "ad5056ae957ab3856f0ebe59acd08762742475871e1abb51ebaec5ea7e1eb2c1",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:273",
+      "text_sha256": "2c1fb4142ed81616e67f8b8e52671a737cd9e04f4a6e87ad90b9c294bf0a7190",
+      "tokens_taken": 115
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:210",
+      "text_sha256": "2e5fe1e311e66553e8440e074eeae07fedbf09dd0e324edf1ab5d5106bd571eb",
+      "tokens_taken": 191
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:994",
+      "text_sha256": "997ffc73c065b199f92686a31b4de627fea984aa2d37b720fe54666710cf3e3d",
+      "tokens_taken": 231
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:238",
+      "text_sha256": "7431b8263482a3cdde7b3d100abc7ba65f5f8afae84195a8a4ccfbc725ab7678",
+      "tokens_taken": 99
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:924",
+      "text_sha256": "0cd6e1be714199cef12c5f436199475fc159ebd0ce7dca64a557256fee4bfc31",
+      "tokens_taken": 187
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:683",
+      "text_sha256": "9e441462ba0d8888a6a6b1764954dd45ee349e73a06c2492e91d91f2af90d955",
+      "tokens_taken": 167
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1137",
+      "text_sha256": "78ecd93f97cd4b41db762a14c441f1b2790096c0d44eb268d8072a87b1523ac1",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:19",
+      "text_sha256": "a2bb5a1940125d05a412187a4f0e0d133602be55eabf298ba2120fefc337f067",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1096",
+      "text_sha256": "7ff2e009fc208fa723bccbf8e2eb26ffb4fe4e1d7cd34f3e6d71a341ec1f2858",
+      "tokens_taken": 162
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:577",
+      "text_sha256": "353646ba48562d94ec59d974f9bc55610d927888c3ccb81121a20dde0ec38a60",
+      "tokens_taken": 242
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:671",
+      "text_sha256": "0143fbefd0d6d9c30308a4164c3498fc575869da2a6ca55fc763008a7b391ad8",
+      "tokens_taken": 148
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1319",
+      "text_sha256": "198d5c06446c6b8223453915c345f78dcc064bca1adc40301bc90f41daab937b",
+      "tokens_taken": 111
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1072",
+      "text_sha256": "8bd39ec8b9ee4c15c91464ad88235770a797658f94f15421037806aa79dc0ae1",
+      "tokens_taken": 226
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:992",
+      "text_sha256": "24ee77e14c03a650cecd929e1f77ae5a7be8b6c486d69492270c0ca849e562d5",
+      "tokens_taken": 147
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:193",
+      "text_sha256": "d0d9ee0e7fc5814dae0a9e7c27e79801a54e296559a1def578e7ce8628aa3a25",
+      "tokens_taken": 155
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:804",
+      "text_sha256": "f8d24efc1856c9243a847608a3951b164d7975c99a758ab5f8bdb803ebe76eee",
+      "tokens_taken": 184
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:664",
+      "text_sha256": "b75f5f8e969586b56052b07bde5a1186ff357d585fd829453d5976d820d72b44",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1269",
+      "text_sha256": "34775e555b816fa2874444a1fde5e72338e5ac795aed7fbc8496b856078cc0c7",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1005",
+      "text_sha256": "c275e32ec7671147940d582aac03182e4f0833c7a64bf97b527885ef51873db7",
+      "tokens_taken": 157
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:562",
+      "text_sha256": "53b2b8ec6859991243958afc7a501c494de200bd2c816b3683be2a44382624ab",
+      "tokens_taken": 137
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:837",
+      "text_sha256": "0ba3ea9162071daf8d582271dcdee7cf2bd526bd2bb770dde3b5f5e3c581d6d8",
+      "tokens_taken": 173
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1317",
+      "text_sha256": "f870773f9ddbcdef3c04f09ea51e57b0d165a535041a3eddf9c1dde61b28c4d1",
+      "tokens_taken": 152
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:184",
+      "text_sha256": "3609484bb558abf0f4fca81a61bd013f7c015af657014b9cb5d0be781e155132",
+      "tokens_taken": 292
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:906",
+      "text_sha256": "802ad75f97d1f29f6c1f0b7d25d9695462eb5b4050ea15e436cbd68e70e71adc",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1211",
+      "text_sha256": "d4f0779751bf856711e5b1a92181d07853b1c8f1edb7f4c0f065fd3da3f51671",
+      "tokens_taken": 128
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:439",
+      "text_sha256": "6094c1307c7f9f2397fcc490ea427ea6ded00e56ba47610630871bc1da0c3f53",
+      "tokens_taken": 269
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:379",
+      "text_sha256": "0745fbf99bcfa795fa671e6671bbaed09cafc20e7263f783b9415269c1198f93",
+      "tokens_taken": 133
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:240",
+      "text_sha256": "a856682722468c1d004d695784aacc2c8aeeb668fc79807471a22f4604e88b53",
+      "tokens_taken": 209
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:867",
+      "text_sha256": "d00cfc7c3f9be8ae11a4f51199e0aa9d99d0ec45ff48e823b2f25c069734d6db",
+      "tokens_taken": 137
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1017",
+      "text_sha256": "6de6e7c07c80b5cb184f206fcb28b3066a0042291a864b966b6a258fcfabb359",
+      "tokens_taken": 153
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1304",
+      "text_sha256": "466c0b7b83284646052dc8de89e6d6069c528f888acba5ec2d888f91ddddd26c",
+      "tokens_taken": 225
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:675",
+      "text_sha256": "bdc19ab26e15f0bcfca93453b386765c35f384452fdd096e1b15219f454db401",
+      "tokens_taken": 133
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1152",
+      "text_sha256": "13258cfb3b4edcca4513d672bd55089b814b9552fffcf4ea97517bd965b1afce",
+      "tokens_taken": 126
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1296",
+      "text_sha256": "af1b2c6fca2d1fa08de399f101e327b6fa66e23334fae63296bf848717b920f8",
+      "tokens_taken": 195
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:657",
+      "text_sha256": "c4db63e386193ae53b94f644f326cc904ff80750c4efaf95afc73f3fb26ee95f",
+      "tokens_taken": 110
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:66",
+      "text_sha256": "4fdb3ac6e5ee03d5a0eda694fb035134cd3e02ea60393dba36c9918bc916bfdc",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:798",
+      "text_sha256": "e492375917dec815b6815ae4343e1ab539e72e841bf8717928f11e9464853449",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1164",
+      "text_sha256": "e726c651acd12019c0be4d947861bdcc7a2a54b04dd3f942d7cff74eadcc2a59",
+      "tokens_taken": 95
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:561",
+      "text_sha256": "7243d1cc464e6224938e98096a1b848173df89fbc2d46a6deca94f4acdffe148",
+      "tokens_taken": 133
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:242",
+      "text_sha256": "19aa50f5c2b83e38b53f2f230a5a637c1525fea04e4c0f8c28f9ba1b3f534096",
+      "tokens_taken": 102
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1308",
+      "text_sha256": "2f77376bcca9beb6141e1927ea094eba85cb41f253a99636cea22d2424451a34",
+      "tokens_taken": 107
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:640",
+      "text_sha256": "9aa98dad7730b5ec7a230fa7deb04dd5caa19b6dcf3133cc7eeb8da90a632daf",
+      "tokens_taken": 132
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:836",
+      "text_sha256": "368f3318ef0a7915ab6419dae81722f86e7e952634764f1104e1a4a10738676b",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:418",
+      "text_sha256": "06da5e9108d24ca24d40a29c35d86da2107f8deea943bc6532a025ffe3200dac",
+      "tokens_taken": 220
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1239",
+      "text_sha256": "99a11a109cce480908b64ab33e3e6147e7f708dbb170ff9f2b7f76f1b1300d03",
+      "tokens_taken": 209
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:39",
+      "text_sha256": "c978923bd49d103e9843f7fabd8864aaad9f0e8498b9f1f3b2c90db7d0af2ec3",
+      "tokens_taken": 170
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:143",
+      "text_sha256": "ec38b5477c06f547ad9173511a624de3768c04c67e0fa4c797f8715bea1c9fe5",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:818",
+      "text_sha256": "5cd46a765c306b9babb494ad3b090a588b6d63aa20ac3b53ee17259987194525",
+      "tokens_taken": 88
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1207",
+      "text_sha256": "fb96b2472a1783489b3ecfa46ac4bc0c31babf19749a185741798c31630bf1a5",
+      "tokens_taken": 149
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:142",
+      "text_sha256": "d6c3ba948bd23d85d4f438cb6af65db56d895b8a7135223b97b27740410f9d63",
+      "tokens_taken": 109
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:921",
+      "text_sha256": "a5405b9d230b204859c522094839fdb638d397c079913d4e14e346c84d7a075f",
+      "tokens_taken": 235
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1089",
+      "text_sha256": "bc3ec707c03511efe0ff89b5f82f1a4e5237d3e0599d1e508a0c9290701d2571",
+      "tokens_taken": 224
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:445",
+      "text_sha256": "f3d0f9afe9eee6680309c31a833f21e4b5206a55b33363c217d04d398ced726d",
+      "tokens_taken": 116
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:241",
+      "text_sha256": "f0ec23190204e8195442d78da1eb2cd811961a73ec7d581e0cae6a70dfcac99a",
+      "tokens_taken": 104
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:47",
+      "text_sha256": "55a1b4df04e161513efdbe21a98d88728388e7e4cab7061a25a7608b40d5d30b",
+      "tokens_taken": 199
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:524",
+      "text_sha256": "997613bf8e373e1e279810e37367bfd5e4205e8bc981d1d6d885c9ef67d4a48c",
+      "tokens_taken": 151
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1285",
+      "text_sha256": "afa2aa79945edcb1a2e3732fa06dfe7bb44134987c81c130b1b7f9e612e21ecc",
+      "tokens_taken": 204
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1131",
+      "text_sha256": "10113847397da1544042c18a586e04947eeaa668aa600237a8c846af6c6e224b",
+      "tokens_taken": 178
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:642",
+      "text_sha256": "629c0c070512cab5b177f2d3679a180945317cf15717af081b94c4b2148e3b7a",
+      "tokens_taken": 183
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:871",
+      "text_sha256": "fa3ba88d9091d1e21ec842f5506b03a719ea1cefb2c88280b986684139574dcd",
+      "tokens_taken": 126
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1288",
+      "text_sha256": "727c4ab3e42c71eacd78584874ac163caa3d991f4cf4212f7adb703122a97f46",
+      "tokens_taken": 153
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:841",
+      "text_sha256": "69a2075c76111dff57a92c8acb77d17bfe8de7128ce7c3b3ef0b5e2abd8ebe08",
+      "tokens_taken": 181
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:700",
+      "text_sha256": "5d4f190de94b6c55ec966610db4782b2f604b4c84983f706d7e52e22aebc821b",
+      "tokens_taken": 85
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:409",
+      "text_sha256": "124c44cdd508c01e22b6c1e926d427d0549fd681d35f783455b65e9b656f6325",
+      "tokens_taken": 194
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1310",
+      "text_sha256": "7b402af6ad7c98642a54baa51a1bc54d4ed1f0ded2f82d64f58daa9bcb2f76e0",
+      "tokens_taken": 124
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1220",
+      "text_sha256": "3a89f3b7d3a79cdcd522929143b692875dbf6a67c9dd68b987909150fc62e01f",
+      "tokens_taken": 127
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:282",
+      "text_sha256": "fdf78328633b55691afd88eea417c7ee0e7e05419b9fd184d9f7ed818d42bc28",
+      "tokens_taken": 230
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:247",
+      "text_sha256": "2bd2be2083324923cbe4693e30a6b29d1bac7c4fb72eb50ef738f7e1b2ccc806",
+      "tokens_taken": 212
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1298",
+      "text_sha256": "ef192af3532c517b57f7741023d91d70048a88e66111c76dc4e4f572c4169d82",
+      "tokens_taken": 233
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:416",
+      "text_sha256": "ccf32042ffc5010a1708f9b7990cc5195e86d7ca6885c860bb942464b90126f4",
+      "tokens_taken": 295
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:392",
+      "text_sha256": "8c496fc7c6f71b6418dfeb1176c56b1742d5a3c8845cf8954af16b5378ec13c9",
+      "tokens_taken": 158
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:230",
+      "text_sha256": "f45710ce83f81a99abc61c3b891fe23be5e7bf394cde4ff591078962c0148428",
+      "tokens_taken": 213
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:76",
+      "text_sha256": "b784dce158e252da82ae81ddfa214f78af71eb0897575847bfcb002a97f3dda2",
+      "tokens_taken": 206
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:434",
+      "text_sha256": "17e40a7c30ff72bfbcf9e86b6f65c4e981f908c70c9380067410d87dd503600b",
+      "tokens_taken": 99
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1014",
+      "text_sha256": "b1c0ca8268bbdd11a894989047c699d463192008ced81f1e3f8e808a0376d6f7",
+      "tokens_taken": 169
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1297",
+      "text_sha256": "9e12c9118e8424cf6dbba194973a115ab7ccd8bef5f79ee630ee93be0cf52517",
+      "tokens_taken": 155
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1282",
+      "text_sha256": "cb483b38ec593ef30f209122a6076732dfd50276b92e047c76692e4d23f73a26",
+      "tokens_taken": 140
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1077",
+      "text_sha256": "92a7b5ca04b34bd45a203d864d34bb4ff4907bc7912d1f4d8a05b9a1aa124c26",
+      "tokens_taken": 199
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:877",
+      "text_sha256": "868d2bc5625debd2b46e84544db6e19da7286b995233712ae28577f1d76d1c38",
+      "tokens_taken": 321
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:8",
+      "text_sha256": "c28b8a0283d42373a37c45b9a157c9606cdf6da6ab873ab2aa2f1923420980b4",
+      "tokens_taken": 225
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:817",
+      "text_sha256": "49e2b41e09bd88c0e57ff9a5d36a558fc80285c5252b8521d11af5af12cddb32",
+      "tokens_taken": 106
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:32",
+      "text_sha256": "195085723a2b5f1046f9b82e80558c23e11e06de74af589b59d850b6ad5d2fa1",
+      "tokens_taken": 170
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:770",
+      "text_sha256": "d87abf1b73eb559a46371c4affdf0904a422f48de6e97b5f1118460863e068c8",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1148",
+      "text_sha256": "4a529a470a1e8ab135370b442599999f90671a736187aa38cfc8ae641cc1d648",
+      "tokens_taken": 228
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:937",
+      "text_sha256": "680fd249274402d178d6c0aeddc7ca6e3ed43f52d821aa10fd92f10ad32b21d9",
+      "tokens_taken": 240
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:712",
+      "text_sha256": "ed51e000e8eed19b7c1c9c458d48c2cc0d98a3d141fb57f6013504a48a50efb3",
+      "tokens_taken": 192
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:784",
+      "text_sha256": "9e867567cf328e4808982760e500530316c99285b30dce14fcd98a95bd06b6ef",
+      "tokens_taken": 5
+     }
+    ],
+    "author_run_seconds": 90.424,
+    "author_run_peak_gib": 77.01
+   },
+   {
+    "id": "long-math-65536",
+    "kind": "math",
+    "n_tokens": 65536,
+    "ids_sha256": "6596d2878f1eacdfd035e824c271c2807bb5b119a53bb628f67527f56052c698",
+    "source_documents": [
+     {
+      "source": "/public/gsm8k/test.jsonl:441",
+      "text_sha256": "571cf2ad32dc393955daccbfdc320d6a45768080267b0a90b3551b7574bb28e7",
+      "tokens_taken": 114
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:998",
+      "text_sha256": "f10b6b997899d80f296c57ac33822774e3c14d72d5c8bfd29c8080e99c4ecad1",
+      "tokens_taken": 164
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:660",
+      "text_sha256": "dec56ec75fb23cc676af526fd38a355b0e015b32aac8f0486fa8fe4d4afd330c",
+      "tokens_taken": 221
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:120",
+      "text_sha256": "50f3afa23a3d9f8f0bb34c68a3937a54bd94cf93452f837e8a7cfef105122e26",
+      "tokens_taken": 339
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:986",
+      "text_sha256": "12e3a29d997169a0fc74e698a1509afdd87faf9fe12f53178181c36367c72f83",
+      "tokens_taken": 89
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1168",
+      "text_sha256": "5225b636b0fe9df0eeb511c8d49a5a5166570d0a14ee1660dae24f05049792e9",
+      "tokens_taken": 75
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:611",
+      "text_sha256": "d50abd507c9cf09d06fa257a39a8424577909b61827f2747fbf852cebd3f02b1",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:122",
+      "text_sha256": "d66637d055682f457a3cef67c3e2545a790748557fe2cf0373848d96c6f7721e",
+      "tokens_taken": 137
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1068",
+      "text_sha256": "55fdd31083eef059775d16cd520324334081c24ba015b84988bafb11010dab53",
+      "tokens_taken": 215
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:710",
+      "text_sha256": "30a67b010a01e4dc9f8482d8a6d41199172e65a3ac3c1c7eb7ee7246ba387c80",
+      "tokens_taken": 207
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1204",
+      "text_sha256": "2c174cc782a754cc7df55019195062609a65c7d740b3a9708c81716a4573972b",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:978",
+      "text_sha256": "522e74539d41781d5d0f678a02d77d326907045965a1b7beb5c9167f632ed84d",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:101",
+      "text_sha256": "1e78d1b3ca9f7b22764a913b249073d1f97ea4ecf7bf9327cb6ef9b05e3adac1",
+      "tokens_taken": 293
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:634",
+      "text_sha256": "2fc6118678e850a09d3b66fa75ef426742513cf395fdcdb48984037d87bc923a",
+      "tokens_taken": 136
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:605",
+      "text_sha256": "e3278797b2c40ce4cc5199fbb4d299072f429243dc9f2d920479c5172687e77f",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:43",
+      "text_sha256": "cf49e102b53eaa7f9e61d3eabae8d6326a0c15d3b44602daac2b89f847e20f78",
+      "tokens_taken": 153
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:435",
+      "text_sha256": "5313c6c70c3e2a16e2d5f0b08fdfc753bd726afa7a4fa58308b0421c20a31cff",
+      "tokens_taken": 191
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1093",
+      "text_sha256": "d859993155a72de2ceee4dc86dc05765f231d7c75e90b12b908d884f4c73dfb2",
+      "tokens_taken": 159
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:995",
+      "text_sha256": "01688c1ae20cb41d157963266cae15f3ef290b58e0748da35c20fc1a38899166",
+      "tokens_taken": 219
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:755",
+      "text_sha256": "5ab06128454109f2cff47742580f4f7060cd2bd299e564dbbe775410b2bc872a",
+      "tokens_taken": 292
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1070",
+      "text_sha256": "d99a1887643a73203ef8ae5686ece2dc1cde4b4166629a44cd4dfd6f7d73ca73",
+      "tokens_taken": 226
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:406",
+      "text_sha256": "e5b03ce58b542fd15a83882344ccbca274c5ad0f903047a773b18ce9effc8e32",
+      "tokens_taken": 241
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1261",
+      "text_sha256": "5e04cb92c3fd028823e13f1550d14199830c4dce668c2ee7dfd0752acf40b919",
+      "tokens_taken": 155
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:869",
+      "text_sha256": "b500990f3de165026f204044178fe2a3f9213d997ed33fd25b80d679288402d6",
+      "tokens_taken": 215
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1154",
+      "text_sha256": "bcf9e2c1f301d97db0f4b16a8c79a2254079d678f7afd1f2a829dbbea3301ae4",
+      "tokens_taken": 196
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:774",
+      "text_sha256": "d8c936d5650331e2bf298e62a9249da3d62f58097c5f744046d7919bb8819c61",
+      "tokens_taken": 158
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:919",
+      "text_sha256": "6fe59c078ce5eea475a573767dfed47291e8dfd79dfdf637bb85b281925dd9d2",
+      "tokens_taken": 116
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:970",
+      "text_sha256": "8db4afa73a86e5fb3b9a2d404497e158cd429b41ae27864d8493e8ac20d75054",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:780",
+      "text_sha256": "76427fc4bcc8a2d56fb5f7068f096dac667a049545282ac1664355e09a8f6ed9",
+      "tokens_taken": 230
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:790",
+      "text_sha256": "11e9a65c8c7e448d4a5f8943c0033c1db6e19ca061415fb352704a782dc0beb6",
+      "tokens_taken": 181
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:776",
+      "text_sha256": "e0e11372aa5d164ba23f53825f6c0dd461cb7dc84a601fab1d8d9cc6928632bb",
+      "tokens_taken": 192
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:64",
+      "text_sha256": "ada1f378447607d90bba4d7d283fd953c9155318e088bc61b2ddc4306028b8e3",
+      "tokens_taken": 255
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:934",
+      "text_sha256": "570423d9e1f256ced76d90e3f64da44c486a4e941dbc36e5b4d1d182ae0693c7",
+      "tokens_taken": 149
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:834",
+      "text_sha256": "5a09490b5c2618ce3d2aebe97288ff707972914b8ea70bdec5b1c4469f537080",
+      "tokens_taken": 204
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:422",
+      "text_sha256": "47a08f891eb8b542f9c1fac2f3974ef694f975857d10f4a9b55f377dd89c1c7f",
+      "tokens_taken": 179
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1169",
+      "text_sha256": "b28861955bdb87573edf2c8a8fb491bd52eee5bcf4d299db45b200650c4ba4f4",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:517",
+      "text_sha256": "d39f9a9355fd5658cbd05753aa56a471912af9130e3e4ed68a8021437a6c9ce1",
+      "tokens_taken": 73
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:491",
+      "text_sha256": "c1c2cbc153caa3ec625e6c556999b35708a6c540223cd03cebdafa61d7afb8da",
+      "tokens_taken": 112
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1109",
+      "text_sha256": "9b0863d9decb8c54b2c791cb0aa8d98e382c576d8b87ac0aaac1162eb2b7536f",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:336",
+      "text_sha256": "68434278e929c0441bac6b09f6daad230cb24b7f497ccd06421c3cc978b8efc7",
+      "tokens_taken": 127
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1153",
+      "text_sha256": "87b698730de15bed705aa3e4d3a779b859f1945064810bd9a22e00e5c888ba79",
+      "tokens_taken": 125
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:918",
+      "text_sha256": "e75ea9bc0bde047eb8a01d4e89aad68bbdec3ea6d881713c1adc6104af5674a6",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:739",
+      "text_sha256": "cfc1bef3b2d11434269085273f9b6c7e8a8432cc03168ec1614f6fb134281bad",
+      "tokens_taken": 99
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:73",
+      "text_sha256": "d5646336390a8307f166296ed234b6f8c1813d854020f52d5605ea45a6e8af7b",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:136",
+      "text_sha256": "0e9c7d254c1e8aadb8490c46a64cd681a24b8edaf4073d320a3f31b7e550a5f8",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1162",
+      "text_sha256": "516be41a315fb1f42d43e95e1a4072a7483774e4a8bfcc241d1ff168df0aec56",
+      "tokens_taken": 237
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:778",
+      "text_sha256": "d3b0857dcbdc399982b86e39db65fd0b06aece9d0463edbc68c33f158961a34a",
+      "tokens_taken": 253
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:575",
+      "text_sha256": "adbf5dd68059c5570362601073527c8a0280f4bba72a9f56299449076d536387",
+      "tokens_taken": 190
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:404",
+      "text_sha256": "ca1c6a75876340e51a51d9d0bcfb60eb433c6c6b5ab4a8e86462aa00bc13f0af",
+      "tokens_taken": 231
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:633",
+      "text_sha256": "4f9cfd48affe0441e5d7b72adf89f0b3aca9d28dc70207577e52dae32c3a5f0b",
+      "tokens_taken": 146
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:661",
+      "text_sha256": "0fbc320484e22cb35389c571a48f7da96c85e2555fdbba89db1e49dc5f3ced46",
+      "tokens_taken": 184
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:705",
+      "text_sha256": "8f93ea76d63ae14ebdc7ed67085398485a9222cbe94ca3de27df0ecefab9cf4a",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:816",
+      "text_sha256": "daa308b653431d2f98d5ea08053a7e6282a06eb16a1b99a1a9478ff671f2f2e2",
+      "tokens_taken": 294
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1069",
+      "text_sha256": "adca0346fa4dd29bff3c4b5269ad6263e71fba35a1a1b80cde73f06bc92eae1d",
+      "tokens_taken": 186
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1124",
+      "text_sha256": "5e962472e0ac87451e4e21415af5ba7516abf35575b335553e86631c51c87a52",
+      "tokens_taken": 144
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:431",
+      "text_sha256": "3753815a25adb07a521850b4c4f2495eb1a7b5d9ff76b72f9ab2a530e12d020e",
+      "tokens_taken": 222
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:799",
+      "text_sha256": "c19bc3232ef1a62bde5beb01f913f68e81be3fb30d5c91af235755117ea0c193",
+      "tokens_taken": 282
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:260",
+      "text_sha256": "0732992a601fcc1480a542de6022483f235532788269ab6ee65e5061756db891",
+      "tokens_taken": 196
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:844",
+      "text_sha256": "49fb4f96ba7fbabc98a36b52262487fa7b587d9b1b51b8c3b63195fa9a980d3e",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:856",
+      "text_sha256": "71b0dc767e5280f5886e467ed94e55f2e31c7fc541974bfc58fe734651645079",
+      "tokens_taken": 188
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:378",
+      "text_sha256": "faa2961abf03565282588be8bc4dcb09a10d8cb06be16e9e7b2a70cdde2834e6",
+      "tokens_taken": 175
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:581",
+      "text_sha256": "3a94764f6289d35876d24a97001c57ea44231b9fc564d649cb960a91c8832775",
+      "tokens_taken": 157
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1299",
+      "text_sha256": "7ac46adfea8f351600fbce0ca83c40f7db4ac432e2baf153cd359cac91cf0114",
+      "tokens_taken": 174
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:559",
+      "text_sha256": "b76267515bda6e1f06d4a7254cc64e50c47dda42eed50b2dfa24566251b742e7",
+      "tokens_taken": 94
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:658",
+      "text_sha256": "68ac78cb17999735ea17af118109d7fdb265800963c2915aaf1b2033bcb3ece4",
+      "tokens_taken": 180
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:92",
+      "text_sha256": "7e2485d3a896305171af3ad2317b2a4f877a5f2aee493e061ad2f1ea9a069f4d",
+      "tokens_taken": 108
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:824",
+      "text_sha256": "7fc0dcb986a70ca3ad517e317444470aa862b05478b7311cf39763644e7f12de",
+      "tokens_taken": 206
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:391",
+      "text_sha256": "45d5de1dfef087f3aba06d34d7f1008068ca7474521684f9fcf7e7dac90acd76",
+      "tokens_taken": 140
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:783",
+      "text_sha256": "779216b2244d5064929784b59a70177d3314d0176323dfda542d0eba4d1486c9",
+      "tokens_taken": 200
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:558",
+      "text_sha256": "7cbabf724cc9b4fa15ffdcb8261fa7241e5300901f963ddae26a371fc6754a06",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1105",
+      "text_sha256": "c2bcd3e198ab6bab1c3ad8adb4779c2cd26c0c7af72f061ce79cdf30dd3db0af",
+      "tokens_taken": 72
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:901",
+      "text_sha256": "29a3c1227096bd51de7b7aa7359b482783896abfedcffd18d6684ae4c2f0780a",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:786",
+      "text_sha256": "6aa4a299d3f568887a6d183ea6fac2144d78d956a455a47b406f1c162980c85a",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:411",
+      "text_sha256": "945b066e93484d7c1fd9498b6d64c590d6fe306fff0e45decf5bddd6c241b0b8",
+      "tokens_taken": 263
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:93",
+      "text_sha256": "7d0197745185f951e4c2c6ea4ff915e13853280291a49b1a6194d8af3f5fd408",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:90",
+      "text_sha256": "cccf84050a0ff14c12efb63510b108b273e5fcd513a73e8314902d64eb02a561",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:881",
+      "text_sha256": "7a5f01abc003a9b32b4d5bb78a41fb6e3edc277ce76b73dbb0676bbc12494299",
+      "tokens_taken": 149
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:211",
+      "text_sha256": "e112c93249a8ffb341c4aac8dfa250bb59d518ff9b404f3fe6e864cdfb664e8c",
+      "tokens_taken": 275
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1273",
+      "text_sha256": "7b259de0821dcd91a07545319c09dc8aefb826fff100d7bcedece5030b1e3d9d",
+      "tokens_taken": 192
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:951",
+      "text_sha256": "870cae39e7384b08e6edeecaea6ca2cbf876ca67d3ca7a56152b9d22f05d433c",
+      "tokens_taken": 152
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1280",
+      "text_sha256": "961e88e8ece6e66a423c788a20950eed974146087a98c0c45c01d2c962c812cb",
+      "tokens_taken": 190
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:812",
+      "text_sha256": "306c6662fa88f7fce5ad61f08685fbcfb6da2fc04b707645933decbc6696f153",
+      "tokens_taken": 134
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:531",
+      "text_sha256": "f0dc7952f2d7db3ce81ce64931557d0714bb08f05106446b1808e6ea9b01f449",
+      "tokens_taken": 237
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:911",
+      "text_sha256": "9410580aae7b649b51994d8c8a945de53b0983e56a068614af42a3a4ad30ebab",
+      "tokens_taken": 81
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:493",
+      "text_sha256": "7dfc6e2a79dd592675ccdfd8bff368c146fde9953fbd8124d2a3174c83287c5b",
+      "tokens_taken": 87
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:220",
+      "text_sha256": "ed67828780ea1641d1f55e7662a09c6081e966550c49ebaccdf7901341cd1580",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1170",
+      "text_sha256": "9fff991c38c5467c070ac3c319c6988324e61689a442e1a9a5bc24c11bff9f0a",
+      "tokens_taken": 168
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:174",
+      "text_sha256": "d8baa0fda4812267e6d160e3cd57b3011b2ed0ffe43c722951857a6ebab0cc53",
+      "tokens_taken": 238
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:501",
+      "text_sha256": "2abd54941001a9157a8221bc6bf16f6671771490e312080d629c804bd7017da0",
+      "tokens_taken": 149
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:632",
+      "text_sha256": "b42deae3a504f562f4727fae3805d5e415e6e2d07877aa27cc3d41e9f56fbaca",
+      "tokens_taken": 171
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:789",
+      "text_sha256": "f5971d6f0306a85beb9e411f603b240ecebe49466a602312a539700e3376bee2",
+      "tokens_taken": 130
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:123",
+      "text_sha256": "767e0255d1ce41af8c5f8584e6e96c431b7981e2340273111d84a93a6ee3e0a0",
+      "tokens_taken": 222
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1117",
+      "text_sha256": "e0010abfac9b93e6c782ec656bc83c3d3a3808b52fdb53c9f19b5dcb21d95c5a",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:407",
+      "text_sha256": "025ad156616c36a4c095c54fdccb803ca3c5cacd41394e155d2299c5f9332313",
+      "tokens_taken": 241
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:588",
+      "text_sha256": "ab03ea894bc41cd40fdf9af541a9abb073632582436af6edbfa06a17683600e1",
+      "tokens_taken": 226
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:665",
+      "text_sha256": "e344e67cdd9e4dd7118ef0e00f38558e69115a4d9daeb4f7d0faebfc5f563a1f",
+      "tokens_taken": 126
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:963",
+      "text_sha256": "4481d1511d7e835fb50d841e977cc48f48006119e4ba32a431be6c09ee958802",
+      "tokens_taken": 121
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1082",
+      "text_sha256": "2224975ea635a0d0ccf698c77d36e21b52814f137de104d764dbb9015f54c4bc",
+      "tokens_taken": 104
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:23",
+      "text_sha256": "0b5b03c26da3e6d7e45faa939f5685b65b8d65a1b3b99b638c45b40433edeaa3",
+      "tokens_taken": 132
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:542",
+      "text_sha256": "93323bfc2693084ff2669750cddf9b5f58303b7e49a8d18e5ab37e015b727823",
+      "tokens_taken": 219
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:509",
+      "text_sha256": "3a518ed6469e8e6e9257f9b7d4569bfc776793ceb32dbf04b3faafd9b3afa908",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1051",
+      "text_sha256": "6dfc869b15cb7821f666b85ea313921993d6358059a852265fd1b3e1d832bc31",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:617",
+      "text_sha256": "32f6ca4b3d5b631707b2028314d3a058eaac09b66241a0bdb9f67c03e8548776",
+      "tokens_taken": 121
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:662",
+      "text_sha256": "b29c67868ee6fbe70c4566853c69199f8793ea365475d41c1dd57a0002b9b7c4",
+      "tokens_taken": 206
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:932",
+      "text_sha256": "c7d5d5861800542e0fc4df28a705539c820b90cac95069694dee84411e7c67e0",
+      "tokens_taken": 198
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1032",
+      "text_sha256": "f3832b46b680d527eaf82c266b4f7f1dfef9a06db31a496b3eedec2b4ecfb94a",
+      "tokens_taken": 157
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:514",
+      "text_sha256": "d22f435b74099d09a6f4b55cb7a7ec1ed94eaa41a3e1db3f83a3e21b0740e502",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:255",
+      "text_sha256": "602827b51f7703e24dd88e7a3942cbe28780ef2454fb79732375d2dd5ed8f86f",
+      "tokens_taken": 186
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:915",
+      "text_sha256": "6acc9b2f5e12abb0fa05709e94cf55c9111c0e9798799f07393cc1183195cb56",
+      "tokens_taken": 90
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:487",
+      "text_sha256": "ced8213d7bc1e1241f98a422b37ce8e25f75bb6c3fc79fbc1ad41f24a5276f8c",
+      "tokens_taken": 80
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1159",
+      "text_sha256": "327d625bb9592fa0807feae90ec39a203b675adfb4ad825f6bec6dd30937a574",
+      "tokens_taken": 185
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:848",
+      "text_sha256": "dae23b03250f56364c5d9e3fda391e06b9562377574cb7499c739b95ed88023a",
+      "tokens_taken": 118
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:173",
+      "text_sha256": "c5495963c3ad01fc11c3b1183cf6cdfca53f6ba78832cbacdd2ffd73431a2180",
+      "tokens_taken": 220
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:615",
+      "text_sha256": "59b5503474389d63fdad08419188e8325eee9f121092063e215501e9a7b43dd2",
+      "tokens_taken": 181
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1076",
+      "text_sha256": "ca0899a222880929b5301afe6a839e3610d97bcf6bec26e2c15ba3613a65c0d2",
+      "tokens_taken": 202
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1240",
+      "text_sha256": "1218b568aefeecec9d02bdf127ec6eec88f45c2011b4e24fa82b4da435cb008f",
+      "tokens_taken": 186
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1050",
+      "text_sha256": "9edc5bd76087acb85b2e20337b14bd59cdc2feea8ecc12189c6218c4cea24407",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:374",
+      "text_sha256": "c1589176c9d707dad8847cb5b8cfb84a38fef3e40d2bec2cd9d34b7f3c46d106",
+      "tokens_taken": 151
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:250",
+      "text_sha256": "17c6dfb158f0aa8409579928964f5292b7f995367338db345204ef72024249e8",
+      "tokens_taken": 200
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:647",
+      "text_sha256": "276508c24fde79d091184ac2004421d3dce04e17d1c25d3280c9b8b24d80e528",
+      "tokens_taken": 126
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:227",
+      "text_sha256": "cb443f0cfbbdf6cc32c375a0c34143d21d6939d4640cbd748f2816c5ffc07a6f",
+      "tokens_taken": 227
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:57",
+      "text_sha256": "2a4d5b814788d94f2decfc060aa50538ace1b1bd56938a55b244a245302d0043",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:106",
+      "text_sha256": "833d7c978734b02d6c19bde1ca72edd403fc8159427309e8de756d948c8d495c",
+      "tokens_taken": 75
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:914",
+      "text_sha256": "bc18377c996699e4f3c8653b167a6a369bf3d9c7e2c0ce2fe68fd36472d190bb",
+      "tokens_taken": 204
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:515",
+      "text_sha256": "f2f063ec57b3c499290db63e1edbd50d164c6e975b1b76aa2a8413024e388e52",
+      "tokens_taken": 143
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:847",
+      "text_sha256": "128bd4a9ce4c19dc05deb09b66e1d217edc40157da98aac4fb79ab6a633cadaa",
+      "tokens_taken": 235
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:199",
+      "text_sha256": "9e07931f528609d1220824476c7d239cfb6bdccf418f600f9d43981281566f83",
+      "tokens_taken": 238
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:84",
+      "text_sha256": "c084c04e1f75b8e6e7156a56c069044fc0998a753a6d016b12cc4c1ab721fdb8",
+      "tokens_taken": 104
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1231",
+      "text_sha256": "678987c2d839a6f76c82ae7aafc555d501b0f02b00e217d998a2804d2ebfd953",
+      "tokens_taken": 238
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1092",
+      "text_sha256": "2c8759161efb9bfc85234524bfe1c1c1889478ae2fb5ca0e471fe523c26c5e05",
+      "tokens_taken": 93
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:113",
+      "text_sha256": "039570227e0b8b95f7a91e084d4568a1daaf846646a309904782caa3391d6dcf",
+      "tokens_taken": 124
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1013",
+      "text_sha256": "929ee63e126f4affc8e8af86b8e44729072bda5f9d44d5e18723089b82b1100e",
+      "tokens_taken": 199
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:859",
+      "text_sha256": "a4414acc91a7e339ee67c0f3fbdb39f845129aa3eb55050bb3fd458b9198c9b8",
+      "tokens_taken": 179
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:360",
+      "text_sha256": "b4d8c49e71973f9259fdb98a3630a278b494b21c00e865153184ddee89bdf114",
+      "tokens_taken": 167
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:225",
+      "text_sha256": "01593bc5123888e69a7c53ed93f86fd940f08b9c198c97fe3bddcb1a5f72cc5b",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:560",
+      "text_sha256": "f4531ed6303009d026c9cbddf367f70fffa64b9fd1e02f297d983b4176308998",
+      "tokens_taken": 182
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:132",
+      "text_sha256": "a32b8fb7cd5a592abf2d292ec160dda30cae77d220e64fce4d4067c6de1eb433",
+      "tokens_taken": 84
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:544",
+      "text_sha256": "0245248bb55d135862d121ed4ebfbd4d5f637af29ff1a64d59ac31eb96e648ef",
+      "tokens_taken": 130
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:638",
+      "text_sha256": "33dcd819a8c900a5929e7c161a0dc0200356b8e335499bfaf21338641d9b76f9",
+      "tokens_taken": 118
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:198",
+      "text_sha256": "76123c213ef8669fdc22bf24184ada5ff33d90bcec581ba6c417c43d9717ad34",
+      "tokens_taken": 110
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1155",
+      "text_sha256": "bb701359cf63a1ceb612fa1c730c5bcd384418bdb898c411316b97bde9b11bcd",
+      "tokens_taken": 105
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1161",
+      "text_sha256": "261d1f6e2f0754f15260e61ca8c3b8fbe402a797a311fa47be9001ce4b96d47d",
+      "tokens_taken": 139
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1234",
+      "text_sha256": "7bde31d2c7972c83c81642433152112f61384450da2c80a9029a96fbab9448a5",
+      "tokens_taken": 175
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1309",
+      "text_sha256": "a328fc3687220deedac16eabd4b3200687ad2899fe979190bab130a53cbef6b0",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:845",
+      "text_sha256": "4e979f9d3ce26438d7c4e129562d25579a4aa85b13ba2e3fe2f24fcc2b6af782",
+      "tokens_taken": 200
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:98",
+      "text_sha256": "11e8cc228ccaea6a421e9884209e7810f47700a2663e553599a075690f7ab114",
+      "tokens_taken": 147
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1264",
+      "text_sha256": "cbd60e33e731cabb6190cc8f8b15e976bc8ad564d7a59f82e56440cb462fa163",
+      "tokens_taken": 282
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:944",
+      "text_sha256": "3b745a12060db20f4a1aab3d085c2dd98a2b3a5e1580df03bec3f59fcf970d70",
+      "tokens_taken": 133
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:415",
+      "text_sha256": "6185d2357eedb12ad6d83356352c570182fecafc83c58458885fcbfa146ad407",
+      "tokens_taken": 123
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:630",
+      "text_sha256": "3dd114ae8dea6e3dde57c9ec6c0d7c04ec3eb75a97a88fe82ecab071e1c84931",
+      "tokens_taken": 193
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:97",
+      "text_sha256": "ac8a2e08de3aaa8723901ca41700e412441c7c2ee99829070e2f7e2c04c42ecb",
+      "tokens_taken": 86
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1300",
+      "text_sha256": "4a5cb0bfad85f666fb84f10443ff3162271e7bf6762df20e02fd799cbba577e1",
+      "tokens_taken": 187
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:767",
+      "text_sha256": "0808c7ca04c7c973d98b6dce0f44a87894f6a3517f903fd858459cd49fa6fbdd",
+      "tokens_taken": 132
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1048",
+      "text_sha256": "b8e4d0daf633da6d5acfdd0fb4a552b0489becb08677b696e91e76a2bea8ff9b",
+      "tokens_taken": 237
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:650",
+      "text_sha256": "68d0dc815d73414e5c8d18cd6f742ffbc4c150b831fdc02d0db1e3451c857522",
+      "tokens_taken": 186
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:258",
+      "text_sha256": "cbcebb50ffe3c846350426ee2f5d6dd53ad0ca321dbee1912c3c098ddf48cf19",
+      "tokens_taken": 204
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:15",
+      "text_sha256": "b0838e5aa3de2d7aca0ae1a13e8fba98bc4fb69b73162475b99442ef5d438f1a",
+      "tokens_taken": 180
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:362",
+      "text_sha256": "176c02af1436f26a4857510d5cca5768f2f5ec57d81dbde7bf6e90e599f3dc6b",
+      "tokens_taken": 203
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:22",
+      "text_sha256": "21a599e622466f5619a61ab6f7fbae409f4e112c3476c8432896d91ea5872e43",
+      "tokens_taken": 102
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1088",
+      "text_sha256": "81b4e681d8eb8943fc0dceef789c8d7a2ef050e93fabb6a094b43bc9e6b3db19",
+      "tokens_taken": 150
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:717",
+      "text_sha256": "d378d3b56eed9b703062d8a27a7d822a027165c4cc8297f0c15f64d9b6384cda",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1135",
+      "text_sha256": "5eea2c8dbca1a915b8353c886740ef576f2cf4579ea666c6fe001fab27b80710",
+      "tokens_taken": 124
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:355",
+      "text_sha256": "883a9214489d0b9fe411635353259e6983135f38c1710b331fd20ed70915f093",
+      "tokens_taken": 193
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:348",
+      "text_sha256": "63b7cc7d3e1d66e721410e4fe0897969d7ca1b8f8e3df0a06ddc7aa7534f6597",
+      "tokens_taken": 130
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:945",
+      "text_sha256": "38ac3d143f72117367637c81c5c43410e0302b3087db264e224a88f2dddcb99c",
+      "tokens_taken": 174
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:809",
+      "text_sha256": "cba90ad17dd9a8aee725aefbcaa873c295292b13a9910044c6bc71862cc70d01",
+      "tokens_taken": 167
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:725",
+      "text_sha256": "2c32fd5928633a70334eeb4924bd4f220e9fc121f8bcc184befc92fab3490cc9",
+      "tokens_taken": 311
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1020",
+      "text_sha256": "0c4430914ab391de3893b5fe702dbf6e59997756c734c595b0dfc2d0ad5ea4a0",
+      "tokens_taken": 232
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:974",
+      "text_sha256": "55b87dd6f0c7dc9583f2ddefcf3369b3e9392fbcc014c3f932cfa849eae804e0",
+      "tokens_taken": 119
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:337",
+      "text_sha256": "aa783512e5bf4dd458aa160441b784776164b9da77cb5cf9b67dbdfef470bc89",
+      "tokens_taken": 215
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:24",
+      "text_sha256": "a0d8b5d259d9f155af3950ab00268ecaa8ae8b751be07d8e4c2562538f706e3c",
+      "tokens_taken": 87
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:719",
+      "text_sha256": "e67ce1eb70c0b5b1eb90effa4a85e23b0e2cb1b9ee0f9c8311cf86872d526377",
+      "tokens_taken": 152
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:130",
+      "text_sha256": "6baefee0b20a1d7b93e087c65337393483375333537f81475711392402104ac8",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1233",
+      "text_sha256": "d88d405dd63358e82955082d59ec2eed72e15401c5479e9771608aede29974f1",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:878",
+      "text_sha256": "3234644783d2ae6dda2284e34f169efa43ab6f23dc0143b57bccf02cc1ffb767",
+      "tokens_taken": 178
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1187",
+      "text_sha256": "5de60a6dedbcefdb997e7f503b534c312b5f18267af5b1559e7ec85bcb6d5644",
+      "tokens_taken": 118
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:892",
+      "text_sha256": "deeb977527964faca06249ff87e8561787904fa8081b6bdab8441dd465dc02fd",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:224",
+      "text_sha256": "6b7b9ec06b21a814229c72e9e9ce99307d3a817d21f532409e24f2925e31055a",
+      "tokens_taken": 108
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1133",
+      "text_sha256": "4c81601f09cf36ed9fc5455308626d6350304183d29c25bf58aea1d5bb7a84c7",
+      "tokens_taken": 159
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:504",
+      "text_sha256": "522ed378e18d0c4a3d4d552e241b80afdf21f600bdbfefe7f1013d4b18236961",
+      "tokens_taken": 116
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1086",
+      "text_sha256": "da8908a5b93434581e5f2d857d1ae76d3a59b4c37ed67d0e64ebab3f29746082",
+      "tokens_taken": 81
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:505",
+      "text_sha256": "82ccfb6fc6646c909e4f09796362ea007043fa0c8672066f58507d1c380d51b4",
+      "tokens_taken": 189
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:365",
+      "text_sha256": "263fb10633c5c83a3d7541559debdb6bb0e1195f5cafd571bdb485c7079bb357",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1266",
+      "text_sha256": "c0b95e8b0cb56146dc358c252998e6e35f1b4a85feb19dfb289fbd01e5220c40",
+      "tokens_taken": 248
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1205",
+      "text_sha256": "d6715af56fa5ca8e5e5fe1af4bcf388c22721d19e5f9ec13b06276021b43e884",
+      "tokens_taken": 183
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:386",
+      "text_sha256": "f0818d820079bf490aeba76a6528dc42904946d297bce3289cfcc0cb9f358f27",
+      "tokens_taken": 189
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:356",
+      "text_sha256": "4fb2b9c1944d3e3dd6e4c1db6dcea12560b2fbdb6ac22134dc3881a8fb393c63",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:936",
+      "text_sha256": "547da29e5931f514fc31684d0bd97295a1b89e77802ea4b89b828398380fefbf",
+      "tokens_taken": 250
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1110",
+      "text_sha256": "d00af0419a5926c58e7df561b316b098eddac63421de1fbb2c7c524c1ab0a2ac",
+      "tokens_taken": 217
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1279",
+      "text_sha256": "ff4b7058b97740cc872a33bd438f88918f01d8c798cb498278ea5e0f71a4deb0",
+      "tokens_taken": 111
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:746",
+      "text_sha256": "78651597c502a0422e41a109a1ca664205dee30609844b54ba20908566c9a702",
+      "tokens_taken": 187
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:533",
+      "text_sha256": "8dd1aedd1d65ff0525cdcd44c9bf2a9cd4150d1f5cd9d8903882a6c1afe0b2ba",
+      "tokens_taken": 159
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:526",
+      "text_sha256": "782a66de56438baa007bc1ecaccb6b86e9a0f1914e459f10edf96075b6db45f9",
+      "tokens_taken": 146
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:338",
+      "text_sha256": "9de0f8f3ac9efc15895d084d4b3fb82c27071f6d7cd9f5b55d211909ffafd99b",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:815",
+      "text_sha256": "853849c05394fa847c33dc6ca0a5041dfb3fdaedb2eb00a18d41d4b6d1fbad85",
+      "tokens_taken": 285
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:806",
+      "text_sha256": "2288014f84ecee26b21ebc5453523792f6c61a7e4fe9002fb5c68d32979b04c3",
+      "tokens_taken": 110
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:207",
+      "text_sha256": "e8c775b7bdfdfd530003a03474dab1e3f9f6943f5e184c19b65e147ecbdc62d6",
+      "tokens_taken": 214
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:20",
+      "text_sha256": "b265db64498af39d1fe0d9084b848b3edd84655d87f2b5f9d8efaa12dd747c9a",
+      "tokens_taken": 247
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:433",
+      "text_sha256": "4d1d6453c1ac877f0a6c9e093c0ef49c202d191d2b6cb3cd28a93f0b2a74908e",
+      "tokens_taken": 186
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:607",
+      "text_sha256": "146fa843d69c22dce09ebe097970ab4538afa1d898d26b8af05147eeba3a62b4",
+      "tokens_taken": 152
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:993",
+      "text_sha256": "5ac23039f3bc709059b599e26b358d54acd0ebc15a6a89d84b7a04a0b4b2d726",
+      "tokens_taken": 225
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1015",
+      "text_sha256": "b3676a452ef6a687db7a27738051e872954d13493339e4641699ea5e2c09d587",
+      "tokens_taken": 244
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:111",
+      "text_sha256": "6a5cec53ba2169a130dbe5575370ca3c929bc2a895022929c14a78f63b141224",
+      "tokens_taken": 176
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:35",
+      "text_sha256": "bdf127da8f73b6f0cd595fe3c84766ea7e17972206d82e38a3ebe62808de7018",
+      "tokens_taken": 122
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:71",
+      "text_sha256": "626e12f8ee4553932d9c59b04b6307a249380c36ea14ca65b0950a50fe9acfc8",
+      "tokens_taken": 187
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:53",
+      "text_sha256": "229740ac1d7e7ce6d89b356c0114355f08134275e2baff53c827325bcd252fda",
+      "tokens_taken": 155
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:648",
+      "text_sha256": "c3a996193ceaff91ddcba14c114fa71f19dd82d4361cead2323ffc811ca259cc",
+      "tokens_taken": 191
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:541",
+      "text_sha256": "f6a65230183aee2f194aa65a9c90107ec2332f77f334e584cfb53fe14a83a1de",
+      "tokens_taken": 183
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:758",
+      "text_sha256": "c3365719780a53a5c17368d11409a80d474cd977d7f80d1f0e7f158daa92c80a",
+      "tokens_taken": 205
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1303",
+      "text_sha256": "d2038972840df8f6bc4234bd761584ca8cd43e708f58388a1f37f8a3cb41d91e",
+      "tokens_taken": 199
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:11",
+      "text_sha256": "836b3c02c8bedd68c21883f42ea60772731e93e25e1f1496126725aed2ed1731",
+      "tokens_taken": 203
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:34",
+      "text_sha256": "b6775f2bda4ecd030407ab487b2aa2b24083a37420d43d024e396cc014c29dca",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:573",
+      "text_sha256": "21cb576b6b22fbbc617737a806f2f6b2731ef08539ff4ebe4edc3248373322d1",
+      "tokens_taken": 235
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:941",
+      "text_sha256": "ad77aaeb21f8f71119989e977086e43ff73ee5626582a832a112286c43a72ee6",
+      "tokens_taken": 120
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:280",
+      "text_sha256": "87033f84bc49165ed9dd688c12921aff270c8c95f69ad763542d7c7c0a0b10a9",
+      "tokens_taken": 241
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1248",
+      "text_sha256": "eafd71e248974f9bcbfb702b20680fdc29d269d6ae8753677fe6359dd7a256e2",
+      "tokens_taken": 170
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:551",
+      "text_sha256": "72f77a4780d984a61ce6820980ff18bb3dd3519f858872cd50692b9f28b4729a",
+      "tokens_taken": 251
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:127",
+      "text_sha256": "aedca21e93f9e91b6a11328a4daadcd999f1081ce2b0023beb4418ab1327ea88",
+      "tokens_taken": 97
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:540",
+      "text_sha256": "fff21ecdba74a6ad49a486728baf13790d582506708b481ff4ed5e422e880c12",
+      "tokens_taken": 147
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:140",
+      "text_sha256": "b23e5c799599eb0d1537f54d09641c5a51f535aa47db614161f0f481bdf9a8cb",
+      "tokens_taken": 99
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1242",
+      "text_sha256": "22c52cf9127c5b84f3d26444ebef256096539b9f8294e9d5a01242442d7da6be",
+      "tokens_taken": 166
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:645",
+      "text_sha256": "1afb9da26c3c59f471f49d9cfa4371b81d9ebd20c59bf0599e406c2bcb5aaf24",
+      "tokens_taken": 117
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:676",
+      "text_sha256": "044c62d7da187776585a7f6389042e57ae7664ff1dbbc7bd461a95f7bea94be9",
+      "tokens_taken": 189
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:750",
+      "text_sha256": "85c73893a08de50f799f756cc058754a165c41a2c419d8632299ca6484759865",
+      "tokens_taken": 90
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1200",
+      "text_sha256": "7d055bc4917db8d9ba871bf8b46f997d317d5744c03a517c427711396f1b2716",
+      "tokens_taken": 325
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1140",
+      "text_sha256": "8f384d5bcc5d645bfedbba40ee4f11ada8ad09d22efa5b993f565757b501cf05",
+      "tokens_taken": 257
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1053",
+      "text_sha256": "3930b29e03061923b2b56dcc98576db5fb48ac3f6c26899cbb93a346da5c246e",
+      "tokens_taken": 203
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1181",
+      "text_sha256": "c532f8d1bab37b4f6a3d65b820c386ef3f76d81de83900beacc7eb4b1b600c01",
+      "tokens_taken": 186
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1284",
+      "text_sha256": "f77e5ee84c7a44d455a9564ebcdb1ab8184e3253c9ab4c34a895b0fa1ab98728",
+      "tokens_taken": 158
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:747",
+      "text_sha256": "5af9e6e46672636e8a1aa7c8faa9c784039f499d5661406d00317edb0a49ecb6",
+      "tokens_taken": 292
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:202",
+      "text_sha256": "92959ee824fdf0ee1f68810a2a4a80cbdecc082239b86b59d755689a6d11fe67",
+      "tokens_taken": 180
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:796",
+      "text_sha256": "27599e990315dad12696659a3a338d1c413130458260d59c6065cb24f8b0db09",
+      "tokens_taken": 171
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:281",
+      "text_sha256": "4a1b1f91928528ec63221611df845014251e327238d2c73010c79e155994bc83",
+      "tokens_taken": 110
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:964",
+      "text_sha256": "a7e9a9af5f4955eef4a1f8324ab358fd5589366d35dcbaf4a24175083079881b",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:566",
+      "text_sha256": "cc9625a97ce63a316d31889efc7271dcca730f1eaaa707a34b131941ed28f46a",
+      "tokens_taken": 112
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:125",
+      "text_sha256": "6b1911516e506aaa42de102a11ea1354c17c7b91b49c63c8effbbf8337b03499",
+      "tokens_taken": 119
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1031",
+      "text_sha256": "c0c4813842a6f6e8c34e52eaead94d1a0cea6dd223ae988a8a637ab077b007be",
+      "tokens_taken": 338
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:737",
+      "text_sha256": "db4787d720740b75f59938a4f806deceb9f45c8f575426a40a88d50dbf2ec32e",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:965",
+      "text_sha256": "4ae6be91325c043570e6577893446f4f8bc7c7f5f80771803d6c6cd2bfc0a463",
+      "tokens_taken": 128
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1251",
+      "text_sha256": "8eb2db38264527904e4d4e30a7dd27eb36c6f73607e3122be2ab79c99e5ad26c",
+      "tokens_taken": 94
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:618",
+      "text_sha256": "bcd1135adfe9d6f8ecb6a079eca20fb6e9c87a6c1bb97d3c9b4daa440b66eff3",
+      "tokens_taken": 114
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:510",
+      "text_sha256": "935bd195d7dd65fdebbe872d2e675bc6184379b76ba4c17f797d35073dc436c7",
+      "tokens_taken": 137
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1262",
+      "text_sha256": "a4481cd028926d871f668036411e6b0b188762d2979fea19fd58390a972c3141",
+      "tokens_taken": 235
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1257",
+      "text_sha256": "77ea48e4044f888656cdac4e0170456686e621660b2123b1274a045358e04881",
+      "tokens_taken": 205
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:949",
+      "text_sha256": "5ae0ee01b70bebdafcfcb90e4200da3fa0e994f7be1682ad4bdf2ae06f5e293a",
+      "tokens_taken": 209
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:129",
+      "text_sha256": "d435284a3c052088f52154770c85df39fbca48815745626e1bdd6a45ed0c4d34",
+      "tokens_taken": 237
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1237",
+      "text_sha256": "af5404a08e94d5940dcea2a83af64597d9be78e149a705a72127cd85c148e16e",
+      "tokens_taken": 139
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:831",
+      "text_sha256": "fd4cefbd1da39b13d6d81b8aaaa9e86f0c3f9b410fe98ba5343d47b923676baf",
+      "tokens_taken": 264
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:146",
+      "text_sha256": "40b96dc8b27e8388c17da4fcc7f0670677e8096f36534d031ab09d2bdf89feef",
+      "tokens_taken": 130
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1001",
+      "text_sha256": "e1a5626d48ddae31662837faa4a6f3aa454d26d13d738cd3b6c7619eb5f71f5e",
+      "tokens_taken": 218
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:731",
+      "text_sha256": "dbbb9249236e0cb2f9ef9b5eae64fc59e02d3d7f25e9c6a85201cf25d68df32b",
+      "tokens_taken": 123
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1263",
+      "text_sha256": "8c07770ac0e4f23d4bc8ee416bebc697ab45be174cce7a84b545fe302d943d1a",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:38",
+      "text_sha256": "75c7026242e41ad3262b0abfb3ee9a5fbd4e22748390e6f38a7abdd375dc8f43",
+      "tokens_taken": 159
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:513",
+      "text_sha256": "226810ca7828699c89564bc99404c72ff1d54f221e8cc515e6188fff67025832",
+      "tokens_taken": 131
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:787",
+      "text_sha256": "288327f66478f149c8d58f06c69e23443dd207eefcb41b5797275b0b83ed6c8c",
+      "tokens_taken": 124
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:333",
+      "text_sha256": "0adeaea3723249725859f653fdb56e9a56ff623b2b2066857926e382ae1b1ab7",
+      "tokens_taken": 71
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:592",
+      "text_sha256": "5e6edad84c3586d2fddbbd8d02e1e26ee13f671ca12107eb2c0736e5b86ec84f",
+      "tokens_taken": 222
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:285",
+      "text_sha256": "564a7f602fef132d58ce7008d3b748e27b74141c0c8f508cb9289530f0643a72",
+      "tokens_taken": 354
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:961",
+      "text_sha256": "92331f3af0b7454cd3cff91630be968176b73708775f62f7501781ee48cb8d5c",
+      "tokens_taken": 260
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:651",
+      "text_sha256": "41959f71201cfa3189da6ef76f91cd27649fc6acf1eb60164b4a9f6f8e9a406d",
+      "tokens_taken": 246
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:887",
+      "text_sha256": "b34ac74247a4332d6ba92907d93ea489c415a313cd5c4395fd780f16600db718",
+      "tokens_taken": 166
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:164",
+      "text_sha256": "7304bf028a4e8e4fe2941bbce4fde678cec2981d15e74be6a5d74729a1cec590",
+      "tokens_taken": 138
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:563",
+      "text_sha256": "5ab545e9f2db1db4e81d9128b11192f1c116c1b20cdfb0a580435ef0127a47e4",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:977",
+      "text_sha256": "74e74cca2398daf13850c362373012f8277e462a739949b815d2d3929f1cf079",
+      "tokens_taken": 259
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:616",
+      "text_sha256": "de0aa80810a68d1a620938a7931f8b4638c9d73932855af295248bc1b97d73e4",
+      "tokens_taken": 255
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1123",
+      "text_sha256": "387282daea4291582ee65e1e9cbc04c26fdffdc7e4859fcd8438fe699c43df90",
+      "tokens_taken": 312
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:408",
+      "text_sha256": "f9eaa1ac2e253ec15bdcd57e9649667cc4bf63dfcb9270a2956d260db1461b1f",
+      "tokens_taken": 262
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:988",
+      "text_sha256": "955f5b816ae0b69b7dc4de37582e229ecc50ea7e5fe097e209bacd75ecde98a2",
+      "tokens_taken": 191
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1196",
+      "text_sha256": "cbc4e75892bd5bff97bd74bc454225735b5ed20639f14c511158aa9e8961fa73",
+      "tokens_taken": 228
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:698",
+      "text_sha256": "e87ac8e85809ce63610127612d96b3132f5419039e8dee484ba0121d257d6bb9",
+      "tokens_taken": 148
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:189",
+      "text_sha256": "2a09cd05b95e06f9fa669e214dd2a63e5f5be4267988b1ae97b5b9689fe7f91d",
+      "tokens_taken": 164
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:508",
+      "text_sha256": "3305cf1a393b8db7da14b7887f7f58d1e962c4b3a0a6bf83e02c3f45067d7c50",
+      "tokens_taken": 154
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:983",
+      "text_sha256": "80cdaab52113960e19a1a679be808ac374a80921e0296a9c583fea4cf582979c",
+      "tokens_taken": 210
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:734",
+      "text_sha256": "49b3500541f229b1edf39b5758fe9d3cedf0645769e0567ffb0d91bb722c0498",
+      "tokens_taken": 106
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:762",
+      "text_sha256": "5cb3974a3edc530247b9955c450edcb09d36d45d002a8f2098ea3a5871cef027",
+      "tokens_taken": 86
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:910",
+      "text_sha256": "2c0f1c907e41c43da0f9b29034a33325b6a46d35f2bac199ad37e2b646224799",
+      "tokens_taken": 140
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:917",
+      "text_sha256": "2f39c4bad0e41db89c5670e8d48919a1e6b55b59324e226ad294964380cb5308",
+      "tokens_taken": 230
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:899",
+      "text_sha256": "a0fcabcf53147cfc6ad834b949d4d87a1c9319f41c897ec0f4a3fa54354a6ce5",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1047",
+      "text_sha256": "f29d35aaac768800edb2fa4076630a16fc4bc40f5f54b6dcd226781b51c23d16",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:858",
+      "text_sha256": "a96d0691659c74f322d22c1879de80b828eaadf5b8d17da83e19026a83f68c7b",
+      "tokens_taken": 165
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:741",
+      "text_sha256": "4c88824f0f0c7499a9f16472a7ef09c009060991d0b55290315b62bc89d80007",
+      "tokens_taken": 143
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1121",
+      "text_sha256": "d8bd2d8dd3e4fd7adba5801cebdf32a76c6083574ccd9afacfa4a7fad17b3137",
+      "tokens_taken": 109
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1301",
+      "text_sha256": "e4a50748e29be258a39b61d4ffa431a44f5f9a8d0d395f41f2965530a17123e2",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1274",
+      "text_sha256": "6783b5f43f13b8d3aad6b5d5e7221d557a0d1dfb8cc955b424fdd5d6a3147a8f",
+      "tokens_taken": 94
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1025",
+      "text_sha256": "3de425c8863fd2900890884df10f38940b7113af3c6c4d6201b8864295e9f193",
+      "tokens_taken": 164
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:875",
+      "text_sha256": "b7fbaea50b81bcf029ec5b22323d4ba810ef398ab27eedecf7afd1322e2319f2",
+      "tokens_taken": 93
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:270",
+      "text_sha256": "f3184d07348826740bda2eb1e77041a322efc52edcfe8ebbc7f149a40987f517",
+      "tokens_taken": 82
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:808",
+      "text_sha256": "7ac6d67f8cf5bf562be2efd5413860b7defc0f7d29748f59987cb2de6e1807d4",
+      "tokens_taken": 151
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1144",
+      "text_sha256": "3c7bef5770a89f525776acc3f89d7e7fb4de065e25889d4a94f781a26c7443af",
+      "tokens_taken": 81
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:486",
+      "text_sha256": "6f4a8bbdbaa28d351ea8ba12205f9620cd95a655b495b4ed4fef07d1b2519b03",
+      "tokens_taken": 95
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:644",
+      "text_sha256": "b1dc9f7dd5f42a105774ad8043797cd134ee19421be33bdcb548fc866be92009",
+      "tokens_taken": 142
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1232",
+      "text_sha256": "ed27dca2934f78f36dc7e0b0826e8481ccbf91918d6bc9aa167f69987efc936b",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:49",
+      "text_sha256": "88ee9ec8fcdd91d36a1407a9c9b3844d10e7276694f5575e4744520d45e7c294",
+      "tokens_taken": 120
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:223",
+      "text_sha256": "33761c1e9a42d8eb5cae0a6a2b8c8ad57005d039bd0b8cb05283999e75e5ec9e",
+      "tokens_taken": 98
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:603",
+      "text_sha256": "6f7ff7d52c24a46b7cda8558c0cacd0e8c7c5c9ec0c24ebafc59400293e0d495",
+      "tokens_taken": 83
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:873",
+      "text_sha256": "671bd75926d3b10b34743272595bf1b42597962a4a97fd72db352bfd6c0fe571",
+      "tokens_taken": 185
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:262",
+      "text_sha256": "7339ef3de99bb2d5bd17aeb108fc58cd7e3625229f8e05451abd947b9c60b136",
+      "tokens_taken": 119
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:947",
+      "text_sha256": "536af58c090b6173dfcf1c370330e58971f3db4d1253cdf36ddc82fa2fd2baf6",
+      "tokens_taken": 114
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:895",
+      "text_sha256": "2a597e44a3a44b31b085779befce2012c917c8a7a82d961e2acfb30fb3449657",
+      "tokens_taken": 233
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:114",
+      "text_sha256": "b7efe87e33f0f760a8559f58311ec254a9b3f53e9dcc8a003c903a9e60ff6e05",
+      "tokens_taken": 84
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:166",
+      "text_sha256": "b1df0ba77a44fe74c97741756c3425b7aa747404e7cb45a58d7614a32001465d",
+      "tokens_taken": 190
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:923",
+      "text_sha256": "e6ff488af933347c0c61660ac57cf623b6e01d118e7bac99010baab1a7c7a720",
+      "tokens_taken": 127
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1012",
+      "text_sha256": "122bd36d21ed6468cef0f95359bc12b02bb9cc741eda7f8ae9201e5045d1e210",
+      "tokens_taken": 419
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:512",
+      "text_sha256": "9b4e7ca704ac826142a9d81f529d831c2109abe28555d2d6c6c0ce3ff25a5e52",
+      "tokens_taken": 89
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1139",
+      "text_sha256": "36e42ec9f7c2415135fe8882b5170ec9ce2a3d80c4250a52b76670d538fe4abf",
+      "tokens_taken": 177
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1199",
+      "text_sha256": "90cef38a9c0018e9ae31b4eb7097e6d9128458fa51cc52b89e2fcf92477e41a7",
+      "tokens_taken": 271
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:597",
+      "text_sha256": "be202f5a4d2cb360f330f529d8829f3f4468d912dec59d051d23ed6eaa08f35f",
+      "tokens_taken": 213
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1283",
+      "text_sha256": "512c530c337c07d713dd4562fe05396de4c8a9544d31c586866adda54cdd9994",
+      "tokens_taken": 152
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:744",
+      "text_sha256": "fe71de60d5fd48bf0c9c63c80f3935079a53d4555eb2fb721d1bb43978e91554",
+      "tokens_taken": 164
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:840",
+      "text_sha256": "796f2abfc3139252ad751ed501928ab8215567e4b8c1ca7d2ae9d894de395ebc",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:395",
+      "text_sha256": "6bf3941c273b020fb33e20b68c3868eac6cbda10316b8f14cfd2a435d351da84",
+      "tokens_taken": 142
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:954",
+      "text_sha256": "6428ac14e379fea53b12f2b0d89fb5615d9245b07a60ff330def852c547cef15",
+      "tokens_taken": 293
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1182",
+      "text_sha256": "d14ee85b6c6237a576749fecf9f8090138c60a451ec62095ad782d7a586f4517",
+      "tokens_taken": 90
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:916",
+      "text_sha256": "7a5d992f667dc99022fe30de9c675b44bbc29a28905a99f4cfb970b2e0a5295f",
+      "tokens_taken": 130
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:884",
+      "text_sha256": "ad6a07f593cd1d0eb62793bd5d4f12586e97727629d43c4ac7ef71433d8622f1",
+      "tokens_taken": 142
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:204",
+      "text_sha256": "dece45426c916f962351b595d6424b4cb8999ceec611cbe9cf826b2cc431029f",
+      "tokens_taken": 238
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:636",
+      "text_sha256": "fc976dd231b4975ce37bdc2a2340f38dd427aebfbc4467128339862e19fed2f1",
+      "tokens_taken": 115
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1116",
+      "text_sha256": "b24143519a2179181f0b8423286d3c57ff59994880b9fb25e1aadbcbdd5b3330",
+      "tokens_taken": 156
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:382",
+      "text_sha256": "18d8fc030df0f41cfe90b128e67c44d41e1e8a83ff950a90a48fc2e8f4e8d157",
+      "tokens_taken": 106
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:12",
+      "text_sha256": "b4ac2baff94db0a27b7cc9872748b9ced58e53cbfc1be42065028f094bb70cd5",
+      "tokens_taken": 176
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:584",
+      "text_sha256": "10962e65be1b332037418a61bd91d841608299aa134bb339bb1a48e1d67562ae",
+      "tokens_taken": 201
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:335",
+      "text_sha256": "47fae064ef4b6b51d12e882b2f1bce1dc66e2178f72e297c310314416d793591",
+      "tokens_taken": 111
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:689",
+      "text_sha256": "2372a5fe67049c08cfa10233effdadb80d0caa3c9db53ccd8f83dd5679362680",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:361",
+      "text_sha256": "a2896301373e5ea39c97712619b3a2a007c1d913b5176b2d8b101084ae80448b",
+      "tokens_taken": 117
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1216",
+      "text_sha256": "0e05f96564e85bcb5a3d1d77ced8c52c6831a8146529e8b27d5accabe759b98e",
+      "tokens_taken": 238
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:271",
+      "text_sha256": "e8dbb726f1d3669c30bab9322ffeed84583e725cd00ddf8a6081567be015b149",
+      "tokens_taken": 146
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1245",
+      "text_sha256": "e586e828ef46f5fae0099d17804943b3009f4112fc0d9fa773104c1f2af01dc3",
+      "tokens_taken": 192
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1143",
+      "text_sha256": "9e3f6ae37b04bdf7eb3e6aea7f9025a0627c932b1165cac4520b0f6c7b09952f",
+      "tokens_taken": 163
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:372",
+      "text_sha256": "035f2fccb9e2ae2cdddbfb3421c5624c40389e0338b60191c702df2f8979cff7",
+      "tokens_taken": 182
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1176",
+      "text_sha256": "e8f01ba2380395cb976217449c4375d523e5683d8c86a55dd4d58a73e391b627",
+      "tokens_taken": 247
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1202",
+      "text_sha256": "aa446cb96c9c2e836ebdfa3b7bbc7e9e88418865a084e906f2ac681af52c3f9a",
+      "tokens_taken": 178
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:168",
+      "text_sha256": "8795df145831403a1d606a8bdf6c9776dffe706565706f3d7ae8477c8990cb95",
+      "tokens_taken": 201
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1067",
+      "text_sha256": "2529d87f221f37262df28c19ccc934d3339ece49424c8ea392fba15486328f48",
+      "tokens_taken": 271
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:565",
+      "text_sha256": "7a192c0f5f064f9b7a3b0bcaf32888a898d0e50463a598aab34e4a16b8bcf06c",
+      "tokens_taken": 172
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:261",
+      "text_sha256": "219b9bb1dfe4cf192d9ae5a87316ac23441a5b4798bf7e9ec7a87c2252772228",
+      "tokens_taken": 134
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1055",
+      "text_sha256": "745cddb527d3e1a007a0bad019fe826868dce7c011660422164d2b8e48b15dea",
+      "tokens_taken": 153
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:564",
+      "text_sha256": "ac803a2f8f2ed2f3b52425719be2ccc9d93c0666788dc7a208199801896e5947",
+      "tokens_taken": 135
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1225",
+      "text_sha256": "21013128a651f98603569df839914e87153737c950e0bddf9e86438ac054af9f",
+      "tokens_taken": 103
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:51",
+      "text_sha256": "884e294563d17ea909901c8aff33e884c4baa51cb0881220e8bc894b56bacc9d",
+      "tokens_taken": 116
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:686",
+      "text_sha256": "567429d6d31a9605eda85ff5e516889c5e9c4341bdff877fc265e5997486b41b",
+      "tokens_taken": 145
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:967",
+      "text_sha256": "f407d5ee6faac53cd37195c79eb5a58424872ce321e4a0c5a01c050297d1a679",
+      "tokens_taken": 317
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:814",
+      "text_sha256": "54cafd404cf70c740953e8722523401e14ded1eb4c1c809099fbe28d6dc58cbc",
+      "tokens_taken": 171
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1195",
+      "text_sha256": "5256b723137915920942a09790b36689baf9745e9606be232e829cfd8eab69d2",
+      "tokens_taken": 123
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1098",
+      "text_sha256": "23e872d951d7becf136b3c968692adbb9cf9950193aa540e6e59f55cfe92f91d",
+      "tokens_taken": 123
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:96",
+      "text_sha256": "bcaa5dae84957330df1b045d3313d6f20967d9196859596e64d7d2965a562825",
+      "tokens_taken": 148
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:635",
+      "text_sha256": "1d3803d674abdb8304633fe5cfa68565a3c262dc5c188568c6579521b35ecfd0",
+      "tokens_taken": 76
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1179",
+      "text_sha256": "eede0e12167990e3fd9378da1979941844fd63a33a56f54a9c7a8729d29585c1",
+      "tokens_taken": 82
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:99",
+      "text_sha256": "d06165c79a2676b704ff7e2d4d5c5792beb3d36cb67b4680d7d77ee970b8ce72",
+      "tokens_taken": 190
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:239",
+      "text_sha256": "5da6523c4e0d1db1bb6e14f5087b80e141eeee7837ce2d66114792cd40bd30e6",
+      "tokens_taken": 112
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:331",
+      "text_sha256": "7beed1320654e3df06a20475651a7abe3cf408f255648713d2d768431208fb89",
+      "tokens_taken": 154
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:234",
+      "text_sha256": "12854b5b06eac5936abc31dcb5743cb289611b42e6ba1f6c15ef20902d9b290d",
+      "tokens_taken": 159
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:375",
+      "text_sha256": "a985b9571c9439d8f0954dbcb49448ec4cc7bfdc19d31723245350db2f16649e",
+      "tokens_taken": 101
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:894",
+      "text_sha256": "868e49a751df80f7d76a5aeaeae1252fb382c0ac86227b442678b4d8b4775013",
+      "tokens_taken": 113
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:609",
+      "text_sha256": "2c4d2dcf56d2386c4b4c9abcbc3ef8674dc46674b685bd4e7ac40129dc587c96",
+      "tokens_taken": 172
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:400",
+      "text_sha256": "506d3eb7689f8f629f27b36e53ebfbe4794924d9d091c81c6ff5ea351bccc212",
+      "tokens_taken": 107
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:352",
+      "text_sha256": "6c70f085f61779147ef51a65b4344f8bf331329f2366139d84eab9603e246a96",
+      "tokens_taken": 156
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:567",
+      "text_sha256": "957017721d50d3a91c3f339ea0ea6087245ab044bd142f9e4b9b5f5f41cbbad3",
+      "tokens_taken": 118
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:614",
+      "text_sha256": "8493e1ce4f6448e1b6e88597d674360c93bf292de71f6b9ace8cd744c6651dea",
+      "tokens_taken": 120
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:490",
+      "text_sha256": "6eadf06338cbe7e667919aeedde2b1cb200f120274a60a9d60587540fe1c9349",
+      "tokens_taken": 129
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:187",
+      "text_sha256": "e780384f63cd3bb487cb9d95dbdc431ac565c0033d36b653c4df6000be7aa25a",
+      "tokens_taken": 289
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:159",
+      "text_sha256": "7fbe797353ca1467000cd36c773d620f26c05fc9454a2b576d2d2e274eea6ff1",
+      "tokens_taken": 136
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:646",
+      "text_sha256": "0862d888928e8ad9d4ab1430e3a50eb1501be250645364889609dd5de5754950",
+      "tokens_taken": 92
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:828",
+      "text_sha256": "5a593b1a876150bc335a6cf7fa1e6f1f8b69a8e4d998400dbf68e625f18d7471",
+      "tokens_taken": 242
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:444",
+      "text_sha256": "b0eff4e62940d0fe2d31eaffd9b9f2f7317c4ede4b3eb5820b2d20269e2cff4a",
+      "tokens_taken": 239
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:251",
+      "text_sha256": "390500698fa6b3a6380e61c5bdf6d0e0fbf1ea8dee891946267ba8210054f096",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:704",
+      "text_sha256": "de2f779d149f4702532d377195406fd431e29a44e87444a72648bc1de3285698",
+      "tokens_taken": 167
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1178",
+      "text_sha256": "ae770faf52e47b5cfe94819bed0a1b51e3fb0938755329cccae62818d26eab53",
+      "tokens_taken": 168
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:217",
+      "text_sha256": "e20fc54478ad0391b1a370786782675a8acc0b0e476f14378582eea51b455247",
+      "tokens_taken": 173
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:103",
+      "text_sha256": "dd2bb43eb680a17263021c8b414b187eee64a9f467a4e9e29aeedb0611877da5",
+      "tokens_taken": 160
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:727",
+      "text_sha256": "bea7f1bdf8120e298e5f504f527fb73cb953851ca785aa6f8e0e576f3a9d62c7",
+      "tokens_taken": 214
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1061",
+      "text_sha256": "9f79c38960ba7c3507987bef2689d7e1f0a828c7f67394042d63868e9521b138",
+      "tokens_taken": 133
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:44",
+      "text_sha256": "2a2801f9bbc954232f38da9f864fd3973309894df5a1778f563905a5b424e97c",
+      "tokens_taken": 217
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:826",
+      "text_sha256": "ba8886ae938bdb4de7a8b8c64bb6088d01a9fcc95c4b3718e2ea296ab9f9c18f",
+      "tokens_taken": 142
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:116",
+      "text_sha256": "fedf2edc5ebb43568adf7c678a710f82cdcb2e1659b411e3782d949d525f6a7d",
+      "tokens_taken": 213
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:713",
+      "text_sha256": "e6156436b3fa72d017d3bdacbfd201df422ac9d3cd0df65361977e3dc62505ca",
+      "tokens_taken": 158
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:419",
+      "text_sha256": "f26f3f89411d81d1286d5b0f8e6e64e9b96301b1da03872ac8b25ca0a75c4270",
+      "tokens_taken": 96
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:674",
+      "text_sha256": "592345fa426b65a4860161724c87b3ae15153ccb0f06f1c05d3b44f3f3aaa9df",
+      "tokens_taken": 80
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1087",
+      "text_sha256": "5599f267a629a3a763b53a95e91f1c533a80675fbe19e171dc331f46f93fcb37",
+      "tokens_taken": 380
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1180",
+      "text_sha256": "1e48603e5a606742563bc7618e2578d7e2fe13910a9e865cca420263d8ec8cfe",
+      "tokens_taken": 140
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1058",
+      "text_sha256": "608ab72c1e037d58165cc18229d8ea73b54cdbb342b9e5c7c69384e6b567cd06",
+      "tokens_taken": 115
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:753",
+      "text_sha256": "3a5bd68c92336af7f043d70af365a180818cae56d1fadb11b56c372c317df6f4",
+      "tokens_taken": 109
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1128",
+      "text_sha256": "f4bb00753ce01e7c20f724f24efbe2bf8e1c6638d2a3b3b2b4bff5b0d869dbcd",
+      "tokens_taken": 146
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1318",
+      "text_sha256": "65a9532c5c65720f379d38187b1583697f84866935374a663010be84fffe9492",
+      "tokens_taken": 119
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:155",
+      "text_sha256": "bd40ec67bf22c2a957cfd75078359d3744b67b1e953dfc470cb0bd98ec5aaad4",
+      "tokens_taken": 279
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1130",
+      "text_sha256": "9d621f8a1e0b1f515a8603fc097a14e4d5ef7435f1ea9089b086f1c254cde73b",
+      "tokens_taken": 185
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:117",
+      "text_sha256": "12271e2d824949e9f87ff9580b7c6734861c5d89cad4cee0a869fb3964d158d5",
+      "tokens_taken": 120
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1002",
+      "text_sha256": "bbf78f1dbf767eb0e6136a4a51a91553030554ff0b1ead5d784fe8c9b8ee9b2c",
+      "tokens_taken": 277
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:857",
+      "text_sha256": "f9118dd5edd4a721921ef0d6773fa63fbfd90293191b997d05a0708af8a161ec",
+      "tokens_taken": 175
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:940",
+      "text_sha256": "a3dfb9da0bd9bf25a7cd0d4e81c81f686d4d9fde2ad6411e501a0887917ae542",
+      "tokens_taken": 173
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1222",
+      "text_sha256": "311ca9d552ba471aea400158f90f6dcbef9d52fee0fce3828bbdf00fcf606a23",
+      "tokens_taken": 141
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:1184",
+      "text_sha256": "f81bb2041f5f009820665f590f8311bbde6dd5038bae73f8819ff9a1b2a32194",
+      "tokens_taken": 241
+     },
+     {
+      "source": "/public/gsm8k/test.jsonl:574",
+      "text_sha256": "d35aba0674b3e74f6d54ed7ec229eb170cbc1af482bd8f0ce52c302c3db15872",
+      "tokens_taken": 156
+     }
+    ],
+    "author_run_seconds": 101.217,
+    "author_run_peak_gib": 114.63
+   },
+   {
+    "id": "long-structured-32768",
+    "kind": "structured",
+    "n_tokens": 32768,
+    "ids_sha256": "71f9c7b1f09d72b4edf7939cc52aeb0e2d010639f84353f4f2673d5b4a29ac5c",
+    "source_documents": [
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=64,N=640,device_name=NVIDIA_A100-SXM4-80GB.json",
+      "text_sha256": "a3138a143ae09b0d589a0c53b516b5ba87b7a74f729532eb923fe3393a8d8754",
+      "tokens_taken": 1177
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=16,N=7168,device_name=NVIDIA_H100_80GB_HBM3,dtype=int8_w8a16.json",
+      "text_sha256": "9249607f6a8b239090622249e5ef46c71da001f1b17323036297499c85cf57c1",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=256,N=1344,device_name=NVIDIA_B200.json",
+      "text_sha256": "a1ea86a173e803ecde95bf6a0582fda52cf6dcad7afca7dd17a1680ad15bd55d",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=2048,K=4096,device_name=NVIDIA_L40,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "2f46d4a0a76cee0bd0ce11cd379b18ce4f1ea99fae6c696a19008ed5b288d21d",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=1536,K=1536,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "b642e3c0b0bf6955e1ceebe8fb64079288d765ab8f26c7f78cd1c59f54bbb910",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=1,N=3584,device_name=NVIDIA_A100-SXM4-80GB.json",
+      "text_sha256": "c9fdf76265a55528e3ca0d10e0e3005af73d823471bedb4cad005410e7cf9782",
+      "tokens_taken": 1772
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=256,N=128,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "2eaa26fd53083ddb9265365075e2f65a5ff1debf6ae91988f5ba2326b630419e",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=1,N=3072,device_name=NVIDIA_A100-SXM4-80GB,dtype=int8_w8a16.json",
+      "text_sha256": "f062d9cce5493697ce5d731068cb6f7294080b33c6de30cd011bc7e0fc475feb",
+      "tokens_taken": 1772
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=32768,K=512,device_name=NVIDIA_A800-SXM4-80GB,dtype=int8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "ba92c3c86b2b89abed5be0b4b9367602172d5540f3c6fff95d5e2bc08c9cb5e7",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=1536,K=7168,device_name=NVIDIA_L20Y,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "e8f397cd064774dc1c043bf5c3a04929b2cc443b748db154b8cb0c35ff93a04b",
+      "tokens_taken": 201
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=8,N=1792,device_name=NVIDIA_A100-SXM4-80GB.json",
+      "text_sha256": "204601363b7d1c69f3a0e5525af2f40348d4aaaf76e900f4fc1bd5611e110356",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=18432,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "4dd5ae136448b08cabe089b6e0cb962b75f288db5b84efe10220170f3e603549",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=128,device_name=NVIDIA_L20Y,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "b9eda85a6976a2e51365e958c7936de69802998fa26f798b575ade24bf59b9d1",
+      "tokens_taken": 201
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_3_1/E=257,N=256,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "a07e1b0a48c17bd3e1bea7dda939750e79e1f791da3d3e375438b3ed58e43140",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=8,N=3584,device_name=AMD_Instinct_MI300X.json",
+      "text_sha256": "667b25bd3e8796371a9d6c188c5f27b61c2aaff878b63c9bff010b05d7060f8f",
+      "tokens_taken": 1718
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=32,N=448,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "c3abe23ca68c22649bca1a91f0e13d25d207359bb78439182db98ba034caf6d8",
+      "tokens_taken": 1244
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=36864,K=7168,device_name=NVIDIA_H200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "4d670f0d9da6890303e8e5830b516d791b3cd0d0fd442fa824bdcf2d59896ed2",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=4608,K=7168,device_name=AMD_Instinct_MI300X,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "5c635b518c9e4676f93727e94dcd65b9e1e35bf8b8f4ef63f4c03e328adab1d2",
+      "tokens_taken": 1358
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=64,N=2688,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "5ad6440146e11c16f95a71c837c9277704a475f6c8185e2dd3a52eca4d93f977",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_3_1/E=160,N=384,device_name=NVIDIA_H200,dtype=fp8_w8a8.json",
+      "text_sha256": "8c659f64d3f94f57a7f0a5f4ffde25aaa4ca4505c2fca92afe526bb58e2013c6",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=1152,device_name=NVIDIA_A800-SXM4-80GB,dtype=int8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "b7e99ac5ab0afbc92fdf6fe025638af7b41f42bb24de25d6f3528609a2e6e473",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=16,N=800,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8.json",
+      "text_sha256": "f1ed2d37f0c73f0be1fc7102547c7da0e17fe1659d6a1b78b3a36677f2be6815",
+      "tokens_taken": 1056
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=1536,K=1536,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "08fa355911741e0b1030f064be9a0898495032b7f0a492e112f2fce9ee9f90f5",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_6_0/E=64,N=192,device_name=AMD_Instinct_MI325X.json",
+      "text_sha256": "458d6e7e4ed21f527345a0bd542d1c1506efb5f0e605a4f10439d27d487a4c59",
+      "tokens_taken": 1434
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=1024,device_name=NVIDIA_H200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "651822b876764850babbe595e431b06aee24d5188f2c8ebb78434ed1efb96258",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=512,K=7168,device_name=AMD_Radeon_Graphics,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "9b413d4f07d98efb68a5816123dd9549aaa18946698c1bbaf64bf9eab28c12e4",
+      "tokens_taken": 1358
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=272,N=128,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "7f91d38bff5f5af227132269f2916069537a03dbf1bb7ffce3979264637d629a",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_3_1/E=128,N=768,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "25f2d91d50bce19b075487612768c64fdaf666a186c41a88671e0746315ce27e",
+      "tokens_taken": 629
+     }
+    ],
+    "author_run_seconds": 92.09,
+    "author_run_peak_gib": 77.01
+   },
+   {
+    "id": "long-structured-65536",
+    "kind": "structured",
+    "n_tokens": 65536,
+    "ids_sha256": "28d0d13567e622f14531a549481fc73327a2e681c141421f15dd613938943e40",
+    "source_documents": [
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=16,N=2048,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "e327b555a908233ac6513c4635bfc3339bf9f5d8cb82893c49e05e53f608e86a",
+      "tokens_taken": 1177
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=16,N=3584,device_name=NVIDIA_A100-SXM4-80GB.json",
+      "text_sha256": "168d609459df9d840ea8dbe4f0a6aed963fdd223bacd3677ea21bd32b95b3d4f",
+      "tokens_taken": 1772
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_3_1/E=257,N=256,device_name=NVIDIA_H20-3e,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "31e50b5d6c8defdae8b124c9a7740e0e613fc844070a470322f01537758e4816",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=512,N=2688,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "0963e8cd396c736bc91c6bd29e3f7175d4812054377b17ea1b6f3c91d2538218",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=64,N=384,device_name=NVIDIA_B200.json",
+      "text_sha256": "13163b688aa88ac589c53d74e39a1f2850ac4c9c1d25a7f557476b65b2d160a3",
+      "tokens_taken": 1244
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=64,N=1280,device_name=NVIDIA_H200.json",
+      "text_sha256": "7c92a4e4b10cfcb4a7ab5c9cdde90ba807db516ccfa23400eb25f75e0485a3ea",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=18432,device_name=NVIDIA_H20,dtype=int8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "9c3f8a8b75ae43e324b6f1476ac624f220b5b323d499f6e9b2871751e6bd05dc",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=64,N=640,device_name=NVIDIA_H200,dtype=fp8_w8a8.json",
+      "text_sha256": "783dd8f6c3b01c572055d39fc9af0ac4f86f2f1fdbe3085f1169b877c6361d6f",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=1,N=14336,device_name=NVIDIA_A100-SXM4-80GB.json",
+      "text_sha256": "24937486bcb22ebe59bf77524bb0bc70f1610304d3e97c54567046319bd5e890",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=128,N=192,device_name=NVIDIA_A800-SXM4-80GB.json",
+      "text_sha256": "4fefd3fa85b8aa98d3201686571ba4264b1113b620f26f47347809d97991dda2",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=257,N=256,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "baeb9af55ebed47dfc01230f43ad2ded43ad5742102d95810a5d77330436e52b",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=256,N=64,device_name=NVIDIA_A800-SXM4-80GB.json",
+      "text_sha256": "6385a99951a5184447a1ea10346910f860be32c12d31b96a9c056e0db01125dc",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=512,N=256,device_name=NVIDIA_B200.json",
+      "text_sha256": "3dbb49d1d256600058923a0dffabefb124606c690dbc614d8d04f7f2a89dd7ee",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=576,K=7168,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "a86eafde7dea17a2c4d837464fe98321779c6756bbbe0ee9dd0a97602317f399",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=257,N=128,device_name=NVIDIA_H20,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "3dcdab8bea83072b257c3f0b809b5107d4035a323e2aa31e0397ed96d8b0cbc9",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=144,N=512,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "a64e95642861d98d02b094b38ed5213a796d6b540b4d4116cb7dda290538ed76",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=257,N=128,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "b6d16e2f5aca9c4a52848b66946c8294e7e95302e2e5c65815a560a3b080c670",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=256,K=7168,device_name=NVIDIA_A100-SXM4-80GB,dtype=int8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "b264f5620f1f54b03346a42e6c20b18ab589f4a2dbc04a82b7dbcffdda0fbffa",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=161,N=192,device_name=NVIDIA_H200,dtype=fp8_w8a8,per_channel_quant=True.json",
+      "text_sha256": "eda579fbd27b541c3a7a0909c82f86babc3904f4dc86c6eba27b351286db89d6",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=161,N=384,device_name=NVIDIA_H200,dtype=fp8_w8a8,per_channel_quant=True.json",
+      "text_sha256": "75f32678bc5c80676a35c94acdf1895fa7d23cdd32ebe1713033d60e3e119e9b",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=256,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "3c3e002580a41dfcb68afbfd6da328b855f3053cb478a32e99b01fc5f9bdd472",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=2048,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "0f49a888aa92ef7a2b8a5df688d8f98112545a94f6499e637fe65eb1466736fe",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=128,N=384,device_name=NVIDIA_H20.json",
+      "text_sha256": "bd2d834480cea96ca206f6c6e87ef8ea8c277e40f517c023d98674113f71965f",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=32,N=896,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "110d7f5b6310d37b8b8ceab952a76b286ebd735a6e572c6d43658b8ee3c19caa",
+      "tokens_taken": 1244
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=5120,K=1024,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "5725fdd408d67cdd0ec970db897280e946e85d64bec8d045377b65f6ed470ec8",
+      "tokens_taken": 201
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=16,N=3200,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8.json",
+      "text_sha256": "7065632b1df8009444d8b198fc95b0a704b9801a83f7f73d4f7c5ed2950c1fd8",
+      "tokens_taken": 1056
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=8,N=2048,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "ff9c1e2c18a74020f3c95ef98472884fde58d1c7bde0a59fb76ff9042e8491b4",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=16,N=2048,device_name=NVIDIA_B200.json",
+      "text_sha256": "529f2b3eea08222c5a79afec1b93caa3ed599292cdcf07ac3a864fa128234fd1",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=256,device_name=AMD_Radeon_Graphics,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "fd11ef15c6eda6c6412b166d7b6f84dd2507b4bd69c11b6ac21495e0131cc8aa",
+      "tokens_taken": 1358
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=256,N=2688,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "057233d0d5f2a2cbfd3077292ddb65c19266bade5ad8e7b0beaa075afbaf0f40",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=2688,device_name=NVIDIA_B200.json",
+      "text_sha256": "b0fda1dc65b4fe6feaba18551749b13e7ce63e96658f18def48cc7e915a5bf04",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=128,N=768,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "f4be42f15712b2252be57af25c1d403b70e49e5010a30a7a0d4e92ece4b3100d",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=512,K=7168,device_name=NVIDIA_H20,dtype=int8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "aee99424f346bad39bb2ee24ba71613daec1a207d18acb36a82ad07f5fe23a6e",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=192,N=192,device_name=NVIDIA_H20-3e.json",
+      "text_sha256": "6e1ddf115cce355e9e20a9f9ae8ec31f8730495ccbe464587464f8137590d37e",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=2304,device_name=AMD_Radeon_Graphics,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "46af9e30c2b575e509ce61d0387d04fe9c103fb97e654f840933fb5f07a06afc",
+      "tokens_taken": 1358
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_2_0/E=161,N=192,device_name=NVIDIA_A800-SXM4-80GB,dtype=int8_w8a8.json",
+      "text_sha256": "780d617f7b245c5ef21371f2dde0cc337b1b973c0fd877d35206be6223d79c96",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=1536,K=7168,device_name=NVIDIA_A100-SXM4-80GB,dtype=int8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "dc4f8b5da5b514fa138823c1bab9bb536495e0a9968b8c66ab07428c7bd99240",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=8,N=1792,device_name=NVIDIA_H200,dtype=fp8_w8a8.json",
+      "text_sha256": "a1b36d1e5aacea5e8406a1a6d1ed130f6c11f53628415fcdf58ee89bce3b5899",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=16,N=1344,device_name=NVIDIA_A100-SXM4-40GB.json",
+      "text_sha256": "a4208a91d533cee055b658f293b0042006de0dfd760d48a279768e0d95f39b91",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=1024,device_name=NVIDIA_L20Y,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "92343f92f177f1b64672669e246489b1247435c52350e8772d9dbee5ce243ef1",
+      "tokens_taken": 201
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_6_0/E=64,N=1536,device_name=AMD_Instinct_MI325X.json",
+      "text_sha256": "7f7785d11e38b720edeeb2b33faf0594509974880f9afab91213dd2d3fd15d36",
+      "tokens_taken": 1434
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=512,N=128,device_name=NVIDIA_H800,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "d8f289e3e98bc55583826f3526d923469cf598a710ced19d991f3822d94c59f4",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "6cf416b6f689af338e22023e47e308c6cfdfe320bf1686e40f276edce90e16d8",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_3_1/E=128,N=352,device_name=NVIDIA_RTX_6000_Ada_Generation,dtype=fp8_w8a8.json",
+      "text_sha256": "44c630aad07b85879a0b2b99d5f7959d18411a53788cc7263505f686a52a0659",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=128,N=192,device_name=NVIDIA_H200,dtype=fp8_w8a8.json",
+      "text_sha256": "f8c65a67847daf9464f1af4e11ad5e33f4ba20d95cb17ebc063e7fa4ce006b45",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=18432,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "5f2e26819c798a212fbafdb274ee1d14d213f2cd2380184d1c4d6fbbdddf1893",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=5120,K=3200,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "70fef34b838e2aa124a97bc30943d3fcd70649b2bf63d0861d99efc47fd83a6f",
+      "tokens_taken": 201
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_3_1/E=8,N=7168,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "6bd5c96745ee7544de6c074de60b95abedd74af65eb472118dab4ed7eff4c429",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=512,N=128,device_name=NVIDIA_H20-3e.json",
+      "text_sha256": "6ab4d7b0b91ae315a408444d05ac911ea7e1c2bb6a75dfd8872f92ce25554d96",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=1536,K=7168,device_name=AMD_Radeon_Graphics,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "f726bd7f536dd20d110feeac45105939a20f2d2a521590b3ee336fa933eb8051",
+      "tokens_taken": 1358
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=32768,K=512,device_name=NVIDIA_H200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "347771ded6677cb17b36996cc0ccdc4d16d011014bb42860e2b77b194f6531b3",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=257,N=64,device_name=NVIDIA_A100-SXM4-80GB.json",
+      "text_sha256": "40493c6c4f8689e665b538afde283ffd270cf50ff82be73be54cc8b83ac698f0",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_4_0/E=128,N=384,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "e896063788a6c3322b4001206e848ef77c16601ba0bb34e00637d379dab673f4",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=18432,device_name=NVIDIA_L20Y,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "64e584a3ffe8532f008498809510ae18d01935d370785756045a6d258930c6cf",
+      "tokens_taken": 201
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=256,N=256,device_name=NVIDIA_B200,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "20c4ca9cf463852a6d7fbb26224a6a98c8d230bf5243b23c0a991b477227cea9",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/quantization/configs/N=7168,K=1152,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8,block_shape=[128, 128].json",
+      "text_sha256": "fa13ff3fc34cd0ad38986cd39a91813626d0e71c61e603f3e56b68317868cf51",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_1_0/E=64,N=640,device_name=NVIDIA_H100_80GB_HBM3.json",
+      "text_sha256": "b231153d54e0500969e2cf2d64b192c9e3736d6eb34ed526d888a81f79d9b088",
+      "tokens_taken": 1178
+     },
+     {
+      "source": "python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=161,N=192,device_name=NVIDIA_H200.json",
+      "text_sha256": "e82d8f40230528c208e655ac861245cb1fc75829c79adff888e4a688f217378c",
+      "tokens_taken": 899
+     }
+    ],
+    "author_run_seconds": 100.242,
+    "author_run_peak_gib": 114.63
+   }
+  ]
+ },
+ "note": "fixed text from inside the image (the engine tree's documentation, runtime source and tuned kernel configurations, and GSM8K's test split), disjoint by path from the 32 hidden sequences' sources; never generated by either implementation. The ids are the hidden material.",
+ "statistic": "as tests/hidden/fidelity/provenance.json: k3 per sequence, the node's value the median over the eight; each served sequence is scored against the author run at exactly its length"
+}

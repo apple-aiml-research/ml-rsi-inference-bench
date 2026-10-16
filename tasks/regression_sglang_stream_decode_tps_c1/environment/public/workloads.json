@@ -1,0 +1,71 @@
+{
+  "_note": "The scored shapes and the guard shapes, fixed; every point is taken on one server per tree. The score is the geometric mean, over the scored points, of candidate over pristine streamed generated-token throughput; a guard point must not read worse on the candidate (the first-token latency guard is a second reading of the first scored point). The verifier runs its own copy of this file.",
+  "primary_workload": "in1000_out1000_n5_c1_stream",
+  "scored_workloads": [
+    "in1000_out1000_n5_c1_stream",
+    "in1000_out2000_n3_c1_stream",
+    "in1000_out1000_n8_c4_stream"
+  ],
+  "guard_workloads": [
+    "in1000_out1000_n32_c16_stream",
+    "ttft_c1"
+  ],
+  "workloads": [
+    {
+      "name": "in1000_out1000_n5_c1_stream",
+      "role": "scored",
+      "input_len": 1000,
+      "output_len": 1000,
+      "num_prompts": 5,
+      "concurrency": 1,
+      "tp_size": 4,
+      "seed": 1234,
+      "streaming": true,
+      "_note": "One untimed warm-up request precedes the 5 scored ones. The server is launched with --tp 4 and nothing else."
+    },
+    {
+      "name": "in1000_out2000_n3_c1_stream",
+      "role": "scored",
+      "input_len": 1000,
+      "output_len": 2000,
+      "num_prompts": 3,
+      "concurrency": 1,
+      "tp_size": 4,
+      "seed": 1234,
+      "streaming": true
+    },
+    {
+      "name": "in1000_out1000_n8_c4_stream",
+      "role": "scored",
+      "input_len": 1000,
+      "output_len": 1000,
+      "num_prompts": 8,
+      "concurrency": 4,
+      "tp_size": 4,
+      "seed": 1234,
+      "streaming": true
+    },
+    {
+      "name": "in1000_out1000_n32_c16_stream",
+      "role": "guard",
+      "input_len": 1000,
+      "output_len": 1000,
+      "num_prompts": 32,
+      "concurrency": 16,
+      "tp_size": 4,
+      "seed": 1234,
+      "streaming": true
+    },
+    {
+      "name": "ttft_c1",
+      "role": "guard",
+      "from": "in1000_out1000_n5_c1_stream",
+      "metric_key": "latency_ms.ttft.mean",
+      "lower_is_better": true,
+      "input_len": 1000,
+      "output_len": 1000,
+      "num_prompts": 5,
+      "concurrency": 1
+    }
+  ]
+}

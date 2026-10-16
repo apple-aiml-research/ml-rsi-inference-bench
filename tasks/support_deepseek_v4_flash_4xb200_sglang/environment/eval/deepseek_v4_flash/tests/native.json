@@ -1,0 +1,6 @@
+{
+ "model_dir": "/model/deepseek-ai/DeepSeek-V4-Flash",
+ "architecture": "DeepseekV4ForCausalLM",
+ "model_type": "deepseek_v4",
+ "source": "the checkpoint's own config.json (architectures[0], model_type)"
+}

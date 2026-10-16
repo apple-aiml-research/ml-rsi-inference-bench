@@ -1,0 +1,151 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+
+[task]
+name = "inference-bench/optimize_qwen3_6_27b_pd_bulk_2xb200_sglang_open"
+description = "Optimize SGLang prefill/decode DISAGGREGATED serving for Qwen3.6-27B on 2xB200, scored on the geometric mean of continuation-turn tail latency AND tail inter-token latency (pooled P99 ITL) in a multi-turn agent workload. Two pools behind a conversation-sticky router: ONE GPU of prefill and ONE of decode across the two GPUs, joined by SGLang's NIXL transfer engine. The model has 24 attention heads and 4 kv heads, so TP=1 per pool is the only split this model admits here; TP=6 is not legal for it at all. Why these axes and not throughput: vLLM's own docs say disaggregation does not improve throughput and make no TTFT claim -- what it controls is tail inter-token latency. A split only has something to relieve where the aggregated deployment has decode interference to remove, which is why the scored workload is a concurrent multi-turn one rather than any single-turn shape."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["sglang", "throughput-optimization", "qwen3_6", "qwen3_5", "moe", "gated-delta-net", "linear-attention", "hybrid-attention", "qwen3.6-27b", "b200", "sm100", "srt", "pd-disaggregation", "prefill-decode", "mooncake", "latency-optimization", "multi-turn", "8xb200"]
+
+[agent]
+timeout_sec = 30000  # 8.33h
+
+[verifier]
+timeout_sec = 21600
+
+[environment]
+build_timeout_sec = 7200
+cpus = 16
+memory_mb = 262144
+storage_mb = 81920
+# /dev/shm for the engine's shared-memory IPC: the /dev/shm/vllm_* segments the
+# engine creates per worker, plus torch/NCCL shared-memory transports. Docker's
+# default is 64 MiB, which the verifier preflight voids as `dev_shm_too_small`
+# (floor 1 GiB).
+shm_size_mb = 16384
+gpus = 2
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[metadata.inference_bench]
+tier = "regular"
+category = "throughput_optimization"
+engine = "sglang"
+score_profile = "throughput_optimization_v1"
+
+[metadata.inference_bench.pd]
+prefill_gpus = 1
+decode_gpus = 1
+engine = "sglang"
+chunked_prefill_size = -1
+transfer_backend = "nixl"
+router_port = 10001
+discovery_port = 30001
+conversation_turns = 8          # 4 user turns and their replies
+first_turn_prefix_tokens = 8000
+new_tokens_per_turn = 12000
+reply_tokens = 512
+conversations = 16
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+# Agents see the tag; prepare_target_env.sh materializes workspace/repo/ from the same commit
+# (editable) and tags it inference_base (the diff base). The agent edits Python under
+# python/sglang/srt/** AND the runtime-JIT kernels at sglang/jit_kernel/csrc/**
+# (edit_policies = ["python", "csrc:jit_kernel"] -- the .cu/.cuh under jit_kernel are JIT-
+# recompiled at serve time by tvm-ffi -> nvcc from the $repo overlay, so they are editable+scored
+# with NO rebuild step; the bulk prebuilt sgl-kernel/flashinfer .so are NOT scored.
+# Per-side tvm-ffi cache is isolated in the verifier (jit_cache_{cand,pris}).
+[metadata.inference_bench.target]
+repo = "https://github.com/sgl-project/sglang.git"
+commit = "v0.5.12.post1"
+workdir = "/app/repo"
+edit_policies = ["python", "csrc:jit_kernel", "csrc:sgl-kernel"]
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+cuda = "12.8"
+engine_install = "task_scoped_sglang_0_5_10_editable_source_overlay"
+
+[metadata.inference_bench.model]
+hf_model_id = "Qwen/Qwen3.6-27B"
+architecture = "Qwen3_5ForConditionalGeneration"
+total_parameters = "27B"
+activated_parameters = "27B"
+context_window = 65536
+dtype = "bf16"
+tensor_parallel_size = 1  # per pool, not per machine
+
+[metadata.inference_bench.scoring]
+primary_metric = "pd_latency_itl_geomean_ms"
+num_runs = 5
+warmup_runs = 2
+
+[metadata.inference_bench.correctness]
+mode = "loose"
+comparison = "logits"
+atol = 0.05
+rtol = 0.05
+min_pass_rate = 0.95
+num_prompts = 20
+max_tokens = 100
+
+[[metadata.inference_bench.workloads]]
+name = "pd_multiturn"
+input_len = 12000
+output_len = 512
+num_prompts = 64
+max_concurrency = 16
+
+[metadata.inference_bench.commands]
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+# Generous on purpose. Preparation copies overlays and relinks a venv -- minutes, not seconds -- and a timeout here is
+# NOT retried: the docker backend raises RuntimeError("Command timed out after N seconds"), which would kill the trial
+# with a message that says nothing about preparation.
+timeout_sec = 3600.0
+# One attempt: preparation is deterministic, so a second run fails the same way, and a red healthcheck is the signal.
+retries = 1
+
+[environment.env]
+
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+# Fallback budget for a backend where no launcher injects one; MUST equal [agent]
+# timeout_sec above.
+INFB_AGENT_TIMEOUT_SEC = "30000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_ENGINE = "sglang"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+USE_HUB_KERNELS = "NO"
+VLLM_USE_AOT_COMPILE = "0"
+
+[verifier.env]
+INFB_SGLANG_PINNED_COMMIT = "v0.5.12.post1"
+INFB_BUILD_SGL_KERNEL_SH = "/app/scripts/build_sgl_kernel.sh"
+INFB_EDIT_POLICY_CSRC = "1"
+INFB_EDIT_POLICY_CSRC_SGLKERNEL = "1"
+INFB_SGLKERNEL_BUILD_TIMEOUT_SEC = "9000"
+INFB_SERVE_READY_TIMEOUT_SEC = "3600"
+INFB_LIVE_REF_TIMEOUT_SEC = "7200"
+INFB_CORRECTNESS_MODE = "loose"
+INFB_ENGINE = "sglang"
+INFB_OFFICIAL = "1"
+INFB_WORKLOAD_NUM_RUNS_DECODE_HEAVY = "1"
+INFB_WORKLOAD_NUM_RUNS_HIGH_LOAD = "1"
+INFB_WORKLOAD_NUM_RUNS_PREFILL_HEAVY = "5"
+MAX_JOBS = "8"
+USE_HUB_KERNELS = "NO"
+VLLM_USE_AOT_COMPILE = "0"
+
+[metadata.inference_bench.scoring.num_runs_per_workload]
+pd_multiturn = 3

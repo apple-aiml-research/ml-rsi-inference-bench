@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Wed, 27 May 2026 00:00:00 +0000
+Subject: [PATCH] oracle: add inference-bench dsv4_pro_8xb200 marker
+
+ORACLE MARKER: adds a new file to vllm/ so the static verifier
+classifies the candidate as `source_edit` (rather than empty),
+proving the oracle path runs end-to-end.
+---
+ vllm/inference_bench_dsv4_pro_oracle.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 vllm/inference_bench_dsv4_pro_oracle.py
+
+diff --git a/vllm/inference_bench_dsv4_pro_oracle.py b/vllm/inference_bench_dsv4_pro_oracle.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/vllm/inference_bench_dsv4_pro_oracle.py
+@@ -0,0 +1,5 @@
++# inference-bench: dsv4_pro_8xb200 oracle marker (no-op)
++# Task: optimize DeepSeek-V4-Pro on 8xB200 / vLLM 0.20.1+cu129
++# Architecture: Hybrid CSA (4x compress) + HCA (128x compress) attention; MLA base; MoE 384 routed (top-6) + 1 shared with sqrtsoftplus + noaux_tc; native fp4 (NVFP4/MXFP4) experts + fp8 everything else
++# Correctness: loose / logits (atol=0.4 rtol=0.15 min_pass_rate=0.85) — fp4 quant + TP=8 AlltoAll noise floor
++ORACLE_TASK = "dsv4_pro_8xb200"

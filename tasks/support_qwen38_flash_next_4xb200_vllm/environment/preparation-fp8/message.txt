@@ -1,0 +1,4 @@
+Stabilize generic block-FP8 defaults on SM100
+
+Use one pipeline stage for the 64-row default tile with 32-by-32
+quantization blocks. Small tiles and tuned configurations are unchanged.

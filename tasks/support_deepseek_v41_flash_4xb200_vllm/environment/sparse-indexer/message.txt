@@ -1,0 +1,13 @@
+Supply the sparse-indexer dependency runtime and its evaluation materials
+
+third_party/deepgemm_v41_sparse/: the editable source of the MXFP4 sparse MQA-logits runtime (the
+operations' host code and JIT runtime, the JIT kernel headers and generic quantization utilities,
+with the DeepJIT and CUTLASS headers), published as vllm.third_party.deep_gemm_v41_sparse and built
+by tools/build_deepgemm_v41_sparse.py. Its four sparse MQA-logits operations are declared with their
+arguments and not implemented.
+
+Also: the DeepSelect top-k build and configuration, the declarative
+AttentionConfig.indexer_sparse_logits switch, the two component-measurement entry points in
+vllm/model_executor/layers/sparse_indexer_eval.py (declared, not implemented), and under
+eval/deepseek_v41_flash/sparse_indexer/ the indexer's contract, its FP32 mathematics, examples,
+checking script and component measurement. See eval/deepseek_v41_flash/sparse_indexer/README.md.

@@ -1,0 +1,24 @@
+{
+ "what": "C128 compression, D=512, into the flashmla cache (pages of 2): 256 projected tokens of one request, a 200-token extension then 56 one-token steps; the emitted rows after normalization/RoPE, and the stored bytes against the store rule",
+ "ratio": 128,
+ "head_dim": 512,
+ "store": "flashmla",
+ "cache_page": 2,
+ "cache_pages": 3,
+ "cache_first": 2,
+ "swa_pages": [
+  3
+ ],
+ "prefill_tokens": 200,
+ "eps": 1e-06,
+ "emitting_positions": [
+  127,
+  255
+ ],
+ "tensors_sha256": "06a908fa42c8cac54e36f646a99810cf3a49847be028de2f07cd920e12c88e08",
+ "generated": {
+  "label": "dsv4-public-kernel-examples",
+  "expected_from": "an independent float64 implementation of the equations in ../README.md",
+  "checked_against": "the restored human reference"
+ }
+}

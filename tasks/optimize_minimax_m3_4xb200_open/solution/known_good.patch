@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Tue, 24 Jun 2026 00:00:00 +0000
+Subject: [PATCH] oracle: add inference-bench minimax_m3_4xb200 marker
+
+ORACLE MARKER: adds a new file to vllm/ so the static verifier
+classifies the candidate as `source_edit` (rather than empty),
+proving the oracle path runs end-to-end.
+---
+ vllm/inference_bench_minimax_m3_4xb200_oracle.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 vllm/inference_bench_minimax_m3_4xb200_oracle.py
+
+diff --git a/vllm/inference_bench_minimax_m3_4xb200_oracle.py b/vllm/inference_bench_minimax_m3_4xb200_oracle.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/vllm/inference_bench_minimax_m3_4xb200_oracle.py
+@@ -0,0 +1,5 @@
++# inference-bench: minimax_m3_4xb200 oracle marker (no-op)
++# Task: optimize MiniMaxAI/MiniMax-M3-MXFP8 on 4xB200 / vLLM 0.24.0+cu129
++# Architecture: hybrid attn (dense L0-2, block-sparse GQA L3-59 via lightning indexer, sparse_block_size=128 sparse_topk_blocks=16); GQA 64q/4kv head_dim=128 partial RoPE rotary_dim=64; MoE 128 experts top-4 + 1 shared sigmoid+routing_bias; MXFP8 weights (E4M3+E8M0 128x128); 60 layers (3 dense+57 MoE); MTP head (num_mtp_modules=1); 1M context (max_position_embeddings=1048576), served at 16384
++# Correctness: see task.toml [metadata.inference_bench.correctness] (atol=1.0/rtol=0.1/min_pass=0.95)
++ORACLE_TASK = "minimax_m3_4xb200"

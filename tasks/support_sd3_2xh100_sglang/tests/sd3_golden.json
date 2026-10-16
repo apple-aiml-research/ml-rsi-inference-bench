@@ -1,0 +1,162 @@
+{
+  "model_id": "stabilityai/stable-diffusion-3-medium-diffusers",
+  "metric": "pixel_rel_l2",
+  "threshold_rel_l2": 0.05,
+  "fixtures": [
+    {
+      "id": "astronaut",
+      "prompt": "a photograph of an astronaut riding a horse on the moon, high detail",
+      "seed": 42,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "astronaut.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "teapot",
+      "prompt": "a glazed ceramic teapot on a folded linen cloth, steam rising, warm side light, sharp detail",
+      "seed": 211,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "teapot.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "redlacquer",
+      "prompt": "a red lacquer bowl on pale birch wood, raking light, sharp grain",
+      "seed": 1063,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "redlacquer.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "ramen",
+      "prompt": "a bowl of ramen on a wooden table, steam rising, cozy lighting",
+      "seed": 42,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "ramen.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "mountain",
+      "prompt": "a snowy mountain at sunset, alpenglow, sharp",
+      "seed": 7,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "mountain.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "stainedglass",
+      "prompt": "a stained glass panel in deep blue and amber, backlit, sharp lead lines",
+      "seed": 941,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "stainedglass.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "origami",
+      "prompt": "four folded paper cranes in red, white, blue and yellow arranged in a row on a pale concrete slab, flat lighting",
+      "seed": 1853,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "origami.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "candles",
+      "prompt": "three unlit beeswax candles of different heights on a cast iron tray, side light, matte wax",
+      "seed": 1967,
+      "steps": 28,
+      "cfg": 7.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "candles.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "astronaut_cfg1",
+      "prompt": "a photograph of an astronaut riding a horse on the moon, high detail",
+      "seed": 42,
+      "steps": 28,
+      "cfg": 1.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "astronaut_cfg1.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    },
+    {
+      "id": "stainedglass_cfg1",
+      "prompt": "a stained glass panel in deep blue and amber, backlit, sharp lead lines",
+      "seed": 941,
+      "steps": 28,
+      "cfg": 1.0,
+      "h": 1024,
+      "w": 1024,
+      "golden_npy": "stainedglass_cfg1.npy",
+      "shape": [
+        1024,
+        1024,
+        3
+      ]
+    }
+  ],
+  "smoke_ids": [
+    "origami",
+    "astronaut_cfg1"
+  ],
+  "diagnostic_ids": []
+}

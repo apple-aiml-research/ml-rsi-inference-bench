@@ -1,0 +1,7 @@
+Supplied prerequisites and Qwen38 evaluation tools
+
+Hyper-connection operations, the low-latency GEMM helper, the sigmoid output
+gate for GDN decode and its bindings, and task-local evaluation resources.
+
+Native model support and its sparse attention and PLE computations remain
+the implementation task. Package headers carry no model implementation.

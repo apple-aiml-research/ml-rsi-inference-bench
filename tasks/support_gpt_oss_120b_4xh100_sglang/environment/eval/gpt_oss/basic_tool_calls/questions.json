@@ -1,0 +1,50 @@
+[
+ {
+  "question": "Do I need an umbrella in London this afternoon?",
+  "tool": "get_weather"
+ },
+ {
+  "question": "Tell me the current weather in Cairo.",
+  "tool": "get_weather"
+ },
+ {
+  "question": "How hot is it in Phoenix right now, in fahrenheit?",
+  "tool": "get_weather"
+ },
+ {
+  "question": "Is it snowing in Montreal today?",
+  "tool": "get_weather"
+ },
+ {
+  "question": "Please convert 1000 Indian rupees to US dollars.",
+  "tool": "convert_currency"
+ },
+ {
+  "question": "How much is 250 Australian dollars in New Zealand dollars?",
+  "tool": "convert_currency"
+ },
+ {
+  "question": "What do 42 euros come to in Swedish krona?",
+  "tool": "convert_currency"
+ },
+ {
+  "question": "Change 60 Canadian dollars into Mexican pesos for me.",
+  "tool": "convert_currency"
+ },
+ {
+  "question": "Where is flight QF1 right now?",
+  "tool": "lookup_flight"
+ },
+ {
+  "question": "Did flight DL45 depart on schedule?",
+  "tool": "lookup_flight"
+ },
+ {
+  "question": "I'm picking someone up from flight EK202. Is it late?",
+  "tool": "lookup_flight"
+ },
+ {
+  "question": "Check the status of flight SQ321 please.",
+  "tool": "lookup_flight"
+ }
+]

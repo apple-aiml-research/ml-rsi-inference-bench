@@ -1,0 +1,13 @@
+78e55af155646f1b78ff6dcc7a0ec336724c113dcf5c813c0a3ac73d0c89c9b5  repo/sglang/srt/managers/scheduler.py
+# The pinned tree's copy of the file the oracle repairs, recorded here so the digest is available
+# from the pinned commit alone, without an image build.
+#
+# METRICS-ONLY AS A PER-FILE CHECK. The reward gate this task actually uses is the TREE diff against
+# the freshly staged pristine copy (verify_regression_real.py::_edited_paths), because a sealed
+# per-file sha256 silently becomes a second correctness gate: a functionally correct repair made
+# anywhere else in the engine would score 0, and this task's instruction does not name the file.
+# This digest is recorded rather than relied on.
+#
+# Derived from the pinned commit alone, no image build:
+#   git archive --format=tar 163b97012707d712e141e7ee486b72e2b0d8e60d python/ | tar -x -C /tmp/x
+#   sha256sum /tmp/x/python/sglang/srt/managers/scheduler.py

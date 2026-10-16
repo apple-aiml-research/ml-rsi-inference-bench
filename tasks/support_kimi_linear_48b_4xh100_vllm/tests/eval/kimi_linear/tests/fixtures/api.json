@@ -1,0 +1,28 @@
+{
+  "_note": "Development inputs for tests/acceptance.py --mode api. The grader's inputs are different ones of the same kinds: a short plain prompt, a one-turn chat, and five distinct prompts of different lengths served alone and then concurrently in groups of 3 and 5, sizes that are not CUDA-graph capture sizes at this recipe.",
+  "single": {
+    "prompt": "The moon orbits the earth once every"
+  },
+  "chat": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "In one short sentence, what is the largest ocean on Earth?"
+      }
+    ]
+  },
+  "batch_invariance": {
+    "max_tokens": 24,
+    "group_sizes": [
+      3,
+      5
+    ],
+    "prompts": [
+      "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.",
+      "Happy families are all alike; every unhappy family is unhappy in its own way.",
+      "The boiling point of water at sea level, in degrees Celsius, is",
+      "A short list of three primary colors:",
+      "Now is the winter of our discontent made glorious summer by this sun of York; and all the clouds that lour'd upon our house in the deep bosom of the ocean buried."
+    ]
+  }
+}

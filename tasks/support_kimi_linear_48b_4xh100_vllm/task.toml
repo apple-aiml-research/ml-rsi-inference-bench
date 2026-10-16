@@ -1,0 +1,67 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_kimi_linear_48b_4xh100_vllm"
+description = "Day-0 model support: land reliable, numerically faithful and efficient native Kimi-Linear-48B-A3B-Instruct serving in vLLM on eight H100 80GB GPUs -- the TP4/BF16 recipe, two-replica TP4 data parallelism and TP4 prefix caching with its capacity-limited variant -- including efficient KDA kernels and per-request state preserved through the request lifecycle, preserving relevant existing engine behavior"
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "vllm", "h100", "moe", "linear-attention", "hybrid-cache", "mla", "bf16", "long-context", "prefix-caching", "data-parallel"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+build_timeout_sec = 16000
+cpus = 64
+memory_mb = 524288
+storage_mb = 1048576
+shm_size_mb = 65536
+gpus = 8
+gpu_types = ["H100"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/vllm/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 105370
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/vllm/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+build_timeout_sec = 1800
+cpus = 64
+memory_mb = 524288
+storage_mb = 1048576
+shm_size_mb = 65536
+gpus = 8
+gpu_types = ["H100"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/vllm-project/vllm"
+base_commit_hash = "acb5b28091e784d9f6f0a0d61338aa31b5f4b86f"
+reference_commit_hash = "4e68cc9b6aa2b9cfe8d799c2b1cd156a01bca438"
+model_repository = "moonshotai/Kimi-Linear-48B-A3B-Instruct"
+model_revision = "e1df551a447157d4658b573f9a695d57658590e9"
+
+[metadata.inference_bench]
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "vllm"
+score_profile = "model_support_upstream_acceptance_v61"

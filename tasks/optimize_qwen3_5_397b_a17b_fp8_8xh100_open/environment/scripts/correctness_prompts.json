@@ -1,0 +1,22 @@
+[
+  "Describe the differences between supervised, unsupervised, and reinforcement learning.",
+  "Explain quantization-aware training in one paragraph.",
+  "Describe Multi-Latent Attention (MLA) and its memory advantages.",
+  "Explain why LayerNorm is preferred over BatchNorm for transformers.",
+  "What is skip lists?",
+  "Give one example of B+ trees.",
+  "Why is MVCC isolation useful?",
+  "Give one example of B+ trees.",
+  "Briefly explain context-free grammars.",
+  "Give one example of LSM trees.",
+  "Explain how photosynthesis works in cellular biology, covering the main stages and outputs.",
+  "Explain how respiration works in cellular biology, covering the main stages and outputs.",
+  "If 2 workers can build a wall in 12 days, how many days does 25 workers take, assuming linear scaling?",
+  "Describe the historical significance of the Industrial Revolution in 3-5 sentences.",
+  "A train leaves city A at 11 AM travelling at 76 km/h. Another train leaves city B at 11 AM travelling at 80 km/h toward A. The cities are 448 km apart. When and where do they meet?",
+  "Explain how photosynthesis works in cellular biology, covering the main stages and outputs.",
+  "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nList three key historical milestones mentioned in the passage.",
+  "Read the following passage carefully:\n\nThe history of distributed systems traces back to early time-sharing networks, through the ARPANET protocols, the emergence of TCP/IP, and the rise of the modern cloud. Concepts like consensus algorithms (Paxos, Raft), eventual consistency models, and CAP-theorem trade-offs shaped how systems are built today. Frameworks such as MapReduce, Hadoop, and Spark made batch-scale computation accessible; Kubernetes and the container ecosystem transformed deployment. Stream processing with Kafka, Flink, and Beam continues to push the boundary of real-time analytics across globally-distributed infrastructure. \n\nIdentify the central technical challenge described in the passage.",
+  "Why?",
+  "Define gravity."
+]

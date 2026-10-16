@@ -1,0 +1,52 @@
+{
+ "what": "MODEL1 packed sparse attention, 2 requests x 1 query, 64 heads: the SWA pool alone (pages of 256, 128 selected), with a C4 pool (pages of 64, 64 selected) and with a C128 pool (pages of 2, 64 selected); the second request's lists half valid; expected output and LSE",
+ "sm_scale": 0.04419417382415922,
+ "subcases": [
+  {
+   "id": "main",
+   "pools": {
+    "main": {
+     "page": 256,
+     "capacity": 128,
+     "logical_entries": 512
+    }
+   }
+  },
+  {
+   "id": "main+c4",
+   "pools": {
+    "main": {
+     "page": 256,
+     "capacity": 128,
+     "logical_entries": 512
+    },
+    "extra": {
+     "page": 64,
+     "capacity": 64,
+     "logical_entries": 256
+    }
+   }
+  },
+  {
+   "id": "main+c128",
+   "pools": {
+    "main": {
+     "page": 256,
+     "capacity": 128,
+     "logical_entries": 512
+    },
+    "extra": {
+     "page": 2,
+     "capacity": 64,
+     "logical_entries": 256
+    }
+   }
+  }
+ ],
+ "tensors_sha256": "56cc29a244aafac1b4a750de8ca8f7b4e8348778db04cabc92f9f53d9048464a",
+ "generated": {
+  "label": "dsv4-public-kernel-examples",
+  "expected_from": "an independent float64 implementation of the equations in ../README.md",
+  "checked_against": "the restored human reference"
+ }
+}

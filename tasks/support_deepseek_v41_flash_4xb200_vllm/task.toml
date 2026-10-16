@@ -1,0 +1,67 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch"]
+
+[task]
+name = "inference-bench/support_deepseek_v41_flash_4xb200_vllm"
+description = "Day-0 model support: land reliable, numerically faithful and efficient native DeepSeek-V4.1-Flash serving in vLLM on four B200 GPUs (4xB200) at the supplied DSpark deployment, preserving relevant existing engine behavior"
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "vllm", "b200", "moe", "sparse-attention", "compressed-attention", "engram", "hyper-connections", "speculative-decoding", "dspark", "fp8", "fp4", "long-context"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+build_timeout_sec = 12000
+cpus = 64
+memory_mb = 524288
+storage_mb = 4194304
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+PATH = "/opt/vllm/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 141963
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/vllm/bin:/root/.cargo/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+build_timeout_sec = 3600
+cpus = 64
+memory_mb = 524288
+storage_mb = 4194304
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["B200"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/vllm-project/vllm"
+base_commit_hash = "6ead86daeaed3fb406414cc61db23cb214bd7668"
+reference_commit_hash = "e77daef89e18e08321ae7b8b24827eedd5fe8673"
+model_repository = "deepseek-ai/DeepSeek-V4.1-Flash"
+model_revision = "dba1be0a40aa45a94ad051997016db3960a90277"
+
+[metadata.inference_bench]
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "vllm"
+score_profile = "model_support_upstream_acceptance_v59"

@@ -1,0 +1,100 @@
+{"prompt": "Explain the concept of attention mechanisms in transformers in detail."}
+{"prompt": "Write a Python function to compute the nth Fibonacci number using memoization."}
+{"prompt": "Describe the differences between supervised, unsupervised, and reinforcement learning."}
+{"prompt": "What are the key innovations introduced by the GPT family of models?"}
+{"prompt": "Explain how a residual connection helps train very deep neural networks."}
+{"prompt": "Describe the architecture of a Mixture-of-Experts language model."}
+{"prompt": "What is rotary positional embedding and why is it useful?"}
+{"prompt": "Compare the trade-offs between dense and sparse attention mechanisms."}
+{"prompt": "Explain quantization-aware training in one paragraph."}
+{"prompt": "Why is bf16 often preferred over fp16 for large model training?"}
+{"prompt": "Describe how speculative decoding can accelerate LLM inference."}
+{"prompt": "What is the role of the KV cache during autoregressive generation?"}
+{"prompt": "Explain the difference between tensor parallelism and pipeline parallelism."}
+{"prompt": "How does FlashAttention improve attention computation efficiency?"}
+{"prompt": "What is grouped-query attention and when is it useful?"}
+{"prompt": "Describe Multi-Latent Attention (MLA) and its memory advantages."}
+{"prompt": "Explain why LayerNorm is preferred over BatchNorm for transformers."}
+{"prompt": "What is the purpose of warmup steps in transformer training?"}
+{"prompt": "Describe how RoPE handles relative position encoding."}
+{"prompt": "Explain the trade-offs between greedy decoding and sampling-based decoding."}
+{"prompt": "What is Bloom filters?"}
+{"prompt": "Why is linear regression useful?"}
+{"prompt": "Briefly explain type inference."}
+{"prompt": "What is context-free grammars?"}
+{"prompt": "What is skip lists?"}
+{"prompt": "Give one example of MVCC isolation."}
+{"prompt": "What is binary search?"}
+{"prompt": "Briefly explain merge sort."}
+{"prompt": "What is type inference?"}
+{"prompt": "Briefly explain vector clocks."}
+{"prompt": "Give one example of B+ trees."}
+{"prompt": "Give one example of type inference."}
+{"prompt": "Why is MVCC isolation useful?"}
+{"prompt": "What is LZ77 compression?"}
+{"prompt": "Briefly explain Reed-Solomon codes."}
+{"prompt": "Give one example of B+ trees."}
+{"prompt": "Why is TCP handshake useful?"}
+{"prompt": "Briefly explain context-free grammars."}
+{"prompt": "Why is Reed-Solomon codes useful?"}
+{"prompt": "What is hash maps?"}
+{"prompt": "What is DNS recursion?"}
+{"prompt": "Why is TLS certificates useful?"}
+{"prompt": "Why is two-phase commit useful?"}
+{"prompt": "What is LZ77 compression?"}
+{"prompt": "Give one example of LSM trees."}
+{"prompt": "What is vector clocks?"}
+{"prompt": "Give one example of Kalman filters."}
+{"prompt": "Why is merge sort useful?"}
+{"prompt": "Why is Huffman coding useful?"}
+{"prompt": "Briefly explain MVCC isolation."}
+{"prompt": "Explain how photosynthesis works in cellular biology, covering the main stages and outputs."}
+{"prompt": "Compare monolith and microservice architectures on at least three dimensions."}
+{"prompt": "Explain how respiration works in cellular biology, covering the main stages and outputs."}
+{"prompt": "Compute the eigenvalues of the matrix [[6,4],[3,9]] and explain the steps."}
+{"prompt": "Compare Python and Rust on at least three dimensions."}
+{"prompt": "Compute the eigenvalues of the matrix [[5,9],[3,9]] and explain the steps."}
+{"prompt": "If 2 workers can build a wall in 12 days, how many days does 25 workers take, assuming linear scaling?"}
+{"prompt": "Describe the historical significance of the Industrial Revolution in 3-5 sentences."}
+{"prompt": "Explain how mitosis works in cellular biology, covering the main stages and outputs."}
+{"prompt": "Compute the eigenvalues of the matrix [[6,2],[9,4]] and explain the steps."}
+{"prompt": "A train leaves city A at 11 AM travelling at 76 km/h. Another train leaves city B at 11 AM travelling at 80 km/h toward A. The cities are 448 km apart. When and where do they meet?"}
+{"prompt": "Describe the historical significance of the Industrial Revolution in 3-5 sentences."}
+{"prompt": "Explain how meiosis works in cellular biology, covering the main stages and outputs."}
+{"prompt": "Explain how respiration works in cellular biology, covering the main stages and outputs."}
+{"prompt": "If 7 workers can build a wall in 3 days, how many days does 16 workers take, assuming linear scaling?"}
+{"prompt": "Explain how photosynthesis works in cellular biology, covering the main stages and outputs."}
+{"prompt": "Compute the eigenvalues of the matrix [[2,1],[8,2]] and explain the steps."}
+{"prompt": "Describe the historical significance of the fall of Constantinople in 3-5 sentences."}
+{"prompt": "Write a short proof that the square root of 2 is irrational."}
+{"prompt": "A train leaves city A at 8 AM travelling at 42 km/h. Another train leaves city B at 7 AM travelling at 71 km/h toward A. The cities are 333 km apart. When and where do they meet?"}
+{"prompt": "Write a short proof that the square root of 2 is irrational."}
+{"prompt": "A train leaves city A at 10 AM travelling at 87 km/h. Another train leaves city B at 8 AM travelling at 65 km/h toward A. The cities are 366 km apart. When and where do they meet?"}
+{"prompt": "Compare Python and Rust on at least three dimensions."}
+{"prompt": "Compare REST and GraphQL on at least three dimensions."}
+{"prompt": "Compare REST and GraphQL on at least three dimensions."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nList three key historical milestones mentioned in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nSummarize the passage in 2-3 sentences."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nList three key historical milestones mentioned in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nList three key historical milestones mentioned in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nIdentify the central technical challenge described in the passage."}
+{"prompt": "Read the following passage carefully:\n\nThe history of distributed systems traces back to early time-sharing networks, through the ARPANET protocols, the emergence of TCP/IP, and the rise of the modern cloud. Concepts like consensus algorithms (Paxos, Raft), eventual consistency models, and CAP-theorem trade-offs shaped how systems are built today. Frameworks such as MapReduce, Hadoop, and Spark made batch-scale computation accessible; Kubernetes and the container ecosystem transformed deployment. Stream processing with Kafka, Flink, and Beam continues to push the boundary of real-time analytics across globally-distributed infrastructure. \n\nIdentify the central technical challenge described in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nList three key historical milestones mentioned in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nWhat are the main themes of the passage?"}
+{"prompt": "Read the following passage carefully:\n\nThe development of artificial intelligence has unfolded across distinct phases \u2014 symbolic AI in the mid-20th century, the rise of expert systems in the 1980s, the connectionist revival of the late 1980s, the AI winter that tempered expectations through the 1990s, and the deep-learning era that began with AlexNet's 2012 ImageNet victory. The transformer architecture, introduced by Vaswani et al. in 2017, shifted natural language processing onto a self-attention foundation and enabled scaling laws that produced models like GPT, PaLM, and their successors. The current frontier emphasizes alignment, efficient inference, and multimodal capabilities. \n\nIdentify the central technical challenge described in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nIdentify the central technical challenge described in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nWhat are the main themes of the passage?"}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nWhat does the passage suggest about future development?"}
+{"prompt": "Read the following passage carefully:\n\nThe history of distributed systems traces back to early time-sharing networks, through the ARPANET protocols, the emergence of TCP/IP, and the rise of the modern cloud. Concepts like consensus algorithms (Paxos, Raft), eventual consistency models, and CAP-theorem trade-offs shaped how systems are built today. Frameworks such as MapReduce, Hadoop, and Spark made batch-scale computation accessible; Kubernetes and the container ecosystem transformed deployment. Stream processing with Kafka, Flink, and Beam continues to push the boundary of real-time analytics across globally-distributed infrastructure. \n\nIdentify the central technical challenge described in the passage."}
+{"prompt": "Read the following passage carefully:\n\nQuantum computing leverages superposition and entanglement to perform certain computations more efficiently than classical machines. Shor's algorithm factors integers in polynomial time on a quantum computer, breaking RSA. Grover's algorithm achieves quadratic speedup for unstructured search. Practical machines from IBM, Google, and IonQ have shown quantum supremacy for specific tasks but face significant challenges around error correction, coherence times, and gate fidelity. The race between superconducting, trapped-ion, and photonic approaches continues to define the field's near-term trajectory and timelines for fault-tolerant operation.\n\nSummarize the passage in 2-3 sentences."}
+{"prompt": "Read the following passage carefully:\n\nThe history of distributed systems traces back to early time-sharing networks, through the ARPANET protocols, the emergence of TCP/IP, and the rise of the modern cloud. Concepts like consensus algorithms (Paxos, Raft), eventual consistency models, and CAP-theorem trade-offs shaped how systems are built today. Frameworks such as MapReduce, Hadoop, and Spark made batch-scale computation accessible; Kubernetes and the container ecosystem transformed deployment. Stream processing with Kafka, Flink, and Beam continues to push the boundary of real-time analytics across globally-distributed infrastructure. \n\nList three key historical milestones mentioned in the passage."}
+{"prompt": "Why?"}
+{"prompt": "Tell me one fact."}
+{"prompt": "Define gravity."}
+{"prompt": "Hello, world."}
+{"prompt": "Hello, world."}
+{"prompt": "the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the. What pattern do you see?"}
+{"prompt": "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello. What pattern do you see?"}
+{"prompt": "Translate 'good morning' into Spanish, French, and Japanese."}
+{"prompt": "Define 'r\u00e9sum\u00e9' and explain its etymology."}
+{"prompt": "What is the meaning of the emoji \u26a1 in technical contexts?"}

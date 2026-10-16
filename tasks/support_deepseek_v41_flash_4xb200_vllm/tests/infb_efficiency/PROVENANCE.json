@@ -1,0 +1,57 @@
+{
+ "package": "tests/infb_efficiency of support_deepseek_v41_flash_4xb200_vllm",
+ "owner": "this task. Its own local tests are authoritative; no shared implementation, manifest, vendoring command or central guard governs it",
+ "origin": {
+  "source": "the benchmark's Day-0 efficiency implementation",
+  "files": {
+   "__init__.py": "c2553cc2e7ec6e176891a22a34ae641a7298facf004b1dd931900a980cff8378",
+   "_paired_helper.py": "c555cd9b68bb2b883c18f194d87253b208ad28795fb2c926aa9da80f44639798",
+   "canary.py": "f1fb99a5530f23bc1e432013b143bc744341345c7178f1de051cc48d6765a9e9",
+   "client.py": "849808a8df96c13a42e9335ba114447c37feb0e9b2cd889f028a36b80894bb64",
+   "deadline.py": "a98123a8bf63b8c1a3501991ed15e650caa843f6a86c27ec772ba98b22c648af",
+   "efficiency.schema.json": "18da03f8955a5e0f8bbd75aae09d2a2389c9d989af605e355af46088ab02eacb",
+   "nodes.py": "5115aff1106339efb7202f1a28cbfcef0e7ab94f615c48a5c939f13b9c998954",
+   "pool.jsonl.xz": "fc9428a776ecc030c4b0eeb6b5aea3c7425052913acb3d880b4b0cb4190cd472",
+   "pool.provenance.json": "fdc3b328a67e7e26d38b041e278c43738dea30ff1d333db67f1cf2880229a40d",
+   "reference.py": "044496f468b69a9efcc2389526fee995c151a6d4bbde1ddf95e12a0a044c1b11",
+   "schema_check.py": "6995ae1b20dbec565f795b2ca73b8187d435541c3e0e855a1d68538d1770f3d7",
+   "snapshot.py": "387c6ed6f21248d0e1ce47deba0cb790999927f6fd92a68b9d72873544e86ab3"
+  },
+  "public_efficiency": {
+   "README.md": "deb7e3fd6e96531eb4c762d99a814dec4c18432992ca5478bb300b98e7fbf336",
+   "client.py": "849808a8df96c13a42e9335ba114447c37feb0e9b2cd889f028a36b80894bb64",
+   "sample.jsonl.xz": "e56003aa4ebc046e79043f2a0c89efbd03e31fadf5ed2352e881457519ae513e",
+   "sample.provenance.json": "db11c23272ef6e8c7d3950bba9d9e33f6b3f2f10c0a2d954d43ada3e521f6dca"
+  }
+ },
+ "local_changes": {
+  "__init__.py": "rewritten: says whose package this is and what each file does",
+  "_paired_helper.py": "the six functions this task calls, unchanged (their AST equal to the source's): cleanup_stale_ipc, spawn_with_retry, _gpu_pids_via_proc, kill_stray_gpu_processes, wait_for_gpu_free_memory, teardown_and_confirm_free; the other 27 definitions (rsync and pristine worktrees, benchmark scoring and profiles, csrc/so/FlashAttention rebuilds, edit policy) and the module's alias assignments removed; a new header",
+  "client.py": "the docstring rewritten for the agent's copy (no grading narrative, the V4.1 vLLM invocation); SGLangAdapter and TransformersTokenizer removed, a checkpoint directory without tokenizer.json refused; decode_c1's statistic is the median of per-prompt ratios alone (ratio-of-medians removed); the per-axis task_bars override removed (the verdict's bar is rho); --rho's help names no value",
+  "nodes.py": "the docstring rewritten for this task's nodes; EfficiencyMixin, the SGLang prefix-cache flush (flush_between_draws, flush_cache, FLUSH_PATHS), the best-of c1_attempts retries and _stop_message removed; a single draw is refused (this task draws decode_c1 five times and throughput three times); decode_c1_statistic must be median_of_ratios; task_bars and flush_between_draws are refused if set (no_other_options); axis_sizing's bar is rho; run_axis's forecast stop and the canary re-draw's time forecast removed (each draw gets what remains of its axis's one measurement invocation), the relaunch's forecast skips removed and the reference's second launch bounded by deadlines.relaunch_reference_s, and axis_sizing's reference need is all of an axis's draws in one invocation (deadlines.invocation_s)",
+  "reference.py": "the static recipe argv only: the upstream-class setUpClass interception (_CAPTURE) and the host-check driver (run_host_checks) removed, and a config naming either refused; the engine module's default is vllm; the docstring's steps 2 and 4 say so; each axis's draws are one measurement invocation under deadlines.invocation_s, each draw limited to what remains of it (the per-draw reference bounds retired); the sparse-indexer contract: the reference server's JIT caches include the sparse MQA-logits runtime's, keyed by role, source id and GPU architecture (JIT_CACHE_VARS, SPARSE_JIT_ROOT, private_jit_caches' sparse argument), and the reference's component recordings (sparse_components: prefill then decode, after the identity check and before the reference is served, with the reference server's environment, through tests/infb_verify/sparse_measure.py) are recorded for the component nodes and never a host fault of the trial",
+  "deadline.py": "one docstring phrase ('vendored byte for byte' -> 'carried unchanged')",
+  "canary.py": "a docstring-only removal of recorded provenance: no statement, condition, threshold or string literal changed (the module's AST is byte-equal to the source's)",
+  "snapshot.py": "the mandatory snapshot fix: the pristine image's sparse runtime products are the unimplemented runtime's, so build_product_exclude keeps them out of the copy, and build_sparse runs the narrow builder on the restored reference tree with the engine's interpreter (step 4a); its products are recorded as built, 'sparse', and snapshot.json gains sparse_build",
+  "schema_check.py": "unchanged",
+  "efficiency.schema.json": "unchanged",
+  "pool.jsonl.xz": "unchanged",
+  "pool.provenance.json": "unchanged",
+  "KIT_MANIFEST.json": "removed: this package is not a verbatim copy, and no manifest governs it"
+ },
+ "files": {
+  "__init__.py": "3526d84cc91db00c75aaf50116dd2e35f752430220f2834b08db0cd78fff7777",
+  "_paired_helper.py": "414985a776de3379c4abfc10782a1e3ee12755ffe41e327e4f36b1c1bd13d925",
+  "canary.py": "cdd9cf711fb431928a6906635cfa6beeb68fe043f4826eff53af0fd04da27243",
+  "client.py": "fe2d1f0c5b7a7b7a0beeca9701dc2312c6d880f429a0e713759d2c1c6b7ba8c2",
+  "deadline.py": "4f5a637ca8842c71c3c9f67e5bb078a27903480538e5c8a8f365f5d142c506ae",
+  "efficiency.schema.json": "18da03f8955a5e0f8bbd75aae09d2a2389c9d989af605e355af46088ab02eacb",
+  "nodes.py": "29d03f60da045316dfe4baadc4e7c732fcee28c012942818cb80a02055810e16",
+  "pool.jsonl.xz": "fc9428a776ecc030c4b0eeb6b5aea3c7425052913acb3d880b4b0cb4190cd472",
+  "pool.provenance.json": "fdc3b328a67e7e26d38b041e278c43738dea30ff1d333db67f1cf2880229a40d",
+  "reference.py": "c8c18c655d48ef3bd89b38c0b54b347399e13d7676d1e8cd78cd64d451dd1c71",
+  "schema_check.py": "6995ae1b20dbec565f795b2ca73b8187d435541c3e0e855a1d68538d1770f3d7",
+  "snapshot.py": "caf4967b99eb615985be9d4096f9597cdb0e8fb3174ad8ba83eb8cefbec19d11"
+ },
+ "agent_copy": "environment/eval/deepseek_v41_flash/serving/client.py (and tests/eval/...) is client.py, byte for byte; a repository guard holds them equal"
+}

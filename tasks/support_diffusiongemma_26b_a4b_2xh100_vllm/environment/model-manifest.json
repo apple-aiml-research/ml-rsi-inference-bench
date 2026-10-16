@@ -1,0 +1,207 @@
+{
+ "models": [
+  {
+   "bytes": 51680022402,
+   "file_count": 20,
+   "files": [
+    {
+     "git_blob": "11cc27b6f12779a41e6777a7cbcd1b8e693189e5",
+     "path": ".gitattributes",
+     "sha256": "fd82bca78d82eb3604d07379f861f2289fefa0f0642b442277ee66f8c81b9e96",
+     "size": 1658
+    },
+    {
+     "git_blob": "5e69c184a47d0e83d3cd46571c7dc5ce3bbdf75f",
+     "path": "README.md",
+     "sha256": "3acbbf7e4c01297291113b1297732b6bcecf0d7769a2571fefeca4f0f5909747",
+     "size": 19722
+    },
+    {
+     "git_blob": "e61bbfe9a31db79ea1e4e557b046f895ad7899d0",
+     "path": "chat_template.jinja",
+     "sha256": "36e3a42e5cf14cd0020e72d92e1fdd9970f59b82170e421f0cbe1bb42bead3f0",
+     "size": 17466
+    },
+    {
+     "git_blob": "d609366b2563e13f39fbad6c6ee6f7d0231aa0d0",
+     "path": "config.json",
+     "sha256": "13b11d2fe87302cc2332c64eb9eb4ac305d9b8a123ffe9c5cb5b1920fc70c506",
+     "size": 3469
+    },
+    {
+     "git_blob": "73dcc9ff4ae4e0caa1301e1cc8f07ac6e2b317da",
+     "path": "generation_config.json",
+     "sha256": "99334f763c3dbe8b161aeaca1c150a05344299fda2d2e4a0e1d342c744461200",
+     "size": 357
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00001-of-00011.safetensors",
+     "sha256": "3efe137998af7d2bde4e3ab04ab3524823699a4ac3130adace5003ef40cceeb6",
+     "size": 4732780476
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00002-of-00011.safetensors",
+     "sha256": "4a39d68c756fb26bbd2a54f2b8d550047ea98f3152f87ec75db825c8e17934a7",
+     "size": 4884578006
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00003-of-00011.safetensors",
+     "sha256": "ac6083e3489215ca032501714b78832e5cc4c945a8dbbb905b5292a4e95bc75e",
+     "size": 4913414742
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00004-of-00011.safetensors",
+     "sha256": "865b66393de5a9c752e67beae1bd2c860c12786b72ad86ca9345c00b7b586e60",
+     "size": 4884578030
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00005-of-00011.safetensors",
+     "sha256": "a87e01bed77ad9d2234851267d99af583ff79c7a86d7494fe08ae0f9de9cd318",
+     "size": 4913414814
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00006-of-00011.safetensors",
+     "sha256": "077e841b3b138fbc38df2c36665abdaafa96b8c96f968e2263a7452afaa912ab",
+     "size": 4884578070
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00007-of-00011.safetensors",
+     "sha256": "13a18b3c04a7f19a16385dd8a0d7fd0b9cc89ef131e4294a063c31c7d90c58ef",
+     "size": 4913414814
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00008-of-00011.safetensors",
+     "sha256": "aca5d3bdfc84700bd55b475781cb46e5608104c4832d2abe111a119ddcb23ff7",
+     "size": 4884578070
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00009-of-00011.safetensors",
+     "sha256": "8e2418867354e5cb356c0af8ccfdcc60bc363500674d6cf395991e7d6219eb29",
+     "size": 4913414814
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00010-of-00011.safetensors",
+     "sha256": "93d564b7dd686464a5c068ff9665cd5d3bca399c2ce320aecd41bd011e3787d5",
+     "size": 4884578070
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model-00011-of-00011.safetensors",
+     "sha256": "afec047176bb2a05f078566576aec6bdb71ad4d041275d0d0c89473fda6d6d87",
+     "size": 2838371118
+    },
+    {
+     "git_blob": "c5c692dcc6f1cf0845a69d344d635b52d2d8b34b",
+     "path": "model.safetensors.index.json",
+     "sha256": "6e33e8465d55fe6c7bc0a5453c7a4b341e6467d032c6ded82aaf439f61dac69a",
+     "size": 104650
+    },
+    {
+     "git_blob": "5465974d23e1eca2c46c2809b26c997946ce0d90",
+     "path": "processor_config.json",
+     "sha256": "32bdf45d2ad4cc29a0822ddd157a182de76644f0419a6228d151495256e9813c",
+     "size": 1689
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "tokenizer.json",
+     "sha256": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+     "size": 32169626
+    },
+    {
+     "git_blob": "af7f25861136b515f4bf64d9d0a6cf9875a6d508",
+     "path": "tokenizer_config.json",
+     "sha256": "a284d1243b62be31faa9c13e1c28cece940c4abaa7bd9ad87b94f61b40687200",
+     "size": 2741
+    }
+   ],
+   "repo_id": "google/diffusiongemma-26B-A4B-it",
+   "revision": "0f28bc42f588fbd8f71e08102b1c3960298a1358",
+   "source": "https://huggingface.co/api/models/google/diffusiongemma-26B-A4B-it/revision/0f28bc42f588fbd8f71e08102b1c3960298a1358?blobs=true"
+  },
+  {
+   "bytes": 999604126,
+   "file_count": 10,
+   "files": [
+    {
+     "git_blob": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+     "path": ".gitattributes",
+     "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+     "size": 1519
+    },
+    {
+     "git_blob": "6634c8cc3133b3848ec74b9f275acaaa1ea618ab",
+     "path": "LICENSE",
+     "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+     "size": 11343
+    },
+    {
+     "git_blob": "4b8373851d093eb9f3017443f27781c6971eff24",
+     "path": "README.md",
+     "sha256": "b19c806a904db6dc878a0462e70b551f6b7ac78dfbb88c2eb966ca2b9109ae15",
+     "size": 4917
+    },
+    {
+     "git_blob": "0dbb161213629a23f0fc00ef286e6b1e366d180f",
+     "path": "config.json",
+     "sha256": "18e18afcaccafade98daf13a54092927904649e1dd4eba8299ab717d5d94ff45",
+     "size": 659
+    },
+    {
+     "git_blob": "dfc11073787daf1b0f9c0f1499487ab5f4c93738",
+     "path": "generation_config.json",
+     "sha256": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6",
+     "size": 242
+    },
+    {
+     "git_blob": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+     "path": "merges.txt",
+     "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+     "size": 1671839
+    },
+    {
+     "hub": "lfs sha256",
+     "path": "model.safetensors",
+     "sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+     "size": 988097824
+    },
+    {
+     "git_blob": "443909a61d429dff23010e5bddd28ff530edda00",
+     "path": "tokenizer.json",
+     "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+     "size": 7031645
+    },
+    {
+     "git_blob": "07bfe0640cb5a0037f9322287fbfc682806cf672",
+     "path": "tokenizer_config.json",
+     "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
+     "size": 7305
+    },
+    {
+     "git_blob": "4783fe10ac3adce15ac8f358ef5462739852c569",
+     "path": "vocab.json",
+     "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+     "size": 2776833
+    }
+   ],
+   "repo_id": "Qwen/Qwen2.5-0.5B-Instruct",
+   "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+   "source": "https://huggingface.co/api/models/Qwen/Qwen2.5-0.5B-Instruct/revision/7ae557604adf67be50417f59c2c2f167def9a775?blobs=true"
+  }
+ ],
+ "note": "Every file of each pinned revision (.gitattributes included). sha256 is the Hub LFS sha256 for LFS files and the digest of the verified download for the others, whose Hub git blob id is recorded beside it. Staged and verified 2026-09-29T18:13:57Z.",
+ "totals": {
+  "bytes": 52679626528,
+  "files": 30
+ }
+}

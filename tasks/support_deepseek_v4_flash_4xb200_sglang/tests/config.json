@@ -1,0 +1,3161 @@
+{
+ "base_commit": "eac98398e7adc70dd10d8db3ff77226b026000ce",
+ "f2p_node_ids": [
+  "infb_verify.test_l0.test_registry_resolves_native_class",
+  "infb_verify.test_kernels.test_sparse_bf16_correctness",
+  "infb_verify.test_kernels.test_sparse_paged_correctness",
+  "infb_verify.test_kernels.test_compression_state_correctness",
+  "infb_verify.test_kernels.test_cache_transform_correctness",
+  "infb_verify.test_kernels.test_kernel_prefill_efficiency",
+  "infb_verify.test_kernels.test_kernel_decode_efficiency",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_0_efficiency_decode_c1",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_0_efficiency_throughput",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_health",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_health_generate",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_capital_france",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_basic_math",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_color_completion",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_ascii_ratio",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_no_repetition_blowup",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_max_token_one",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_streaming_response",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_concurrent_requests",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_long_prompt",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_determinism_temp_zero",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_gsm8k_hidden_slice",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_fidelity_kl",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_long_context_fidelity",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_long_reach_fidelity",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_prefix_cache",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_recipe_conformance",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_generation_replay",
+  "infb_verify.test_hidden.TestHiddenDSV4.test_prefix_branch_replay"
+ ],
+ "p2p_node_ids": [
+  "infb_verify.test_l0.test_build_editable_install",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_build_chat_response_qwen3_thinking_forces_reasoning",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_convert_to_internal_request_single",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_extract_routed_dp_rank_from_header_invalid",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_extract_routed_dp_rank_from_header_no_header",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_extract_routed_dp_rank_from_header_with_header",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_extract_routed_dp_rank_header_overrides_body",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_fallback_always_mode",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_fallback_enable_thinking_mode_default_on",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_fallback_explicit_enable_thinking_mode_default_off",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_fallback_explicit_thinking_mode_default_off",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_fallback_mistral_mode",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_fallback_no_detector_returns_false",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_get_reasoning_from_request_default_false_toggle",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_get_reasoning_from_request_default_true_toggle",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_get_reasoning_from_request_special_cases",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_hunyuan_reasoning_effort_dispatch",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_incremental_streaming_output_delta",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_jinja_tool_schema_fallback_to_flat_function",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_jinja_uses_openai_tool_schema_first",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_kimi_k2_non_streaming_tool_call_id_format",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_kimi_k2_non_streaming_tool_call_id_with_history",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_kimi_k2_streaming_tool_call_id_format",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_kimi_k2_streaming_tool_call_id_with_history",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_non_streaming_cached_tokens_details_emits_sglext",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_stop_str_isolation_between_requests",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_streaming_abort_yields_error",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_streaming_cached_tokens_details_emits_sglext",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_unstreamed_tool_args_completion",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_unstreamed_tool_args_no_completion_needed",
+  "registered.unit.entrypoints.openai.test_serving_chat.ServingChatTestCase.test_unstreamed_tool_args_no_parser_data",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_empty_list_returns_empty_string",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_mixed_str_and_dict_parts",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_multiple_text_parts_joined",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_non_text_part_list_preserved",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_non_tool_role_unchanged",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_openai_text_parts_flattened",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestNormalizeToolContent.test_string_content_unchanged",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestProcessToolCallsWithRequiredToolChoice.test_required_with_parser_uses_function_call_parser",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestProcessToolCallsWithRequiredToolChoice.test_required_without_parser_falls_back_to_json",
+  "registered.unit.entrypoints.openai.test_serving_chat.TestProcessToolCallsWithRequiredToolChoice.test_required_without_parser_invalid_json_returns_none",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_allocator_alloc_free_cycle",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_batch_multiple_requests",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_kernel_correctness_long_seq",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_kernel_correctness_short_seq",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_kernel_lru_replacement",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_request_lifecycle_direct_path",
+  "registered.unit.managers.test_hisparse_unit.TestHiSparseUnit.test_request_lifecycle_staging_path",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_add_chunked_req_hybrid_swa_defers_when_swa_below_page",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_add_chunked_req_hybrid_swa_reserves_page_for_alloc_extend",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_mixed_chunk_prefill_budgets",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_fail_high_priority_values_first",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_fail_low_priority_values_first",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_skip_already_preempted_request",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_success_high_priority_values_first",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_success_low_priority_values_first",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_success_low_priority_values_first_exact_once",
+  "registered.unit.managers.test_prefill_adder.TestPrefillAdder.test_preempt_success_low_priority_values_first_exact_twice",
+  "registered.unit.mem_cache.test_swa_eviction_boundary.TestSWAEvictionBoundary.test_formula_noop_short_sequence",
+  "registered.unit.mem_cache.test_swa_eviction_boundary.TestSWAEvictionBoundary.test_formula_page_gt_window_sweep",
+  "registered.unit.mem_cache.test_swa_unittest.TestSWA.test_swa_memory_pool",
+  "registered.unit.mem_cache.test_swa_unittest.TestSWA.test_swa_radix_cache_1",
+  "registered.unit.mem_cache.test_swa_unittest.TestSWA.test_swa_radix_cache_eagle",
+  "registered.unit.utils.test_weight_checker.TestCheckTensors.test_asserts_on_name_mismatch",
+  "registered.unit.utils.test_weight_checker.TestCheckTensors.test_asserts_on_should_compare_mismatch",
+  "registered.unit.utils.test_weight_checker.TestCheckTensors.test_passes_when_all_equal",
+  "registered.unit.utils.test_weight_checker.TestCheckTensors.test_passes_when_should_compare_false_even_if_diff",
+  "registered.unit.utils.test_weight_checker.TestCheckTensors.test_raises_when_should_compare_true_and_diff",
+  "registered.unit.utils.test_weight_checker.TestCheckTensors.test_zip_strict_raises_on_length_mismatch",
+  "registered.unit.utils.test_weight_checker.TestCompare.test_fails_after_reset_on_normal_param",
+  "registered.unit.utils.test_weight_checker.TestCompare.test_passes_after_reset_then_restoring_normal_params",
+  "registered.unit.utils.test_weight_checker.TestCompare.test_passes_when_only_skipped_buffer_diverges",
+  "registered.unit.utils.test_weight_checker.TestCompare.test_passes_when_unchanged",
+  "registered.unit.utils.test_weight_checker.TestCompare.test_without_snapshot_raises",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_checksum_changes_after_param_mutation",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_checksum_is_stable_for_unchanged_weights",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_hashes_are_hex_strings",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_parallelism_info_reflects_runner_state",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_returns_dict_with_expected_top_level_keys",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_skips_non_persistent_buffers",
+  "registered.unit.utils.test_weight_checker.TestComputeChecksum.test_validates_against_pydantic_schema",
+  "registered.unit.utils.test_weight_checker.TestHandle.test_returns_dict_for_checksum_action",
+  "registered.unit.utils.test_weight_checker.TestHandle.test_returns_none_for_non_checksum_actions",
+  "registered.unit.utils.test_weight_checker.TestHandle.test_routes_to_actions",
+  "registered.unit.utils.test_weight_checker.TestHandle.test_unknown_action_raises",
+  "registered.unit.utils.test_weight_checker.TestHashTensor.test_changes_with_data",
+  "registered.unit.utils.test_weight_checker.TestHashTensor.test_does_not_mutate_input",
+  "registered.unit.utils.test_weight_checker.TestHashTensor.test_returns_16_char_hex",
+  "registered.unit.utils.test_weight_checker.TestHashTensor.test_stable_for_same_input",
+  "registered.unit.utils.test_weight_checker.TestIsNonPersistentBufferName.test_does_not_match_normal_param_names",
+  "registered.unit.utils.test_weight_checker.TestIsNonPersistentBufferName.test_matches_cos_sin_cache_substring",
+  "registered.unit.utils.test_weight_checker.TestIsNonPersistentBufferName.test_matches_freqs_cis_substring",
+  "registered.unit.utils.test_weight_checker.TestIsNonPersistentBufferName.test_matches_inv_freq_substring",
+  "registered.unit.utils.test_weight_checker.TestIsNonPersistentBufferName.test_matches_weight_fp32_substring",
+  "registered.unit.utils.test_weight_checker.TestRandomLike.test_bool_returns_bool_with_both_values",
+  "registered.unit.utils.test_weight_checker.TestRandomLike.test_does_not_mutate_input",
+  "registered.unit.utils.test_weight_checker.TestRandomLike.test_floating_point_preserves_dtype_shape_device",
+  "registered.unit.utils.test_weight_checker.TestRandomLike.test_floating_point_values_in_unit_range",
+  "registered.unit.utils.test_weight_checker.TestRandomLike.test_int_returns_correct_dtype_in_range",
+  "registered.unit.utils.test_weight_checker.TestResetTensors.test_changes_normal_params_in_place",
+  "registered.unit.utils.test_weight_checker.TestResetTensors.test_skips_cos_sin_cache",
+  "registered.unit.utils.test_weight_checker.TestResetTensors.test_skips_freqs_cis",
+  "registered.unit.utils.test_weight_checker.TestResetTensors.test_skips_weight_fp32",
+  "registered.unit.utils.test_weight_checker.TestSnapshot.test_captures_params_and_buffers",
+  "registered.unit.utils.test_weight_checker.TestSnapshot.test_detaches_and_moves_to_cpu"
+ ],
+ "grade": {
+  "format": "junit",
+  "tool_label": "pytest",
+  "reports": [
+   "/logs/verifier/junit-l0.xml",
+   "/logs/verifier/junit-kernels.xml",
+   "/logs/verifier/junit-l3.xml",
+   "/logs/verifier/junit-l2.xml"
+  ]
+ },
+ "infb": {
+  "task": "support_deepseek_v4_flash_4xb200_sglang",
+  "verifier_version": "V4",
+  "upstream_base_commit": "55224fff08518b2402680a5b1b9189dcc5b27dda",
+  "reference_commit": "35870d55aca7c6912aa4c785f583da4acac04938",
+  "model_repo": "deepseek-ai/DeepSeek-V4-Flash",
+  "model_revision": "60d8d70770c6776ff598c94bb586a859a38244f1",
+  "model_dir": "/model/deepseek-ai/DeepSeek-V4-Flash",
+  "model_record": "/model/.infb/manifest.json",
+  "model_files": 73,
+  "model_type": "deepseek_v4",
+  "architectures": [
+   "DeepseekV4ForCausalLM"
+  ],
+  "gpus": 4,
+  "gpu_name": "B200",
+  "gpu_min_total_gib": 170,
+  "gpu_min_free_fraction": 0.95,
+  "shm_min_gib": 16,
+  "ports_free": [
+   21000
+  ],
+  "transformers_version": "5.6.0",
+  "importable": [
+   "sgl_kernel",
+   "deep_gemm",
+   "flashinfer",
+   "flashinfer_cubin",
+   "tilelang"
+  ],
+  "shared_libraries": [
+   "libibverbs.so.1"
+  ],
+  "restore": {
+   "trees": {
+    "eval/deepseek_v4_flash": "a653ca897ff89ef92a000eed226c01e188e55256",
+    "python/sglang/test": "6c3c3959e47d289e527ae23c505e6cb3604b090c",
+    "test": "1657bcf970a80a51d263b027bb9fe8f5728ec2d9"
+   },
+   "rule": "Before anything imports from them, test.sh's restore_paths.py removes each path as a path (a symlink on the way is unlinked, never followed) and writes it from the blobs of this tree in the base commit of the image's own object store (replace objects, grafts and checkout filters off), then hashes the written files back against it; a difference is a verifier fault (exit 4, the -1 sentinel). eval/deepseek_v4_flash holds the materials the grader's wrappers import. test.patch is re-applied after."
+  },
+  "record_tests_digest": true,
+  "bars": {
+   "gsm8k_hidden_floor": 0.905,
+   "rule": "SE is the run-to-run sample standard deviation of five reference-solution runs on the exact hidden inputs, floored at one question; keep upstream's floor iff min - 3*SE clears it, else publish floor(mean - 3*SE). Applied once and never re-derived from a later reading.",
+   "measured": {},
+   "measured_initial": {
+    "hidden_slice_scores": [
+     0.945,
+     0.94,
+     0.95,
+     0.935,
+     0.95
+    ],
+    "hidden_slice_questions": [
+     189,
+     188,
+     190,
+     187,
+     190
+    ],
+    "mean_questions": 188.8,
+    "sample_sd_questions": 1.3038,
+    "three_sd_questions": 3.912,
+    "min_questions": 187,
+    "spread_questions": 3,
+    "keep_upstream_floor": false,
+    "decision": "min - 3*SE = 183.09 questions, below upstream's 186, so the floor adapts to floor(mean - 3*SE) = 184 of 200 = 0.92",
+    "binomial_se_questions": 3.25,
+    "binomial_se_note": "reported alongside; it is larger than the run-to-run SE here (3.25 vs 1.30 questions), and under the binomial reading the floor would adapt further. The rule in force is the run-to-run SE.",
+    "protocol_unchanged": "the spread is 3 questions, so the registered protocol stays; the alternative protocol is for a spread that makes the registered one uninformative"
+   },
+   "rule_revised": "The same rule, applied to the reference solution's own readings of the hidden slice instead of the first five runs: fifteen readings in all, derived once before any candidate run read the bar. Why: across readings taken on different hosts the spread is twice the five-run SD (2.63 against 1.30 questions), and at the earlier floor of 184 a correct tree read at the floor itself once and under it about 2 % of the time (a normal fit to the first twelve readings): a calibration correction, not a loosening. Only this slice is graded; upstream's own test_gsm8k (> 0.93 on the dataset's first 200 questions) runs in the same launch as a published diagnostic.",
+   "measured_final": {
+    "status": "final: the fifteen readings, derived once and before any candidate run read the bar",
+    "readings": [
+     {
+      "revision": "reading set 1",
+      "run": "host 1",
+      "questions": 190
+     },
+     {
+      "revision": "reading set 1",
+      "run": "host 2",
+      "questions": 192
+     },
+     {
+      "revision": "reading set 1",
+      "run": "host 3",
+      "questions": 186
+     },
+     {
+      "revision": "reading set 2",
+      "run": "host 1",
+      "questions": 188
+     },
+     {
+      "revision": "reading set 2",
+      "run": "host 2",
+      "questions": 189
+     },
+     {
+      "revision": "reading set 2",
+      "run": "host 3",
+      "questions": 186
+     },
+     {
+      "revision": "reading set 3",
+      "run": "host 1",
+      "questions": 190
+     },
+     {
+      "revision": "reading set 3",
+      "run": "host 2",
+      "questions": 190
+     },
+     {
+      "revision": "reading set 3",
+      "run": "host 3",
+      "questions": 187
+     },
+     {
+      "revision": "reading set 4",
+      "run": "host 1",
+      "questions": 193
+     },
+     {
+      "revision": "reading set 4",
+      "run": "host 2",
+      "questions": 184
+     },
+     {
+      "revision": "reading set 4",
+      "run": "host 3",
+      "questions": 190
+     },
+     {
+      "revision": "reading set 5",
+      "run": "host 1",
+      "questions": 188
+     },
+     {
+      "revision": "reading set 5",
+      "run": "host 2",
+      "questions": 188
+     },
+     {
+      "revision": "reading set 5",
+      "run": "host 3",
+      "questions": 188
+     }
+    ],
+    "n": 15,
+    "mean_questions": 188.6,
+    "sample_sd_questions": 2.3543,
+    "se_questions": 2.3543,
+    "three_se_questions": 7.063,
+    "min_questions": 184,
+    "max_questions": 193,
+    "upstream_floor_questions": 186,
+    "keep_upstream_floor": false,
+    "decision": "min - 3*SE = 176.94 questions, below upstream's 186, so the floor adapts to floor(mean - 3*SE) = floor(181.54) = 181 of 200 = 0.905",
+    "reference_false_fail_per_reading": {
+     "at_the_floor": 0.00029,
+     "at_184": 0.015147,
+     "at_upstreams_186": 0.093966,
+     "how": "a normal fit to the readings (mean, sample SD), with a continuity correction: P(reading < floor)"
+    },
+    "binomial_se_questions": 3.2787,
+    "binomial_se_note": "reported alongside; at p = 0.9430 it is 3.28 questions against the run-to-run 2.35. The rule in force is the run-to-run SE."
+   },
+   "fidelity_T": 0.061017,
+   "fidelity_rule": "T = max(0.05, 3 x the largest of five fresh reference-solution medians); the gate is the median k3 over the 32 hidden sequences, strictly below T. Set once from the five values below and never re-derived. Each designated quality control must exceed 3T = 0.183051; a control that does not is recorded.",
+   "fidelity_measured": {
+    "oracle_medians": [
+     0.020339,
+     0.018747,
+     0.01944,
+     0.019882,
+     0.019384
+    ],
+    "largest": 0.020339,
+    "smallest": 0.018747,
+    "positions_per_run": 123360,
+    "sequences": 32,
+    "T": 0.061017,
+    "three_T": 0.183051,
+    "note": "two independent implementations -- the engine serving FP8 KV at the registered recipe and the model author's own tilelang kernels at model parallel 4 -- agree to about two hundredths of a nat per position. The 0.05 floor in the rule is not binding here: 3 x the largest median is larger."
+   },
+   "fidelity_per_sequence_cap_factor": 10,
+   "fidelity_per_sequence_cap_rule": "From an observed reading in which math-8192-06 scored k3 23.2 under a passing median of 0.0189: no hidden sequence above 10 x fidelity_T = 0.610170, beside the median. The reference's own worst sequence was 0.047-0.051 in the five runs that set T and 0.0477-0.0569 in five later fresh runs, so the cap sits about ten times above it",
+   "fidelity_worst_sequence_measured": {
+    "reference_runs": [
+     "ref-1",
+     "ref-2",
+     "ref-3",
+     "ref-4",
+     "ref-5"
+    ],
+    "medians": [
+     0.019027,
+     0.017261,
+     0.018191,
+     0.01898,
+     0.019753
+    ],
+    "worst": [
+     [
+      "code-4416-01",
+      0.049404
+     ],
+     [
+      "math-512-02",
+      0.056905
+     ],
+     [
+      "code-2304-05",
+      0.047737
+     ],
+     [
+      "code-2304-05",
+      0.049393
+     ],
+     [
+      "code-512-05",
+      0.050006
+     ]
+    ]
+   },
+   "fidelity_T_bands": {
+    "512": 0.073539,
+    "2304": 0.065409,
+    "4416": 0.054852,
+    "8192": 0.05
+   },
+   "fidelity_T_bands_rule": "Per band b, T_b = max(0.05, 3 x f_b), f_b the human reference's median over its own recorded draws of that band (a draw is one pass of the set on one serve, its band value the median over the band's sequences); the node's verdict is the conjunction over bands. The floor 0.05 keeps the origin stated in long_rule. k = 3 on every band: a quality control fails the long 65,536 band at 1.46-3.64 x in all four of its readings; on the 32,768 band it would fail at 2 x, but the floor binds there (max(0.05, 0.035) = 0.05). The reference's worst draw is at most 0.38 of T_b on every band (the three-quarter rule asks at most 0.75). Set before any reference run of this rule. The hidden bands' draws are the five reference serves (per-sequence records); the graded runs print per band.",
+   "fidelity_T_bands_measured": {
+    "512": {
+     "f_b": 0.024513,
+     "draws": 5,
+     "routes": [
+      "route C"
+     ],
+     "worst_draw": 0.028074,
+     "T_b": 0.073539,
+     "worst_over_T_b": 0.382
+    },
+    "2304": {
+     "f_b": 0.021803,
+     "draws": 5,
+     "routes": [
+      "route C"
+     ],
+     "worst_draw": 0.022876,
+     "T_b": 0.065409,
+     "worst_over_T_b": 0.35
+    },
+    "4416": {
+     "f_b": 0.018284,
+     "draws": 5,
+     "routes": [
+      "route C"
+     ],
+     "worst_draw": 0.019015,
+     "T_b": 0.054852,
+     "worst_over_T_b": 0.347
+    },
+    "8192": {
+     "f_b": 0.013177,
+     "draws": 5,
+     "routes": [
+      "route C"
+     ],
+     "worst_draw": 0.014105,
+     "T_b": 0.05,
+     "worst_over_T_b": 0.282
+    }
+   },
+   "long_T": 0.05,
+   "long_rule": "T_long = max(0.05, 3 x the largest of five fresh human-reference medians over the held-out long set), each sequence scored against the model-author run at exactly its own length; the gate is the median k3 over the 8 sequences, strictly below T_long, with every sequence served and finite. Three times the largest median is 0.047970, below the floor, so T_long is the floor. Where the floor sits, read at this task's base: the 13 registered tests that set a KL bar set it between 0.001 and 0.03 -- test/registered/4-gpu-models/test_qwen3_next_models.py 0.0025 and test_qwen3_next_models_mtp.py 0.0025, 0.008, 0.0035; test/registered/radix_cache/test_swa_radix_cache_kl.py 0.002; test_unified_radix_cache_kl.py 0.003 (default), 0.0025, 0.003, 0.03 (TestUnifiedSWARadixCache, the largest), 0.003; and the nine test/registered/lora/*_logprob_diff.py 0.001-0.015. Each compares the engine with itself across one change of configuration; this gate compares it with an independent implementation, and the floor sits above all of them",
+   "long_measured": {
+    "reference_medians": [
+     0.014963,
+     0.015682,
+     0.015227,
+     0.015489,
+     0.01599
+    ],
+    "largest": 0.01599,
+    "three_largest": 0.04797,
+    "T_long": 0.05,
+    "worst_sequence": [
+     "long-code-32768",
+     0.035883
+    ],
+    "sequences": 8,
+    "positions_per_run": 393208,
+    "where": "4 x NVIDIA B200 and the release recipe",
+    "largest_per_sequence": [
+     "long-code-32768",
+     0.035883,
+     "ref-4"
+    ],
+    "per_sequence_max_over_five": {
+     "long-code-32768": [
+      0.035883,
+      "ref-4"
+     ],
+     "long-code-65536": [
+      0.018878,
+      "ref-2"
+     ],
+     "long-math-32768": [
+      0.013117,
+      "ref-5"
+     ],
+     "long-math-65536": [
+      0.010743,
+      "ref-3"
+     ],
+     "long-prose-32768": [
+      0.024494,
+      "ref-4"
+     ],
+     "long-prose-65536": [
+      0.026738,
+      "ref-2"
+     ],
+     "long-structured-32768": [
+      0.00169,
+      "ref-4"
+     ],
+     "long-structured-65536": [
+      0.002158,
+      "ref-4"
+     ]
+    },
+    "quality_control": {
+     "median": 0.050942,
+     "per_sequence": {
+      "long-prose-32768": 0.088921,
+      "long-prose-65536": 0.120811,
+      "long-code-32768": 0.060404,
+      "long-code-65536": 0.562886,
+      "long-math-32768": 0.02599,
+      "long-math-65536": 0.04148,
+      "long-structured-32768": 0.010628,
+      "long-structured-65536": 0.003152
+     },
+     "hidden_median": 0.018835
+    },
+    "cap_readings": {
+     "readings": 192,
+     "over_the_cap": 1,
+     "the_excursion": [
+      "long-prose-65536",
+      1.048778,
+      "host 1"
+     ],
+     "long_prose_65536_other_readings": [
+      0.0232,
+      0.0267,
+      0.0228,
+      0.022,
+      0.0231,
+      0.0301,
+      0.0267,
+      0.0332,
+      0.0223,
+      0.0288,
+      0.0426,
+      0.0236,
+      0.0259,
+      0.0868,
+      0.0315,
+      0.0238,
+      0.0247,
+      0.022,
+      0.0254,
+      0.025,
+      0.0245,
+      0.026,
+      0.0235
+     ],
+     "per_reading_rate": "1/192",
+     "single_reading_false_fail_per_trial": 0.041,
+     "resend_false_fail_per_trial": 0.0002,
+     "resend_false_fail_if_sequence_specific": 0.0017
+    }
+   },
+   "prefix_min_cached": 5632,
+   "prefix_T": 0.05,
+   "prefix_rule": "After a held-out 6,144-token prefix has been served, prefix + 512-token continuation with logprob_start_len 6,144 must report cached_tokens >= 5,632 (22 of its 24 pages; the reference reports 5,888, the 23 whole pages below the start position), and the median over the 8 items of k3 between the continuation's warm and cold teacher-forced log-probabilities must be at most T_prefix = max(0.05, 3 x the largest of five fresh human-reference medians) = 3 x 0.018137",
+   "prefix_measured": {
+    "reference_medians_warm_vs_cold": [
+     0.011397,
+     0.014875,
+     0.018137,
+     0.012189,
+     0.014995
+    ],
+    "largest": 0.018137,
+    "three_largest": 0.054411,
+    "T_prefix": 0.054411,
+    "reference_medians_cold_vs_cold": [
+     0.012314,
+     0.012893,
+     0.018376,
+     0.013476,
+     0.010324
+    ],
+    "reference_cached_tokens": 5888,
+    "items": 8
+   },
+   "long_per_sequence_cap": 0.107649,
+   "long_per_sequence_cap_rule": "Beside the median, no long sequence above 3 x the largest single-sequence k3 the human reference scored in the five runs that set T_long (0.035883, long-code-32768 in ref-4) = 0.107649, the T rule's own derivation applied per sequence. Why: a quality control scores the long set's median at 0.050942, 1.9 % over T_long, but its long-code-65536 at 0.562886 (5.2 x this cap); on the 32 hidden sequences it scores 0.018835, where no sequence exercises enough of the selection. A sequence above the cap on its first reading is sent once more at once and fails the node only if its second reading is above the cap too. Why: in 192 readings of the long set by the reference, one reading was above the cap: long-prose-65536 at k3 1.048778, a sequence whose other 23 readings are 0.022-0.087, with every other sequence of that run normal and no cache reuse in it (cause unknown). The per-reading rate is p = 1/192 = 0.0052, so a single reading of the eight fails the reference with probability 1 - (1 - p)^8 = 0.041 per trial, and the re-send with about 8 p^2 = 0.0002; if the excursion belongs to that one sequence alone (1 in its 24 readings), the re-send's rate is (1/24)^2 = 0.0017. The quality control's excursion is its own and repeats",
+   "long_T_bands": {
+    "32768": 0.052509,
+    "65536": 0.05
+   },
+   "long_T_bands_rule": "Per band b, T_b = max(0.05, 3 x f_b), f_b the human reference's median over its own recorded draws of that band (a draw is one pass of the set on one serve, its band value the median over the band's sequences); the node's verdict is the conjunction over bands. The floor 0.05 keeps the origin stated in long_rule. k = 3 on every band: a quality control fails the long 65,536 band at 1.46-3.64 x in all four of its readings; on the 32,768 band it would fail at 2 x, but the floor binds there (max(0.05, 0.035) = 0.05). The reference's worst draw is at most 0.38 of T_b on every band (the three-quarter rule asks at most 0.75). Set before any reference run of this rule.",
+   "long_T_bands_measured": {
+    "32768": {
+     "f_b": 0.017503,
+     "draws": 27,
+     "routes": [
+      "route A",
+      "route B",
+      "route C"
+     ],
+     "worst_draw": 0.018605,
+     "T_b": 0.052509,
+     "worst_over_T_b": 0.354
+    },
+    "65536": {
+     "f_b": 0.014267,
+     "draws": 27,
+     "routes": [
+      "route A",
+      "route B",
+      "route C"
+     ],
+     "worst_draw": 0.0174,
+     "T_b": 0.05,
+     "worst_over_T_b": 0.348
+    }
+   },
+   "band_redraw": 1,
+   "band_redraw_rule": "A band whose median is at or over its bar on the first draw is drawn once more whole (every sequence of the band sent again) and fails only if the second draw is at or over the bar too; both draws are printed. The reference's rate: no draw of any band above 0.38 x T_b (27 draws of each long band across both routes, 5 of each hidden band, 11 of the prefix band); a normal fit to each band's draws puts T_b 13-62 standard deviations above their mean. A one-sequence spike cannot move a four-sequence band's median (the mean of its middle two); the re-draw is for a whole-band excursion, which was never observed.",
+   "long_per_sequence_cap_resend": 1,
+   "long_per_sequence_cap_leave_out": 8,
+   "long_per_sequence_cap_rule_revised": "The cap (0.107649, unchanged) reads each long sequence's k3 with its long_per_sequence_cap_leave_out largest per-position terms left out, on all eight sequences, with the re-send kept; long-prose-65536 returns to the cap. The band medians keep the whole-sequence k3 and their bars. Stated beside the cap: a defect confined to 8 or fewer positions of a sequence is not graded by the cap.",
+   "long_per_sequence_cap_measured": {
+    "landing_readings": 1020,
+    "launches": 3,
+    "refused": 0,
+    "long_prose_65536": {
+     "readings": 180,
+     "over_cap_k3": 12,
+     "over_cap_trimmed": 0,
+     "position_of_every_excursion": 30854,
+     "r_range": [
+      8.689,
+      11.424
+     ],
+     "reference_logprob": -2.143,
+     "trimmed_range_of_the_12": [
+      0.0207,
+      0.0227
+     ]
+    },
+    "over_cap_trimmed_all_sequences": 0,
+    "largest_trimmed": 0.023577,
+    "largest_trimmed_over_cap": 0.22
+   },
+   "prefix_T_superseded": 0.054411,
+   "prefix_T_rule": "The prefix set is one band: T_prefix = max(0.05, 3 x 0.014814), 0.014814 the reference's median over its 11 recorded draws (the five earlier serves and the six graded reference runs of both routes); 3 x is 0.044442, so the floor binds, 0.05 (the earlier bar was 3 x the largest of the five serves' medians, 0.054411). The worst draw is 0.018137, 0.363 of the bar. At or over the bar the set is drawn once more (band_redraw).",
+   "prefix_T_measured": {
+    "f_b": 0.014814,
+    "draws": 11,
+    "routes": [
+     "route A",
+     "route B",
+     "route C"
+    ],
+    "worst_draw": 0.018137,
+    "T_b": 0.05,
+    "worst_over_T_b": 0.363
+   },
+   "long_reach_T": {
+    "prose": 0.055887,
+    "code": 0.052067
+   },
+   "long_reach_leave_out": 8,
+   "long_reach_rule": "Two held-out 262,144-token sequences, prose and code, each scored against the landing's recorded log-probabilities (the reference fallback: the model-author implementation cannot score this length on four B200s), by k3 with its long_reach_leave_out largest per-position terms left out; per kind T = max(0.05, 3 x the largest of six readings), the six being launches L2-L7 of the recording job read against launch L1's first answer, the recorded reference; a sequence at or over its bar is sent once more and fails only if its second reading is at or over it too. The statistic was chosen after that job's data, whose one k3 reading over its bar sat on a single position, and confirmed out of sample on seven fresh launches against these bars, fixed before them. Stated with the choice: a defect confined to 8 or fewer positions of a sequence is not graded by this node.",
+   "long_reach_measured": {
+    "six_readings": {
+     "prose": [
+      0.017743,
+      0.018512,
+      0.018455,
+      0.017681,
+      0.018336,
+      0.018629
+     ],
+     "code": [
+      0.01618,
+      0.017246,
+      0.017174,
+      0.016517,
+      0.017356,
+      0.016991
+     ]
+    },
+    "largest": {
+     "prose": 0.018629,
+     "code": 0.017356
+    },
+    "correct_readings_pooled": {
+     "n_per_kind": 63,
+     "at_or_over_bar": 0,
+     "range": {
+      "prose": [
+       0.017565,
+       0.019307
+      ],
+      "code": [
+       0.015621,
+       0.018229
+      ]
+     },
+     "largest_over_bar": {
+      "prose": 0.345,
+      "code": 0.35
+     },
+     "note": "28 readings per kind from the recording job (21 pairs of its seven launches and 7 repeats) and 35 from an out-of-sample set (seven more launches, five asks each, read against the recorded reference); they share 14 launches"
+    },
+    "quality_control": {
+     "n_per_kind": 12,
+     "under_bar": 0,
+     "range": {
+      "prose": [
+       0.12875,
+       0.155372
+      ],
+      "code": [
+       0.155417,
+       0.192029
+      ]
+     }
+    },
+    "k3_whole_sequence_for_comparison": {
+     "prose_over_its_bar": "4 of 63 readings, all on position 74,069 (one position over 5 nats each)",
+     "code_over_its_bar": "0 of 63, the largest 0.0785 against 0.0795, on position 20,946"
+    }
+   }
+  },
+  "diagnostics": "upstream's own test_gsm8k on its default rows and test_spec_accept_length run in the same launch and are emitted, not scored (the hidden slice replaces the first; the acceptance length is measured and published); both run under per-node deadlines (infb.efficiency.deadlines). The single-request decode speed and the output throughput at C = 16 are scored by the two efficiency nodes against the human reference measured in the same run, and everything both measurements see is kept in /logs/verifier/efficiency/TestHiddenDSV4/efficiency.json and its requests sidecar; the preflight record carries the GPU, checkpoint and /tests measurements.",
+  "registered_test_path": "registered/4-gpu-models/test_deepseek_v4_flash_fp4_b200.py",
+  "registered_test_class": "TestDSV4FlashFP4B200",
+  "hidden_slice": {
+   "path": "/tests/hidden/gsm8k_slice.jsonl",
+   "ids": "/tests/hidden/slice_ids.json",
+   "rows": 205,
+   "num_shots": 5,
+   "num_examples": 200,
+   "seed": 20260921,
+   "note": "rows 0-4 of upstream's file are the demonstrations, byte-identical to upstream's few-shot prompt; the 200 scored questions are a seeded draw from rows 5-1318. 32 of them also sit in upstream's default rows 5-204: hidden means unknown to the agent, not disjoint."
+  },
+  "l3": {
+   "files": [
+    "registered/unit/mem_cache/test_swa_unittest.py",
+    "registered/unit/mem_cache/test_swa_eviction_boundary.py",
+    "registered/unit/managers/test_prefill_adder.py",
+    "registered/unit/managers/test_hisparse_unit.py",
+    "registered/unit/utils/test_weight_checker.py",
+    "registered/unit/entrypoints/openai/test_serving_chat.py"
+   ],
+   "rule": "the base versions of the six unit-test files the landing squash modifies (the verifier resets test/ and python/sglang/test to the base blobs), run WITH the task's four GPUs because that is how test.sh runs the step; the ids that pass on the base tree and on the landing tree are the pass-to-pass set.",
+   "pass_on_both": 104,
+   "not_included": {
+    "registered/unit/mem_cache/test_swa_eviction_boundary.py": "7 base-version ids fail on the landing tree",
+    "registered/unit/mem_cache/test_swa_unittest.py": "1 base-version id fails on the landing tree",
+    "registered/unit/utils/test_weight_checker.py": "10 base-version ids fail on the landing tree",
+    "registered/unit/entrypoints/openai/test_serving_chat.py": "1 base-version id fails on the landing tree",
+    "a CPU-only differential": "measured first on CPU and discarded: 46 of the 123 base ids failed with 'No CUDA GPUs are available', which would have published a pass-to-pass set of 62 instead of 104 and one that does not describe what the verifier runs"
+   }
+  },
+  "efficiency": {
+   "engine": "sglang",
+   "rho": "0.8",
+   "decode_c1_draws": 3,
+   "score_profile": "model_support_upstream_acceptance_v54",
+   "tokenizer": "/model/deepseek-ai/DeepSeek-V4-Flash/tokenizer.json",
+   "seed_file": "/tests/hidden/efficiency_seed.json",
+   "reference": {
+    "root": "/opt/infb-reference",
+    "app": "/app",
+    "base": "eac98398e7adc70dd10d8db3ff77226b026000ce",
+    "patch": "/tests/reference/solution.patch",
+    "patch_sha256": "0fd81aba8fb191abf0bfe9fd495c88a0047b88b99f91a7f121a52ade8f7ed995",
+    "target_tree": "a2b5892f605902f93cea26fffc90ae8ce40b52ac",
+    "pythonpath": [
+     "third_party/flash_mla",
+     "python"
+    ],
+    "engine_module": "sglang",
+    "build_product_roots": [
+     "python/sglang"
+    ],
+    "port": 31000,
+    "health_path": "/health_generate",
+    "vendor_build": {
+     "helper": "/tests/eval/deepseek_v4_flash/kernels/build.py",
+     "why": "the reference's vendored FlashMLA is built in its own tree after reconstruction (snapshot.py), never copied from the image's stub build"
+    },
+    "vendor_modules": [
+     "flash_mla",
+     "flash_mla.cuda"
+    ]
+   },
+   "recipes": {
+    "TestHiddenDSV4": {
+     "C": 16,
+     "label": "LowLatency: the registered class TestDSV4FlashFP4B200 and the base's cookbook say low-latency, C = 16",
+     "launch": {
+      "module": "test/registered/4-gpu-models/test_deepseek_v4_flash_fp4_b200.py",
+      "class": "TestDSV4FlashFP4B200"
+     }
+    }
+   },
+   "deadlines": {
+    "rule": "generated by tests/infb_verify/deadline_dag.py from infb.deadline_dag, never set by hand. launch_s and teardown_s are the walls of the class's launch and teardown, nodes each hidden node's wall; every operation inside keeps its public limit (eval/deepseek_v4_flash/limits.json), which the operations themselves enforce. The reference's launch, measurement invocations and teardown use those limits directly (reference.py).",
+    "launch_s": 1420,
+    "teardown_s": 240,
+    "nodes": {
+     "test_0_efficiency_decode_c1": 1860,
+     "test_0_efficiency_throughput": 1860,
+     "test_ascii_ratio": 960,
+     "test_basic_math": 960,
+     "test_capital_france": 960,
+     "test_color_completion": 960,
+     "test_concurrent_requests": 960,
+     "test_determinism_temp_zero": 960,
+     "test_fidelity_kl": 1920,
+     "test_gsm8k": 960,
+     "test_gsm8k_hidden_slice": 960,
+     "test_health": 960,
+     "test_health_generate": 960,
+     "test_long_prompt": 960,
+     "test_max_token_one": 960,
+     "test_no_repetition_blowup": 960,
+     "test_prefix_cache": 1920,
+     "test_recipe_conformance": 1860,
+     "test_spec_accept_length": 960,
+     "test_streaming_response": 960,
+     "test_long_context_fidelity": 3720,
+     "test_long_reach_fidelity": 1860,
+     "test_generation_replay": 960,
+     "test_prefix_branch_replay": 960
+    }
+   },
+   "control": {
+    "role": "the quality control: it demonstrates that the efficiency nodes separate a correct but slow tree; used in calibration only, never shipped as a solution",
+    "site": "python/sglang/srt/managers/scheduler.py, Scheduler.__init__: `self.forward_sleep_time = None` becomes `= 0.02`, upstream's own test hook, which run_batch sleeps on once per engine step",
+    "d_s": 0.02,
+    "patch_sha256": "ccb820fc330aa00a072722ee2a92900a6d0064d707cf5fcf56ad904a024d857e",
+    "sized": "on 4xB200 with the reference: the same sleep set at runtime through /slow_down, on one draw of the pool, gave S1 0.331 and S_C 0.560 of the reference's"
+   },
+   "reference_draws": 3,
+   "candidate_throughput_draws": 3,
+   "decode_c1_statistic": "median_of_ratios",
+   "sizing": {
+    "draw_s": {
+     "TestHiddenDSV4": {
+      "decode_c1": 32.29,
+      "throughput": 36.77
+     }
+    },
+    "start_s": 5,
+    "measured": "the longest reference draw of each axis on this workload (sha256:d655a2e4...), unchanged across all 88 recorded reference draws on it: decode_c1 32.28 s, rounded up to 32.29, and throughput 36.77 s. The most recent 25 draws per axis reach 31.16 and 34.42 s. start_s is the longest a scored node spent besides its draws in the 25 runs on this workload whose plugin recorded the call (3.07 s decode, 4.25 s throughput), rounded up."
+   }
+  },
+  "long": {
+   "path": "/tests/hidden/long",
+   "sequences": 8,
+   "lengths": [
+    32768,
+    65536
+   ],
+   "kinds": [
+    "prose",
+    "code",
+    "math",
+    "structured"
+   ],
+   "seed": 20260925,
+   "provenance": "/tests/hidden/long/provenance.json"
+  },
+  "long_reach": {
+   "path": "/tests/hidden/long-reach",
+   "sequences": 2,
+   "length": 262144,
+   "kinds": [
+    "prose",
+    "code"
+   ],
+   "reference": "the landing's own server at the release recipe, recorded once: launch L1's first answer in the recording job, the reference fallback",
+   "provenance": "/tests/hidden/long-reach/provenance.json"
+  },
+  "prefix": {
+   "path": "/tests/hidden/prefix",
+   "items": 8,
+   "prefix_tokens": 6144,
+   "continuation_tokens": 512,
+   "provenance": "/tests/hidden/prefix/provenance.json"
+  },
+  "recipe": {
+   "rule": "Superseded by rule_current and kept as a record. The landing adds its own attention backend, 'dsv4' (with the deprecated alias 'compressed'), to ATTENTION_BACKEND_CHOICES, and its deepseek_v4_hook forces that backend and page_size 256 for this architecture; the earlier base accepted no 'dsv4', so neither the name nor the page size entered the recipe. What this rule required was the kernel family: on every tensor-parallel rank the 40-token decode trace runs a kernel of FlashMLA's sparse-MLA family (the sm100::decode::head64 or sm100::fwd::head64 namespaces, a sparse kernel). The landing runs sm100::decode::head64::flash_fwd_splitkv_mla_fp8_sparse_kernel 228 times per rank (with its combine kernel); an earlier passing tree, with its own backend name 'deepseek_v4' and page size 1, ran sm100::fwd::head64::sparse_attn_fwd_kernel 228 times per rank, inside the family. The backend names are recorded, not asserted.",
+   "rule_current": "No fixed kernel family. The scoped roles' kernels are the candidate's own component map (its component nodes' profiled public calls, by base name, generic copy/fill/element-wise kernels left out): the target's verify graphs must run each attributable role (packed attention, C4 core and indexer compression, C128 compression) on every rank, the draft the packed attention; a role the map cannot attribute is recorded as an attribution limit, never a numerical verdict. The rule above is history."
+  },
+  "deadline_dag": {
+   "rule": "Every operation keeps its public limit (eval/deepseek_v4_flash/limits.json) and is enforced per operation; a node's wall B = max(margin_factor x R, Cmax + dispatch_s), R the reference's measured wall for the node's complete procedure (no retries) on the declared hardware, the maximum over the recorded reference runs, Cmax the largest limit among its operations; one more B per permitted whole-node repetition; a serial group is the sum of its members plus dispatch_s; the verifier's allowance is the root plus final_s plus the verifier image's build (verifier_build_s); the job lifetime is agent + the task image's build + verifier + final_s. A node or group wall expiring with every operation within its limit is verifier_fault (censored), an operation past its limit candidate_fail. tests/infb_verify/deadline_dag.py generates every value below and checks every caller.",
+   "margin_factor": 3,
+   "dispatch_s": 60,
+   "final_s": 600,
+   "verifier_build_s": 3900,
+   "steps": [
+    {
+     "ops": {
+      "action": 1
+     },
+     "R_s": 1.144,
+     "R_source": "max(the first round's R 0.9 s, the second round's maximum 1.144 s) = 1.144 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.664, 0.690, 0.666, 0.850, 0.900, 0.840, 0.854, 0.853 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 1.131, 0.872, 1.005, 1.144, 1.113 s. The maximum over a round's readings is that round's R.",
+     "name": "prepare"
+    },
+    {
+     "ops": {
+      "action": 1
+     },
+     "R_s": 27.28,
+     "R_source": "max(the first round's R 23.294 s, the second round's maximum 27.28 s) = 27.28 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 23.294, 22.257, 22.677, 22.457, 22.532, 22.434, 22.531, 22.516 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 22.358, 22.569, 27.280, 22.824, 22.272 s. The maximum over a round's readings is that round's R.",
+     "name": "preflight"
+    },
+    {
+     "name": "reference_kernels",
+     "ops": {
+      "component_check": 4,
+      "invocation": 13,
+      "action": 2
+     },
+     "R_s": 112.976,
+     "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 111.182, 112.976, 109.561, 110.871, 109.501 s. The maximum over them is R."
+    },
+    {
+     "ops": {
+      "startup": 1,
+      "invocation": 2,
+      "teardown": 1
+     },
+     "R_s": 536.099,
+     "R_source": "max(the first round's R 536.099 s, the second round's maximum 491.26 s) = 536.099 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 529.722, 529.083, 529.195, 534.486, 531.165, 531.124, 536.099, 533.270 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 486.930, 487.031, 488.220, 491.260, 488.984 s. The maximum over a round's readings is that round's R.",
+     "name": "reference"
+    },
+    {
+     "ops": {
+      "action": 1
+     },
+     "R_s": 0.418,
+     "R_source": "max(the first round's R 0.306 s, the second round's maximum 0.418 s) = 0.418 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.306, 0.299, 0.297, 0.306, 0.300, 0.300, 0.296, 0.302 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.417, 0.411, 0.409, 0.410, 0.418 s. The maximum over a round's readings is that round's R.",
+     "name": "restore"
+    },
+    {
+     "name": "l0_build",
+     "ops": {
+      "kernel_build": 1
+     },
+     "R_s": 125.204,
+     "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 123.419, 125.204, 122.088, 124.037, 124.620 s. The maximum over them is R."
+    },
+    {
+     "name": "l0_registry",
+     "ops": {
+      "unit_test_file": 1
+     },
+     "R_s": 11.685,
+     "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 11.591, 11.685, 11.464, 11.546, 11.653 s. The maximum over them is R."
+    },
+    {
+     "name": "kernels",
+     "group": "kernels"
+    },
+    {
+     "ops": {
+      "unit_test_file": 6
+     },
+     "R_s": 93.666,
+     "R_source": "max(the first round's R 93.666 s, the second round's maximum 91.202 s) = 93.666 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 91.300, 91.251, 92.367, 93.666, 90.149, 91.324, 91.268, 90.734 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 90.639, 91.167, 91.202, 91.077, 90.656 s. The maximum over a round's readings is that round's R.",
+     "name": "l3"
+    },
+    {
+     "name": "l2",
+     "group": "TestHiddenDSV4"
+    },
+    {
+     "ops": {
+      "action": 1
+     },
+     "R_s": 0.037,
+     "R_source": "max(the first round's R 0.037 s, the second round's maximum 0.037 s) = 0.037 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.036, 0.037, 0.036, 0.036, 0.036, 0.037, 0.036, 0.036 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.037, 0.037, 0.037, 0.036, 0.037 s. The maximum over a round's readings is that round's R.",
+     "name": "grade"
+    }
+   ],
+   "l2": {
+    "launch": {
+     "ops": {
+      "startup": 1
+     },
+     "R_s": 251.029,
+     "R_source": "max(the first round's R 251.028 s, the second round's maximum 251.029 s) = 251.029 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 241.026, 241.025, 241.025, 251.028, 251.028, 251.028, 251.027, 241.027 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 251.029, 251.027, 251.026, 251.027, 251.027 s. The maximum over a round's readings is that round's R."
+    },
+    "teardown": {
+     "ops": {
+      "teardown": 1
+     },
+     "R_s": 0.05,
+     "R_source": "max(the first round's R 0.048 s, the second round's maximum 0.05 s) = 0.05 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.048, 0.046, 0.043, 0.046, 0.045, 0.038, 0.044, 0.045 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.040, 0.050, 0.048, 0.041, 0.043 s. The maximum over a round's readings is that round's R."
+    },
+    "nodes": {
+     "test_0_efficiency_decode_c1": {
+      "ops": {
+       "invocation": 1
+      },
+      "R_s": 81.804,
+      "R_source": "max(the first round's R 75.557 s, the second round's maximum 81.804 s) = 81.804 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 74.660, 75.149, 75.410, 75.505, 75.473, 74.929, 75.557, 75.128 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 79.466, 81.804, 80.167, 78.747, 80.201 s. The maximum over a round's readings is that round's R."
+     },
+     "test_0_efficiency_throughput": {
+      "ops": {
+       "invocation": 1
+      },
+      "R_s": 92.888,
+      "R_source": "max(the first round's R 92.888 s, the second round's maximum 92.623 s) = 92.888 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 92.670, 92.555, 92.147, 92.874, 91.971, 92.592, 92.888, 92.401 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 91.842, 92.284, 92.476, 91.724, 92.623 s. The maximum over a round's readings is that round's R."
+     },
+     "test_ascii_ratio": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.801,
+      "R_source": "max(the first round's R 0.801 s, the second round's maximum 0.797 s) = 0.801 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.791, 0.785, 0.792, 0.791, 0.789, 0.801, 0.795, 0.787 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.795, 0.794, 0.796, 0.790, 0.797 s. The maximum over a round's readings is that round's R."
+     },
+     "test_basic_math": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.399,
+      "R_source": "max(the first round's R 0.399 s, the second round's maximum 0.397 s) = 0.399 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.394, 0.390, 0.394, 0.392, 0.392, 0.399, 0.396, 0.390 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.395, 0.395, 0.395, 0.392, 0.397 s. The maximum over a round's readings is that round's R."
+     },
+     "test_capital_france": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.396,
+      "R_source": "max(the first round's R 0.396 s, the second round's maximum 0.395 s) = 0.396 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.395, 0.390, 0.391, 0.391, 0.390, 0.396, 0.393, 0.389 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.393, 0.395, 0.391, 0.389, 0.394 s. The maximum over a round's readings is that round's R."
+     },
+     "test_color_completion": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.405,
+      "R_source": "max(the first round's R 0.404 s, the second round's maximum 0.405 s) = 0.405 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.401, 0.399, 0.402, 0.400, 0.399, 0.404, 0.402, 0.398 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.402, 0.405, 0.401, 0.399, 0.405 s. The maximum over a round's readings is that round's R."
+     },
+     "test_concurrent_requests": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 1.164,
+      "R_source": "max(the first round's R 1.164 s, the second round's maximum 0.896 s) = 1.164 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 1.154, 1.142, 1.151, 0.904, 0.869, 1.164, 0.872, 1.160 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.888, 0.881, 0.886, 0.890, 0.896 s. The maximum over a round's readings is that round's R."
+     },
+     "test_determinism_temp_zero": {
+      "ops": {
+       "http_request": 2
+      },
+      "R_s": 0.42,
+      "R_source": "max(the first round's R 0.42 s, the second round's maximum 0.415 s) = 0.42 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.410, 0.408, 0.411, 0.411, 0.406, 0.420, 0.414, 0.406 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.413, 0.413, 0.411, 0.406, 0.415 s. The maximum over a round's readings is that round's R."
+     },
+     "test_fidelity_kl": {
+      "ops": {
+       "http_request": 32
+      },
+      "R_s": 10.756,
+      "R_source": "max(the first round's R 10.756 s, the second round's maximum 10.642 s) = 10.756 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 10.665, 10.401, 10.500, 10.618, 10.488, 10.756, 10.623, 10.470 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 10.611, 10.592, 10.640, 10.491, 10.642 s. The maximum over a round's readings is that round's R.",
+      "repetitions": 1,
+      "repetitions_why": "each band at or over its bar is drawn once more, whole: at most the whole set once"
+     },
+     "test_gsm8k": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 30.557,
+      "R_source": "max(the first round's R 29.83 s, the second round's maximum 30.557 s) = 30.557 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 23.531, 29.290, 28.243, 27.618, 29.830, 26.909, 28.753, 27.529 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 26.578, 23.699, 24.560, 25.139, 30.557 s. The maximum over a round's readings is that round's R."
+     },
+     "test_gsm8k_hidden_slice": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 20.598,
+      "R_source": "max(the first round's R 18.828 s, the second round's maximum 20.598 s) = 20.598 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 17.746, 14.117, 18.828, 17.984, 15.271, 18.746, 16.954, 16.696 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 20.435, 16.368, 18.788, 20.598, 12.442 s. The maximum over a round's readings is that round's R."
+     },
+     "test_health": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 1.003,
+      "R_source": "max(the first round's R 1.003 s, the second round's maximum 1.003 s) = 1.003 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 1.003, 1.002, 1.002, 1.002, 1.003, 1.003, 1.002, 1.003 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 1.003, 1.002, 1.003, 1.003, 1.003 s. The maximum over a round's readings is that round's R."
+     },
+     "test_health_generate": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 1.002,
+      "R_source": "max(the first round's R 1.002 s, the second round's maximum 1.002 s) = 1.002 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 1.002, 1.002, 1.002, 1.002, 1.002, 1.002, 1.002, 1.002 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 1.002, 1.001, 1.002, 1.002, 1.002 s. The maximum over a round's readings is that round's R."
+     },
+     "test_long_prompt": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 2.278,
+      "R_source": "max(the first round's R 2.261 s, the second round's maximum 2.278 s) = 2.278 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 2.171, 2.223, 2.162, 2.232, 2.194, 2.179, 2.253, 2.261 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 2.259, 2.234, 0.466, 2.263, 2.278 s. The maximum over a round's readings is that round's R."
+     },
+     "test_max_token_one": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.177,
+      "R_source": "max(the first round's R 0.177 s, the second round's maximum 0.176 s) = 0.177 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.175, 0.174, 0.173, 0.177, 0.175, 0.174, 0.175, 0.172 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.173, 0.174, 0.171, 0.172, 0.176 s. The maximum over a round's readings is that round's R."
+     },
+     "test_no_repetition_blowup": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.66,
+      "R_source": "max(the first round's R 0.66 s, the second round's maximum 0.66 s) = 0.66 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.654, 0.652, 0.652, 0.655, 0.653, 0.660, 0.658, 0.651 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.653, 0.660, 0.653, 0.652, 0.658 s. The maximum over a round's readings is that round's R."
+     },
+     "test_prefix_cache": {
+      "ops": {
+       "action": 16,
+       "http_request": 24
+      },
+      "R_s": 42.287,
+      "R_source": "max(the first round's R 42.287 s, the second round's maximum 41.945 s) = 42.287 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 41.933, 42.287, 41.807, 42.093, 40.525, 40.670, 41.938, 41.753 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 41.945, 41.686, 40.360, 41.875, 41.772 s. The maximum over a round's readings is that round's R.",
+      "repetitions": 1,
+      "repetitions_why": "the set at or over its bar is drawn once more, whole"
+     },
+     "test_recipe_conformance": {
+      "ops": {
+       "action": 1,
+       "http_request": 1,
+       "invocation": 4
+      },
+      "R_s": 75.313,
+      "R_source": "max(the first round's R 73.443 s, the second round's maximum 75.313 s) = 75.313 s. First round, after the witness timing fix (readings taken before it are not this node's procedure): three reference (oracle) runs, 4 x B200 each, reading 68.724, 73.443, 73.123 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 74.687, 72.246, 74.914, 75.313, 74.305 s. The maximum over a round's readings is that round's R."
+     },
+     "test_spec_accept_length": {
+      "ops": {
+       "http_request": 3
+      },
+      "R_s": 3.69,
+      "R_source": "max(the first round's R 3.637 s, the second round's maximum 3.69 s) = 3.69 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 3.585, 3.583, 3.549, 3.584, 3.614, 3.637, 3.570, 3.583 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 3.569, 3.620, 3.601, 3.593, 3.690 s. The maximum over a round's readings is that round's R."
+     },
+     "test_streaming_response": {
+      "ops": {
+       "http_request": 1
+      },
+      "R_s": 0.417,
+      "R_source": "max(the first round's R 0.413 s, the second round's maximum 0.417 s) = 0.417 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 0.406, 0.408, 0.406, 0.406, 0.410, 0.413, 0.409, 0.408 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 0.408, 0.412, 0.415, 0.408, 0.417 s. The maximum over a round's readings is that round's R."
+     },
+     "test_long_context_fidelity": {
+      "ops": {
+       "http_request": 4,
+       "http_request_long": 4
+      },
+      "R_s": 22.694,
+      "R_source": "max(the first round's R 21.261 s, the second round's maximum 22.694 s) = 22.694 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 20.742, 20.662, 20.874, 20.703, 21.261, 21.230, 21.001, 20.865 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 22.232, 22.206, 22.694, 22.329, 22.524 s. The maximum over a round's readings is that round's R.",
+      "repetitions": 1,
+      "repetitions_why": "each band at or over its bar is drawn once more, whole (the per-sequence cap's resend is per request, inside the margin)"
+     },
+     "test_long_reach_fidelity": {
+      "ops": {
+       "http_request_long": 2
+      },
+      "R_s": 38.165,
+      "R_source": "max(the first round's R 38.165 s, the second round's maximum 36.559 s) = 38.165 s. First round: eight reference (oracle) runs, 4 x B200 each, reading 38.165, 37.193, 37.100, 37.252, 37.397, 37.478, 37.213, 38.108 s. Second round: five reference (oracle) runs, 4 x B200 each, reading 36.559, 36.353, 36.264, 36.331, 36.493 s. The maximum over a round's readings is that round's R."
+     },
+     "test_generation_replay": {
+      "ops": {
+       "http_request": 74,
+       "action": 56
+      },
+      "R_s": 187.11,
+      "R_source": "the scored schedule's own calibration: 21 correct runs of the final tree with R = 3, each alone, on 21 distinct hosts over two independent routes; the maximum over them. The bound is Cmax + dispatch = 960 s, since 3 x R is 561 s and 303 s."
+     },
+     "test_prefix_branch_replay": {
+      "ops": {
+       "http_request": 64,
+       "action": 16
+      },
+      "R_s": 100.99,
+      "R_source": "the scored schedule's own calibration: 21 correct runs of the final tree with R = 3, each alone, on 21 distinct hosts over two independent routes; the maximum over them. The bound is Cmax + dispatch = 960 s, since 3 x R is 561 s and 303 s."
+     }
+    }
+   },
+   "generated": {
+    "config.efficiency.deadlines": {
+     "launch_s": 1420,
+     "teardown_s": 240,
+     "nodes": {
+      "test_0_efficiency_decode_c1": 1860,
+      "test_0_efficiency_throughput": 1860,
+      "test_ascii_ratio": 960,
+      "test_basic_math": 960,
+      "test_capital_france": 960,
+      "test_color_completion": 960,
+      "test_concurrent_requests": 960,
+      "test_determinism_temp_zero": 960,
+      "test_fidelity_kl": 1920,
+      "test_gsm8k": 960,
+      "test_gsm8k_hidden_slice": 960,
+      "test_health": 960,
+      "test_health_generate": 960,
+      "test_long_prompt": 960,
+      "test_max_token_one": 960,
+      "test_no_repetition_blowup": 960,
+      "test_prefix_cache": 1920,
+      "test_recipe_conformance": 1860,
+      "test_spec_accept_length": 960,
+      "test_streaming_response": 960,
+      "test_long_context_fidelity": 3720,
+      "test_long_reach_fidelity": 1860,
+      "test_generation_replay": 960,
+      "test_prefix_branch_replay": 960
+     }
+    },
+    "test.sh": {
+     "l2_budget_s": 33040,
+     "prepare_s": 360,
+     "preflight_s": 360,
+     "reference_kernels_s": 1860,
+     "reference_s": 1860,
+     "restore_s": 360,
+     "l0_build_s": 3660,
+     "l0_registry_s": 1860,
+     "kernels_s": 11220,
+     "l3_s": 1860,
+     "grade_s": 360,
+     "kernel_node_s": [
+      1860,
+      1860,
+      1860,
+      1860,
+      1860,
+      1860
+     ]
+    },
+    "task.toml.verifier.timeout_sec": 61360,
+    "job_lifetime_s": 109960
+   },
+   "kernels": {
+    "nodes": {
+     "test_sparse_bf16_correctness": {
+      "ops": {
+       "component_check": 1
+      },
+      "R_s": 8.911,
+      "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 8.818, 8.845, 8.695, 8.911, 8.898 s. The maximum over them is R."
+     },
+     "test_sparse_paged_correctness": {
+      "ops": {
+       "component_check": 1
+      },
+      "R_s": 11.069,
+      "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 10.999, 11.064, 10.828, 11.069, 10.883 s. The maximum over them is R."
+     },
+     "test_compression_state_correctness": {
+      "ops": {
+       "component_check": 1
+      },
+      "R_s": 30.553,
+      "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 30.151, 30.496, 30.081, 30.553, 30.241 s. The maximum over them is R."
+     },
+     "test_cache_transform_correctness": {
+      "ops": {
+       "component_check": 1
+      },
+      "R_s": 32.471,
+      "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 32.274, 32.114, 31.765, 31.923, 32.471 s. The maximum over them is R."
+     },
+     "test_kernel_prefill_efficiency": {
+      "ops": {
+       "invocation": 7,
+       "action": 1
+      },
+      "R_s": 23.364,
+      "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 23.364, 22.893, 22.685, 23.041, 23.042 s. The maximum over them is R."
+     },
+     "test_kernel_decode_efficiency": {
+      "ops": {
+       "invocation": 6,
+       "action": 1
+      },
+      "R_s": 10.929,
+      "R_source": "a calibration round: five reference (oracle) runs, 4 x B200 each, reading 10.687, 10.693, 10.523, 10.929, 10.682 s. The maximum over them is R."
+     }
+    }
+   }
+  },
+  "importable_vendored": {
+   "modules": [
+    "flash_mla",
+    "flash_mla.cuda"
+   ],
+   "path": "/opt/infb-reference/tree/third_party/flash_mla",
+   "why": "/app/third_party/flash_mla is the candidate's committed source at preflight time; the vendored modules are probed against the reference tree's own build so no candidate code runs before the reference phase"
+  },
+  "model_adaptations": {
+   "record": "/model/.infb/source-adaptations.json",
+   "files": {
+    "inference/kernel.py": {
+     "original_sha256": "59b325083d7103975cba025bd0d60ea343bb82d8fff53088afb7c04bd380c0c2",
+     "adapted_sha256": "8726d5a7250bb2934be70c0ffe85422252547ead75ca718cea9420239efab9fb"
+    }
+   },
+   "why": "environment/fetch_model.py adapts the model-author kernel.py in its download step; preflight checks the effective bytes against the record"
+  },
+  "kernels": {
+   "why": "the six component nodes. Each arm runs in its own worker process on one device (the reference first, in the isolated reference phase, with its serving JIT cache root; the candidate after L0 with test.sh's candidate caches); the verdicts are computed in the verifier's process against the private float64 references; the efficiency nodes pair each family with the reference's measurement of the same seed and require both clocks' ratio median(reference) / median(candidate) >= rho.",
+   "rho": "0.8",
+   "manifest": "/tests/hidden/kernel_state_v49.json",
+   "device": "0",
+   "reference_tree": "/opt/infb-reference/tree",
+   "work": "/tmp/infb-kernels",
+   "records": "/logs/verifier/records/kernels",
+   "nodes": [
+    "test_sparse_bf16_correctness",
+    "test_sparse_paged_correctness",
+    "test_compression_state_correctness",
+    "test_cache_transform_correctness",
+    "test_kernel_prefill_efficiency",
+    "test_kernel_decode_efficiency"
+   ]
+  },
+  "generated_replay": {
+   "why": "the two generated-history nodes. A serving engine is not bit-reproducible -- two identical cold prefills of one history, a minute apart in the same server, move 2,105 of 2,112 prefix log-probabilities, by up to 2.57 nats, at contested tokens -- so comparing ONE generation with ONE replay against a bar frozen from five launches failed correct implementations on the draw. Each history is now replayed cold R = 3 times, each pass after its own flush and in the registered order, and the generation is judged against the spread the engine itself produces: the node's S1', S2', S3' and S4 (the public protocol's step 6) over its whole schedule, against the bars below. The schedule is the fix for that finding: 512 generated tokens, so the decode-time reads pass out of the 128-token sliding window, and shared-prefix branch points 4,000 and 4,321, off the 128- and 256-token page boundaries. Per-sequence mean k3 and max |d| are still recorded, as diagnostics; they grade nothing. No candidate or fault-control reading ever sets a bar.",
+   "schedule": "/tests/hidden/kernel_state_v49.json (replay)",
+   "bars": {
+    "test_generation_replay": {
+     "T1p": 1.0216288958611501,
+     "T2p": 4,
+     "T3p": 4.591198840356719,
+     "G": 0.7618164062499999
+    },
+    "test_prefix_branch_replay": {
+     "T1p": 1.0468951594297213,
+     "T2p": 14,
+     "T3p": 10.42473195626584,
+     "G": 0.6581562392600825
+    }
+   },
+   "calibration": [
+    {
+     "role": "run 1",
+     "route": "route B",
+     "host": "host 1",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.9478180112988593,
+      "S2p": 0,
+      "S3p": 0.6139785051345825,
+      "S4": 0.8419921875,
+      "tokens": 10240,
+      "decisive_tokens": 8622,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8869018347327776,
+      "S2p": 7,
+      "S3p": 2.640850305557251,
+      "S4": 0.7425537109375,
+      "tokens": 8192,
+      "decisive_tokens": 6083,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 2",
+     "route": "route B",
+     "host": "host 2",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8574010948849139,
+      "S2p": 1,
+      "S3p": 1.0221449136734009,
+      "S4": 0.8240234375,
+      "tokens": 10240,
+      "decisive_tokens": 8438,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8205831727128644,
+      "S2p": 2,
+      "S3p": 1.222145676612854,
+      "S4": 0.727294921875,
+      "tokens": 8192,
+      "decisive_tokens": 5958,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 3",
+     "route": "route B",
+     "host": "host 3",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8363570674271833,
+      "S2p": 1,
+      "S3p": 1.0630567073822021,
+      "S4": 0.829296875,
+      "tokens": 10240,
+      "decisive_tokens": 8492,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.9024872346205379,
+      "S2p": 2,
+      "S3p": 1.632348656654358,
+      "S4": 0.7218017578125,
+      "tokens": 8192,
+      "decisive_tokens": 5913,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 4",
+     "route": "route B",
+     "host": "host 4",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8571353832127697,
+      "S2p": 0,
+      "S3p": 0.9732040166854858,
+      "S4": 0.8427734375,
+      "tokens": 10240,
+      "decisive_tokens": 8630,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.831503249767255,
+      "S2p": 0,
+      "S3p": 0.791093111038208,
+      "S4": 0.7803955078125,
+      "tokens": 8192,
+      "decisive_tokens": 6393,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 5",
+     "route": "route B",
+     "host": "host 5",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8373547771502069,
+      "S2p": 0,
+      "S3p": 0.8488894701004028,
+      "S4": 0.81181640625,
+      "tokens": 10240,
+      "decisive_tokens": 8313,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8439290389860536,
+      "S2p": 2,
+      "S3p": 2.3313491344451904,
+      "S4": 0.75390625,
+      "tokens": 8192,
+      "decisive_tokens": 6176,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 6",
+     "route": "route B",
+     "host": "host 6",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.929879150685403,
+      "S2p": 0,
+      "S3p": 0.7988091111183167,
+      "S4": 0.84765625,
+      "tokens": 10240,
+      "decisive_tokens": 8680,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.973015579462521,
+      "S2p": 5,
+      "S3p": 1.7643903493881226,
+      "S4": 0.766357421875,
+      "tokens": 8192,
+      "decisive_tokens": 6278,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 7",
+     "route": "route A",
+     "host": "host 7",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8910749814773191,
+      "S2p": 2,
+      "S3p": 1.1157101392745972,
+      "S4": 0.827734375,
+      "tokens": 10240,
+      "decisive_tokens": 8476,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8708238872144487,
+      "S2p": 3,
+      "S3p": 1.7330928444862366,
+      "S4": 0.78564453125,
+      "tokens": 8192,
+      "decisive_tokens": 6436,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 8",
+     "route": "route A",
+     "host": "host 8",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.9318035526139645,
+      "S2p": 2,
+      "S3p": 1.3099009096622467,
+      "S4": 0.8353515625,
+      "tokens": 10240,
+      "decisive_tokens": 8554,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8665249678086476,
+      "S2p": 4,
+      "S3p": 2.6147265881299973,
+      "S4": 0.76220703125,
+      "tokens": 8192,
+      "decisive_tokens": 6244,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 9",
+     "route": "route A",
+     "host": "host 9",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.879109952211313,
+      "S2p": 0,
+      "S3p": 0.9860877990722656,
+      "S4": 0.83427734375,
+      "tokens": 10240,
+      "decisive_tokens": 8543,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.9212986838104018,
+      "S2p": 5,
+      "S3p": 2.7128260135650635,
+      "S4": 0.7486572265625,
+      "tokens": 8192,
+      "decisive_tokens": 6133,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 10",
+     "route": "route A",
+     "host": "host 10",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8582223954698109,
+      "S2p": 1,
+      "S3p": 1.0911080837249756,
+      "S4": 0.8220703125,
+      "tokens": 10240,
+      "decisive_tokens": 8418,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8353084565284091,
+      "S2p": 2,
+      "S3p": 1.3066219091415405,
+      "S4": 0.72119140625,
+      "tokens": 8192,
+      "decisive_tokens": 5908,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 11",
+     "route": "route A",
+     "host": "host 11",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8618860790150464,
+      "S2p": 2,
+      "S3p": 1.2516907453536987,
+      "S4": 0.83681640625,
+      "tokens": 10240,
+      "decisive_tokens": 8569,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.7910427008415482,
+      "S2p": 4,
+      "S3p": 1.394787073135376,
+      "S4": 0.756591796875,
+      "tokens": 8192,
+      "decisive_tokens": 6198,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 12",
+     "route": "route A",
+     "host": "host 12",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.7940892024505363,
+      "S2p": 0,
+      "S3p": 0.9254230260848999,
+      "S4": 0.8423828125,
+      "tokens": 10240,
+      "decisive_tokens": 8626,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.926340821201356,
+      "S2p": 2,
+      "S3p": 1.5517903566360474,
+      "S4": 0.745361328125,
+      "tokens": 8192,
+      "decisive_tokens": 6106,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 13",
+     "route": "route A",
+     "host": "host 13",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8604610930452784,
+      "S2p": 2,
+      "S3p": 1.1470633745193481,
+      "S4": 0.84609375,
+      "tokens": 10240,
+      "decisive_tokens": 8664,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8886585147849552,
+      "S2p": 2,
+      "S3p": 1.044425368309021,
+      "S4": 0.7650146484375,
+      "tokens": 8192,
+      "decisive_tokens": 6267,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 14",
+     "route": "route A",
+     "host": "host 14",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8722497341486581,
+      "S2p": 0,
+      "S3p": 0.8634910583496094,
+      "S4": 0.83232421875,
+      "tokens": 10240,
+      "decisive_tokens": 8523,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8142605425567079,
+      "S2p": 3,
+      "S3p": 1.4597283601760864,
+      "S4": 0.7525634765625,
+      "tokens": 8192,
+      "decisive_tokens": 6165,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 15",
+     "route": "route A",
+     "host": "host 15",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.7925802124983808,
+      "S2p": 0,
+      "S3p": 0.9480316638946533,
+      "S4": 0.85341796875,
+      "tokens": 10240,
+      "decisive_tokens": 8739,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.9114023336832344,
+      "S2p": 3,
+      "S3p": 1.371666043996811,
+      "S4": 0.7325439453125,
+      "tokens": 8192,
+      "decisive_tokens": 6001,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 16",
+     "route": "route A",
+     "host": "host 16",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8849396280273844,
+      "S2p": 0,
+      "S3p": 0.9795695543289185,
+      "S4": 0.83779296875,
+      "tokens": 10240,
+      "decisive_tokens": 8579,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8683577533761732,
+      "S2p": 2,
+      "S3p": 1.5278863906860352,
+      "S4": 0.7783203125,
+      "tokens": 8192,
+      "decisive_tokens": 6376,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 17",
+     "route": "route A",
+     "host": "host 17",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8931756172546816,
+      "S2p": 1,
+      "S3p": 1.0091874599456787,
+      "S4": 0.844140625,
+      "tokens": 10240,
+      "decisive_tokens": 8644,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8257755577161419,
+      "S2p": 0,
+      "S3p": 0.9879660606384277,
+      "S4": 0.77099609375,
+      "tokens": 8192,
+      "decisive_tokens": 6316,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 18",
+     "route": "route A",
+     "host": "host 18",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8301394068455121,
+      "S2p": 0,
+      "S3p": 0.7316515445709229,
+      "S4": 0.821484375,
+      "tokens": 10240,
+      "decisive_tokens": 8412,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.8354084611537667,
+      "S2p": 2,
+      "S3p": 1.3241539597511292,
+      "S4": 0.763916015625,
+      "tokens": 8192,
+      "decisive_tokens": 6258,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 19",
+     "route": "route A",
+     "host": "host 19",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8313294218628985,
+      "S2p": 0,
+      "S3p": 0.8519178628921509,
+      "S4": 0.832421875,
+      "tokens": 10240,
+      "decisive_tokens": 8524,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.9855078411729203,
+      "S2p": 3,
+      "S3p": 1.9983978271484375,
+      "S4": 0.749755859375,
+      "tokens": 8192,
+      "decisive_tokens": 6142,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 20",
+     "route": "route A",
+     "host": "host 20",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.873836278347518,
+      "S2p": 1,
+      "S3p": 1.0240162014961243,
+      "S4": 0.81337890625,
+      "tokens": 10240,
+      "decisive_tokens": 8329,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.770170005438596,
+      "S2p": 1,
+      "S3p": 1.1405383944511414,
+      "S4": 0.7412109375,
+      "tokens": 8192,
+      "decisive_tokens": 6072,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    },
+    {
+     "role": "run 21",
+     "route": "route A",
+     "host": "host 21",
+     "driver": "driver A",
+     "generation": {
+      "S1p": 0.8415035890978708,
+      "S2p": 2,
+      "S3p": 1.20596444606781,
+      "S4": 0.837109375,
+      "tokens": 10240,
+      "decisive_tokens": 8572,
+      "sequences": 20,
+      "replay_passes": 3
+     },
+     "prefix": {
+      "S1p": 0.7742684356938508,
+      "S2p": 2,
+      "S3p": 1.166598618030548,
+      "S4": 0.7513427734375,
+      "tokens": 8192,
+      "decisive_tokens": 6155,
+      "sequences": 16,
+      "replay_passes": 3
+     }
+    }
+   ],
+   "confirmation": [],
+   "calibration_rule": "Committed before any reading of the scored schedule (the implementation is tests/infb_verify/generated_replay.py bars_from_calibration). Per node, from correct runs of THIS schedule with R = 3 only -- at least 20, each alone on its host, on at least 8 hosts, over both routes -- with a false-failure budget of 1% per node per run, so alpha = 0.0025 for each part: T1' = exp(m + 2.807 s) of log S1' -- RULE Q, the fitted quantile ALONE, with no 3x floor. Q was fixed before any reading of this schedule and validated on a set no bar had seen: all 11 held-out correct runs read S1' <= Q at both nodes (largest 0.89 of Q), two fresh fault-control runs read S1' > Q at both nodes (1.43-1.89x), and the expected false-fail rate per correct run under Q, refitted on 34 correct runs, is 5.5e-3 and 2.8e-3 per node, inside the 1% budget and about 0.08 and 0.03 points of a percent more than the earlier floor would cost. That floor of 3 x the observed maximum let that fault control pass, separated at z 7.6-15.0 but under the floor; the floor is reported beside each bar and does not enter it; T2' = the negative-binomial (Poisson when the variance is at most the mean) alpha-quantile of S2', at least 2 x its observed max and at least 3; T3' = the peaks-over-threshold alpha-quantile of the per-token excess e above u = 0.25 nats (a generalized Pareto fitted by maximum likelihood at 10 or more exceedances, an exponential tail at 1 to 9, the floors alone at none), at least 2 x the observed max of S3' and at least 2 nats; G = min(mean - 4 sd of S4, the observed min of S4 - 0.05). Each bar is computed on the pooled set and on every stratum (route, driver, host) with at least three runs, and the worst stratum governs. A run fails the node when S1' > T1', S2' > T2', S3' > T3' or S4 < G.",
+   "superseded_schedule": {
+    "why": "the earlier bars, their five calibration launches and their rule, kept unedited. They calibrated the earlier 132-token, one-replay schedule, which the current schedule replaces; they grade nothing now and are kept as a record. The image is named by digest alone; the digest is the measured identity and is unchanged.",
+    "bars": {
+     "test_generation_replay": {
+      "T_mean": 0.043123,
+      "T_max": 8.1369
+     },
+     "test_prefix_branch_replay": {
+      "T_mean": 0.088294,
+      "T_max": 7.5915
+     }
+    },
+    "calibration": [
+     {
+      "launch": "run 1",
+      "nodes": {
+       "test_generation_replay": {
+        "launch": "run 1",
+        "max_mean_k3": 0.014374284888535567,
+        "max_abs_d": 2.712296187877655,
+        "sequences": [
+         {
+          "label": "single-code-8192-01-4093/code-8192-01@4093",
+          "mean_k3": 0.002659189564776654,
+          "max_abs_d": 0.5933654308319092,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4095/code-8192-01@4095",
+          "mean_k3": 0.013754032578039355,
+          "max_abs_d": 2.712296187877655,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4096/code-8192-01@4096",
+          "mean_k3": 0.0009634085518840311,
+          "max_abs_d": 0.30529487133026123,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4097/code-8192-01@4097",
+          "mean_k3": 0.0017746420094683062,
+          "max_abs_d": 0.4020514488220215,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4223/code-8192-01@4223",
+          "mean_k3": 0.012876777538990558,
+          "max_abs_d": 2.1131438612937927,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4224/code-8192-01@4224",
+          "mean_k3": 0.0037530298614026365,
+          "max_abs_d": 0.7952722907066345,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4093/code-8192-05@4093",
+          "mean_k3": 0.002619663721701755,
+          "max_abs_d": 0.2786879539489746,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4095/code-8192-05@4095",
+          "mean_k3": 0.014374284888535567,
+          "max_abs_d": 1.156180500984192,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4096/code-8192-05@4096",
+          "mean_k3": 0.008292775335990363,
+          "max_abs_d": 0.9066939353942871,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4097/code-8192-05@4097",
+          "mean_k3": 0.001765964497801038,
+          "max_abs_d": 0.3287111520767212,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4223/code-8192-05@4223",
+          "mean_k3": 0.001826207258479529,
+          "max_abs_d": 0.3975851535797119,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4224/code-8192-05@4224",
+          "mean_k3": 0.001197212053806716,
+          "max_abs_d": 0.3576928973197937,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-02@4095",
+          "mean_k3": 0.003231279312989662,
+          "max_abs_d": 0.3836706280708313,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-06@4096",
+          "mean_k3": 0.0013676972091562207,
+          "max_abs_d": 0.2691311836242676,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/prose-8192-00@4097",
+          "mean_k3": 0.0029230721515168374,
+          "max_abs_d": 0.6203564405441284,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/math-8192-06@4093",
+          "mean_k3": 0.002697135817305877,
+          "max_abs_d": 0.5144563913345337,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-00@4095",
+          "mean_k3": 0.0024930243317198867,
+          "max_abs_d": 0.39062634110450745,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-04@4096",
+          "mean_k3": 0.0028396379589974547,
+          "max_abs_d": 0.3995061181485653,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-03@4097",
+          "mean_k3": 1.8037221961016e-09,
+          "max_abs_d": 0.0006250687874853611,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-07@4223",
+          "mean_k3": 2.680434170891817e-10,
+          "max_abs_d": 0.000259577325778082,
+          "cached_tokens": 0
+         }
+        ]
+       },
+       "test_prefix_branch_replay": {
+        "launch": "run 1",
+        "max_mean_k3": 0.029431188966378304,
+        "max_abs_d": 2.495746999979019,
+        "sequences": [
+         {
+          "label": "prefix-code-8192-01-4095/A0",
+          "mean_k3": 0.004291867825318549,
+          "max_abs_d": 0.7936796844005585,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B1",
+          "mean_k3": 0.007432628453672358,
+          "max_abs_d": 0.8966408371925354,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-01-4095/A2",
+          "mean_k3": 0.0015432503313566742,
+          "max_abs_d": 0.34710973501205444,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B3",
+          "mean_k3": 0.0036366589689589934,
+          "max_abs_d": 0.3044089078903198,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A0",
+          "mean_k3": 0.0077863792996478364,
+          "max_abs_d": 1.009057641029358,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B1",
+          "mean_k3": 0.0027374991691858238,
+          "max_abs_d": 0.47871601581573486,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A2",
+          "mean_k3": 0.008672702106916655,
+          "max_abs_d": 1.1141256093978882,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B3",
+          "mean_k3": 0.019908276931456654,
+          "max_abs_d": 2.1926511004567146,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A0",
+          "mean_k3": 0.0013722975698383336,
+          "max_abs_d": 0.25316452980041504,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B1",
+          "mean_k3": 0.011620980424837033,
+          "max_abs_d": 1.1324481964111328,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A2",
+          "mean_k3": 0.019546746412457044,
+          "max_abs_d": 2.097534716129303,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B3",
+          "mean_k3": 0.029431188966378304,
+          "max_abs_d": 2.495746999979019,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A0",
+          "mean_k3": 0.005605361367654038,
+          "max_abs_d": 0.7208609580993652,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B1",
+          "mean_k3": 0.005825079959481303,
+          "max_abs_d": 0.543158769607544,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A2",
+          "mean_k3": 0.01437260103709106,
+          "max_abs_d": 2.242554485797882,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B3",
+          "mean_k3": 0.004667362787913482,
+          "max_abs_d": 0.4933871030807495,
+          "cached_tokens": 4096
+         }
+        ]
+       }
+      },
+      "image_digest": "sha256:15aaebcf864433da597354a27bdf7598254bf1e290faffe9f189ff0df3c01f23"
+     },
+     {
+      "launch": "run 2",
+      "nodes": {
+       "test_generation_replay": {
+        "launch": "run 2",
+        "max_mean_k3": 0.0077519641917365035,
+        "max_abs_d": 1.636618971824646,
+        "sequences": [
+         {
+          "label": "single-code-8192-01-4093/code-8192-01@4093",
+          "mean_k3": 0.0026497564354873463,
+          "max_abs_d": 0.6010410785675049,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4095/code-8192-01@4095",
+          "mean_k3": 0.0021906463670395013,
+          "max_abs_d": 0.5867679715156555,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4096/code-8192-01@4096",
+          "mean_k3": 0.003746650302611995,
+          "max_abs_d": 0.9032579660415649,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4097/code-8192-01@4097",
+          "mean_k3": 0.0009807252628738071,
+          "max_abs_d": 0.3912873864173889,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4223/code-8192-01@4223",
+          "mean_k3": 0.002059413270076993,
+          "max_abs_d": 0.31583308428525925,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4224/code-8192-01@4224",
+          "mean_k3": 0.0077519641917365035,
+          "max_abs_d": 1.636618971824646,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4093/code-8192-05@4093",
+          "mean_k3": 0.005898780400631159,
+          "max_abs_d": 0.6291937828063965,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4095/code-8192-05@4095",
+          "mean_k3": 0.00290373478004951,
+          "max_abs_d": 0.5456693172454834,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4096/code-8192-05@4096",
+          "mean_k3": 0.005473014849194844,
+          "max_abs_d": 0.7068362236022949,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4097/code-8192-05@4097",
+          "mean_k3": 0.002185619535714003,
+          "max_abs_d": 0.333004891872406,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4223/code-8192-05@4223",
+          "mean_k3": 0.0013985352271914573,
+          "max_abs_d": 0.34954002499580383,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4224/code-8192-05@4224",
+          "mean_k3": 0.0014604437139275164,
+          "max_abs_d": 0.280073881149292,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-02@4095",
+          "mean_k3": 0.006968516216297074,
+          "max_abs_d": 1.1178675889968872,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-06@4096",
+          "mean_k3": 0.0026347406494172717,
+          "max_abs_d": 0.3195980489253998,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/prose-8192-00@4097",
+          "mean_k3": 0.006084974500246694,
+          "max_abs_d": 0.9159603118896484,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/math-8192-06@4093",
+          "mean_k3": 0.001481511503467504,
+          "max_abs_d": 0.3188241124153137,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-00@4095",
+          "mean_k3": 0.002631290527792638,
+          "max_abs_d": 0.36133432388305664,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-04@4096",
+          "mean_k3": 0.002292555993769809,
+          "max_abs_d": 0.39152979850769043,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-03@4097",
+          "mean_k3": 1.0504048699147096e-08,
+          "max_abs_d": 0.0015846629394218326,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-07@4223",
+          "mean_k3": 2.0122557427742562e-11,
+          "max_abs_d": 4.0985934901982546e-05,
+          "cached_tokens": 0
+         }
+        ]
+       },
+       "test_prefix_branch_replay": {
+        "launch": "run 2",
+        "max_mean_k3": 0.028369794454086508,
+        "max_abs_d": 2.189905285835266,
+        "sequences": [
+         {
+          "label": "prefix-code-8192-01-4095/A0",
+          "mean_k3": 0.0027809691248461945,
+          "max_abs_d": 0.3813662528991699,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B1",
+          "mean_k3": 0.006216722971098951,
+          "max_abs_d": 0.48511427640914917,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-01-4095/A2",
+          "mean_k3": 0.00477909556353216,
+          "max_abs_d": 0.6938532590866089,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B3",
+          "mean_k3": 0.00876826825467511,
+          "max_abs_d": 0.9422588348388672,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A0",
+          "mean_k3": 0.020711547055911494,
+          "max_abs_d": 2.013769507408142,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B1",
+          "mean_k3": 0.028369794454086508,
+          "max_abs_d": 2.189905285835266,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A2",
+          "mean_k3": 0.00455541773337425,
+          "max_abs_d": 0.7126795053482056,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B3",
+          "mean_k3": 0.003112623687222296,
+          "max_abs_d": 0.3277543783187866,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A0",
+          "mean_k3": 0.0018721519070938036,
+          "max_abs_d": 0.5141139030456543,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B1",
+          "mean_k3": 0.011294429247398652,
+          "max_abs_d": 1.1464462280273438,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A2",
+          "mean_k3": 0.00732712973777375,
+          "max_abs_d": 1.192866027355194,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B3",
+          "mean_k3": 0.005023660362080033,
+          "max_abs_d": 0.516262412071228,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A0",
+          "mean_k3": 0.003943637169336046,
+          "max_abs_d": 0.5543644428253174,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B1",
+          "mean_k3": 0.005997729981429055,
+          "max_abs_d": 0.5431335344910622,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A2",
+          "mean_k3": 0.010366106221289322,
+          "max_abs_d": 1.3158597946166992,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B3",
+          "mean_k3": 0.004774750743868433,
+          "max_abs_d": 0.4512690305709839,
+          "cached_tokens": 4096
+         }
+        ]
+       }
+      },
+      "image_digest": "sha256:15aaebcf864433da597354a27bdf7598254bf1e290faffe9f189ff0df3c01f23"
+     },
+     {
+      "launch": "run 3",
+      "nodes": {
+       "test_generation_replay": {
+        "launch": "run 3",
+        "max_mean_k3": 0.005847013260732889,
+        "max_abs_d": 1.2330812811851501,
+        "sequences": [
+         {
+          "label": "single-code-8192-01-4093/code-8192-01@4093",
+          "mean_k3": 0.005317747219940863,
+          "max_abs_d": 1.1538279056549072,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4095/code-8192-01@4095",
+          "mean_k3": 0.0009713395213248443,
+          "max_abs_d": 0.3995932936668396,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4096/code-8192-01@4096",
+          "mean_k3": 0.0010207491510409762,
+          "max_abs_d": 0.3139430731534958,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4097/code-8192-01@4097",
+          "mean_k3": 0.0015620082039509507,
+          "max_abs_d": 0.5494978427886963,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4223/code-8192-01@4223",
+          "mean_k3": 0.0032801570839261817,
+          "max_abs_d": 0.574219822883606,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4224/code-8192-01@4224",
+          "mean_k3": 0.005847013260732889,
+          "max_abs_d": 1.2330812811851501,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4093/code-8192-05@4093",
+          "mean_k3": 0.0026250515919753062,
+          "max_abs_d": 0.7483880519866943,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4095/code-8192-05@4095",
+          "mean_k3": 0.00555318015238051,
+          "max_abs_d": 0.5783944129943848,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4096/code-8192-05@4096",
+          "mean_k3": 0.0025768013105642597,
+          "max_abs_d": 0.610816478729248,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4097/code-8192-05@4097",
+          "mean_k3": 0.001501582569302399,
+          "max_abs_d": 0.2813318073749542,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4223/code-8192-05@4223",
+          "mean_k3": 0.001974593047253882,
+          "max_abs_d": 0.6403478384017944,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4224/code-8192-05@4224",
+          "mean_k3": 0.0014232964967593345,
+          "max_abs_d": 0.23889952898025513,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-02@4095",
+          "mean_k3": 0.004556152024863503,
+          "max_abs_d": 0.7032755017280579,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-06@4096",
+          "mean_k3": 0.0021741479402897,
+          "max_abs_d": 0.34179866313934326,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/prose-8192-00@4097",
+          "mean_k3": 0.004591743531548322,
+          "max_abs_d": 0.5305416584014893,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/math-8192-06@4093",
+          "mean_k3": 0.0017531399209238952,
+          "max_abs_d": 0.3957888036966324,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-00@4095",
+          "mean_k3": 0.0019281071193248585,
+          "max_abs_d": 0.32945358753204346,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-04@4096",
+          "mean_k3": 0.002739855388362954,
+          "max_abs_d": 0.4564458131790161,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-03@4097",
+          "mean_k3": 2.692886692981851e-09,
+          "max_abs_d": 0.0007727358606643975,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-07@4223",
+          "mean_k3": 3.1330805180873745e-11,
+          "max_abs_d": 6.221865623956546e-05,
+          "cached_tokens": 0
+         }
+        ]
+       },
+       "test_prefix_branch_replay": {
+        "launch": "run 3",
+        "max_mean_k3": 0.020831225933340036,
+        "max_abs_d": 1.3259084820747375,
+        "sequences": [
+         {
+          "label": "prefix-code-8192-01-4095/A0",
+          "mean_k3": 0.001779055120495835,
+          "max_abs_d": 0.3988261818885803,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B1",
+          "mean_k3": 0.009621673797126022,
+          "max_abs_d": 0.864716649055481,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-01-4095/A2",
+          "mean_k3": 0.006676237700325369,
+          "max_abs_d": 1.3259084820747375,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B3",
+          "mean_k3": 0.005358921143119348,
+          "max_abs_d": 0.5455549955368042,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A0",
+          "mean_k3": 0.020831225933340036,
+          "max_abs_d": 1.2132378816604614,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B1",
+          "mean_k3": 0.003937233903723244,
+          "max_abs_d": 0.43921589851379395,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A2",
+          "mean_k3": 0.005806472022371244,
+          "max_abs_d": 0.5295145511627197,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B3",
+          "mean_k3": 0.004065732987464792,
+          "max_abs_d": 0.559708833694458,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A0",
+          "mean_k3": 0.005011324812520713,
+          "max_abs_d": 0.536374568939209,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B1",
+          "mean_k3": 0.01317992125157587,
+          "max_abs_d": 0.9884347915649414,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A2",
+          "mean_k3": 0.008910524830052252,
+          "max_abs_d": 1.204557180404663,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B3",
+          "mean_k3": 0.005276363521738483,
+          "max_abs_d": 0.49996232986450195,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A0",
+          "mean_k3": 0.0067120066688227545,
+          "max_abs_d": 1.1040351390838623,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B1",
+          "mean_k3": 0.0054471462923927445,
+          "max_abs_d": 0.5870445966720581,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A2",
+          "mean_k3": 0.009391887093567534,
+          "max_abs_d": 0.9935433864593506,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B3",
+          "mean_k3": 0.012063883633234242,
+          "max_abs_d": 1.2802231311798096,
+          "cached_tokens": 4096
+         }
+        ]
+       }
+      },
+      "image_digest": "sha256:15aaebcf864433da597354a27bdf7598254bf1e290faffe9f189ff0df3c01f23"
+     },
+     {
+      "launch": "run 4",
+      "nodes": {
+       "test_generation_replay": {
+        "launch": "run 4",
+        "max_mean_k3": 0.011551949615689398,
+        "max_abs_d": 1.5091180205345154,
+        "sequences": [
+         {
+          "label": "single-code-8192-01-4093/code-8192-01@4093",
+          "mean_k3": 0.0020462050625445222,
+          "max_abs_d": 0.6568565368652344,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4095/code-8192-01@4095",
+          "mean_k3": 0.0005699288287378789,
+          "max_abs_d": 0.22490954399108887,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4096/code-8192-01@4096",
+          "mean_k3": 0.0005122217570835934,
+          "max_abs_d": 0.2676956057548523,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4097/code-8192-01@4097",
+          "mean_k3": 0.001666218468002753,
+          "max_abs_d": 0.4234534353017807,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4223/code-8192-01@4223",
+          "mean_k3": 0.001242952279087795,
+          "max_abs_d": 0.3471059650182724,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4224/code-8192-01@4224",
+          "mean_k3": 0.0012199131699297963,
+          "max_abs_d": 0.2837151288986206,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4093/code-8192-05@4093",
+          "mean_k3": 0.0051066024927756935,
+          "max_abs_d": 0.523578405380249,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4095/code-8192-05@4095",
+          "mean_k3": 0.006408269654786258,
+          "max_abs_d": 1.0464344024658203,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4096/code-8192-05@4096",
+          "mean_k3": 0.006340579351978676,
+          "max_abs_d": 1.0363488793373108,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4097/code-8192-05@4097",
+          "mean_k3": 0.0025354799094885164,
+          "max_abs_d": 0.42720693349838257,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4223/code-8192-05@4223",
+          "mean_k3": 0.0019771092967888655,
+          "max_abs_d": 0.32070839405059814,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4224/code-8192-05@4224",
+          "mean_k3": 0.0011405472046202715,
+          "max_abs_d": 0.24230724573135376,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-02@4095",
+          "mean_k3": 0.005786371580775255,
+          "max_abs_d": 0.9010899662971497,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-06@4096",
+          "mean_k3": 0.0016956869511614927,
+          "max_abs_d": 0.30845069885253906,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/prose-8192-00@4097",
+          "mean_k3": 0.003150194790192171,
+          "max_abs_d": 0.7427465915679932,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/math-8192-06@4093",
+          "mean_k3": 0.004239514448037914,
+          "max_abs_d": 0.9818527698516846,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-00@4095",
+          "mean_k3": 0.011551949615689398,
+          "max_abs_d": 1.5091180205345154,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-04@4096",
+          "mean_k3": 0.0031286854251820905,
+          "max_abs_d": 0.3229280710220337,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-03@4097",
+          "mean_k3": 1.1927163732682047e-08,
+          "max_abs_d": 0.0012659006169997156,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-07@4223",
+          "mean_k3": 2.6315366415515e-10,
+          "max_abs_d": 0.00019545774557627738,
+          "cached_tokens": 0
+         }
+        ]
+       },
+       "test_prefix_branch_replay": {
+        "launch": "run 4",
+        "max_mean_k3": 0.013776588488756746,
+        "max_abs_d": 1.4504616260528564,
+        "sequences": [
+         {
+          "label": "prefix-code-8192-01-4095/A0",
+          "mean_k3": 0.0019959045453103717,
+          "max_abs_d": 0.49756330251693726,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B1",
+          "mean_k3": 0.00810201604179513,
+          "max_abs_d": 0.5880371332168579,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-01-4095/A2",
+          "mean_k3": 0.005965462887233419,
+          "max_abs_d": 0.6767971962690353,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B3",
+          "mean_k3": 0.007083614475308073,
+          "max_abs_d": 0.935776948928833,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A0",
+          "mean_k3": 0.004777392632866619,
+          "max_abs_d": 0.4748905897140503,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B1",
+          "mean_k3": 0.0034794601834829755,
+          "max_abs_d": 0.4695627689361572,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A2",
+          "mean_k3": 0.008703785108187992,
+          "max_abs_d": 1.3939825296401978,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B3",
+          "mean_k3": 0.006071914921492016,
+          "max_abs_d": 0.7921570539474487,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A0",
+          "mean_k3": 0.013776588488756746,
+          "max_abs_d": 1.4504616260528564,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B1",
+          "mean_k3": 0.011329216425718823,
+          "max_abs_d": 1.1643611192703247,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A2",
+          "mean_k3": 0.01159742712284189,
+          "max_abs_d": 0.9320676922798157,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B3",
+          "mean_k3": 0.011633266500722581,
+          "max_abs_d": 0.7419973015785217,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A0",
+          "mean_k3": 0.009543209588534,
+          "max_abs_d": 1.185194969177246,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B1",
+          "mean_k3": 0.009536935497550317,
+          "max_abs_d": 1.032828688621521,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A2",
+          "mean_k3": 0.008855464091218644,
+          "max_abs_d": 1.0246849060058594,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B3",
+          "mean_k3": 0.0031117278570272407,
+          "max_abs_d": 0.378043532371521,
+          "cached_tokens": 4096
+         }
+        ]
+       }
+      },
+      "image_digest": "sha256:15aaebcf864433da597354a27bdf7598254bf1e290faffe9f189ff0df3c01f23"
+     },
+     {
+      "launch": "run 5",
+      "nodes": {
+       "test_generation_replay": {
+        "launch": "run 5",
+        "max_mean_k3": 0.008299438056033967,
+        "max_abs_d": 1.1467931270599365,
+        "sequences": [
+         {
+          "label": "single-code-8192-01-4093/code-8192-01@4093",
+          "mean_k3": 0.004081866771482215,
+          "max_abs_d": 0.6659451425075531,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4095/code-8192-01@4095",
+          "mean_k3": 0.002179221345150552,
+          "max_abs_d": 0.5096730887889862,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4096/code-8192-01@4096",
+          "mean_k3": 0.0008777738966602148,
+          "max_abs_d": 0.2676258385181427,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4097/code-8192-01@4097",
+          "mean_k3": 0.0010978362657555229,
+          "max_abs_d": 0.5021221935749054,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4223/code-8192-01@4223",
+          "mean_k3": 0.005399742224424578,
+          "max_abs_d": 1.1253658533096313,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-01-4224/code-8192-01@4224",
+          "mean_k3": 0.001931322344298681,
+          "max_abs_d": 0.42556672915816307,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4093/code-8192-05@4093",
+          "mean_k3": 0.0024753076330222483,
+          "max_abs_d": 0.2837117910385132,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4095/code-8192-05@4095",
+          "mean_k3": 0.004779146450950767,
+          "max_abs_d": 0.4949955940246582,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4096/code-8192-05@4096",
+          "mean_k3": 0.008299438056033967,
+          "max_abs_d": 1.1467931270599365,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4097/code-8192-05@4097",
+          "mean_k3": 0.0032199168539795583,
+          "max_abs_d": 0.5575488805770874,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4223/code-8192-05@4223",
+          "mean_k3": 0.0019842919531696044,
+          "max_abs_d": 0.3063862919807434,
+          "cached_tokens": 0
+         },
+         {
+          "label": "single-code-8192-05-4224/code-8192-05@4224",
+          "mean_k3": 0.002799343139918026,
+          "max_abs_d": 0.6399586796760559,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-02@4095",
+          "mean_k3": 0.005726873644211313,
+          "max_abs_d": 0.8443046826869249,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/math-8192-06@4096",
+          "mean_k3": 0.0017170557881558712,
+          "max_abs_d": 0.22919171676039696,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c3/prose-8192-00@4097",
+          "mean_k3": 0.0037200587777363485,
+          "max_abs_d": 0.4707827568054199,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/math-8192-06@4093",
+          "mean_k3": 0.0016798820483153812,
+          "max_abs_d": 0.2722209095954895,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-00@4095",
+          "mean_k3": 0.002507684317699501,
+          "max_abs_d": 0.38919442892074585,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/prose-8192-04@4096",
+          "mean_k3": 0.0031645642708427422,
+          "max_abs_d": 0.41768962144851685,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-03@4097",
+          "mean_k3": 7.160454672089492e-10,
+          "max_abs_d": 0.00027066603070124984,
+          "cached_tokens": 0
+         },
+         {
+          "label": "c5/structured-8192-07@4223",
+          "mean_k3": 1.7096056633927995e-09,
+          "max_abs_d": 0.0005382582894526422,
+          "cached_tokens": 0
+         }
+        ]
+       },
+       "test_prefix_branch_replay": {
+        "launch": "run 5",
+        "max_mean_k3": 0.02099446879912384,
+        "max_abs_d": 2.530510663986206,
+        "sequences": [
+         {
+          "label": "prefix-code-8192-01-4095/A0",
+          "mean_k3": 0.0038462265046874736,
+          "max_abs_d": 0.6102458536624908,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B1",
+          "mean_k3": 0.005684014017654128,
+          "max_abs_d": 0.6521692276000977,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-01-4095/A2",
+          "mean_k3": 0.00411035991828474,
+          "max_abs_d": 0.6757639646530151,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4095/B3",
+          "mean_k3": 0.013308878145804484,
+          "max_abs_d": 1.4211690425872803,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A0",
+          "mean_k3": 0.005627991972755675,
+          "max_abs_d": 0.838648796081543,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B1",
+          "mean_k3": 0.004419253221824501,
+          "max_abs_d": 0.7320518493652344,
+          "cached_tokens": 3840
+         },
+         {
+          "label": "prefix-code-8192-05-4095/A2",
+          "mean_k3": 0.02099446879912384,
+          "max_abs_d": 2.530510663986206,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4095/B3",
+          "mean_k3": 0.006650837406558277,
+          "max_abs_d": 0.6713905334472656,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A0",
+          "mean_k3": 0.004472726678979868,
+          "max_abs_d": 0.49667084217071533,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B1",
+          "mean_k3": 0.008189126209627485,
+          "max_abs_d": 0.518335223197937,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/A2",
+          "mean_k3": 0.0072615021251398165,
+          "max_abs_d": 0.6580239534378052,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-01-4223/B3",
+          "mean_k3": 0.011965436666274967,
+          "max_abs_d": 1.0051709413528442,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A0",
+          "mean_k3": 0.005883777329579579,
+          "max_abs_d": 0.7106294631958008,
+          "cached_tokens": 0
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B1",
+          "mean_k3": 0.006497363871718024,
+          "max_abs_d": 0.6415650844573975,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/A2",
+          "mean_k3": 0.008141599798030155,
+          "max_abs_d": 1.3322783708572388,
+          "cached_tokens": 4096
+         },
+         {
+          "label": "prefix-code-8192-05-4223/B3",
+          "mean_k3": 0.0051000355144764165,
+          "max_abs_d": 0.5550036430358887,
+          "cached_tokens": 4096
+         }
+        ]
+       }
+      },
+      "image_digest": "sha256:15aaebcf864433da597354a27bdf7598254bf1e290faffe9f189ff0df3c01f23"
+     }
+    ],
+    "confirmation": [],
+    "calibration_rule": "T_mean = max(0.005, 3 x the largest per-sequence mean k3), T_max = max(0.25, 3 x the largest per-sequence max |d|), over the node's complete schedule on each of five fresh reference launches (runs of the restored reference tree, original recipe)",
+    "rule_text": "The earlier version of the two generated-history nodes. Bars per node, frozen by the reference-only rule above from five fresh reference launches of the node's complete schedule: T_mean = max(0.005, 3 x the largest per-sequence mean k3), T_max = max(0.25, 3 x the largest per-sequence max |d|). Every sequence of a candidate had to satisfy both bars of its node. Three further fresh reference launches confirm (confirmation); no candidate or fault-control reading sets them."
+   },
+   "replays": 3,
+   "statistics": {
+    "S1p": "over the node's decisive tokens (generated probability at least 0.9), the median |g - median(r1,r2,r3)| divided by the median |r2 - r1|, the denominator floored at 1e-6 nats. A correct run reads about 1.",
+    "S2p": "the number of tokens whose excess e = max(0, min(r) - g, g - max(r)) is at least 1 nat.",
+    "S3p": "the largest excess e.",
+    "S4": "the decisive tokens' share of all the node's tokens, a floor so that S1' cannot be emptied."
+   },
+   "bars_frozen": true,
+   "bars_from": {
+    "test_generation_replay": {
+     "governed_by": {
+      "T3p": "route A",
+      "T1p": "route B"
+     },
+     "pooled": {
+      "runs": 21,
+      "alpha_per_part": 0.0025,
+      "T1p": {
+       "rule": "Q: the lognormal quantile alone, no 3x floor",
+       "lognormal_quantile": 0.9846710574299747,
+       "mean_log": -0.14620724522861006,
+       "sd_log": 0.04658339857373872,
+       "superseded_3x_floor_not_applied": 2.843454033896578
+      },
+      "T2p": {
+       "quantile": 4,
+       "model": "Poisson(mean 0.714)",
+       "2x_observed_max": 4,
+       "floor": 3
+      },
+      "T3p": "generalized Pareto (xi 0.195, beta 0.1213) over 706 exceedances, lambda 3.283e-03; the alpha-quantile 3.598, floors 2 x 1.310 and 2.0",
+      "G": {
+       "mean_minus_4sd": 0.7898340909794241,
+       "observed_min_minus_0.05": 0.7618164062499999
+      },
+      "observed": {
+       "S1p_max": 0.9478180112988593,
+       "S2p_max": 2,
+       "S3p_max": 1.3099009096622467,
+       "S4_min": 0.81181640625
+      }
+     }
+    },
+    "test_prefix_branch_replay": {
+     "governed_by": {
+      "T1p": "route B",
+      "T3p": "route B",
+      "G": "route B"
+     },
+     "pooled": {
+      "runs": 21,
+      "alpha_per_part": 0.0025,
+      "T1p": {
+       "rule": "Q: the lognormal quantile alone, no 3x floor",
+       "lognormal_quantile": 1.0430464356528033,
+       "mean_log": -0.1484109698187576,
+       "sd_log": 0.06788623658206507,
+       "superseded_3x_floor_not_applied": 2.956523523518761
+      },
+      "T2p": {
+       "quantile": 8,
+       "model": "Poisson(mean 2.667)",
+       "2x_observed_max": 14,
+       "floor": 3
+      },
+      "T3p": "generalized Pareto (xi 0.280, beta 0.1371) over 1481 exceedances, lambda 8.609e-03; the alpha-quantile 8.387, floors 2 x 2.713 and 2.0",
+      "G": {
+       "mean_minus_4sd": 0.6798791746291235,
+       "observed_min_minus_0.05": 0.67119140625
+      },
+      "observed": {
+       "S1p_max": 0.9855078411729203,
+       "S2p_max": 7,
+       "S3p_max": 2.7128260135650635,
+       "S4_min": 0.72119140625
+      }
+     }
+    }
+   },
+   "calibration_set": {
+    "runs": 21,
+    "hosts": 21,
+    "routes": {
+     "route A": 15,
+     "route B": 6
+    },
+    "drivers": {
+     "driver A": 21
+    },
+    "each_alone": "yes: one run per host on each route's half",
+    "tree": "the final tree, with these bars absent, so every node printed its measurement and skipped",
+    "heads": "thirteen runs on one tree head and eight on another; the diff between them touches no field or line that either replay node reads"
+   }
+  }
+ }
+}

@@ -1,0 +1,4 @@
+# No diff in this file. The oracle for this task runs solve.sh's built-in
+# __sglang_noop__ path, which is the default value of INFB_ORACLE_PATCH: it
+# appends a one-line comment to sglang's package root so the verifier benches a
+# candidate that is semantically identical to the baseline (speedup ~1.0x).

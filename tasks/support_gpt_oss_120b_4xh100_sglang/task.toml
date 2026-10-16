@@ -1,0 +1,80 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+artifacts = ["/logs/artifacts/model.patch", "/logs/artifacts/capture.json"]
+
+[task]
+name = "inference-bench/support_gpt_oss_120b_4xh100_sglang"
+description = "Day-0 model support: land reliable, numerically faithful and efficient native GPT-OSS-120B serving in SGLang on four H100 80GB GPUs at the supplied TP4 deployment, including native packed MXFP4 experts and Harmony interactions, preserving relevant existing engine behavior"
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["day0", "model_support", "sglang", "h100", "moe", "mxfp4", "attention-sinks", "sliding-window", "harmony"]
+
+[agent]
+timeout_sec = 30000
+
+[environment]
+build_timeout_sec = 21600
+cpus = 32
+memory_mb = 524288
+# 2 TiB. A SECOND complete image -- the separate verifier's -- is built
+# AFTER the agent phase, so the peak sits on top of the agent's own writes.
+storage_mb = 2097152
+# Docker's and Podman's 64 MB default shared-memory size cannot host a TP=4 server.
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["H100"]
+workdir = "/app"
+allow_internet = false
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"
+# Pier merges these into every compose call and its `exec` carries no image PATH, so the engine venv
+# has to be named here as well as in the image.
+PATH = "/opt/sglang/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[environment.healthcheck]
+command = "bash /app/scripts/start_agent_timer.sh || true"
+
+[verifier]
+timeout_sec = 55252
+environment_mode = "separate"
+
+[verifier.env]
+INFB_OFFICIAL = "1"
+INFB_REAL_ENGINE = "1"
+PATH = "/opt/sglang/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[verifier.environment]
+# The verifier image is this task's recipe verbatim plus the tests, so on the public route it is a
+# layer-cache hit after the task image.
+build_timeout_sec = 2700
+cpus = 32
+memory_mb = 524288
+storage_mb = 2097152
+shm_size_mb = 65536
+gpus = 4
+gpu_types = ["H100"]
+allow_internet = false
+
+[metadata]
+category = "model_support"
+repository_url = "https://github.com/sgl-project/sglang"
+base_commit_hash = "b525f9e2acb1af15ecf986c0f7539fcbf229c0e9"
+reference_commit_hash = "7b5bcb6e84f949362ed1b2b1e5f5a6f722f649e1"
+model_repository = "openai/gpt-oss-120b"
+model_revision = "b5c939de8f754692c1647ca79fbf85e8c1e70f8a"
+
+[metadata.inference_bench]
+# THE CANDIDATE IS CAPTURED BY pre_artifacts.sh, NOT BY CANDIDATE FINALIZATION. Without this key
+# `VllmBenchTaskAdapter.candidate_finalization_workspace` returns "/app" for every task carrying
+# inference_bench metadata and finalization then demands an isolated `<workspace>/repo` Git root.
+# This form has no `repo/`: the recipe is `git clone ... .` under `WORKDIR /app`, so the repository
+# IS the workspace. Nothing is lost: pre_artifacts.sh captures `git diff --binary <base> HEAD`,
+# commit to commit, and instruction.md says so to the agent's face.
+candidate_capture = "pre_artifacts"
+tier = "regular"
+category = "model_support"
+engine = "sglang"
+score_profile = "model_support_upstream_acceptance_v60"

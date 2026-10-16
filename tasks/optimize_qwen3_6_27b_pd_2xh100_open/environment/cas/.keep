@@ -1,0 +1,3 @@
+# Intentionally empty: the task Dockerfile's `COPY cas/` needs a directory to copy. No
+# extra CA certificates are shipped with this task, so the build echoes a notice and skips
+# update-ca-certificates. Drop a *.crt here if your build needs a private CA installed.

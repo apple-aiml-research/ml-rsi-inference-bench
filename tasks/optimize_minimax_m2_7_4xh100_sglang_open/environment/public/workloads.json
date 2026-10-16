@@ -1,0 +1,42 @@
+{
+  "workloads": [
+    {
+      "name": "decode_heavy",
+      "input_len": 1024,
+      "output_len": 8192,
+      "num_prompts": 4,
+      "max_concurrency": 1
+    },
+    {
+      "name": "prefill_heavy",
+      "input_len": 8192,
+      "output_len": 1,
+      "num_prompts": 256,
+      "max_concurrency": 1
+    },
+    {
+      "name": "high_load",
+      "input_len": 1024,
+      "output_len": 1024,
+      "num_prompts": 256,
+      "profiles": [
+        {
+          "name": "c16",
+          "pattern": "closed_loop",
+          "concurrency": 16
+        },
+        {
+          "name": "c32",
+          "pattern": "closed_loop",
+          "concurrency": 32
+        },
+        {
+          "name": "c64",
+          "pattern": "closed_loop",
+          "concurrency": 64
+        }
+      ],
+      "_comment": "Closed-loop concurrency sweep: 3 profiles c16/c32/c64, all pattern=closed_loop (--request-rate inf; steady saturation holding exactly c in flight — NOT bursty arrivals), no rate_per_s. high_load score = geomean of request_throughput at the 3 concurrency levels. Measures closed-loop THROUGHPUT CAPACITY; does NOT measure arrival-pattern robustness, tail-latency, or SLO. (mid-high-concurrency throughput, not peak — valid as a same-c ratio-to-baseline)."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Inference-Bench Oracle <infb@example.com>
+Date: Sat, 30 Aug 2026 00:00:00 +0000
+Subject: [PATCH] oracle: add inference-bench optimize_minimax_m3_pd_8xb200_sglang_open marker
+
+ORACLE MARKER: adds a new file under sglang/ so the static verifier classifies the candidate as
+`source_edit` rather than empty, proving the oracle path runs end to end.
+
+A new file rather than a context-anchored edit: sglang/__init__.py's first lines differ between
+0.5.12.post1 and 0.5.18 (read from both pinned wheels), so any context would apply to at most one.
+---
+ sglang/inference_bench_minimax_m3_pd_oracle.py | 14 ++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 sglang/inference_bench_minimax_m3_pd_oracle.py
+
+diff --git a/sglang/inference_bench_minimax_m3_pd_oracle.py b/sglang/inference_bench_minimax_m3_pd_oracle.py
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/sglang/inference_bench_minimax_m3_pd_oracle.py
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: Apache-2.0
++"""inference-bench oracle marker for optimize_minimax_m3_pd_8xb200_sglang_open.
++
++A NEW FILE, deliberately: a context-anchored marker patch does not apply across SGLang versions --
++sglang/__init__.py line 1 is `# SGLang public APIs` at 0.5.12.post1 and a docstring at 0.5.18, and
++an earlier sglang-targeting marker anchored on lines neither version has. This adds a file
++instead, so the static verifier classifies the candidate as `source_edit` on any pin.
++
++Runtime no-op: nothing imports it. The oracle here is a pipeline integration test, so the expected
++score is ~0 reward at a ratio near 1.0; a NEGATIVE reward or a gate reason token is the interesting
++outcome.
++"""
++
++INFERENCE_BENCH_PD_ORACLE = True

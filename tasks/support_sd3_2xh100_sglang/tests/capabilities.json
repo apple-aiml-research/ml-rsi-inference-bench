@@ -1,0 +1,506 @@
+{
+  "schema_version": "infb-tstar-capability-map/3",
+  "task": "support_sd3_2xh100_sglang",
+  "map_version": "core49-precision-bars-v1",
+  "score_profile": "t_sd3_diffusion_core49_precision_bars_20261008",
+  "layers_published_to_agent": false,
+  "note": "Capability grouping for reporting; binary reward is determined by config.json.",
+  "capabilities": [
+    {
+      "id": "sd3_loads_natively",
+      "title": "The three text encoders, the DiT and the VAE are SGLang's own classes, loaded through SGLang's loader",
+      "layer": "T1",
+      "status": "planned",
+      "merge": "all_of",
+      "requires": [],
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sd3_generates_matching_images",
+      "title": "Images meet their precision-matched independent reference bars",
+      "layer": "T1",
+      "status": "planned",
+      "merge": "all_of",
+      "requires": [
+        "sd3_loads_natively"
+      ],
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sd3_components_match_reference",
+      "title": "Each component computes what diffusers computes at fp32 on the candidate's own captured inputs",
+      "layer": "T1",
+      "status": "planned",
+      "merge": "all_of",
+      "requires": [],
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sd3_runs_engine_denoising",
+      "title": "Every scored request is denoised by the engine's own loop for exactly its num_inference_steps",
+      "layer": "T1",
+      "status": "planned",
+      "merge": "all_of",
+      "requires": [],
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sd3_prompt_conditioned",
+      "title": "Different prompts at one seed give clearly different images, both natively generated",
+      "layer": "T1",
+      "status": "planned",
+      "merge": "all_of",
+      "requires": [],
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "clip_g_projection_survives_loading",
+      "title": "CLIP-G is served with its projection while precision variants coexist",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "cfg1_single_row",
+      "title": "cfg=1 runs the positive branch alone and a single-row batch is correct",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "request_isolation_abab",
+      "title": "A -> B -> A on one engine returns A identically",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "in_request_batching",
+      "title": "A list prompt / num_outputs_per_prompt > 1 gives each image its own generator's result",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "prompt_semantics",
+      "title": "Explicit negative prompt, CLIP truncation at 77 tokens, T5 at 256",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "error_recovery",
+      "title": "An illegal size is refused cleanly and the engine serves the next request",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "request_cancellation",
+      "title": "A running request can be aborted, a timeout_s deadline is enforced, a queued request can be aborted before it runs",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "vae_tiled_decode",
+      "title": "Tiled VAE decode above 1024 agrees with untiled at component level",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "native_joint_attention",
+      "title": "The DiT's joint attention runs on the engine's attention layer, and its output decides the DiT output",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "attention_backend_selection",
+      "title": "--attention-backend fa and torch_sdpa both take effect, FA by default, both correct",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "tensor_parallel_dit",
+      "title": "TP=2 on the DiT with real sharded compute and participating collectives",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sequence_parallel_dit",
+      "title": "Ulysses SP=2 with the replicated context, including a non-divisible legal size",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "fp8_dit_execution",
+      "title": "FP8 DiT execution with real low-precision compute",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "lora_semantics",
+      "title": "LoRA load/switch/disable/scale semantics on the engine linears",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "cfg_parallel",
+      "title": "CFG parallel on 2 GPUs: each CFG branch on one rank, combined across the group, guidance 1 served",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "tp2_x_fp8",
+      "title": "TP=2 x FP8: sharded quantized weights and scales compute correctly",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "tp2_x_lora",
+      "title": "TP=2 x LoRA: delta sharding, scale, switching and restore",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sp2_x_cfg_x_nondivisible",
+      "title": "SP=2 x {cfg=1, cfg>1} x a non-divisible size",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "sp2_x_lora_or_fp8",
+      "title": "SP=2 x LoRA or FP8 where the layouts interact",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "lifecycle_under_parallel",
+      "title": "Consecutive requests, config switches, release and recovery on the parallel paths",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "dynamic_batching",
+      "title": "Dynamic batching on a shared serving instance",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "efficiency_report",
+      "title": "Paired, repeated latency / throughput / memory / per-rank work",
+      "layer": "T4",
+      "status": "planned",
+      "report_only": true,
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "precision_profile_bf16",
+      "title": "The bf16 profile runs and passes: every component at bf16 in weights and main compute (recorded), judged on the bf16 reference",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "precision_profile_fp32",
+      "title": "The fp32 profile runs and passes: every component fp32, TF32 off (NVIDIA_TF32_OVERRIDE=0), judged on the fp32 reference",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "precision_profile_mixed",
+      "title": "The mixed profile runs and passes (CLIP fp16, T5 fp32, DiT bf16 autocast, VAE fp32), judged on its own reference",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "precision_contract",
+      "title": "Component precision switches honoured or explicitly refused; the legal backend matrix (FA3 fp16/bf16, SDPA/math fp32) with clear errors",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "precision_component_probes",
+      "title": "One-component-at-a-time precision probes: CLIP pooled projection, conditioning concat, DiT entry, VAE entry",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "precision_references",
+      "title": "Per-profile in-run references with frozen fingerprints (weights, tokenizer, scheduler grid, initial noise, backend, versions)",
+      "layer": "T2",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "clip_encoder_parallel",
+      "title": "The two CLIP encoders sharded on 2 GPUs, bound to the right process group, against an independent component reference",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "dit_layerwise_offload",
+      "title": "DiT layerwise offload with real CPU/GPU residency changes and a resident reference",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "batching_x_multioutput_isolation",
+      "title": "Dynamic batching x multi-output / independent seeds, and adapter isolation between batched requests",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "offload_x_lora",
+      "title": "DiT layerwise offload x LoRA: after swap-out / swap-in no stale delta, dtype or weight state across set / switch / unmerge",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "lora_multi_adapter",
+      "title": "Several LoRA adapters at once, each at its own scale (alpha/r or rsLoRA alpha/sqrt(r)), on the merge and the run-time paths",
+      "layer": "T3",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    },
+    {
+      "id": "tp2_x_batching",
+      "title": "TP2 dynamic batching with per-request outputs, RNG, adapter isolation, abort and recovery",
+      "layer": "T4",
+      "status": "planned",
+      "why": "Required gate results are scored by config.json."
+    }
+  ],
+  "unmapped": [
+    {
+      "node_id": "native_text_encoders_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_text_encoders_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_text_encoders_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_vae_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_vae_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_vae_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_transformer_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_transformer_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_transformer_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "image_similarity_full_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "image_similarity_full_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "image_similarity_full_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "component_alignment_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "component_alignment_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "component_alignment_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "stage_step_count_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "stage_step_count_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "stage_step_count_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "prompt_conditioning_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "prompt_conditioning_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "prompt_conditioning_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "precision_recorded_bf16",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "precision_recorded_fp32",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "precision_recorded_mixed",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "flux_text_encoding",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "shared_loader_selection",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "cfg1_single_row",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "request_isolation_abab",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "in_request_batching",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "prompt_semantics",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "error_recovery",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "request_cancellation",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "vae_tiled_decode_is_real",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "native_joint_attention",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "attention_backend_selection",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "cfg_parallel_is_real",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "clip_encoder_parallel_is_real",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "dit_layerwise_offload_is_real",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "tensor_parallel_dit",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "sequence_parallel_dit",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "sp2_x_cfg_x_nondivisible",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "lifecycle_under_parallel_tp2",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "lifecycle_under_parallel_sp2",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "dynamic_batching_is_real",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "batching_x_multioutput_isolation",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "dynamic_batching_is_real_tp2",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "batching_x_multioutput_isolation_tp2",
+      "reason": "Required scored check; no independent capability certification claimed for this revision."
+    },
+    {
+      "node_id": "no_hf_evaluated_path",
+      "reason": "Required native-implementation capability check; it is not a scoring-forgery rule and is not yet certified for this revision."
+    }
+  ],
+  "layer_conditions": [],
+  "integrity": [
+    {
+      "id": "private_reference_integrity",
+      "title": "Private-reference and scoring-path integrity",
+      "detects": [
+        "hidden_reference_read",
+        "scoring_path_edit",
+        "planted_score_file"
+      ],
+      "evidence": [
+        "anti_cheat"
+      ],
+      "why": "Trusted-file hashes, candidate executable-source checks and planted-score rejection."
+    }
+  ]
+}

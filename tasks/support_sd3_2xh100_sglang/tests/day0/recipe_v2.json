@@ -1,0 +1,95 @@
+{
+  "recipe_id": "sd3m-dit-fp8-e4m3-block128-v2",
+  "status": "specified",
+  "source": {
+    "hf_repo": "stabilityai/stable-diffusion-3-medium-diffusers",
+    "revision": "ea42f8cef0f178587cf766dc8129abd379c90671",
+    "file": "transformer/diffusion_pytorch_model.safetensors",
+    "size": 4169981408,
+    "sha256": "8b0e357dd04755fbfb067c63f4a883ac1de2942dd4a3240069874a17022e5418",
+    "lfs_pointer_git_oid": "797bbf8904491ba4d5904084c1d7baec23729562",
+    "dtype": "float16",
+    "n_tensors": 683,
+    "config": "transformer/config.json (372 B, git oid f6305a08a77fb74e9b21965855abe0ee904eb9c3)"
+  },
+  "format": {
+    "consumer": "sglang 9e6d1c0 multimodal_gen Fp8Config.from_config (quant_method fp8): weight_block_size -> block quant, BlockQuantScaleParameter named weight_scale_inv",
+    "quantization_config": {
+      "quant_method": "fp8",
+      "fmt": "e4m3",
+      "activation_scheme": "dynamic",
+      "weight_block_size": [
+        128,
+        128
+      ]
+    },
+    "weight_dtype": "float8_e4m3fn",
+    "scale_tensor_suffix": ".weight_scale_inv",
+    "scale_dtype": "float32",
+    "scale_shape": "[ceil(out/128), ceil(in/128)]",
+    "scale_semantics": "DEQUANTISATION MULTIPLIER despite the DeepSeek-V3 name: W[i, j] ~= float(weight[i, j]) * weight_scale_inv[i // 128, j // 128]",
+    "activation_semantics": "dynamic, per token, per contiguous 128-channel group along the input dimension: s = max(max|x|, 1e-10) / 448, x_q = RNE_E4M3(clamp(x / s, -448, 448)); the semantics every FP8 block-GEMM path of the pinned engine implements (DeepGEMM, CUTLASS blockwise, Triton w8a8_block)",
+    "rounding": "round to nearest, ties to even, onto the finite E4M3 grid; values clamped to +-448 BEFORE the cast (so no NaN code can appear); the sign of a value that rounds to zero is kept (0x80)",
+    "non_quantized_tensors": "byte-identical copies of the source tensors (float16), biases of quantized linears included",
+    "container": "one safetensors file diffusion_pytorch_model.safetensors, metadata {\"format\": \"pt\"}, plus config.json = the source config with quantization_config added (modules_to_not_convert = every non-quantized module that owns a .weight, sorted)",
+    "scale_arithmetic": "scale = fl32(amax / 448), the correctly rounded float32 quotient, on every device (implemented as a tensor-by-tensor division with a same-shape, same-device divisor). NOT amax * fl32(1/448), which is what a CUDA tensor divided by a Python scalar computes."
+  },
+  "algorithm": [
+    "for each quantized weight W (float16 [N, K]); N and K are multiples of 128 for every SD3-medium target, so no padding block exists",
+    "amax[b] = max |W| over each 128x128 block b (exact in float16); an all-zero block is REFUSED (the pinned converter would produce NaN)",
+    "scale[b] = fl32(amax[b] / 448): float32 IEEE division by a same-shape, same-device float32 tensor (see format.scale_arithmetic)",
+    "q = cast_e4m3fn(clamp(float32(W) / scale[block of each element], -448, 448))  (float32 IEEE division)",
+    "operation for operation the same as sglang 9e6d1c0 python/sglang/multimodal_gen/tools/convert_hf_to_fp8.py::block_fp8 EXCEPT the scale division (the converter's is a Python-scalar division, i.e. multiply-by-reciprocal on its hard-coded CUDA device). A GPU build re-derives every tensor on CPU and refuses a mismatch (exit 6)."
+  ],
+  "quantized_modules": {
+    "rule": "every linear of the 24 joint blocks' attention projections (both streams) and feed-forward networks (both streams)",
+    "include_regex": [
+      "^transformer_blocks\\.\\d+\\.attn\\.(to_q|to_k|to_v|add_q_proj|add_k_proj|add_v_proj|to_add_out)$",
+      "^transformer_blocks\\.\\d+\\.attn\\.to_out\\.0$",
+      "^transformer_blocks\\.\\d+\\.ff\\.net\\.(0\\.proj|2)$",
+      "^transformer_blocks\\.\\d+\\.ff_context\\.net\\.(0\\.proj|2)$"
+    ],
+    "expected_count": 285,
+    "count_derivation": "blocks 0-22: 4 image-attn + 3 context-qkv + to_add_out + 2 ff + 2 ff_context = 12 each (276); block 23 (context_pre_only): 4 + 3 + 2 = 9; total 285",
+    "differs_from_the_pinned_converter": "convert_hf_to_fp8.py's name filter skips every key containing 'net', so on SD3 it quantizes the 191 attention projections and leaves all 94 feed-forward linears in 16 bit -- about a third of the per-block GEMM FLOPs. The recipe names its list explicitly instead, and keeps the converter's arithmetic."
+  },
+  "high_precision_modules": {
+    "rule": "not quantized, kept as the source's float16: adaLN modulation linears (norm1.linear, norm1_context.linear, norm_out.linear: M = batch rows, conditioning-sensitive), the patch/pos/time/text embedders, context_embedder, proj_out; all norms, softmax, GELU and the attention core (QK^T, PV) run in 16/32-bit as the engine normally does",
+    "note": "FP8 attention (QK^T/PV in FP8) is out of scope for this recipe"
+  },
+  "randomness": "none: the recipe is a pure function of the source bytes; there is no seed to fix",
+  "libraries": {
+    "torch": "2.9.1",
+    "safetensors": "0.8.0",
+    "numpy": "2.3.5",
+    "note": "reference conversion versions; the generated manifest records the versions actually used"
+  },
+  "identity": {
+    "content": "tensor_set_sha256 = sha256 over the sorted lines 'name<TAB>dtype<TAB>shape<TAB>sha256(raw bytes)'. This is the identity the benchmark relies on: it does not depend on how the container lays the tensors out.",
+    "container": "file_sha256 of diffusion_pytorch_model.safetensors and config.json, recorded separately; a different safetensors version may reorder the header without changing a single tensor, and that is reported as container drift, not as a different asset",
+    "recipe_fingerprint": "sha256 over the NORMATIVE fields listed in sd3_fp8_recipe.py (source sha/file/n_tensors, quantization_config, dtypes, scale suffix, scale_arithmetic, include_regex, expected_count); prose edits do not change it"
+  },
+  "expected": {
+    "measured": "The expected hashes describe a CPU conversion using torch 2.9.1+cu128, safetensors 0.8.0 and numpy 2.3.5. Copied tensors retain the source bytes. CUDA conversions must pass the converter's independent CPU cross-check.",
+    "recipe_fingerprint": "26adefc33b1ca01bbae6882c19c49e881be89cd5d1750816149245050ba7fe08",
+    "tensor_set_sha256": "65859ca925147df629414e6d19371501837e9dcea30d758bae083e8d53398ed7",
+    "n_tensors": 968,
+    "n_quantized_modules": 285,
+    "bytes": {
+      "fp8_weights": 1337720832,
+      "scales": 326592,
+      "other": 1494460544,
+      "total": 2832507968
+    },
+    "container": {
+      "diffusion_pytorch_model.safetensors": {
+        "sha256": "82dce0b00215f9bca8599588c26e813d7d7afa72083c4bb0c9a243fa846f5321",
+        "size": 2832621456
+      },
+      "config.json": {
+        "sha256": "5d9676b9810338d785909f40c30289f7f711bacfb5a57e6aa83ff738bd4301bb"
+      }
+    },
+    "per_tensor": "Per-tensor hashes are recorded in the generated fp8_manifest.json."
+  }
+}

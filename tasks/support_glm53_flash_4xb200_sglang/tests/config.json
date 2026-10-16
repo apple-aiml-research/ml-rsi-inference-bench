@@ -1,0 +1,858 @@
+{
+ "base_commit": "9f6b624b4b4460f4b62aed3297cd2574dbf02b92",
+ "f2p_node_ids": [
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_0_efficiency_decode_c1",
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_0_efficiency_throughput",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_0_efficiency_decode_c1",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_0_efficiency_throughput",
+  "infb_verify.test_l0.test_registry_resolves_native_class",
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_gsm8k_hidden_slice",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_gsm8k_hidden_slice",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_spec_accept_length",
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_fidelity_kl",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_fidelity_kl",
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_00_recipe_conformance",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_00_recipe_conformance",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_zz_adaptive_schedule",
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_chat_protocols",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_chat_protocols",
+  "infb_verify.test_hidden.TestHiddenHighThroughput.test_attention_semantics",
+  "infb_verify.test_hidden.TestHiddenLowLatency.test_attention_semantics"
+ ],
+ "p2p_node_ids": [
+  "infb_verify.test_l0.test_build_editable_install",
+  "registered.unit.model_executor.test_pool_configurator.TestAllSWAConfigurator.test_constraint_respected",
+  "registered.unit.model_executor.test_pool_configurator.TestAllSWAConfigurator.test_full_max_is_zero",
+  "registered.unit.model_executor.test_pool_configurator.TestAllSWAConfigurator.test_max_total_equals_swa",
+  "registered.unit.model_executor.test_pool_configurator.TestAllSWAConfigurator.test_memory_utilization",
+  "registered.unit.model_executor.test_pool_configurator.TestDSAIndexerAllocationPolicy.test_pd_prices_every_indexer_layer",
+  "registered.unit.model_executor.test_pool_configurator.TestDSAIndexerAllocationPolicy.test_resolved_hicache_override_prices_every_indexer_layer",
+  "registered.unit.model_executor.test_pool_configurator.TestDefaultConfigurator.test_constraint_page_aligned",
+  "registered.unit.model_executor.test_pool_configurator.TestDefaultConfigurator.test_constraint_respected",
+  "registered.unit.model_executor.test_pool_configurator.TestDefaultConfigurator.test_dsa_mla_cell_size_uses_backend_kv_layout",
+  "registered.unit.model_executor.test_pool_configurator.TestDefaultConfigurator.test_memory_utilization",
+  "registered.unit.model_executor.test_pool_configurator.TestDefaultConfigurator.test_no_swa_fields",
+  "registered.unit.model_executor.test_pool_configurator.TestDefaultConfigurator.test_page_alignment",
+  "registered.unit.model_executor.test_pool_configurator.TestDflashDraftKvBudget.test_bytes_per_token_from_draft_geometry",
+  "registered.unit.model_executor.test_pool_configurator.TestDflashDraftKvBudget.test_dcp_replication_scales_draft_budget",
+  "registered.unit.model_executor.test_pool_configurator.TestDflashDraftKvBudget.test_hybrid_swa_budget_shrinks_by_draft_pool",
+  "registered.unit.model_executor.test_pool_configurator.TestEagleConfigurator.test_dsa_draft_full_indexer_cost_does_not_exceed_budget",
+  "registered.unit.model_executor.test_pool_configurator.TestEagleConfigurator.test_eagle_does_not_exceed_budget",
+  "registered.unit.model_executor.test_pool_configurator.TestEagleConfigurator.test_hybrid_swa_draft_uses_swa_geometry_and_capacity",
+  "registered.unit.model_executor.test_pool_configurator.TestFactory.test_chunk_cap_configurator_selection",
+  "registered.unit.model_executor.test_pool_configurator.TestFactory.test_default_for_non_swa",
+  "registered.unit.model_executor.test_pool_configurator.TestFactory.test_swa_for_hybrid",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_chunk_cache_cap_accounts_for_draft_swa_layers",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_chunk_cache_cap_accounts_for_spec_topk_page_rounding",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_chunk_cache_cap_disagg_decode_pre_alloc",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_chunk_cache_cap_doubles_decode_alloc_for_spec_v2_overlap",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_chunk_cache_cap_drops_prefill_for_disagg_decode",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_chunk_cache_cap_prefill_holds_window_plus_chunk",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_constraint_memory_within_budget",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_constraint_respected",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_different_layer_counts",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_max_total_equals_full",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_memory_utilization",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_mla_uses_full_and_swa_latent_geometry",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_ratio_respected",
+  "registered.unit.model_executor.test_pool_configurator.TestHybridSWAConfigurator.test_ratio_with_page_alignment",
+  "registered.unit.model_executor.test_pool_configurator.TestSWAPoolFloor.test_dsv4_accepts_pool_above_floor",
+  "registered.unit.model_executor.test_pool_configurator.TestSWAPoolFloor.test_dsv4_rejects_single_page_pool",
+  "registered.unit.model_executor.test_pool_configurator.TestSWAPoolFloor.test_hybrid_swa_accepts_pool_above_floor",
+  "registered.unit.model_executor.test_pool_configurator.TestSWAPoolFloor.test_hybrid_swa_rejects_single_page_pool",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_deepseek_string_format",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_empty_template",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_invalid_template",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_llama4_openai_format",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_msg_content_pattern",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_msg_content_without_multimodal_keywords",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_template_no_content_loop_is_string",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_template_with_filter",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_template_with_is_test",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_template_with_slice",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_detect_tool_result_id_association",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_already_string",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_filter_none_values",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_invalid_format_raises",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_openai_format",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_preserves_image_content_hash",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_string_format",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_v32_encoding",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_v32_encoding_accepts_responses_input_text",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_video_structured_fields_become_video_data",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_video_with_modalities",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_with_audio",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_with_modalities",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_process_content_with_video",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_sort_by_tool_call_id_value_is_not_association",
+  "registered.unit.parser.test_jinja_template_utils.TestTemplateContentFormatDetection.test_tool_call_id_text_does_not_enable_order_recovery",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2BackendFallback.test_apply_runtime_state_updates_runner_attn_backend",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2BackendFallback.test_missing_seed_cuda_graph_fallback",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2BackendFallback.test_override_worker_state_restores_runner_attn_backend",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2BackendFallback.test_preserves_initialized_backend_when_draft_extend_backend_is_unset",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2BackendFallback.test_spec_v2_attn_backends_include_draft_extend_fallback",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2BackendFallback.test_uses_draft_extend_backend_when_available",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2Topk1FastPath.test_assert_on_inconsistent_steps_and_draft_tokens",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2Topk1FastPath.test_fast_path_matches_slow_path",
+  "registered.unit.spec.test_eagle_worker_v2_topk1_fastpath.TestEagleWorkerV2Topk1FastPath.test_idle_draft_runs_each_eager_forward_without_tree_layout"
+ ],
+ "grade": {
+  "format": "junit",
+  "tool_label": "pytest",
+  "reports": [
+   "/logs/verifier/junit-l0.xml",
+   "/logs/verifier/junit-l3.xml",
+   "/logs/verifier/junit-l2-TestHiddenHighThroughput.xml",
+   "/logs/verifier/junit-l2-TestHiddenLowLatency.xml"
+  ]
+ },
+ "infb": {
+  "task": "support_glm53_flash_4xb200_sglang",
+  "verifier_version": "V4",
+  "reference_commit": "97c6978369ac1e04c91fcc01c98acc25129a6000",
+  "model_repo": "zai-org/GLM-5.3-Flash",
+  "model_revision": "690b705278a3a58e538fcb37c2ca8b5f9511213c",
+  "model_dir": "/model/zai-org/GLM-5.3-Flash",
+  "model_record": "/model/.infb/manifest.json",
+  "model_files": 72,
+  "model_type": "glm5_next",
+  "architectures": [
+   "Glm5NextForConditionalGeneration"
+  ],
+  "gpus": 4,
+  "gpu_name": "B200",
+  "gpu_min_total_gib": 170,
+  "gpu_min_free_fraction": 0.95,
+  "shm_min_gib": 16,
+  "ports_free": [
+   21000
+  ],
+  "transformers_version": "5.12.1",
+  "importable": [
+   "sgl_kernel",
+   "deep_gemm",
+   "deep_ep",
+   "flashinfer",
+   "flashinfer_cubin",
+   "tilelang"
+  ],
+  "shared_libraries": [
+   "libibverbs.so.1"
+  ],
+  "kit_paths_reset_to_base": [
+   "python/sglang/test",
+   "test",
+   "eval"
+  ],
+  "bars": {
+   "gsm8k_hidden_floor": {
+    "high_throughput": 0.92,
+    "low_latency": 0.914
+   },
+   "spec_accept_length": 4.0,
+   "upstream_bs_1_speed": {
+    "scored_as_written": true,
+    "speed_tok_s": 250,
+    "accept_length": 4.0,
+    "attempts": 3,
+    "source": "the vendored registered class's own bs_1_speed_thres and accept_length_thres at the reference commit (SpecDecodingMixin, python/sglang/test/kits/spec_decoding_kit.py); nothing here sets them, and nothing here may make them stricter",
+    "rule": "upstream's own absolute threshold at the reference is SCORED AS WRITTEN on the candidate, and the same node runs once on the REFERENCE's LowLatency server during the reference phase as a host check -- a reference that cannot meet upstream's own bar means the host cannot, so the trial writes the -1 sentinel rather than failing the candidate.",
+    "host_bound": "the bar is absolute and host-bound: the reference oracle read 262.61 tok/s on its first cold attempt on one host and 326-333 warm, while upstream's own second B200 host read 278.06-287.29 against the then-threshold 300 and failed it. The efficiency nodes run first in each class so this probe meets a warm server, as it does in upstream's CI"
+   },
+   "rule": "five reference-oracle runs per class on the hidden slice; keep upstream's bar iff min - 3*sd clears it, else floor(mean - 3*sd) (sd = sample sd of the five runs)",
+   "measured_2026_09_20": {
+    "high_throughput_gsm8k_hidden_questions": [
+     466,
+     470,
+     467,
+     467,
+     464
+    ],
+    "low_latency_gsm8k_hidden_questions": [
+     466,
+     469,
+     469,
+     474,
+     464
+    ],
+    "low_latency_spec_accept_length": [
+     4.523,
+     4.472,
+     4.422,
+     4.472,
+     4.472
+    ],
+    "high_throughput_floor": "min 464 - 3*2.17 = 457.5 < 465 -> floor(466.8 - 6.5) = 460 = 0.92",
+    "low_latency_floor": "min 464 - 3*3.78 = 452.6 < 465 -> floor(468.4 - 11.35) = 457 = 0.914",
+    "low_latency_accept": "min 4.422 - 3*0.036 = 4.315 >= 4.0 -> upstream's 4.0 kept",
+    "fidelity_median_k3_high_throughput": [
+     0.04565,
+     0.039232,
+     0.039084,
+     0.044856,
+     0.041281
+    ],
+    "fidelity_median_k3_low_latency": [
+     0.038801,
+     0.038801,
+     0.038801,
+     0.038801,
+     0.038801
+    ]
+   },
+   "fidelity_T": {
+    "high_throughput": 0.1253,
+    "low_latency": 0.1164
+   },
+   "fidelity_rule": "Per context-length band b and class: T_b = max(floor_b, k x f_b), f_b the reference oracle's median over its own draws, and the verdict the conjunction over bands. The short band is the hidden 32 (782-1,530 tokens): f_b from 28 draws per class, floor_b = 0.05, k = 3 (no quality control passes this band at 3x and fails it at 2x). The long band is the long group (2,600-8,192 tokens): f_b from 11 draws in HighThroughput and 10 in LowLatency, floor_b = the widest engine-against-engine reading x 4/3, k = 2 (a quality control passes this band at 3x and fails it at 2x in LowLatency, and the oracle's worst draw sits within 3/4 of T_b). Gate: each band median below its T_b; a failing band median is re-drawn once whole and fails only if both draws fail; a sequence with a non-finite served log-probability is re-sent once with its band and fails only if both readings are non-finite. Every reading is printed with its band. The bars' README is /public/fidelity-examples/README.md.",
+   "fidelity_bands": {
+    "high_throughput": {
+     "band": "782-1530 tokens (the hidden 32)",
+     "f_b": 0.04175,
+     "draws": {
+      "node": 20,
+      "regular_route": 8
+     },
+     "worst_draw": 0.0545,
+     "floor_b": 0.05,
+     "k": 3,
+     "T_b": 0.1253,
+     "worst_over_T_b": 0.435
+    },
+    "low_latency": {
+     "band": "782-1530 tokens (the hidden 32)",
+     "f_b": 0.0388,
+     "draws": {
+      "node": 20,
+      "regular_route": 8
+     },
+     "worst_draw": 0.0438,
+     "floor_b": 0.05,
+     "k": 3,
+     "T_b": 0.1164,
+     "worst_over_T_b": 0.376
+    },
+    "source": "the reference oracle's own draws on the held-out sequences of each band, every draw recorded with the figures above",
+    "high_throughput_long": {
+     "band": "2600-8192 tokens (the long group)",
+     "f_b": 0.021,
+     "draws": {
+      "node": 10,
+      "regular_route": 1
+     },
+     "worst_draw": 0.02458,
+     "floor_b": 0.0291,
+     "floor_b_origin": "the widest engine-against-engine reading, 0.02184 over 55 pairs, x 4/3",
+     "k": 2,
+     "T_b": 0.042,
+     "worst_over_T_b": 0.585
+    },
+    "low_latency_long": {
+     "band": "2600-8192 tokens (the long group)",
+     "f_b": 0.02155,
+     "draws": {
+      "node": 9,
+      "regular_route": 1
+     },
+     "worst_draw": 0.02445,
+     "floor_b": 0.0298,
+     "floor_b_origin": "the widest engine-against-engine reading, 0.02237 over 45 pairs, x 4/3",
+     "k": 2,
+     "T_b": 0.0431,
+     "worst_over_T_b": 0.567
+    }
+   },
+   "fidelity_T_long": {
+    "high_throughput": 0.042,
+    "low_latency": 0.0431
+   }
+  },
+  "diagnostic_node_ids": [
+   "infb_verify.test_hidden.TestHiddenHighThroughput.test_gsm8k",
+   "infb_verify.test_hidden.TestHiddenLowLatency.test_gsm8k",
+   "infb_verify.test_hidden.TestHiddenLowLatency.test_bs_1_speed"
+  ],
+  "hidden_slice": {
+   "path": "/tests/hidden/gsm8k_slice.jsonl",
+   "ids": "/tests/hidden/slice_ids.json",
+   "rows": 520,
+   "seed": 20260920
+  },
+  "l3": {
+   "files": [
+    "unit/model_executor/test_pool_configurator.py",
+    "unit/parser/test_jinja_template_utils.py",
+    "unit/spec/test_eagle_worker_v2_topk1_fastpath.py"
+   ],
+   "rule": "base versions of the CPU files the reference landing modified, ids that pass on the base tree and on the landing tree",
+   "not_included": {
+    "unit/disaggregation/test_prefill_abort_result_cleanup.py": "7 base-version ids fail on the landing tree (the reference landing changed the fixture)",
+    "unit/mem_cache/test_retraction_mamba_backup.py": "2 base-version ids fail on the landing tree",
+    "unit/hardware_backend/mlx/test_attention_patching.py": "needs mlx.core (Apple silicon), cannot import in the image"
+   }
+  },
+  "fidelity_reference": {
+   "dir": "/tests/hidden/fidelity",
+   "sequences": 32,
+   "implementation": "transformers 5.17.0 Glm5NextForConditionalGeneration, FineGrainedFP8, bf16 activations, sdpa, hub kernels finegrained-fp8 v4 / fla v1 / mamba-ssm v2 / deep-gemm v2 (revisions in the records)",
+   "statistic": "k3 = mean over 512 continuation positions of exp(r) - 1 - r, r = ref - served; gate on the median over sequences"
+  },
+  "efficiency": {
+   "engine": "sglang",
+   "rho": "0.8",
+   "reference_draws": 3,
+   "candidate_throughput_draws": 3,
+   "decode_c1_draws": 5,
+   "decode_c1_draws_note": "decode_c1 is drawn five times on both sides, every draw taken, and the median draw decides by this task's statistic (median_of_ratios); the candidate-only best-of-three attempts are retired (c1_attempts unset). The key is task-wide, so HighThroughput moves too.",
+   "decode_c1_statistic": "median_of_ratios",
+   "decode_c1_statistic_note": "decode_c1 compares the two sides prompt by prompt, the median over the timed prompts of the candidate's speed over the kept reference draw's on the same prompt (median_of_ratios). Acceptance is a property of the prompt and the per-request speeds are bimodal, so on identical-tree trials the ratio of the two medians of eight read 0.933 with sd 0.139 while the paired statistic read 1.003 with sd 0.046; a calibration puts one paired comparison's log sd at about 0.07 against 0.195 for the ratio of two draws' S1, with no between-session term. A trial re-grades the same from its recorded draws under it.",
+   "score_profile": "model_support_upstream_acceptance_v62",
+   "tokenizer": "/model/zai-org/GLM-5.3-Flash/tokenizer.json",
+   "seed_file": "/tests/hidden/efficiency_seed.json",
+   "reference": {
+    "root": "/opt/infb-reference",
+    "app": "/app",
+    "base": "9f6b624b4b4460f4b62aed3297cd2574dbf02b92",
+    "base_is": "the prepared base, the engine base a9944aec01e281f5c12c9651f981a53bdece6989 plus one commit adding only eval/ (environment/Dockerfile step 10, asserted there)",
+    "patch": "/tests/reference/solution.patch",
+    "patch_sha256": "0458417f19edace4c62b063eb8d216eb2f58018921826314ba3275f8503ed6fb",
+    "target_tree": "dea660d1aa3a47e41a322ba10ba03381e915a910",
+    "engine_target_tree": "0a199bfe24b194aa7bbcfc561b404ef1b4b0a6e1",
+    "target_tree_is": "the prepared base plus the reference patch, as snapshot.py writes it; its engine portion, the same tree without its eval entry, is engine_target_tree, the landing's own tree from the engine base, which the snapshot step checks (snapshot.py)",
+    "pythonpath": [
+     "python"
+    ],
+    "engine_module": "sglang",
+    "build_product_roots": [
+     "python/sglang"
+    ],
+    "port": 31000,
+    "health_path": "/health_generate"
+   },
+   "recipes": {
+    "TestHiddenHighThroughput": {
+     "C": 64,
+     "label": "high-throughput",
+     "launch": {
+      "module": "test/registered/models_e2e/test_glm53_flash_b200.py",
+      "class": "TestGLM53FlashB200HighThroughput"
+     },
+     "host_checks": []
+    },
+    "TestHiddenLowLatency": {
+     "C": 16,
+     "label": "low-latency",
+     "launch": {
+      "module": "test/registered/models_e2e/test_glm53_flash_b200.py",
+      "class": "TestGLM53FlashB200LowLatency"
+     },
+     "host_checks": [
+      {
+       "module": "test/registered/models_e2e/test_glm53_flash_b200.py",
+       "class": "TestGLM53FlashB200LowLatency",
+       "method": "test_bs_1_speed",
+       "deadline_s": 120
+      }
+     ],
+     "deadlines": {
+      "reference_decode_c1_s": 360,
+      "reference_throughput_s": 305
+     }
+    }
+   },
+   "deadlines": {
+    "launch_s": 1810.0,
+    "teardown_s": 180.0,
+    "node_default_s": 60,
+    "reference_decode_c1_s": 1860.0,
+    "reference_throughput_s": 1860.0,
+    "nodes": {
+     "TestHiddenHighThroughput.test_00_recipe_conformance": 360.0,
+     "TestHiddenHighThroughput.test_0_efficiency_decode_c1": 1860.0,
+     "TestHiddenHighThroughput.test_0_efficiency_throughput": 1860.0,
+     "TestHiddenHighThroughput.test_attention_semantics": 360.0,
+     "TestHiddenHighThroughput.test_chat_protocols": 960.0,
+     "TestHiddenHighThroughput.test_fidelity_kl": 960.0,
+     "TestHiddenHighThroughput.test_gsm8k": 960.0,
+     "TestHiddenHighThroughput.test_gsm8k_hidden_slice": 960.0,
+     "TestHiddenLowLatency.test_00_recipe_conformance": 360.0,
+     "TestHiddenLowLatency.test_0_efficiency_decode_c1": 1860.0,
+     "TestHiddenLowLatency.test_0_efficiency_throughput": 1860.0,
+     "TestHiddenLowLatency.test_attention_semantics": 360.0,
+     "TestHiddenLowLatency.test_bs_1_speed": 960.0,
+     "TestHiddenLowLatency.test_chat_protocols": 960.0,
+     "TestHiddenLowLatency.test_fidelity_kl": 960.0,
+     "TestHiddenLowLatency.test_gsm8k": 960.0,
+     "TestHiddenLowLatency.test_gsm8k_hidden_slice": 960.0,
+     "TestHiddenLowLatency.test_spec_accept_length": 960.0,
+     "TestHiddenLowLatency.test_zz_adaptive_schedule": 360.0
+    },
+    "rule": "every value here is generated by infb_efficiency/bounds.py from the verification DAG in infb.deadline_dag -- each node's alarm is its bound B = max(3 x R, largest operation limit + 60 s), launch_s the launch node's, the reference phase's per-axis limits the reference draws' nodes', teardown_s the public teardown limit."
+   },
+   "canary": {
+    "tolerance": 0.1
+   },
+   "flush_between_draws": true,
+   "sizing": {
+    "draw_s": {
+     "TestHiddenHighThroughput": {
+      "decode_c1": 128.34,
+      "throughput": 77.38
+     },
+     "TestHiddenLowLatency": {
+      "decode_c1": 93.52,
+      "throughput": 53.78
+     }
+    },
+    "start_s": 13,
+    "canary_reading_s": 12.7,
+    "measured": "the longest reference draw of each axis on this workload (texts fc9428a776ec, seed sha256:5f38267da1d2c), over every reference draw recorded for it: 153 class records, 100 from 50 separate runs and 53 from one host's own trials (that host's copies of three of those runs' records count once). HighThroughput decode_c1 128.34 s (the first of three draws, cold) and throughput 77.38 s (the first of three); LowLatency decode_c1 93.52 s (one draw) and throughput 53.78 s (one draw). start_s is the longest a scored efficiency node spent besides its draws and canary readings, over the 169 calls the deadline plugin recorded (12.38 s, HighThroughput throughput), rounded up; canary_reading_s is the longest of 328 readings' took_s (12.67 s, HighThroughput), rounded up."
+   }
+  },
+  "recipe_resolved": {
+   "TestHiddenHighThroughput": {
+    "attention_backend": "dsa",
+    "linear_attn_backend": "triton"
+   },
+   "TestHiddenLowLatency": {
+    "attention_backend": "dsa",
+    "linear_attn_backend": "triton"
+   },
+   "provenance": "the attention backends the reference implementation's serving resolved to, read at the task's engine base from the reference's own served resolution (its server_args record in the verifier's reference phase): attention_backend 'dsa' (the DSA layers' backend; its prefill and decode backends are the recipe's own flags) and linear_attn_backend 'triton' (the KDA layers)"
+  },
+  "deadline_dag": {
+   "rule": "B = (1 + extra) x max(3 x R, largest op cap + 60 s), group = sum B + 60 s, root = sum groups + 60 s, verifier = root + 600 s, job = agent + builds + verifier + 600 s; composed by infb_efficiency/bounds.py",
+   "agent_s": 30000,
+   "environment_build_s": 14400,
+   "verifier_build_s": 3600,
+   "groups": [
+    {
+     "name": "preflight",
+     "nodes": [
+      {
+       "name": "preflight",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "reference",
+     "nodes": [
+      {
+       "name": "TestHiddenHighThroughput.launch",
+       "largest_op": "startup_s",
+       "R_s": 356.1,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "TestHiddenHighThroughput.decode_c1",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "TestHiddenHighThroughput.throughput",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "TestHiddenHighThroughput.teardown",
+       "largest_op": "teardown_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "TestHiddenLowLatency.launch",
+       "largest_op": "startup_s",
+       "R_s": 346.2,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "TestHiddenLowLatency.decode_c1",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "TestHiddenLowLatency.throughput",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "TestHiddenLowLatency.host_check",
+       "largest_op": "http_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "TestHiddenLowLatency.teardown",
+       "largest_op": "teardown_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "kit_reset",
+     "nodes": [
+      {
+       "name": "kit_reset",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "L0",
+     "nodes": [
+      {
+       "name": "test_build_editable_install",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_registry_resolves_native_class",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "L3",
+     "nodes": [
+      {
+       "name": "L3",
+       "largest_op": "unit_file_s",
+       "R_s": 14.4,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      }
+     ]
+    },
+    {
+     "name": "witness:TestHiddenHighThroughput",
+     "nodes": [
+      {
+       "name": "_launch",
+       "largest_op": "startup_s",
+       "R_s": 384.0,
+       "R_source": "development witness runs, not evidence; provisional until measured on the hardware in use"
+      },
+      {
+       "name": "runtime",
+       "largest_op": "http_s",
+       "R_s": 7.0,
+       "R_source": "development witness runs, not evidence; provisional until measured on the hardware in use"
+      },
+      {
+       "name": "attention",
+       "largest_op": "http_s",
+       "R_s": 123.3,
+       "R_source": "development witness runs, not evidence; provisional until measured on the hardware in use"
+      },
+      {
+       "name": "_teardown",
+       "largest_op": "teardown_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "replay",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "graded:TestHiddenHighThroughput",
+     "nodes": [
+      {
+       "name": "_launch",
+       "largest_op": "startup_s",
+       "R_s": 166.0,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_00_recipe_conformance",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_0_efficiency_decode_c1",
+       "largest_op": "invocation_s",
+       "R_s": 321.2,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_0_efficiency_throughput",
+       "largest_op": "invocation_s",
+       "R_s": 265.4,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_attention_semantics",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_chat_protocols",
+       "largest_op": "http_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_fidelity_kl",
+       "largest_op": "http_s",
+       "R_s": 66.9,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_gsm8k",
+       "largest_op": "http_s",
+       "R_s": 86.4,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_gsm8k_hidden_slice",
+       "largest_op": "http_s",
+       "R_s": 52.6,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "_teardown",
+       "largest_op": "teardown_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "witness:TestHiddenLowLatency",
+     "nodes": [
+      {
+       "name": "_launch",
+       "largest_op": "startup_s",
+       "R_s": 480.0,
+       "R_source": "development witness runs, not evidence; provisional until measured on the hardware in use"
+      },
+      {
+       "name": "runtime",
+       "largest_op": "http_s",
+       "R_s": 7.0,
+       "R_source": "development witness runs, not evidence; provisional until measured on the hardware in use"
+      },
+      {
+       "name": "adaptive",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "attention",
+       "largest_op": "http_s",
+       "R_s": 110.5,
+       "R_source": "development witness runs, not evidence; provisional until measured on the hardware in use"
+      },
+      {
+       "name": "_teardown",
+       "largest_op": "teardown_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "replay",
+       "largest_op": "invocation_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "graded:TestHiddenLowLatency",
+     "nodes": [
+      {
+       "name": "_launch",
+       "largest_op": "startup_s",
+       "R_s": 191.0,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_00_recipe_conformance",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_0_efficiency_decode_c1",
+       "largest_op": "invocation_s",
+       "R_s": 160.2,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_0_efficiency_throughput",
+       "largest_op": "invocation_s",
+       "R_s": 135.6,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_attention_semantics",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_bs_1_speed",
+       "largest_op": "http_s",
+       "R_s": 2.4,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_chat_protocols",
+       "largest_op": "http_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "test_fidelity_kl",
+       "largest_op": "http_s",
+       "R_s": 6.6,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_gsm8k",
+       "largest_op": "http_s",
+       "R_s": 86.1,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_gsm8k_hidden_slice",
+       "largest_op": "http_s",
+       "R_s": 84.4,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_spec_accept_length",
+       "largest_op": "http_s",
+       "R_s": 2.4,
+       "R_source": "an oracle trial on 4x B200; provisional until measured again on the hardware in use"
+      },
+      {
+       "name": "test_zz_adaptive_schedule",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      },
+      {
+       "name": "_teardown",
+       "largest_op": "teardown_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "disposition",
+     "nodes": [
+      {
+       "name": "disposition",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    },
+    {
+     "name": "grade",
+     "nodes": [
+      {
+       "name": "grade",
+       "largest_op": "action_s",
+       "R_s": null,
+       "R_source": "not yet measured on this hardware (the floor applies until measured)"
+      }
+     ]
+    }
+   ]
+  },
+  "bounds": {
+   "groups": {
+    "preflight": 420.0,
+    "reference": 12560.0,
+    "kit_reset": 420.0,
+    "L0": 780.0,
+    "L3": 1920.0,
+    "witness:TestHiddenHighThroughput": 5890.0,
+    "graded:TestHiddenHighThroughput": 10390.0,
+    "witness:TestHiddenLowLatency": 7750.0,
+    "graded:TestHiddenLowLatency": 12670.0,
+    "disposition": 420.0,
+    "grade": 420.0
+   },
+   "nodes": {
+    "preflight/preflight": 360.0,
+    "reference/TestHiddenHighThroughput.launch": 1810.0,
+    "reference/TestHiddenHighThroughput.decode_c1": 1860.0,
+    "reference/TestHiddenHighThroughput.throughput": 1860.0,
+    "reference/TestHiddenHighThroughput.teardown": 240.0,
+    "reference/TestHiddenLowLatency.launch": 1810.0,
+    "reference/TestHiddenLowLatency.decode_c1": 1860.0,
+    "reference/TestHiddenLowLatency.throughput": 1860.0,
+    "reference/TestHiddenLowLatency.host_check": 960.0,
+    "reference/TestHiddenLowLatency.teardown": 240.0,
+    "kit_reset/kit_reset": 360.0,
+    "L0/test_build_editable_install": 360.0,
+    "L0/test_registry_resolves_native_class": 360.0,
+    "L3/L3": 1860.0,
+    "witness:TestHiddenHighThroughput/_launch": 1810.0,
+    "witness:TestHiddenHighThroughput/runtime": 960.0,
+    "witness:TestHiddenHighThroughput/attention": 960.0,
+    "witness:TestHiddenHighThroughput/_teardown": 240.0,
+    "witness:TestHiddenHighThroughput/replay": 1860.0,
+    "graded:TestHiddenHighThroughput/_launch": 1810.0,
+    "graded:TestHiddenHighThroughput/test_00_recipe_conformance": 360.0,
+    "graded:TestHiddenHighThroughput/test_0_efficiency_decode_c1": 1860.0,
+    "graded:TestHiddenHighThroughput/test_0_efficiency_throughput": 1860.0,
+    "graded:TestHiddenHighThroughput/test_attention_semantics": 360.0,
+    "graded:TestHiddenHighThroughput/test_chat_protocols": 960.0,
+    "graded:TestHiddenHighThroughput/test_fidelity_kl": 960.0,
+    "graded:TestHiddenHighThroughput/test_gsm8k": 960.0,
+    "graded:TestHiddenHighThroughput/test_gsm8k_hidden_slice": 960.0,
+    "graded:TestHiddenHighThroughput/_teardown": 240.0,
+    "witness:TestHiddenLowLatency/_launch": 1810.0,
+    "witness:TestHiddenLowLatency/runtime": 960.0,
+    "witness:TestHiddenLowLatency/adaptive": 1860.0,
+    "witness:TestHiddenLowLatency/attention": 960.0,
+    "witness:TestHiddenLowLatency/_teardown": 240.0,
+    "witness:TestHiddenLowLatency/replay": 1860.0,
+    "graded:TestHiddenLowLatency/_launch": 1810.0,
+    "graded:TestHiddenLowLatency/test_00_recipe_conformance": 360.0,
+    "graded:TestHiddenLowLatency/test_0_efficiency_decode_c1": 1860.0,
+    "graded:TestHiddenLowLatency/test_0_efficiency_throughput": 1860.0,
+    "graded:TestHiddenLowLatency/test_attention_semantics": 360.0,
+    "graded:TestHiddenLowLatency/test_bs_1_speed": 960.0,
+    "graded:TestHiddenLowLatency/test_chat_protocols": 960.0,
+    "graded:TestHiddenLowLatency/test_fidelity_kl": 960.0,
+    "graded:TestHiddenLowLatency/test_gsm8k": 960.0,
+    "graded:TestHiddenLowLatency/test_gsm8k_hidden_slice": 960.0,
+    "graded:TestHiddenLowLatency/test_spec_accept_length": 960.0,
+    "graded:TestHiddenLowLatency/test_zz_adaptive_schedule": 360.0,
+    "graded:TestHiddenLowLatency/_teardown": 240.0,
+    "disposition/disposition": 360.0,
+    "grade/grade": 360.0
+   },
+   "root_s": 53700.0,
+   "verifier_s": 54300.0,
+   "job_s": 102900.0,
+   "rule": "B = (1 + extra) x max(3 x R, largest op cap + 60 s); group = sum B + 60 s; root = sum groups + 60 s; verifier = root + 600 s; job = agent + builds + verifier + 600 s"
+  }
+ }
+}

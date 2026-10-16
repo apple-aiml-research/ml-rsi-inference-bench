@@ -1,0 +1,378 @@
+[
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch this entry."
+      }
+    ],
+    "generated": "<|channel|>analysis<|message|>Use the function.<|end|><|start|>assistant<|channel|>commentary to=functions.fetch_entry<|constrain|>json<|message|>{\"entry\": {\"enabled\": false, \"n\": 1, \"string\": \"1\", \"nested\": {\"nil\": null, \"empty\": {}}, \"values\": [true, 0, \"\", \"λ\", \"quote\\\"\\\\\\n\"], \"literal\": \"<|channel|>\", \"terminals\": \"<|end|><|call|><|return|>\"}}<|call|>",
+    "expected": {
+      "tool": "fetch_entry",
+      "arguments": {
+        "entry": {
+          "enabled": false,
+          "n": 1,
+          "string": "1",
+          "nested": {
+            "nil": null,
+            "empty": {}
+          },
+          "values": [
+            true,
+            0,
+            "",
+            "λ",
+            "quote\"\\\n"
+          ],
+          "literal": "<|channel|>",
+          "terminals": "<|end|><|call|><|return|>"
+        }
+      },
+      "content": ""
+    }
+  },
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch this entry."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "opaque-echo-θ-57",
+            "type": "function",
+            "function": {
+              "name": "fetch_entry",
+              "arguments": "{\"entry\": {\"enabled\": false, \"n\": 1, \"string\": \"1\", \"nested\": {\"nil\": null, \"empty\": {}}, \"values\": [true, 0, \"\", \"λ\", \"quote\\\"\\\\\\n\"], \"literal\": \"<|channel|>\", \"terminals\": \"<|end|><|call|><|return|>\"}}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "opaque-echo-θ-57",
+        "content": "{\"receipt\":\"ledger_θ_57\"}"
+      }
+    ],
+    "generated": "<|channel|>analysis<|message|>Read it.<|end|><|start|>assistant<|channel|>final<|message|>ledger_θ_57<|return|>",
+    "expected": {
+      "content": "ledger_θ_57"
+    }
+  },
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Repeat literally: <|channel|>"
+      }
+    ],
+    "generated": "<|channel|>final<|message|>Literal <|channel|> remains.<|return|>",
+    "expected": {
+      "content": "Literal <|channel|> remains."
+    }
+  },
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch this entry."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "opaque-echo-θ-57",
+            "type": "function",
+            "function": {
+              "name": "fetch_entry",
+              "arguments": "{\"entry\": {\"enabled\": false, \"n\": 1, \"string\": \"1\", \"nested\": {\"nil\": null, \"empty\": {}}, \"values\": [true, 0, \"\", \"λ\", \"quote\\\"\\\\\\n\"], \"literal\": \"<|channel|>\", \"terminals\": \"<|end|><|call|><|return|>\"}}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "opaque-echo-θ-57",
+        "content": "{\"receipt\":\"ledger_θ_57\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "ledger_θ_57",
+        "tool_calls": []
+      },
+      {
+        "role": "user",
+        "content": "Repeat indigo without a tool."
+      }
+    ],
+    "generated": "<|channel|>final<|message|>indigo<|return|>",
+    "expected": {
+      "content": "indigo"
+    }
+  },
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch this entry."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "opaque-echo-θ-57",
+            "type": "function",
+            "function": {
+              "name": "fetch_entry",
+              "arguments": "{\"entry\": {\"enabled\": false, \"n\": 1, \"string\": \"1\", \"nested\": {\"nil\": null, \"empty\": {}}, \"values\": [true, 0, \"\", \"λ\", \"quote\\\"\\\\\\n\"], \"literal\": \"<|channel|>\", \"terminals\": \"<|end|><|call|><|return|>\"}}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "opaque-echo-θ-57",
+        "content": "{\"receipt\":\"ledger_θ_57\"}"
+      }
+    ],
+    "generated": "<|channel|>final<|message|>Alpha. <|end|><|start|>assistant<|channel|>analysis<|message|>Check again.<|end|><|start|>assistant<|channel|>final<|message|>Beta.<|return|>",
+    "expected": {
+      "content": "Alpha. Beta."
+    }
+  },
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch this entry."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "opaque-echo-θ-57",
+            "type": "function",
+            "function": {
+              "name": "fetch_entry",
+              "arguments": "{\"entry\": {\"enabled\": false, \"n\": 1, \"string\": \"1\", \"nested\": {\"nil\": null, \"empty\": {}}, \"values\": [true, 0, \"\", \"λ\", \"quote\\\"\\\\\\n\"], \"literal\": \"<|channel|>\", \"terminals\": \"<|end|><|call|><|return|>\"}}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "opaque-echo-θ-57",
+        "content": "{\"receipt\":\"changed_é_92\"}"
+      }
+    ],
+    "generated": "<|channel|>analysis<|message|>Read it.<|end|><|start|>assistant<|channel|>final<|message|>changed_é_92<|return|>",
+    "expected": {
+      "content": "changed_é_92"
+    }
+  },
+  {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "fetch_entry",
+          "description": "Fetch the supplied structured entry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "entry": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "entry"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch this entry."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "opaque-echo-θ-57",
+            "type": "function",
+            "function": {
+              "name": "fetch_entry",
+              "arguments": "{\"entry\": {\"enabled\": false, \"n\": 1, \"string\": \"1\", \"nested\": {\"nil\": null, \"empty\": {}}, \"values\": [true, 0, \"\", \"λ\", \"quote\\\"\\\\\\n\"], \"literal\": \"<|channel|>\", \"terminals\": \"<|end|><|call|><|return|>\"}}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "opaque-echo-θ-57",
+        "content": "{\"receipt\":\"ledger_θ_57\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "ledger_θ_57"
+      },
+      {
+        "role": "user",
+        "content": "Fetch the second entry."
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "echo-second-92",
+            "type": "function",
+            "function": {
+              "name": "fetch_entry",
+              "arguments": "{\"entry\":{\"second\":true,\"values\":[]}}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "echo-second-92",
+        "content": "{\"receipt\":\"second_result_92\"}"
+      }
+    ],
+    "generated": "<|channel|>final<|message|>second_result_92<|return|>",
+    "expected": {
+      "content": "second_result_92"
+    }
+  }
+]

@@ -1,0 +1,25 @@
+6140bbbc300f1737deefcc1110cb0f96dac547f2f088b2c62e57363a2829ec74  engine-src.tar (uncompressed stream of engine-src.tar.gz)
+# AN ADDITIONAL PIN, AND IT IS PINNED HERE: line 1 carries the digest, so tests/test.sh enforces
+# it before it unpacks the archive.
+#
+# WHAT IT IS: the sha256 of `gzip -dc /opt/inference-bench/engine-src.tar.gz`, i.e. of the
+# archive's uncompressed stream. The image build prints exactly that number, with the tar flags
+# that make it reproducible
+# (`--sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner`, fixed member prefix `engine-src/`).
+#
+# PINNED from the first image build, which printed it:
+#     [task-image] pinned engine source archived: 21M
+#     [task-image] engine-src.tar sha256 = 6140bbbc300f...
+# test.sh enforces it now that it carries a digest rather than the UNPINNED sentinel.
+#
+# WHY THE RUN WAS NOT UNGUARDED WITHOUT IT, which is the part that decides the fail-closed policy.
+# This task's authority is tests/pristine_tree.sha256 -- a digest of the tree's CONTENT, pinned,
+# and checked immediately after staging. It is strictly stronger than this one: it covers the
+# runtime-mount route as well as the archive route, and it catches tampering after extraction,
+# which an archive digest cannot.
+#
+# So test.sh enforces this file WHEN IT CARRIES A DIGEST and logs a skip when it says UNPINNED,
+# rather than failing every run closed on a redundant second authority that nothing populates: the
+# content digest is what gets derived, not this one, so a fail-closed policy here would make
+# every scored run an infra zero with nothing able to clear it. A placeholder digest would be worse
+# than UNPINNED either way -- it would look checked.

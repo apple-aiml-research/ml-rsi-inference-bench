@@ -1,0 +1,150 @@
+{
+ "schema": "infb-m3-chat-examples/1",
+ "note": "Public examples for `run.py chat` and `run.py tools`; grading uses other prompts of the same kinds (two per thinking mode; a single call, two invokes in one call block, a second turn after a tool result, and a call with thinking enabled), each non-streaming and streaming, greedy, 2,048 tokens.",
+ "reasoning": [
+  {
+   "id": "example-enabled",
+   "thinking_mode": "enabled",
+   "messages": [
+    {
+     "role": "user",
+     "content": "What is 9 times 7?"
+    }
+   ]
+  },
+  {
+   "id": "example-disabled",
+   "thinking_mode": "disabled",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Name the largest planet."
+    }
+   ]
+  },
+  {
+   "id": "example-adaptive",
+   "thinking_mode": "adaptive",
+   "messages": [
+    {
+     "role": "user",
+     "content": "How many minutes are in 3 hours?"
+    }
+   ]
+  }
+ ],
+ "tools": [
+  {
+   "id": "example-single",
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Current weather for one city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        },
+        "include_forecast": {
+         "type": "boolean"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "units": {
+         "type": "object",
+         "properties": {
+          "temperature": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "temperature"
+         ]
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "city",
+        "include_forecast",
+        "days",
+        "units",
+        "fields"
+       ]
+      }
+     }
+    }
+   ],
+   "messages": [
+    {
+     "role": "user",
+     "content": "What's the weather in Oslo? Include a 2-day forecast in celsius with fields wind and humidity."
+    }
+   ]
+  },
+  {
+   "id": "example-parallel",
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_weather",
+      "description": "Current weather for one city.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        },
+        "include_forecast": {
+         "type": "boolean"
+        },
+        "days": {
+         "type": "integer"
+        },
+        "units": {
+         "type": "object",
+         "properties": {
+          "temperature": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "temperature"
+         ]
+        },
+        "fields": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
+       "required": [
+        "city",
+        "include_forecast",
+        "days",
+        "units",
+        "fields"
+       ]
+      }
+     }
+    }
+   ],
+   "messages": [
+    {
+     "role": "user",
+     "content": "Check the weather in Rome and in Vienna, no forecast (0 days), in celsius, field temperature; one call per city together."
+    }
+   ]
+  }
+ ]
+}

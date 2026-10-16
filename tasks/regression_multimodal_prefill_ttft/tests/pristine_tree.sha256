@@ -1,0 +1,29 @@
+738a9d98ae009fa7fdfca1190002ec28324de857e460aa72249ff052e1aa54e3  the tree that becomes repo/
+# THE AUTHORITY for the pristine arm of the scored ratio. `tests/` is not part of the tree the agent
+# works in, while /opt and the workspace are both writable during the agent's turn.
+#
+# tests/test.sh recomputes this over the staged baseline and FAILS CLOSED on a mismatch -- no
+# baseline, so the speedup gate reports baseline_tps_unavailable, which is classified `pristine_
+# failed`: an infrastructure zero and a rerun, never a pass and never a model zero. It covers BOTH
+# staging routes (the runtime mount and the image archive) and, unlike an archive digest, it also
+# covers tampering AFTER extraction.
+#
+# DERIVED, not observed, and re-derivable by anyone from the pinned commit alone -- no image build:
+#
+#     git -C <a full sglang clone> archive 01a96720c6f690ac00adeed94b762b193d8472cd | tar -x -C <dir>
+#     python tests/_pristine_digest.py <dir>
+#
+# `_pristine_digest.resolve_root()` descends into python/ when it is handed a monorepo root, so the
+# monorepo root and the flattened package root produce the same number. Verified on 2026-09-14:
+# both shapes returned this digest.
+#
+# WHAT MAKES THAT PROMISE HOLD, and it is not automatic. The engine stage installs the tree EDITABLE,
+# and this pin's python/pyproject.toml sets `[tool.setuptools_scm] version_file =
+# "sglang/_version.py"`, so the install writes a file the commit does not contain. The image's
+# archive step excludes it, along with `__pycache__`, `*.pyc`, `*.egg-info` and `build` -- see the
+# tar flags in environment/Dockerfile. Without that exclude this number
+# would be a property of the build, and the derivation above would disagree with the image.
+#
+# The pinned commit's own PTX-patch step is a NO-OP here and does not enter the digest: that block
+# rewrites `sglang/jit_kernel/include/sgl_kernel/deepseek_v4/topk/ptx.cuh`, and
+# `git ls-tree -r 01a96720c6 | grep -c ptx.cuh` is 0 at this commit.

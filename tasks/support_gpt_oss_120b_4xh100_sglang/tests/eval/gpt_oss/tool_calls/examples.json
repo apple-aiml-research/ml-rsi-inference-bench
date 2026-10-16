@@ -1,0 +1,44 @@
+[
+  {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "record"
+      ]
+    },
+    "payloads": [
+      {
+        "record": "harbor"
+      },
+      {
+        "record": "cedar"
+      }
+    ]
+  },
+  {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "record"
+      ]
+    },
+    "payloads": [
+      {
+        "record": "kelp"
+      },
+      {
+        "record": "tide"
+      }
+    ]
+  }
+]

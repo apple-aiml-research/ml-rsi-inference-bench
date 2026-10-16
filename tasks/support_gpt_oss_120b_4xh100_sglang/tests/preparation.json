@@ -1,0 +1,18 @@
+{
+  "schema": "gpt-oss-preparation/1",
+  "engine_source_commit": "556e4143f0ba8e480a73fc0e08f05d7ea83880cc",
+  "engine_source_tree": "85bd0aca6e92e6c36430daddeab653768a72b2b3",
+  "generic_repairs": [
+    {
+      "purpose": "Reserve request-to-token table memory before allocating the KV cache",
+      "source": "https://github.com/sgl-project/sglang/pull/6744",
+      "source_head": "2af13eb4bb66fca090a99eedcb4d5ec830b962cd",
+      "upstream_status": "closed without merge, for inactivity",
+      "patch": "prepare-memory-pool.patch",
+      "patch_sha256": "767729d8e57d0deca7ce7e9d6487c09e3cfb57db78f1d5130aac56425c5f5fd6",
+      "admission": "Narrow shared-preparation exception, admitted by the task's design",
+      "scope": "Same patch in agent base and private reference; no unrelated long-context request limit",
+      "accounting": "Conservative bound: inferred request count is at most 4096; explicit counts are passed through; one extra int32 row is reserved"
+    }
+  ]
+}

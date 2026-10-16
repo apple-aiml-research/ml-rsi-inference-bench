@@ -1,0 +1,21 @@
+{
+ "schema": "infb-m3-limits/1",
+ "note": "Operation limits of the verifier's workloads on four B200 GPUs (the component operations on one). Each is a limit on one operation, measured by its own clock; an operation that exceeds its limit on a healthy host fails.",
+ "startup_s": 3600,
+ "startup_clock": "vllm serve spawn to a healthy /health response, including model load, compilation, CUDA-graph capture and JIT",
+ "rebuild_s": 7200,
+ "rebuild_clock": "start to completion of /public/build.sh on the committed tree",
+ "http_workload_s": 900,
+ "http_workload_long_s": 1800,
+ "http_workload_clock": "one request, or one explicitly submitted concurrent batch, from client dispatch through the complete response(s), including queueing and first-use compilation; the longer limit applies when any input has at least 64,000 tokens",
+ "gsm8k_run_s": 3600,
+ "gsm8k_run_clock": "first request to last response of the 1,319-question run at 64 requests in flight",
+ "component_invocation_s": 1800,
+ "component_invocation_clock": "one MSA correctness, timing or context-scaling invocation, dispatch to record, including compilation and warm-up",
+ "test_file_s": 1800,
+ "test_file_clock": "one existing-engine test file (collection and all selected cases) or one Rust crate's tests",
+ "action_s": 300,
+ "action_clock": "one parser, configuration or identity action, dispatch to complete record",
+ "teardown_s": 180,
+ "teardown_clock": "TERM, then KILL after 10 seconds, and reaping of a server or worker group"
+}

@@ -1,0 +1,187 @@
+{
+ "schema": "qwen38-component-examples/1",
+ "meaning": "Representative component cases for `run.py components`; token content comes from examples/prompts.json. The four prefill/decode definitions apply to both recipes; the three speculative samples (MTP3 only) let the engine's own draft head and verification decide progress, and in ple-spec-mixed-example a fresh prefill joins the second measured step (a mixed speculative/prefill iteration, untimed). Grading uses other cases within scope.json.",
+ "ordinary": [
+  {
+   "id": "qsa-chunk-example",
+   "component": "qsa",
+   "mode": "prefill",
+   "lengths": [
+    8,
+    120
+   ],
+   "histories": [
+    1,
+    2045
+   ],
+   "seed": 7
+  },
+  {
+   "id": "qsa-decode-example",
+   "component": "qsa",
+   "mode": "decode",
+   "lengths": [
+    1,
+    1,
+    1
+   ],
+   "histories": [
+    511,
+    4094,
+    8191
+   ],
+   "steps": 32,
+   "seed": 8
+  },
+  {
+   "id": "ple-chunk-example",
+   "component": "ple",
+   "mode": "prefill",
+   "lengths": [
+    8,
+    120
+   ],
+   "histories": [
+    0,
+    0
+   ],
+   "seed": 9
+  },
+  {
+   "id": "ple-decode-example",
+   "component": "ple",
+   "mode": "decode",
+   "lengths": [
+    1,
+    1,
+    1
+   ],
+   "histories": [
+    1,
+    1,
+    1
+   ],
+   "steps": 32,
+   "seed": 10
+  }
+ ],
+ "mtp3": [
+  {
+   "id": "qsa-chunk-example",
+   "component": "qsa",
+   "mode": "prefill",
+   "lengths": [
+    8,
+    120
+   ],
+   "histories": [
+    1,
+    2045
+   ],
+   "seed": 7
+  },
+  {
+   "id": "qsa-decode-example",
+   "component": "qsa",
+   "mode": "decode",
+   "lengths": [
+    1,
+    1,
+    1
+   ],
+   "histories": [
+    511,
+    4094,
+    8191
+   ],
+   "steps": 32,
+   "seed": 8
+  },
+  {
+   "id": "ple-chunk-example",
+   "component": "ple",
+   "mode": "prefill",
+   "lengths": [
+    8,
+    120
+   ],
+   "histories": [
+    0,
+    0
+   ],
+   "seed": 9
+  },
+  {
+   "id": "ple-decode-example",
+   "component": "ple",
+   "mode": "decode",
+   "lengths": [
+    1,
+    1,
+    1
+   ],
+   "histories": [
+    1,
+    1,
+    1
+   ],
+   "steps": 32,
+   "seed": 10
+  },
+  {
+   "id": "qsa-spec-example",
+   "component": "qsa",
+   "mode": "spec",
+   "lengths": [
+    4,
+    4
+   ],
+   "histories": [
+    16,
+    24
+   ],
+   "steps": 4,
+   "seed": 11,
+   "acceptance": "native"
+  },
+  {
+   "id": "ple-spec-example",
+   "component": "ple",
+   "mode": "spec",
+   "lengths": [
+    4,
+    4
+   ],
+   "histories": [
+    16,
+    24
+   ],
+   "steps": 4,
+   "seed": 12,
+   "acceptance": "native"
+  },
+  {
+   "id": "ple-spec-mixed-example",
+   "component": "ple",
+   "mode": "spec",
+   "lengths": [
+    4,
+    4
+   ],
+   "histories": [
+    16,
+    24
+   ],
+   "steps": 4,
+   "seed": 13,
+   "acceptance": "native",
+   "joining": [
+    [
+     1,
+     32
+    ]
+   ],
+   "timed": false
+  }
+ ]
+}

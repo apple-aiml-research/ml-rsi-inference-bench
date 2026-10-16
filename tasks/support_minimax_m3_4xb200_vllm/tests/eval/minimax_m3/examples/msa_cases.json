@@ -1,0 +1,10 @@
+{
+ "schema": "infb-m3-msa-examples/1",
+ "note": "Public examples of the MSA operator contract. Values are N(0,1) clamped to [-3, 3] (BF16; FP8 caches hold the BF16 values cast to float8_e4m3fn) drawn from each example's seed by msa/check.py; page pools are 1.25x the pages needed and block tables a seeded permutation of the pool. Prefill requests are (context tokens, queries); decode rows are seq_lens, 0 marking a graph-padding row. Each example runs the selection operator, then the attention operator on the reference selection of the same inputs. These examples explain the contract; they do not exhaust it.",
+ "examples": [
+  {"id": "prefill-bf16", "phase": "prefill", "kv_dtype": "bfloat16", "requests": [[0, 300], [2500, 129]], "seed": 101},
+  {"id": "prefill-fp8", "phase": "prefill", "kv_dtype": "float8_e4m3fn", "requests": [[0, 300], [2500, 129]], "seed": 102},
+  {"id": "decode-bf16", "phase": "decode", "kv_dtype": "bfloat16", "seq_lens": [1, 129, 2049, 5000, 0], "seed": 201},
+  {"id": "decode-fp8", "phase": "decode", "kv_dtype": "float8_e4m3fn", "seq_lens": [1, 129, 2049, 5000, 0], "seed": 202}
+ ]
+}

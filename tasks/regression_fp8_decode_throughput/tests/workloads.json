@@ -1,0 +1,51 @@
+{
+  "_note": "Workload matrix. The loss is NOT visible at a small decode batch -- it needs every request in flight at once -- and it needs a long generation to keep the run in decode rather than prefill; upstream's own shape (in 2 / out 1000, all 8,196 requests at once) is the anchor. The two other scored points keep the batch large (2,048 and 4,096 in flight) so a repair is measured across the regime rather than at one point; c=64 is the guard: a large-batch repair must not tax the small-batch decode path. Same server settings for every point.",
+  "primary_workload": "in2_out1000_c8196",
+  "scored_workloads": [
+    "in2_out1000_c2048",
+    "in2_out1000_c4096",
+    "in2_out1000_c8196"
+  ],
+  "guard_workloads": [
+    "in2_out1000_c64"
+  ],
+  "workloads": [
+    {
+      "name": "in2_out1000_c8196",
+      "role": "scored",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 8196,
+      "max_concurrency": 8196,
+      "max_model_len": 1280
+    },
+    {
+      "name": "in2_out1000_c2048",
+      "role": "scored",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 2048,
+      "max_concurrency": 2048,
+      "max_model_len": 1280
+    },
+    {
+      "name": "in2_out1000_c4096",
+      "role": "scored",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 4096,
+      "max_concurrency": 4096,
+      "max_model_len": 1280
+    },
+    {
+      "name": "in2_out1000_c64",
+      "role": "guard",
+      "input_len": 2,
+      "output_len": 1000,
+      "num_prompts": 64,
+      "max_concurrency": 64,
+      "max_model_len": 1280,
+      "min_ratio": 0.95
+    }
+  ]
+}

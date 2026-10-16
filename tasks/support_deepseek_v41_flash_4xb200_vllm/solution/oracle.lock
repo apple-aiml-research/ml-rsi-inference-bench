@@ -1,0 +1,266 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/vllm-project/vllm.git",
+ "upstream_base": "e83d57d8ae14e240e2779c37db58b6dacd21bab2",
+ "upstream_base_note": "the parent of the model-definitions squash 9b959b86577c082c0b2bf9e2c22263255a36ad83 (main at 2026-09-10; base committer time 11:42:31Z). It already carries the model's kernels PR and frontends PR as ordinary upstream history, and with the frontends one file under the model package directory: vllm/models/deepseek_v4_1/common/mm_preprocess.py (image-token preprocessing).",
+ "prepared_base": {
+  "commit": "76578587913b5e1cec479d28fbb8e0912cb2834f",
+  "tree": "ec58b5bca948d8f6536d51ea37914aa662ab5851",
+  "decision": "the model-definitions squash authored kernel files outside the model package in the same change; those files are supplied on the parent as a kernel-only preparation commit, each file's origin stated here.",
+  "patch": "../environment/prepared-base/000-supplied-kernels.patch",
+  "sha256": "02d4b86ab4f7e20c1d1a4b43411e67c5078ed692949f0570891956764b8be24a",
+  "bytes": 66515,
+  "produced_by": "git --no-pager diff --no-ext-diff --no-color --binary e83d57d8ae14 9b959b86577c -- <the files below>",
+  "files": [
+   "vllm/model_executor/kernels/attention/dsa/candidate_blocks.py",
+   "vllm/model_executor/kernels/linear/mxfp8/deep_gemm.py",
+   "vllm/model_executor/kernels/linear/mxfp8/flashinfer.py",
+   "vllm/model_executor/kernels/linear/mxfp8/Mxfp8LinearKernel.py",
+   "vllm/model_executor/kernels/linear/__init__.py",
+   "vllm/model_executor/kernels/mhc/tilelang.py",
+   "vllm/model_executor/kernels/mhc/tilelang_kernels.py",
+   "vllm/model_executor/kernels/mhc/torch.py",
+   "vllm/model_executor/kernels/mhc/triton.py",
+   "vllm/model_executor/kernels/mhc/warmup.py",
+   "vllm/model_executor/layers/fused_moe/router/fused_moe_router.py",
+   "vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py",
+   "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "vllm/models/deepseek_v4/nvidia/ops/o_proj.py"
+  ],
+  "files_origin": {
+   "vllm/model_executor/kernels/attention/dsa/candidate_blocks.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/linear/mxfp8/deep_gemm.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/linear/mxfp8/flashinfer.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/linear/mxfp8/Mxfp8LinearKernel.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/linear/__init__.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/mhc/tilelang.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/mhc/tilelang_kernels.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/mhc/torch.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/mhc/triton.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/kernels/mhc/warmup.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/model_executor/layers/fused_moe/router/fused_moe_router.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base",
+   "vllm/models/deepseek_v4/nvidia/ops/o_proj.py": "9b959b86577c082c0b2bf9e2c22263255a36ad83 (the model-definitions squash), whole-file diff from the base"
+  },
+  "message": "../environment/prepared-base/message.txt",
+  "reproduced_by": "environment/Dockerfile step 6: clone at the upstream base, git apply the patch, commit with pinned identity (Inference-Bench <inference-bench@local>) and pinned dates (1789040611 +0000) from message.txt; the step asserts the resulting sha."
+ },
+ "base": "6ead86daeaed3fb406414cc61db23cb214bd7668",
+ "landing": {
+  "pr": 56214,
+  "sha": "e77daef89e18e08321ae7b8b24827eedd5fe8673",
+  "commits": [
+   {
+    "pr": 56228,
+    "sha": "9b959b86577c082c0b2bf9e2c22263255a36ad83"
+   },
+   {
+    "pr": 56214,
+    "sha": "e77daef89e18e08321ae7b8b24827eedd5fe8673"
+   }
+  ],
+  "note": "the family's schema: `pr`/`sha` name the integration commit (#56214), `commits` every commit of the two-PR landing, so the answer-address scan forbids each; the entries below describe them",
+  "model_definitions": {
+   "pr": 56228,
+   "sha": "9b959b86577c082c0b2bf9e2c22263255a36ad83",
+   "parent": "e83d57d8ae14e240e2779c37db58b6dacd21bab2",
+   "merged_at": "2026-09-10T12:16:26Z"
+  },
+  "runtime_integration": {
+   "pr": 56214,
+   "sha": "e77daef89e18e08321ae7b8b24827eedd5fe8673",
+   "parent": "e6821ceac91f4d61c7a8603f6de21d9c8935effb",
+   "merged_at": "2026-09-11T09:11:19Z",
+   "note": "merged 46 main commits after the model-definitions squash"
+  },
+  "kernels": {
+   "pr": 56215,
+   "sha": "be1cb9834b3d74114f4d426068d2bce57c9912a0",
+   "note": "upstream history at the base"
+  },
+  "frontends": {
+   "pr": 56208,
+   "sha": "b47b01cf3383d50a5fae8569cadcbd0736076234",
+   "note": "upstream history at the base"
+  },
+  "sparse_indexer": {
+   "commits": [
+    {
+     "pr": 56254,
+     "sha": "12575123059c2142e39c9af4e217a4792c3c8176"
+    },
+    {
+     "pr": 58215,
+     "sha": "9ef37771beac1c1ce6a8b7ceae1f7ebeb6f51800"
+    }
+   ],
+   "dependency": {
+    "repo": "deepseek-ai/DeepGEMM",
+    "pr": 432,
+    "sha": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2"
+   },
+   "note": "the answer-address scan (environment/buildcheck/no_answer_address.py) forbids each"
+  }
+ },
+ "reference": {
+  "what": "#56228's changes other than the supplied kernel files, its tests/ changes and the AMD directory vllm/models/deepseek_v4_1/amd/*; plus #56214's changes outside tests/ and .buildkite/, applied by `git apply -3` onto base + preparation commit + the former",
+  "exclusion_rule": "by import graph: the served class DeepseekV41ForCausalLM lives in nvidia/vl_model.py, which the package __init__ imports on CUDA, so it is model code and in; the AMD directory is imported only on ROCm and is out; no other file of either PR is excluded",
+  "deviation": {
+   "file": "vllm/v1/simple_kv_offload/manager.py",
+   "what": "#56214's hunk in the SimpleCPU KV-offload connector's sliding-window store path is NOT in the closure: it conflicts with the base because it was written on top of #54736, which merged between the two PRs. KV connectors are out of scope; the recipe reaches no connector and no scored node exercises one. The closure keeps the base's file."
+  },
+  "files_from_prepared_base": 48,
+  "insertions": 9265,
+  "deletions": 125,
+  "sparse_indexer_backport": {
+   "what": "on top of the base reference: the four DeepGEMM #432 sparse MQA-logits target files and the four target bodies of csrc/apis/attention.hpp restored byte for byte in third_party/deepgemm_v41_sparse; #56254's packed/paged indexer integration adapted to this base's layout (no rename refactor); #58215's remap-bounds repair; the reference implementation of the two measurement entry points",
+   "sources": {
+    "deepgemm": {
+     "pr": 432,
+     "sha": "66081d4c9c7d7c44f13fea402e5b622aa0f409c2"
+    },
+    "integration": {
+     "pr": 56254,
+     "sha": "12575123059c2142e39c9af4e217a4792c3c8176"
+    },
+    "bounds_repair": {
+     "pr": 58215,
+     "sha": "9ef37771beac1c1ce6a8b7ceae1f7ebeb6f51800"
+    },
+    "generic_topk": {
+     "pr": 56464,
+     "sha": "fa008bdccf10f2f31f84553112a227cf1b8947d7",
+     "note": "supplied in the preparation commit, not in this patch"
+    }
+   },
+   "adaptation_manifest": "sparse-indexer-adaptation.json"
+  }
+ },
+ "repairs_in_squash": [],
+ "post_merge_repairs": [],
+ "criticality_candidates": [
+  56160,
+  57432,
+  56682,
+  56448
+ ],
+ "criticality_candidate_shas": {
+  "56160": "dc07f1638f73814b95776832b85df1cc92850416",
+  "57432": "80447d27655918da6bfbccd0d3a40e975bda220a",
+  "56682": "e7a3963339654aa18b713f9ff233f129af9c7c8b",
+  "56448": "c4d424c2e27b392da235704ba0edca7ac48bd495"
+ },
+ "criticality_results": {
+  "method": "the closure is the reference alone unless a candidate is needed for the reference to serve at the recipe and pass the scored set; the reference WITHOUT all four candidates is the maximal revert, measured directly (2026-09-24): it launches at the recipe (KV cache 2,422,575 tokens, full DSpark CUDA graphs captured), and it passes the scored upstream set (the L2 differential; the initialization test in 99 s). A candidate is 'out' when the scored set passes without it; one whose criticality could not be decided would stay in; none is undecided.",
+  "56160": {
+   "verdict": "out",
+   "why": "nested-config sparse settings for composite configs: the reference serves this composite checkpoint without it, because the V4.1 package reads its own flat model config (the PR's own description keeps DeepSeek-V4 code and sparse_swa.py unchanged for that reason); measured: the oracle launches and serves at the recipe."
+  },
+  "57432": {
+   "verdict": "out",
+   "why": "FlashInfer DSpark non-causal attention: not reached at the recipe on B200, where the target and the DSpark draft run the FLASHMLA_SPARSE_DSV41 backend (server log, 'Setting kv cache block size to 128 for FLASHMLA_SPARSE_DSV41 backend'); its own measurements move acceptance, not GSM8K accuracy (TP4 95.98% before, 95.75% after)."
+  },
+  "56682": {
+   "verdict": "out",
+   "why": "dummy-load initialization and constant CPU Engram fills; real checkpoint loading unchanged: the one scored node that loads dummy weights, test_can_initialize_large_subset[DeepseekV41ForCausalLM], passes at the reference without it (99.4 s)."
+  },
+  "56448": {
+   "verdict": "out",
+   "why": "the DSpark profiling batch overruns the speculator's input buffer only when max_num_seqs x K exceeds max_num_batched_tokens; at the recipe the memory-profiling run completes and the server launches (max_num_batched_tokens 16,384 with chunked prefill)."
+  }
+ },
+ "closure_oracle": "the reference alone (prepared base + solution.patch): no candidate is critical",
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "4708d5d5c7cab6ed5773957de3c4981822dcd85669cf352ed7f54e29d8e2f3b2",
+  "bytes": 594968,
+  "produced_by": "git --no-pager diff --no-ext-diff --no-color --binary --full-index <prepared base> <reference tree>",
+  "applies_to_tree": "950c7cb644d502056a14312ccf7e623d04782968",
+  "applies_to_tree_note": "the tree the sparse-indexer preparation commit plus this patch produces (git write-tree)",
+  "files": 60,
+  "file_list": [
+   "third_party/deepgemm_v41_sparse/csrc/apis/attention.hpp",
+   "third_party/deepgemm_v41_sparse/csrc/jit_kernels/impls/sm100_sparse_mqa_logits.hpp",
+   "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/impls/sm100_sparse_mqa_logits.cuh",
+   "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/layout/sparse_mqa_logits.cuh",
+   "third_party/deepgemm_v41_sparse/deep_gemm/include/deep_gemm/scheduler/sm100_sparse_mqa_logits_metadata.cuh",
+   "vllm/_aiter_ops.py",
+   "vllm/compilation/breakable_cudagraph.py",
+   "vllm/config/engram.py",
+   "vllm/config/kernel.py",
+   "vllm/config/speculative.py",
+   "vllm/config/vllm.py",
+   "vllm/distributed/kv_transfer/kv_connector/v1/mooncake/store/coordinator.py",
+   "vllm/distributed/kv_transfer/kv_connector/v1/nixl/base_worker.py",
+   "vllm/model_executor/kernels/attention/dsa/sparse_mqa_logits.py",
+   "vllm/model_executor/layers/fusion/quant_activation.py",
+   "vllm/model_executor/layers/quantization/__init__.py",
+   "vllm/model_executor/layers/quantization/modelopt.py",
+   "vllm/model_executor/layers/quantization/utils/fp8_utils.py",
+   "vllm/model_executor/layers/quantization/utils/mxfp8_utils.py",
+   "vllm/model_executor/layers/sparse_attn_indexer.py",
+   "vllm/model_executor/layers/sparse_indexer_eval.py",
+   "vllm/model_executor/models/config.py",
+   "vllm/model_executor/models/registry.py",
+   "vllm/model_executor/warmup/deepseek_v4_mhc_warmup.py",
+   "vllm/model_executor/warmup/flashinfer_sparse_mla_warmup.py",
+   "vllm/models/deepseek_v4/common/ops/fused_indexer_q.py",
+   "vllm/models/deepseek_v4/common/vision.py",
+   "vllm/models/deepseek_v4/nvidia/model.py",
+   "vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py",
+   "vllm/models/deepseek_v4_1/__init__.py",
+   "vllm/models/deepseek_v4_1/attention.py",
+   "vllm/models/deepseek_v4_1/common/__init__.py",
+   "vllm/models/deepseek_v4_1/common/engram.py",
+   "vllm/models/deepseek_v4_1/common/ops/__init__.py",
+   "vllm/models/deepseek_v4_1/common/ops/cache_utils.py",
+   "vllm/models/deepseek_v4_1/common/ops/fused_compress_quant_cache.py",
+   "vllm/models/deepseek_v4_1/common/ops/indexer_k_store.py",
+   "vllm/models/deepseek_v4_1/common/ops/query_quant.py",
+   "vllm/models/deepseek_v4_1/common/rope.py",
+   "vllm/models/deepseek_v4_1/compressor.py",
+   "vllm/models/deepseek_v4_1/nvidia/__init__.py",
+   "vllm/models/deepseek_v4_1/nvidia/dspark.py",
+   "vllm/models/deepseek_v4_1/nvidia/flashinfer_sparse.py",
+   "vllm/models/deepseek_v4_1/nvidia/flashmla.py",
+   "vllm/models/deepseek_v4_1/nvidia/model.py",
+   "vllm/models/deepseek_v4_1/nvidia/model_state.py",
+   "vllm/models/deepseek_v4_1/nvidia/vl_model.py",
+   "vllm/models/deepseek_v4_1/quant_config.py",
+   "vllm/models/deepseek_v4_1/sparse_mla.py",
+   "vllm/utils/deep_gemm.py",
+   "vllm/v1/attention/backends/mla/indexer.py",
+   "vllm/v1/attention/backends/mla/sparse_indexer.py",
+   "vllm/v1/attention/backends/mla/sparse_swa.py",
+   "vllm/v1/attention/backends/registry.py",
+   "vllm/v1/attention/ops/rocm_aiter_mla_sparse.py",
+   "vllm/v1/core/kv_cache_utils.py",
+   "vllm/v1/kv_cache_interface.py",
+   "vllm/v1/worker/gpu/spec_decode/dspark/utils.py",
+   "vllm/v1/worker/gpu/spec_decode/eagle/eagle3_utils.py",
+   "vllm/v1/worker/gpu_model_runner.py"
+  ],
+  "sparse_indexer_note": "the sparse-indexer restoration/backport is scoped; solution/sparse-indexer-adaptation.json lists every hunk"
+ },
+ "model": {
+  "repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "revision": "dba1be0a40aa45a94ad051997016db3960a90277",
+  "files": 87,
+  "bytes": 510313351864,
+  "manifest_sha256": "90032722aa963db251e16e220b1d6bc4721ed22543dfe30933863bf8ccbe455c"
+ },
+ "materials": {
+  "commit": "992b504750b47a6a5bcfd9617b5b49eff8065fa6",
+  "tree": "5679228f2192e21d2567bc194b1326be57923f77",
+  "parent": "76578587913b5e1cec479d28fbb8e0912cb2834f",
+  "note": "the evaluation materials commit; the oracle's patch touches none of its paths, so the patch is byte-identical and only its resulting tree moves"
+ },
+ "sparse_preparation": {
+  "commit": "6ead86daeaed3fb406414cc61db23cb214bd7668",
+  "tree": "4cb7cd0aedc599e26adccf658e66316209b947de",
+  "parent": "992b504750b47a6a5bcfd9617b5b49eff8065fa6",
+  "lock": "../environment/sparse-indexer/preparation.lock.json",
+  "note": "the preparation commit atop the materials commit -- the editable sparse MQA-logits runtime with its four target files withheld and their bodies stubbed, DeepSelect's generic build/configuration, the declarative switch, the two measurement entry points (stubs) and the evaluation materials -- made by both Dockerfiles (step 14) with a pinned identity and date and asserted there. It is the agent's starting HEAD and the base the submission (pre_artifacts.sh), the grader's resets and the oracle are taken from."
+ }
+}

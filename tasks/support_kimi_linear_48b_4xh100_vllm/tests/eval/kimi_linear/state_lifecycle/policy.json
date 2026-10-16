@@ -1,0 +1,62 @@
+{
+  "schema": "infb-kimi-state-lifecycle-policy/1",
+  "note": "The continuation-equivalence rule for request-state lifecycle workloads: fresh, continued, concurrent, data-parallel, prefix-cached, branched, generated-history, preempted/resumed and cancelled requests. README.md in this directory states the protocol; client.py implements the generation reader, the teacher-forced reader and this rule.",
+  "block_tokens": 512,
+  "generation": {
+    "endpoint": "/v1/completions",
+    "prompt": "a token-id list",
+    "temperature": 0,
+    "ignore_eos": true,
+    "skip_special_tokens": false,
+    "logprobs": 1,
+    "return_token_ids": true,
+    "stream": true,
+    "prompt_logprobs": "omitted",
+    "cache_salt": "requests that are meant to share a cached prefix share one salt; every other request has its own",
+    "reading": "exactly the requested number of output tokens, finish reason length, integer token ids, one finite log-probability per returned token; a deliberately cancelled request needs at least one returned token and every returned token is read"
+  },
+  "teacher_forcing": {
+    "endpoint": "/v1/completions",
+    "body": {"prompt": "prompt ids followed by the recorded continuation ids", "max_tokens": 0, "echo": true, "prompt_logprobs": 0, "temperature": 0, "cache_salt": "unique per request"},
+    "server": "a cold server of the tp4 deployment (prefix caching off), one request at a time",
+    "reading": "fidelity/check.py prompt_logprob_values: exact length, a null first entry, the requested token's own key and a finite number at every conditioned position; the values at the continuation's positions are the reference log-probabilities"
+  },
+  "estimator": {
+    "statistic": "fidelity/kl.py k3_per_sequence, unchanged: the mean over positions of (exp(logr) - 1) - logr with logr = reference minus candidate log-probability, in Python double precision; a non-finite candidate value, or a term whose exponential overflows, makes the value +infinity",
+    "reference": "the teacher-forced log-probability of each recorded continuation token on the cold tp4 server",
+    "candidate": "the log-probability the serving deployment returned for that token while generating it",
+    "full_continuation": true,
+    "windows": [4, 16],
+    "window_rule": "every contiguous window of that many generated positions; a continuation shorter than a window has one window, its complete available length",
+    "reported": "per case: the full value, every window value, the maximum per window size with its start index, and every violating window"
+  },
+  "tolerance": {
+    "T_lifecycle": 1.0537542547592982,
+    "rule": "T_lifecycle = max(0.05, 3 * N_reference), where N_reference is the largest full or window value of the qualified reference's continuations against an independently restarted cold reference over the calibration runs",
+    "floor": 0.05,
+    "status": "frozen before any candidate was graded: N_reference is the largest full or window value over the first two launches on each of two independent eight-GPU reference runs",
+    "calibration": {"N_reference": 0.35125141825309936, "launches": [{"label": "calibration-1", "records_sha256": "eeee400f353b8a8bda75efa092eec853846ccc35c659ca9aee62fd0f2b8d5f24"}, {"label": "calibration-2", "records_sha256": "ef638b5fdb749c199798726f079bcf4256c1d1bfff4a6cc4d6d335f817e3aae3"}, {"label": "calibration-3", "records_sha256": "891acb6ac00cffcf197527df9ba123d298ab3382a89eb6b87e789e2f0638c7d8"}, {"label": "calibration-4", "records_sha256": "34fb5d185a40d8e3fe852836db79e15b9b52d879048f927d29998d7263297b25"}], "pending_policy_sha256": "c2ee18c9fdb00ec22fc8794fc736841b254ea7feea3cea0f28a450c7327ac1b8"},
+    "pass": "a case passes only when every full and window value is a finite number less than or equal to T_lifecycle"
+  },
+  "evidence": {
+    "reuse": "a prefix-cache hit counts when the serving engine restores a completed prefix state for the request and consumes it; the engine's hit counter delta (vllm:prefix_cache_hits) of an isolated pair is reported beside it, and an absent counter is reported as unavailable, never as zero",
+    "valid_recomputation": "recomputing a prefix whose reusable checkpoint is unavailable is valid; recomputing every repeated prefix is not prefix-cache support",
+    "graphs": "ordinary decode uses full CUDA graphs on every replica of the deployment"
+  },
+  "workload_domains": {
+    "prompt_tokens": [1, 12000],
+    "continuation_tokens": [1, 1024],
+    "families": ["fresh requests, including one-token prompts", "continued requests", "fresh requests submitted while others decode", "concurrent and uneven data-parallel load", "warm prefixes and siblings at and around block boundaries", "branches from one prefix", "prefixes that include generated tokens", "mixed cached and fresh requests", "capacity-limited turnover, preemption and resumption, cancellation"]
+  },
+  "examples": {
+    "source": "serving/sample.jsonl.xz, tokenized with the checkpoint's tokenizer",
+    "one_token": "Hello",
+    "one_token_max_tokens": 32,
+    "warm_prefix_tokens": 1024,
+    "warm_prefix_max_tokens": 32,
+    "concurrent_requests": 8,
+    "concurrent_prompt_tokens": 256,
+    "concurrent_max_tokens": 64,
+    "loaded_layer_case": "mixed_fresh_continued"
+  }
+}

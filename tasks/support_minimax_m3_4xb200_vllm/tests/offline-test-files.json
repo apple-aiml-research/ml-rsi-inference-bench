@@ -1,0 +1,251 @@
+{
+ "schema": "infb-offline-test-files/1",
+ "hub": [
+  {
+   "repo": "Qwen/Qwen3-0.6B",
+   "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 9732,
+     "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 11422654,
+     "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+     "file": "generation_config.json",
+     "bytes": 239,
+     "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2"
+    },
+    {
+     "file": "config.json",
+     "bytes": 726,
+     "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd"
+    }
+   ]
+  },
+  {
+   "repo": "Qwen/Qwen3.5-4B",
+   "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 16710,
+     "sha256": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 12807982,
+     "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+    },
+    {
+     "file": "preprocessor_config.json",
+     "bytes": 390,
+     "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516"
+    },
+    {
+     "file": "config.json",
+     "bytes": 3161,
+     "sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670"
+    },
+    {
+     "file": "chat_template.jinja",
+     "bytes": 7756,
+     "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+    }
+   ]
+  },
+  {
+   "repo": "MiniMaxAI/MiniMax-M2.5",
+   "revision": "f710177d938eff80b684d42c5aa84b382612f21f",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 10893,
+     "sha256": "60e392fea8d47660584deb3c6a716aab7b9f11fed24bc494baf5eb7ba809e882"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 9730160,
+     "sha256": "757622126525aeeb131756849d93298070ff3f0319c455ec8c5bb0f6b1cebbe8"
+    },
+    {
+     "file": "generation_config.json",
+     "bytes": 166,
+     "sha256": "2c24fe5507e260bb081727e2a14693d9a982942e721b28720c184d201bffb9dd"
+    },
+    {
+     "file": "config.json",
+     "bytes": 1652,
+     "sha256": "3372a31ecbdba614b309cfa5b3dfec33ceea3c580cb9612ff35345d92ced8618"
+    },
+    {
+     "file": "chat_template.jinja",
+     "bytes": 6524,
+     "sha256": "f83cec52bb3a7e5a3cb4d6fd1dfdd6f4fe13b06c5aaa39a1115e70a417fc75f5"
+    }
+   ]
+  },
+  {
+   "repo": "deepseek-ai/DeepSeek-V4-Flash",
+   "revision": "60d8d70770c6776ff598c94bb586a859a38244f1",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 801,
+     "sha256": "6ac8c8dc065ed118161d02dd532749ae3f52c243deac27872134fae2f50d8547"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 6367146,
+     "sha256": "8f9f37ca37fdc4f5fd36d5cf4d3b0e8392edb4e894fd10cc0d70b4957c8633cf"
+    },
+    {
+     "file": "generation_config.json",
+     "bytes": 170,
+     "sha256": "5fccff80f55a4d455bbe516bdd552edf3e9623df95e99fbf2a3c3389fdf91af0"
+    },
+    {
+     "file": "config.json",
+     "bytes": 1749,
+     "sha256": "b628e63398a645abc711d92207f8737dd8140f7a4ef1e0a5b3616019e0ddd818"
+    }
+   ]
+  },
+  {
+   "repo": "zai-org/GLM-4.7-Flash",
+   "revision": "7dd20894a642a0aa287e9827cb1a1f7f91386b67",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 7226,
+     "sha256": "31a173e2797ddc8b72ac996803513e627fc28d7aad02cfcce321a431d865c86d"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 20217442,
+     "sha256": "19e773648cb4e65de8660ea6365e10acca112d42a854923df93db4a6f333a82d"
+    },
+    {
+     "file": "generation_config.json",
+     "bytes": 181,
+     "sha256": "e19f4eb8be12cdb62a3737b52a332c7c142cbf5ee24a5de7d806f6132b782425"
+    },
+    {
+     "file": "config.json",
+     "bytes": 1070,
+     "sha256": "dc9b97c7c9bed726a2e6939da4234d5c43abb3edec8812068c9a1af1dbc13acb"
+    },
+    {
+     "file": "chat_template.jinja",
+     "bytes": 3120,
+     "sha256": "d63ad536c3c81880043e22ec7fd08db42b4d8fb7c89c7138bc562bfa25281375"
+    }
+   ]
+  },
+  {
+   "repo": "moonshotai/Kimi-K2.5",
+   "revision": "4d01dfe0332d63057c186e0b262165819efb6611",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 4862,
+     "sha256": "12fcab43d2b6068f46769f5ff373960bf7c17a94d7abbc50e2491306b2f6cf58"
+    },
+    {
+     "file": "tiktoken.model",
+     "bytes": 2795286,
+     "sha256": "b6c497a7469b33ced9c38afb1ad6e47f03f5e5dc05f15930799210ec050c5103"
+    },
+    {
+     "file": "generation_config.json",
+     "bytes": 52,
+     "sha256": "5431db52f431099f309ece737670e977de148f8cfd5340e920ff1f44d7cff596"
+    },
+    {
+     "file": "preprocessor_config.json",
+     "bytes": 742,
+     "sha256": "0c43520fbcc076dacbffcf0273f0dfa0ee318ff9aa55537cf7f2788d906de7b2"
+    },
+    {
+     "file": "config.json",
+     "bytes": 5416,
+     "sha256": "acd5bb01a16f64b309599cd6ed196be056f613c99d6bc9300692b82cd10882f6"
+    },
+    {
+     "file": "chat_template.jinja",
+     "bytes": 3759,
+     "sha256": "7c91e4b3578b518bfb388d2e3dc645daf0fbf843656e887db75d12891e0030ff"
+    }
+   ]
+  },
+  {
+   "repo": "ByteDance-Seed/Seed-OSS-36B-Instruct",
+   "revision": "497f1dca95ebdec98e41d517b9f060ee753c902f",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 23849,
+     "sha256": "97d6fdf939d37045baeaa69fbaeacb2b88733e35869840f913a372c8aa92ee87"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 11883696,
+     "sha256": "f6bd848f52451824a3033a9f1e67eea5b399a13c90f845a332d3a29537e05827"
+    },
+    {
+     "file": "generation_config.json",
+     "bytes": 172,
+     "sha256": "99c964d4affb46130f92a457c72deacf1b3152df9eb7aa0b05494ec5b1e7915b"
+    },
+    {
+     "file": "config.json",
+     "bytes": 770,
+     "sha256": "09f91799169531b687cbd15e6338aee6105fcbb058193c04faa7ae0344506132"
+    },
+    {
+     "file": "chat_template.jinja",
+     "bytes": 7705,
+     "sha256": "3f9e0dc4adeb8032287d0129dc75b6298fee8698a52ab41e863dbc89929330d3"
+    }
+   ]
+  },
+  {
+   "repo": "stepfun-ai/Step-3.5-Flash",
+   "revision": "ab446a3de5e171ea341227e24bb1f090e1b771f7",
+   "files": [
+    {
+     "file": "tokenizer_config.json",
+     "bytes": 163405,
+     "sha256": "78202af487f4d4360e8d15cb0506d60718f8599770599c6f28f7f1fa045a591f"
+    },
+    {
+     "file": "tokenizer.json",
+     "bytes": 9976972,
+     "sha256": "b564c620eb77fa11d0926011c2202347d6cfc358d79724ee04ae7007e13636f0"
+    },
+    {
+     "file": "config.json",
+     "bytes": 4930,
+     "sha256": "794dcd0ea3e925efd9f8bd98745e2246ae73eab58fb0113c3338d7cab619ea3d"
+    },
+    {
+     "file": "chat_template.jinja",
+     "bytes": 5004,
+     "sha256": "b18b99dff7261214c43e0402cba9f573e3240be6f9bb7ccaa54bb8df97e49dca"
+    }
+   ]
+  }
+ ],
+ "tiktoken": [
+  {
+   "url": "https://openaipublic.blob.core.windows.net/encodings/o200k_base.tiktoken",
+   "file": "o200k_base.tiktoken",
+   "bytes": 3613922,
+   "sha256": "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d"
+  }
+ ]
+}

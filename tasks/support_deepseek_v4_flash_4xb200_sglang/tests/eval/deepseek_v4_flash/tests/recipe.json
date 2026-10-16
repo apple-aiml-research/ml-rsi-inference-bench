@@ -1,0 +1,6 @@
+{
+ "model_dir": "/model/deepseek-ai/DeepSeek-V4-Flash",
+ "declared_context": "the checkpoint's config.json max_position_embeddings",
+ "tp_size": 4,
+ "attention_attribution": "no fixed kernel family. The served attention must run the kernels the tree's own flash_mla_with_kvcache launches in its component map (../kernels/check.py --profile-map; README \"Execution attribution\"), by base name, on every tensor-parallel rank."
+}

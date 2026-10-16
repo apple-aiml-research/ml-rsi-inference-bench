@@ -1,0 +1,342 @@
+{
+ "schema": "diffusion-gemma-l3-hf/1",
+ "rule": "The non-weight files of every non-gated Hugging Face repository an L3 instance reads, at a pinned revision, each checked by sha256, fetched when the verifier image is built into its offline cache (HF_HUB_CACHE); a gated repository is excluded",
+ "fetched": {
+  "facebook/opt-125m": {
+   "revision": "27dcfa74d334bc871f3234de431e71c6eeba5dd6",
+   "instances_failing_offline": 73,
+   "files": {
+    "LICENSE.md": {
+     "sha256": "11203fa656a6dfd929ded198012b18d5d0f2b95e24d13298be37b70c327329a4",
+     "bytes": 11117
+    },
+    "README.md": {
+     "sha256": "7de0df51ed16643814194409c9d6e1cb928db8bb3e0d16ed29c49cb6390607c0",
+     "bytes": 7099
+    },
+    "config.json": {
+     "sha256": "54162c9cd0377110df1859dfabebb106fc0988c8aadb88207ce1ee0d34985df6",
+     "bytes": 651
+    },
+    "generation_config.json": {
+     "sha256": "d37de99f9835d7a4d0916257f724504d12c4a668f36a50b2d42e09ba4ebd05d5",
+     "bytes": 137
+    },
+    "merges.txt": {
+     "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+     "bytes": 456318
+    },
+    "special_tokens_map.json": {
+     "sha256": "0f3cd5f307a2735cfee31ddf33be88655e8be165ee2cdc26ced966f04258adf0",
+     "bytes": 441
+    },
+    "tokenizer_config.json": {
+     "sha256": "d1e4185b43a0a06421ab7218d5c1a775350bd13024507b34fbed25dcf6c14c6b",
+     "bytes": 685
+    },
+    "vocab.json": {
+     "sha256": "06b4d46c8e752d410213d9548eb27a54db70fda0319b6271fb8d59dead5e1cab",
+     "bytes": 898822
+    }
+   }
+  },
+  "llava-hf/llava-1.5-7b-hf": {
+   "revision": "b234b804b114d9e37bb655e11cbbb5f5e971b7a9",
+   "instances_failing_offline": 30,
+   "files": {
+    "README.md": {
+     "sha256": "36693f49ccf7bae2d1f328154cb30b075bc12f08f57917c8ea344bfa54edf423",
+     "bytes": 5639
+    },
+    "added_tokens.json": {
+     "sha256": "a94c56096001713e3eb9a34b1a545a8c1d5e8034ed2fb81f897c8cb54b420121",
+     "bytes": 41
+    },
+    "chat_template.jinja": {
+     "sha256": "6fef09c05345e88b9f85e80bcb3491003332050750586568bdf91cfa81965d0c",
+     "bytes": 674
+    },
+    "chat_template.json": {
+     "sha256": "854445c0a45532ecbee1ae9aa31d4be19644060a156f2c88456f50f584261543",
+     "bytes": 701
+    },
+    "config.json": {
+     "sha256": "0bde54495c54bcc346064a0d314b010d1c4d3ca7f7e583b6f711949a35352c0f",
+     "bytes": 950
+    },
+    "generation_config.json": {
+     "sha256": "3a6dc8c202be258023f58a03f804bdcacf138b8a2cc7492be2530e16945a0951",
+     "bytes": 141
+    },
+    "model.safetensors.index.json": {
+     "sha256": "73af906b5ac12aea6eddf104d482d2a50bca30b20d61ee9f6c5269d3427a6991",
+     "bytes": 70128
+    },
+    "preprocessor_config.json": {
+     "sha256": "a8d5e64ee5c07ff6d70142856d178ac39d0563da3612e32110fa824f5337b7a1",
+     "bytes": 505
+    },
+    "processor_config.json": {
+     "sha256": "fef918d6ba333f72a066877965bc4a162308568ba62aa90c806caedf7b45d64e",
+     "bytes": 173
+    },
+    "special_tokens_map.json": {
+     "sha256": "358c249e2fb29060c6b73157d428853b0c48710deffc8ee670ab1013880946c9",
+     "bytes": 552
+    },
+    "tokenizer.json": {
+     "sha256": "30e1294abd835edfebb24618fce6f47c21ffb2b2802520d150bdee0b808b47cb",
+     "bytes": 3619380
+    },
+    "tokenizer.model": {
+     "sha256": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347",
+     "bytes": 499723
+    },
+    "tokenizer_config.json": {
+     "sha256": "79b7f1ebceddf7235f3791c387d781818b0c7e7cf868d0e4f71896a55b949833",
+     "bytes": 1451
+    }
+   }
+  },
+  "microsoft/Phi-tiny-MoE-instruct": {
+   "revision": "2fe50e88d0e2a5a132563815686ea0dcc8e252b5",
+   "instances_failing_offline": 18,
+   "files": {
+    "CODE_OF_CONDUCT.md": {
+     "sha256": "9daeae709a0bd71bcfd1c96dc5822ecec5210327eff929da64b0ae7f8faf1444",
+     "bytes": 444
+    },
+    "LICENSE": {
+     "sha256": "c49419617a6070bcb197cfe272f7007fdec3e790dbb529cb995473bd69c0bd51",
+     "bytes": 1105
+    },
+    "NOTICE.md": {
+     "sha256": "6ac541192c253d21cd16a597ce69c515868e031db3f32f75d996b993b5aca216",
+     "bytes": 1772
+    },
+    "README.md": {
+     "sha256": "27832c445de98d51b2de2fb54616ca50053640ea3a8141ad21a500267fd7a3f3",
+     "bytes": 13174
+    },
+    "SECURITY.md": {
+     "sha256": "7b6976eec43edfa68b79a459dd089c56b7a395916dbf1a01bd11e6d86e12128f",
+     "bytes": 2656
+    },
+    "added_tokens.json": {
+     "sha256": "84addd9b7448d7b7f5320d3ed40274ba90c58340ffe183a5d13ce5293cbd1f82",
+     "bytes": 315
+    },
+    "config.json": {
+     "sha256": "cdc9b948bf96ecbd2facb5540bc113621a74baf67e8e02fd50121fcc6db32354",
+     "bytes": 1069
+    },
+    "configuration_slimmoe.py": {
+     "sha256": "31e4b0096a467ae6a50948e7a54cc28030148e4872cc37c8d2279238c71094f1",
+     "bytes": 12279
+    },
+    "data_summary_card.md": {
+     "sha256": "dcc9cad772ef4e56bee0035536df7297afa1277d8d48d5c96575eea956b58ba0",
+     "bytes": 4348
+    },
+    "generation_config.json": {
+     "sha256": "689a3630f4b3ba9bed78cde16c7f5fdbbbbd562efd85da06bf3f72f7db4a97d2",
+     "bytes": 177
+    },
+    "model.safetensors.index.json": {
+     "sha256": "5c1854eba7eeed34a62f0113fc9545627b781e9cf58491487dd90606a1129644",
+     "bytes": 182552
+    },
+    "modeling_slimmoe.py": {
+     "sha256": "9ab50e875106cbf6544db2a231727bfe0fdb897776c0875179573e03077c0c02",
+     "bytes": 80615
+    },
+    "sample_finetune.py": {
+     "sha256": "684314343e336315526468e6d4dcec1e2354ebf6f13ce6c799f7707b9a1861c6",
+     "bytes": 4936
+    },
+    "special_tokens_map.json": {
+     "sha256": "474d699677e264edd3851559548cbbb61801ad8da6b249c81455007602313c34",
+     "bytes": 569
+    },
+    "tokenizer.json": {
+     "sha256": "d0f067e1e15cd0a36ebef3668024882cb67a80b86fb4b7b4b128481f0d474db7",
+     "bytes": 1844436
+    },
+    "tokenizer_config.json": {
+     "sha256": "f1dd849855d10277cec0457162688f71e5c9230a7b69370ae66f804755f5e90f",
+     "bytes": 3103
+    }
+   }
+  },
+  "Qwen/Qwen3-0.6B": {
+   "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+   "instances_failing_offline": 11,
+   "files": {
+    "LICENSE": {
+     "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+     "bytes": 11343
+    },
+    "README.md": {
+     "sha256": "1ab64a26fcb3b461423b89a433a8c858f1bf8d4086f979cbb3ff878d47cf20e9",
+     "bytes": 13965
+    },
+    "config.json": {
+     "sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+     "bytes": 726
+    },
+    "generation_config.json": {
+     "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+     "bytes": 239
+    },
+    "merges.txt": {
+     "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+     "bytes": 1671853
+    },
+    "tokenizer.json": {
+     "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+     "bytes": 11422654
+    },
+    "tokenizer_config.json": {
+     "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+     "bytes": 9732
+    },
+    "vocab.json": {
+     "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+     "bytes": 2776833
+    }
+   }
+  },
+  "Qwen/Qwen1.5-7B": {
+   "revision": "831096e3a59a0789a541415da25ef195ceb802fe",
+   "instances_failing_offline": 3,
+   "files": {
+    "LICENSE": {
+     "sha256": "7c7b8e244f6aa1ac8c32b74f56d42c41a0364dd2dabed8d9c6030a862e805b54",
+     "bytes": 6896
+    },
+    "README.md": {
+     "sha256": "389b13b6c35d9e7afb37995f9ac65c5d09cebc4a31902c2644bcce04065988ce",
+     "bytes": 2777
+    },
+    "config.json": {
+     "sha256": "7c6ddc07c85a69705e5d96da1fa13a0ed9281b28d03851b0e7acca3f56699f25",
+     "bytes": 663
+    },
+    "generation_config.json": {
+     "sha256": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+     "bytes": 138
+    },
+    "merges.txt": {
+     "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+     "bytes": 1671839
+    },
+    "model.safetensors.index.json": {
+     "sha256": "c38df71cecf01ce58df146b60c05a371fc9d0b8d4099fe0b46764a6dd9f509af",
+     "bytes": 31696
+    },
+    "special_tokens_map.json": {
+     "sha256": "43870833234196e714e59c21a59eed8b1cfd4bb17a4afa06267937cd87443468",
+     "bytes": 295
+    },
+    "tokenizer.json": {
+     "sha256": "f7c9b2dba4a296b1aa76c16a34b8225c0c118978400d4bb66bff0902d702f5b8",
+     "bytes": 7028015
+    },
+    "tokenizer_config.json": {
+     "sha256": "80d64fccf954f022eb43b7425eb45a133cbb92c76a5f24d4cea6dbe3d45548d9",
+     "bytes": 1289
+    },
+    "vocab.json": {
+     "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+     "bytes": 2776833
+    }
+   }
+  },
+  "Qwen/Qwen2-1.5B-Instruct": {
+   "revision": "ba1cf1846d7df0a0591d6c00649f57e798519da8",
+   "instances_failing_offline": 16,
+   "files": {
+    "LICENSE": {
+     "sha256": "c156170b718ec29139d3653d40ed1986fd92fb7e0959b5c71f3c48f62e6636f4",
+     "bytes": 11344
+    },
+    "README.md": {
+     "sha256": "878dfb7257065abb7e4555d26bd5eb4198e7df4de84e718f2bfffd3b806bd39f",
+     "bytes": 3537
+    },
+    "config.json": {
+     "sha256": "a58e896d2756a7947f23f3db55667c19ca3b8524188a30c8c640cd7ff72a5136",
+     "bytes": 660
+    },
+    "generation_config.json": {
+     "sha256": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6",
+     "bytes": 242
+    },
+    "merges.txt": {
+     "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+     "bytes": 1671839
+    },
+    "tokenizer.json": {
+     "sha256": "f7c9b2dba4a296b1aa76c16a34b8225c0c118978400d4bb66bff0902d702f5b8",
+     "bytes": 7028015
+    },
+    "tokenizer_config.json": {
+     "sha256": "482bd979881423375ca5414e4e0d94cd7c5349dbb17fffd46b4d36d71e62a1bc",
+     "bytes": 1287
+    },
+    "vocab.json": {
+     "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+     "bytes": 2776833
+    }
+   }
+  },
+  "google/gemma-4-E2B-it": {
+   "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+   "instances_failing_offline": 29,
+   "files": {
+    "README.md": {
+     "sha256": "3e0608a6be80e3eb040a5aa6c76707809503deb85be6360184a118fb6156526c",
+     "bytes": 27955
+    },
+    "chat_template.jinja": {
+     "sha256": "0a2c8073c878ab1da004bee933a998606537bbb62016310352c7285c3f01c5b5",
+     "bytes": 18569
+    },
+    "config.json": {
+     "sha256": "1b28f3d2c3100f6c594754b81107428bd7b822a7f48272ca681dae9d2ec38330",
+     "bytes": 4954
+    },
+    "generation_config.json": {
+     "sha256": "d4226bbe3117d2d253ba4609720ba82c6c4ce4627a9a6ae05387c78983ac03de",
+     "bytes": 208
+    },
+    "processor_config.json": {
+     "sha256": "32bdf45d2ad4cc29a0822ddd157a182de76644f0419a6228d151495256e9813c",
+     "bytes": 1689
+    },
+    "tokenizer.json": {
+     "sha256": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+     "bytes": 32169626
+    },
+    "tokenizer_config.json": {
+     "sha256": "9f4fec4b1dc6ecddf8f4a92e9caea5971c0e67d81309f3f9066a2bee8c362633",
+     "bytes": 3082
+    }
+   }
+  }
+ },
+ "excluded": {
+  "meta-llama/Meta-Llama-3-8B": {
+   "revision": "8cde5ca8380496c9a6cc7ef3a8b46a0372a1d920",
+   "gated": "manual",
+   "instances": 33,
+   "reason": "gated; no credential for it is configured (a later addition could add one)"
+  },
+  "google/embeddinggemma-300m": {
+   "revision": "57c266a740f537b4dc058e1b0cda161fd15afa75",
+   "gated": "manual",
+   "instances": 4,
+   "reason": "gated; no credential for it is configured (a later addition could add one)"
+  }
+ }
+}

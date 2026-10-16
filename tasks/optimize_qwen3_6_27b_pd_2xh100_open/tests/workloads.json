@@ -1,0 +1,67 @@
+{
+  "workloads": [
+    {
+      "name": "pd_multiturn",
+      "input_len": 12000,
+      "output_len": 512,
+      "first_turn_prefix_tokens": 8000,
+      "num_prompts": 64,
+      "max_concurrency": 16,
+      "_comment": "input_len is the tokens each TURN adds, not the prompt length. The conversation starts at 8000 tokens and every turn appends this many plus the reply, so by turn 8 the prompt is ~58048 tokens. Feeding input_len to --random-input-len benches a 5x smaller shape than the one this task scores.",
+      "profiles": [
+        {
+          "name": "c4",
+          "pattern": "closed_loop",
+          "concurrency": 4
+        },
+        {
+          "name": "c8",
+          "pattern": "closed_loop",
+          "concurrency": 8
+        },
+        {
+          "name": "c16",
+          "pattern": "closed_loop",
+          "concurrency": 16
+        }
+      ]
+    }
+  ],
+  "pd": {
+    "connector": "NixlConnector",
+    "context_window": 65536,
+    "conversation_turns": 8,
+    "conversations": 16,
+    "decode_gpus": 1,
+    "discovery_port": 30001,
+    "engine_argv_template": [
+      "{vllm}",
+      "serve",
+      "{model}",
+      "--host",
+      "0.0.0.0",
+      "--tensor-parallel-size",
+      "{width}",
+      "--served-model-name",
+      "{served}",
+      "--trust-remote-code",
+      "--dtype",
+      "auto",
+      "--seed",
+      "1024",
+      "--max-model-len",
+      "{max_len}",
+      "--max-num-batched-tokens",
+      "{batched_tokens}",
+      "--max-num-seqs",
+      "256",
+      "--kv-cache-dtype",
+      "fp8"
+    ],
+    "first_turn_prefix_tokens": 8000,
+    "new_tokens_per_turn": 12000,
+    "prefill_gpus": 1,
+    "reply_tokens": 512,
+    "router_port": 10001
+  }
+}

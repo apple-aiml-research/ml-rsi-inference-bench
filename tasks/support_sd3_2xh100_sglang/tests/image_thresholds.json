@@ -1,0 +1,219 @@
+{
+  "schema": "sd3-image-thresholds-v1",
+  "revision": "sd3-core49-precision-bars-20261008-v2",
+  "profiles": {
+    "bf16": {
+      "fixtures": {
+        "astronaut": {
+          "psnr": 16.8,
+          "ssim": 0.71,
+          "clip_img": 0.958,
+          "clip_txt": 0.255
+        },
+        "teapot": {
+          "psnr": 16.8,
+          "ssim": 0.71,
+          "clip_img": 0.958,
+          "clip_txt": 0.255
+        },
+        "redlacquer": {
+          "psnr": 16.8,
+          "ssim": 0.8432912604183066,
+          "clip_img": 0.9777919976711273,
+          "clip_txt": 0.255
+        },
+        "ramen": {
+          "psnr": 16.8,
+          "ssim": 0.8479618138972456,
+          "clip_img": 0.9743523745536804,
+          "clip_txt": 0.255
+        },
+        "mountain": {
+          "psnr": 16.8,
+          "ssim": 0.71,
+          "clip_img": 0.958,
+          "clip_txt": 0.248
+        },
+        "stainedglass": {
+          "psnr": 15.489135120041981,
+          "ssim": 0.6503763647663974,
+          "clip_img": 0.9377517120838165,
+          "clip_txt": 0.255
+        },
+        "origami": {
+          "psnr": 16.8,
+          "ssim": 0.8755224981214669,
+          "clip_img": 0.958,
+          "clip_txt": 0.255
+        },
+        "candles": {
+          "psnr": 16.8,
+          "ssim": 0.8605493634569855,
+          "clip_img": 0.958,
+          "clip_txt": 0.255
+        },
+        "astronaut_cfg1": {
+          "psnr": 30.4048,
+          "ssim": 0.9549075773347181,
+          "clip_img": 0.9851857416629791,
+          "clip_txt": 0.255
+        },
+        "stainedglass_cfg1": {
+          "psnr": 30.4048,
+          "ssim": 0.9240533706156052,
+          "clip_img": 0.958,
+          "clip_txt": 0.255
+        }
+      },
+      "defaults": {
+        "psnr": 16.8,
+        "ssim": 0.71,
+        "clip_img": 0.958,
+        "clip_txt": 0.255
+      },
+      "cfg1_psnr": 30.4048
+    },
+    "fp32": {
+      "fixtures": {
+        "astronaut": {
+          "psnr": 26.5,
+          "ssim": 0.725,
+          "clip_img": 0.96,
+          "clip_txt": 0.252
+        },
+        "teapot": {
+          "psnr": 26.5,
+          "ssim": 0.725,
+          "clip_img": 0.96,
+          "clip_txt": 0.252
+        },
+        "redlacquer": {
+          "psnr": 26.5,
+          "ssim": 0.8593923039053514,
+          "clip_img": 0.9797919976711273,
+          "clip_txt": 0.252
+        },
+        "ramen": {
+          "psnr": 26.5,
+          "ssim": 0.8587370607638738,
+          "clip_img": 0.9789334499835968,
+          "clip_txt": 0.252
+        },
+        "mountain": {
+          "psnr": 26.5,
+          "ssim": 0.725,
+          "clip_img": 0.96,
+          "clip_txt": 0.245
+        },
+        "stainedglass": {
+          "psnr": 25.189135120041982,
+          "ssim": 0.6653763647663974,
+          "clip_img": 0.9397517120838165,
+          "clip_txt": 0.252
+        },
+        "origami": {
+          "psnr": 26.5,
+          "ssim": 0.8905224981214669,
+          "clip_img": 0.96,
+          "clip_txt": 0.252
+        },
+        "candles": {
+          "psnr": 26.5,
+          "ssim": 0.8978912955630127,
+          "clip_img": 0.96,
+          "clip_txt": 0.252
+        },
+        "astronaut_cfg1": {
+          "psnr": 40.1048,
+          "ssim": 0.9678770796484888,
+          "clip_img": 0.9870958447456359,
+          "clip_txt": 0.252
+        },
+        "stainedglass_cfg1": {
+          "psnr": 40.1048,
+          "ssim": 0.9390533706156052,
+          "clip_img": 0.96,
+          "clip_txt": 0.252
+        }
+      },
+      "defaults": {
+        "psnr": 26.5,
+        "ssim": 0.725,
+        "clip_img": 0.96,
+        "clip_txt": 0.252
+      },
+      "cfg1_psnr": 40.1048
+    },
+    "mixed": {
+      "fixtures": {
+        "astronaut": {
+          "psnr": 18.0,
+          "ssim": 0.725,
+          "clip_img": 0.96,
+          "clip_txt": 0.257
+        },
+        "teapot": {
+          "psnr": 18.0,
+          "ssim": 0.725,
+          "clip_img": 0.96,
+          "clip_txt": 0.257
+        },
+        "redlacquer": {
+          "psnr": 18.0,
+          "ssim": 0.8582912604183066,
+          "clip_img": 0.9797919976711273,
+          "clip_txt": 0.257
+        },
+        "ramen": {
+          "psnr": 18.0,
+          "ssim": 0.8629618138972456,
+          "clip_img": 0.9763523745536804,
+          "clip_txt": 0.257
+        },
+        "mountain": {
+          "psnr": 18.0,
+          "ssim": 0.725,
+          "clip_img": 0.96,
+          "clip_txt": 0.25
+        },
+        "stainedglass": {
+          "psnr": 16.689135120041982,
+          "ssim": 0.6653763647663974,
+          "clip_img": 0.9397517120838165,
+          "clip_txt": 0.257
+        },
+        "origami": {
+          "psnr": 18.0,
+          "ssim": 0.8905224981214669,
+          "clip_img": 0.96,
+          "clip_txt": 0.257
+        },
+        "candles": {
+          "psnr": 18.0,
+          "ssim": 0.8755493634569855,
+          "clip_img": 0.96,
+          "clip_txt": 0.257
+        },
+        "astronaut_cfg1": {
+          "psnr": 31.0,
+          "ssim": 0.9699075773347181,
+          "clip_img": 0.9871857416629791,
+          "clip_txt": 0.257
+        },
+        "stainedglass_cfg1": {
+          "psnr": 31.0,
+          "ssim": 0.9390533706156052,
+          "clip_img": 0.96,
+          "clip_txt": 0.257
+        }
+      },
+      "defaults": {
+        "psnr": 18.0,
+        "ssim": 0.725,
+        "clip_img": 0.96,
+        "clip_txt": 0.257
+      },
+      "cfg1_psnr": 31.0
+    }
+  }
+}

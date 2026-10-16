@@ -1,0 +1,34 @@
+f9995a765d3461b09e6abe625599481488b27d429e985d90c991432e5e9d318c  2517
+symlinks 738ef5a9543c44d7ba2af8c6fc7c46943b36ae8988f0ce53e582cdcacbb5a251  25
+# THE AUTHORITY for the pristine arm of the scored ratio, and the one thing in this task the agent
+# cannot reach: tests/ is uploaded at verify time, AFTER the agent's turn, while the tree this seals
+# sits at a path the agent owns for the whole turn.
+#
+# THE HOLE THIS CLOSES. tests/test.sh resolves the scored PRISTINE arm from `source_dir` in
+# ${workspace}/real_engine_source.json. That file is written pre-agent and then sits in the agent's
+# own workspace; the trial runs as ROOT, so both it and the tree it names (/app/baseline_repo) are writable
+# for the whole turn. Editing that tree does not need the JSON touched at all, and it moves the
+# DENOMINATOR of the ratio being scored -- a slower baseline is the cheapest way to pass a speedup
+# gate without repairing anything.
+#
+# FORMAT: `<sha256>  <*.py count>`, both compared. A digest that matches while the count does not
+# means the seal's two fields disagree with each other, which must not read as a verified tree.
+#
+# DERIVED FROM A TREE A REAL TRIAL STAGED -- this task's own tests/test.sh staging path,
+# 2517 regular non-symlink *.py under /app/baseline_repo.
+# NOT derived from upstream: a sibling task did that and was void from the day it merged, its seal
+# covering 2006 *.py against a staged 2004.
+#
+# TO RE-DERIVE: run this task's tests/_pristine_digest.py over the tree test.sh stages, inside a
+# trial on this task's own image. Any other tree is a different number.
+#
+# THE CHANNEL THIS DOES NOT COVER, recorded so it is not mistaken for covered: the content digest
+# skips symlinks, and the staging overlay links the compiled half of the engine in with `ln -sfn`
+# (25 links here). A path ABSENT from the pinned tree lands as a symlink that moves neither
+# this digest nor this count -- `_version.py` and a root `sitecustomize.py` are the two live shapes,
+# the second because CPython's site.py imports it by itself when the arm's tree is first on
+# PYTHONPATH. The inventory IS computed and recorded (`symlink_digest` in
+# artifacts/raw/pristine_tree_check.json); the value observed when this seal was taken was
+#     738ef5a9543c44d7ba2af8c6fc7c46943b36ae8988f0ce53e582cdcacbb5a251  25
+# and it is NOT sealed here, because it has one sample where this digest has 99. It is recorded on
+# every run; a second agreeing sample is what would turn it into a seal.

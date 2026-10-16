@@ -1,0 +1,32 @@
+UNPINNED  engine-src.tar (uncompressed stream of engine-src.tar.gz)
+# AN ADDITIONAL, OPTIONAL PIN — and UNPINNED here is a decision taken WITH the number in hand, not
+# an oversight. Read on before treating it as a gap.
+#
+# WHAT IT WOULD BE: the sha256 of `gzip -dc /opt/inference-bench/engine-src.tar.gz`, i.e. of the
+# archive's uncompressed stream, checked by tests/test.sh BEFORE it unpacks the archive. The image
+# build prints exactly that number, with the tar flags that make it reproducible
+# (`--sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner`, fixed member prefix `engine-src/`).
+#
+# MEASURED on a build of this task's image, 2026-09-14:
+#
+#     d737f5f1966c7fa60a997e03071c12cc68533694be38f863f5d4795119a56d49
+#
+# It is recorded here as a fact and NOT promoted to the enforced first field, because the two
+# authorities are not equally safe to fail closed on.
+#
+# THE CONTENT DIGEST IS THE AUTHORITY, and it is strictly stronger. tests/pristine_tree.sha256 is a
+# digest of the staged tree's CONTENT: it covers the runtime-mount route as well as the archive
+# route, and it catches tampering AFTER extraction, which an archive digest cannot. It is also
+# re-derivable from the pinned commit with no image build -- verified on this same build, where the
+# archive's python/ subtree digests to exactly the number that file carries, over 3524 files.
+#
+# WHAT PINNING THIS ONE WOULD RISK, which is the whole argument. This digest is a property of the
+# TAR STREAM, so it depends on the tar implementation that wrote it, not only on the content: a
+# builder whose tar emits different pax headers produces a different number for a byte-identical
+# tree. test.sh fails closed on a mismatch, so a builder difference would turn every scored run
+# into an infrastructure zero with nothing able to clear it -- while the content digest, which cannot
+# move for that reason, would have been green. A second authority that can only ever add false
+# negatives is not worth enforcing.
+#
+# So test.sh enforces this file WHEN IT CARRIES A DIGEST and logs a skip when it says UNPINNED. If
+# the build environment is ever fixed to one tar, promote the number above into the first field.

@@ -1,0 +1,7 @@
+Pier
+
+Pier includes code derived from Harbor:
+https://github.com/harbor-framework/harbor
+
+Harbor is licensed under the Apache License, Version 2.0.
+Pier contains modifications to the original Harbor code.

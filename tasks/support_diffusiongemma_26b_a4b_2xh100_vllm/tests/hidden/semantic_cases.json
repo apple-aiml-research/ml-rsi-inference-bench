@@ -1,0 +1,528 @@
+{
+ "tp1": [
+  {
+   "id": "sem/t/0",
+   "prompt": "Which is larger, an elephant or a mouse? Answer with one word.",
+   "answer": "elephant",
+   "candidates": [
+    "elephant",
+    "mouse"
+   ]
+  },
+  {
+   "id": "sem/t/1",
+   "prompt": "What comes after Monday? Answer with one word.",
+   "answer": "Tuesday",
+   "candidates": [
+    "Tuesday",
+    "Sunday"
+   ]
+  },
+  {
+   "id": "sem/t/2",
+   "prompt": "What is the chemical symbol for gold? Answer with the symbol only.",
+   "answer": "Au",
+   "candidates": [
+    "Au",
+    "Ag"
+   ]
+  },
+  {
+   "id": "sem/t/3",
+   "prompt": "Which month comes before March? Answer with one word.",
+   "answer": "February",
+   "candidates": [
+    "February",
+    "April"
+   ]
+  },
+  {
+   "id": "sem/t/4",
+   "prompt": "What do bees make? Answer with one word.",
+   "answer": "honey",
+   "candidates": [
+    "honey",
+    "milk"
+   ]
+  },
+  {
+   "id": "sem/t/5",
+   "prompt": "Which animal says moo? Answer with one word.",
+   "answer": "cow",
+   "candidates": [
+    "cow",
+    "dog"
+   ]
+  },
+  {
+   "id": "sem/t/6",
+   "prompt": "What is 7 plus 8? Answer with a number.",
+   "answer": "15",
+   "candidates": [
+    "15",
+    "56"
+   ]
+  },
+  {
+   "id": "sem/t/7",
+   "prompt": "Which is colder, ice or steam? Answer with one word.",
+   "answer": "ice",
+   "candidates": [
+    "ice",
+    "steam"
+   ]
+  },
+  {
+   "id": "sem/t/8",
+   "prompt": "What is the first letter of the English alphabet? Answer with the letter.",
+   "answer": "A",
+   "candidates": [
+    "A",
+    "Z"
+   ]
+  },
+  {
+   "id": "sem/t/9",
+   "prompt": "Which ocean lies between Europe and America? Answer with one word.",
+   "answer": "Atlantic",
+   "candidates": [
+    "Atlantic",
+    "Pacific"
+   ]
+  },
+  {
+   "id": "sem/t/10",
+   "prompt": "How many days are in a week? Answer with a number.",
+   "answer": "7",
+   "candidates": [
+    "7",
+    "5"
+   ]
+  },
+  {
+   "id": "sem/t/11",
+   "prompt": "What is the capital of Germany? Answer with one word.",
+   "answer": "Berlin",
+   "candidates": [
+    "Berlin",
+    "Munich"
+   ]
+  },
+  {
+   "id": "sem/i/0",
+   "prompt": "What colour is the leftmost shape? Answer with one word.",
+   "image_seeds": [
+    5000
+   ],
+   "answer": "red",
+   "candidates": [
+    "red",
+    "red",
+    "purple"
+   ]
+  },
+  {
+   "id": "sem/i/1",
+   "prompt": "What colour is the leftmost shape? Answer with one word.",
+   "image_seeds": [
+    5001
+   ],
+   "answer": "green",
+   "candidates": [
+    "green",
+    "yellow",
+    "purple"
+   ]
+  },
+  {
+   "id": "sem/i/2",
+   "prompt": "What colour is the leftmost shape? Answer with one word.",
+   "image_seeds": [
+    5002
+   ],
+   "answer": "blue",
+   "candidates": [
+    "blue",
+    "red",
+    "blue"
+   ]
+  },
+  {
+   "id": "sem/i/3",
+   "prompt": "What colour is the leftmost shape? Answer with one word.",
+   "image_seeds": [
+    5003
+   ],
+   "answer": "blue",
+   "candidates": [
+    "blue",
+    "green",
+    "purple"
+   ]
+  }
+ ],
+ "tp2": [
+  {
+   "id": "sem/t/0",
+   "prompt": "Which is larger, an elephant or a mouse? Answer with one word.",
+   "answer": "elephant",
+   "candidates": [
+    "elephant",
+    "mouse"
+   ]
+  },
+  {
+   "id": "sem/t/1",
+   "prompt": "What comes after Monday? Answer with one word.",
+   "answer": "Tuesday",
+   "candidates": [
+    "Tuesday",
+    "Sunday"
+   ]
+  },
+  {
+   "id": "sem/t/2",
+   "prompt": "What is the chemical symbol for gold? Answer with the symbol only.",
+   "answer": "Au",
+   "candidates": [
+    "Au",
+    "Ag"
+   ]
+  },
+  {
+   "id": "sem/t/3",
+   "prompt": "Which month comes before March? Answer with one word.",
+   "answer": "February",
+   "candidates": [
+    "February",
+    "April"
+   ]
+  },
+  {
+   "id": "sem/t/4",
+   "prompt": "What do bees make? Answer with one word.",
+   "answer": "honey",
+   "candidates": [
+    "honey",
+    "milk"
+   ]
+  },
+  {
+   "id": "sem/t/5",
+   "prompt": "Which animal says moo? Answer with one word.",
+   "answer": "cow",
+   "candidates": [
+    "cow",
+    "dog"
+   ]
+  },
+  {
+   "id": "sem/t/6",
+   "prompt": "What is 7 plus 8? Answer with a number.",
+   "answer": "15",
+   "candidates": [
+    "15",
+    "56"
+   ]
+  },
+  {
+   "id": "sem/t/7",
+   "prompt": "Which is colder, ice or steam? Answer with one word.",
+   "answer": "ice",
+   "candidates": [
+    "ice",
+    "steam"
+   ]
+  },
+  {
+   "id": "sem/t/8",
+   "prompt": "What is the first letter of the English alphabet? Answer with the letter.",
+   "answer": "A",
+   "candidates": [
+    "A",
+    "Z"
+   ]
+  },
+  {
+   "id": "sem/t/9",
+   "prompt": "Which ocean lies between Europe and America? Answer with one word.",
+   "answer": "Atlantic",
+   "candidates": [
+    "Atlantic",
+    "Pacific"
+   ]
+  },
+  {
+   "id": "sem/t/10",
+   "prompt": "How many days are in a week? Answer with a number.",
+   "answer": "7",
+   "candidates": [
+    "7",
+    "5"
+   ]
+  },
+  {
+   "id": "sem/t/11",
+   "prompt": "What is the capital of Germany? Answer with one word.",
+   "answer": "Berlin",
+   "candidates": [
+    "Berlin",
+    "Munich"
+   ]
+  }
+ ],
+ "candidates": {
+  "text": [
+   {
+    "id": "sem/t/0",
+    "prompt": "Which is larger, an elephant or a mouse? Answer with one word.",
+    "answer": "elephant",
+    "candidates": [
+     "elephant",
+     "mouse"
+    ]
+   },
+   {
+    "id": "sem/t/1",
+    "prompt": "What comes after Monday? Answer with one word.",
+    "answer": "Tuesday",
+    "candidates": [
+     "Tuesday",
+     "Sunday"
+    ]
+   },
+   {
+    "id": "sem/t/2",
+    "prompt": "What is the chemical symbol for gold? Answer with the symbol only.",
+    "answer": "Au",
+    "candidates": [
+     "Au",
+     "Ag"
+    ]
+   },
+   {
+    "id": "sem/t/3",
+    "prompt": "Which month comes before March? Answer with one word.",
+    "answer": "February",
+    "candidates": [
+     "February",
+     "April"
+    ]
+   },
+   {
+    "id": "sem/t/4",
+    "prompt": "What do bees make? Answer with one word.",
+    "answer": "honey",
+    "candidates": [
+     "honey",
+     "milk"
+    ]
+   },
+   {
+    "id": "sem/t/5",
+    "prompt": "Which animal says moo? Answer with one word.",
+    "answer": "cow",
+    "candidates": [
+     "cow",
+     "dog"
+    ]
+   },
+   {
+    "id": "sem/t/6",
+    "prompt": "What is 7 plus 8? Answer with a number.",
+    "answer": "15",
+    "candidates": [
+     "15",
+     "56"
+    ]
+   },
+   {
+    "id": "sem/t/7",
+    "prompt": "Which is colder, ice or steam? Answer with one word.",
+    "answer": "ice",
+    "candidates": [
+     "ice",
+     "steam"
+    ]
+   },
+   {
+    "id": "sem/t/8",
+    "prompt": "What is the first letter of the English alphabet? Answer with the letter.",
+    "answer": "A",
+    "candidates": [
+     "A",
+     "Z"
+    ]
+   },
+   {
+    "id": "sem/t/9",
+    "prompt": "Which ocean lies between Europe and America? Answer with one word.",
+    "answer": "Atlantic",
+    "candidates": [
+     "Atlantic",
+     "Pacific"
+    ]
+   },
+   {
+    "id": "sem/t/10",
+    "prompt": "How many days are in a week? Answer with a number.",
+    "answer": "7",
+    "candidates": [
+     "7",
+     "5"
+    ]
+   },
+   {
+    "id": "sem/t/11",
+    "prompt": "What is the capital of Germany? Answer with one word.",
+    "answer": "Berlin",
+    "candidates": [
+     "Berlin",
+     "Munich"
+    ]
+   },
+   {
+    "id": "sem/t/12",
+    "prompt": "Which is a fruit, an apple or a carrot? Answer with one word.",
+    "answer": "apple",
+    "candidates": [
+     "apple",
+     "carrot"
+    ]
+   },
+   {
+    "id": "sem/t/13",
+    "prompt": "What is 9 minus 4? Answer with a number.",
+    "answer": "5",
+    "candidates": [
+     "5",
+     "13"
+    ]
+   },
+   {
+    "id": "sem/t/14",
+    "prompt": "Which season follows winter? Answer with one word.",
+    "answer": "spring",
+    "candidates": [
+     "spring",
+     "autumn"
+    ]
+   },
+   {
+    "id": "sem/t/15",
+    "prompt": "What colour are ripe bananas? Answer with one word.",
+    "answer": "yellow",
+    "candidates": [
+     "yellow",
+     "purple"
+    ]
+   }
+  ],
+  "image": [
+   {
+    "id": "sem/i/0",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5000
+    ],
+    "answer": "red",
+    "candidates": [
+     "red",
+     "red",
+     "purple"
+    ]
+   },
+   {
+    "id": "sem/i/1",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5001
+    ],
+    "answer": "green",
+    "candidates": [
+     "green",
+     "yellow",
+     "purple"
+    ]
+   },
+   {
+    "id": "sem/i/2",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5002
+    ],
+    "answer": "blue",
+    "candidates": [
+     "blue",
+     "red",
+     "blue"
+    ]
+   },
+   {
+    "id": "sem/i/3",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5003
+    ],
+    "answer": "blue",
+    "candidates": [
+     "blue",
+     "green",
+     "purple"
+    ]
+   },
+   {
+    "id": "sem/i/4",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5004
+    ],
+    "answer": "red",
+    "candidates": [
+     "red",
+     "yellow",
+     "blue"
+    ]
+   },
+   {
+    "id": "sem/i/5",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5005
+    ],
+    "answer": "green",
+    "candidates": [
+     "green",
+     "yellow",
+     "yellow"
+    ]
+   },
+   {
+    "id": "sem/i/6",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5006
+    ],
+    "answer": "orange",
+    "candidates": [
+     "orange",
+     "blue",
+     "blue"
+    ]
+   },
+   {
+    "id": "sem/i/7",
+    "prompt": "What colour is the leftmost shape? Answer with one word.",
+    "image_seeds": [
+     5007
+    ],
+    "answer": "orange",
+    "candidates": [
+     "orange",
+     "yellow",
+     "orange"
+    ]
+   }
+  ]
+ }
+}

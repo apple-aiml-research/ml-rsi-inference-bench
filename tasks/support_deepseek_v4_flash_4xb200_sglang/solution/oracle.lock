@@ -1,0 +1,109 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/sgl-project/sglang.git",
+ "upstream_base": "55224fff08518b2402680a5b1b9189dcc5b27dda",
+ "base": "eac98398e7adc70dd10d8db3ff77226b026000ce",
+ "base_prime": {
+  "why": "the JIT kernel paths upstream landed inside the integration squash are supplied as a kernel preparation commit on the parent WITHOUT the six completed compression, post-compression norm/RoPE and cache-store sources, which are solver work, and the pinned FlashMLA is vendored at third_party/flash_mla with its optimized sparse attention withheld (kernel-materials.json)",
+  "sha": "0a4f56af55881720f8ef6f6589ed55926a647d6d",
+  "parent": "55224fff08518b2402680a5b1b9189dcc5b27dda",
+  "tree": "15dd04397fc0305d15a5364d4e0dac888a95ce89",
+  "patch": "../environment/kernel-prereq.patch",
+  "sha256": "30476191e50c8ad1dd14400a0f7845da0756698e6cb836069995c4f712d8fd7a",
+  "bytes": 246932,
+  "files": 29,
+  "insertions": 6086,
+  "deletions": 147,
+  "produced_by": "git --no-pager diff --no-ext-diff --no-color --binary --full-index 55224fff08518b2402680a5b1b9189dcc5b27dda 35870d55aca7c6912aa4c785f583da4acac04938 -- python/sglang/jit_kernel with the six exclusions ':(exclude)python/sglang/jit_kernel/csrc/deepseek_v4/{c4,c128,c128_v2,c128_online,fused_norm_rope,store}.cuh', plus python/sglang/jit_kernel/csrc/deepseek_v4/README.md naming them",
+  "withheld": [
+   "python/sglang/jit_kernel/csrc/deepseek_v4/c4.cuh",
+   "python/sglang/jit_kernel/csrc/deepseek_v4/c128.cuh",
+   "python/sglang/jit_kernel/csrc/deepseek_v4/c128_v2.cuh",
+   "python/sglang/jit_kernel/csrc/deepseek_v4/c128_online.cuh",
+   "python/sglang/jit_kernel/csrc/deepseek_v4/fused_norm_rope.cuh",
+   "python/sglang/jit_kernel/csrc/deepseek_v4/store.cuh"
+  ],
+  "vendor": {
+   "path": "third_party/flash_mla",
+   "tree": "ce8fe42fdcaf4bf385318c186c2edf1a47614aaa",
+   "source": "FlashMLA 9241ae3ef9bac614dd25e45e507e089f888280e0 transformed by environment/prepare_kernel_materials.py --variant supplied as environment/kernel-materials.json enumerates",
+   "cutlass": {
+    "commit": "147f5673d0c1c3dcf66f78d677fd647e4a020219",
+    "tree": "67435e0794c3c8d340bc0c9592952cddde20c875",
+    "path": "/opt/infb-deps/flashmla-cutlass"
+   }
+  },
+  "commit_recipe": "git apply --binary kernel-prereq.patch; the supplied vendor tree at third_party/flash_mla; git add -A python/sglang/jit_kernel third_party/flash_mla; commit with GIT_{AUTHOR,COMMITTER}_NAME=Inference-Bench, GIT_{AUTHOR,COMMITTER}_EMAIL=inference-bench@local, GIT_{AUTHOR,COMMITTER}_DATE=2026-05-08T01:28:23+0000 and the message in environment/kernel-prereq.msg; environment/Dockerfile asserts the resulting sha",
+  "touches_nothing_else": "git diff --name-only 55224fff HEAD -- . ':!python/sglang/jit_kernel' ':!third_party/flash_mla' is empty (asserted in environment/Dockerfile)"
+ },
+ "base_eval": {
+  "why": "the evaluation materials the agent is given, /app/eval/deepseek_v4_flash, committed on base' as a second preparation commit so they are part of the prepared tree. The commit, its tree, the path tree the restore guard rewrites from and the composed tree all move whenever those materials change; the solution patch does not (sha256 0fd81aba\u2026), because it touches no path under eval/.",
+  "sha": "eac98398e7adc70dd10d8db3ff77226b026000ce",
+  "parent": "0a4f56af55881720f8ef6f6589ed55926a647d6d",
+  "tree": "7e8f9cf5f0d7c8855abf5efac02b62cb649f233e",
+  "path": "eval/deepseek_v4_flash",
+  "path_tree": "a653ca897ff89ef92a000eed226c01e188e55256",
+  "files": 48,
+  "source": "../environment/eval/deepseek_v4_flash, and the public GSM8K test set fetched at build (sha256 3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14) as tests/fixtures/gsm8k_test.jsonl",
+  "commit_recipe": "git add -f eval/deepseek_v4_flash (the engine's .gitignore matches *.jsonl); commit with GIT_{AUTHOR,COMMITTER}_NAME=Inference-Bench, GIT_{AUTHOR,COMMITTER}_EMAIL=inference-bench@local, GIT_{AUTHOR,COMMITTER}_DATE=2026-05-08T01:28:24+0000 and the message in environment/eval-materials.msg; environment/Dockerfile asserts the resulting sha",
+  "touches_nothing_else": "git diff --name-only base' HEAD -- . ':!eval/deepseek_v4_flash' is empty (asserted in environment/Dockerfile and by the computation)",
+  "produced_by": "git alone, from the materials in ../environment/eval/deepseek_v4_flash"
+ },
+ "landing": {
+  "pr": 23882,
+  "sha": "35870d55aca7c6912aa4c785f583da4acac04938",
+  "merged_at": "2026-05-08T01:32:21Z",
+  "tree": "b1a952424b178641adba9d65933553f84a17a4c0",
+  "files_total": 154,
+  "insertions_total": 24963,
+  "deletions_total": 752,
+  "files_after_kernel_supply": 120,
+  "insertions_after_kernel_supply": 16094,
+  "deletions_after_kernel_supply": 605
+ },
+ "repairs_in_squash": [
+  23776,
+  23948,
+  24017,
+  24103
+ ],
+ "post_merge_repairs": [],
+ "criticality_results": {},
+ "closure_oracle": "35870d55aca7c6912aa4c785f583da4acac04938",
+ "composed": {
+  "why": "solution.patch applied on the materials commit; the reference tree the verifier builds and serves, checked whole",
+  "tree": "a2b5892f605902f93cea26fffc90ae8ce40b52ac",
+  "base": "eac98398e7adc70dd10d8db3ff77226b026000ce",
+  "patch_sha256": "0fd81aba8fb191abf0bfe9fd495c88a0047b88b99f91a7f121a52ade8f7ed995",
+  "engine_identity": "the landing 35870d55 (tree b1a952424b17) plus third_party/flash_mla, the pinned FlashMLA's reference variant (tree eb6708178d4d3fd0eae7ad3cf6681155d603088f: every withheld source restored, the offline packaging kept) plus eval/deepseek_v4_flash: every other path is the landing's"
+ },
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "0fd81aba8fb191abf0bfe9fd495c88a0047b88b99f91a7f121a52ade8f7ed995",
+  "bytes": 1207423,
+  "files": 171,
+  "insertions": 26317,
+  "deletions": 635,
+  "produced_by": "git --no-pager diff --no-ext-diff --no-color --binary --full-index 0a4f56af55881720f8ef6f6589ed55926a647d6d <the landing's tree plus the reference vendor tree at third_party/flash_mla>",
+  "equals_landing_patch": false,
+  "composition": "the kernel-less landing patch plus the restoration: the six withheld JIT sources (added), the preparation's README (deleted), the 42 withheld FlashMLA files (added), csrc/api/api.cpp and setup.py (the supplied variants back to the reference variants)"
+ },
+ "model": {
+  "repo": "deepseek-ai/DeepSeek-V4-Flash",
+  "revision": "60d8d70770c6776ff598c94bb586a859a38244f1",
+  "files": 73,
+  "bytes": 159630041626,
+  "shards": 46,
+  "manifest": "../environment/model-manifest.json",
+  "manifest_sha256": "551b5c9fe04a276e2bd7eb43f8f549d20fc44df79e3b25d4c9b2abec38ad68f0",
+  "source_adaptations": {
+   "inference/kernel.py": {
+    "original_sha256": "59b325083d7103975cba025bd0d60ea343bb82d8fff53088afb7c04bd380c0c2",
+    "original_bytes": 22198,
+    "adapted_sha256": "8726d5a7250bb2934be70c0ffe85422252547ead75ca718cea9420239efab9fb",
+    "adapted_bytes": 19265,
+    "by": "environment/fetch_model.py in the download step"
+   }
+  }
+ }
+}

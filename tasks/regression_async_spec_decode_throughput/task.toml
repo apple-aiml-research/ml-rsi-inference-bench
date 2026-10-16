@@ -1,0 +1,103 @@
+#
+# For licensing see accompanying LICENSE file.
+# Copyright (C) 2026 Apple Inc. All Rights Reserved.
+#
+schema_version = "1.2"
+
+[task]
+name = "inference-bench/regression_async_spec_decode_throughput"
+description = "Recover a decode-throughput regression on gpt-oss-120b (1xB200, TP=1) under async scheduling with an EAGLE3 speculative drafter. Throughput is simply lower -- no stall, no spike, no error, output bit-identical. The scored shapes are upstream's own reproduction (1024 requests at concurrency 512, 1024 in / 1024 out, no output-length jitter) and the same request shape at 384 and 256 concurrent requests, combined as a geometric mean; 128 concurrent requests is a guard, measured and never scored."
+authors = [{ name = "Inference-Bench maintainers" }]
+keywords = ["vllm", "regression", "decode", "speculative-decoding", "eagle3", "async-scheduling", "cudagraph", "lite"]
+
+[agent]
+timeout_sec = 30000
+
+[verifier]
+env = { INFB_OFFICIAL = "1", INFB_REAL_ENGINE = "1" }
+timeout_sec = 14400
+
+[environment]
+build_timeout_sec = 7200
+cpus = 8
+memory_mb = 32768
+storage_mb = 65536
+gpus = 1
+gpu_types = ["B200"]
+allow_internet = false
+workdir = "/app"
+
+[environment.healthcheck]
+command = "bash /app/scripts/pier_healthcheck.sh"
+timeout_sec = 3600.0
+retries = 1
+
+[metadata.inference_bench]
+tier = "lite"
+category = "regression"
+engine = "vllm"
+score_profile = "regression_recovery_v2"
+
+[metadata.inference_bench.official]
+requires_real_engine = true
+
+[metadata.inference_bench.target]
+repo = "https://github.com/vllm-project/vllm.git"
+commit = "342c4f147266e7d01a8a6a64754df7e0f7f8991a"
+
+[metadata.inference_bench.model]
+architecture = "GptOssForCausalLM"
+model_type = "gpt_oss"
+feature = "MoE 120B (MXFP4) served at TP=1 on one B200, with a SEPARATE EAGLE3 draft head -- upstream's own reproduction configuration. TWO checkpoints, not one. The defect is host-side scheduling and is independent of model SHAPE, but not of the speculative METHOD: the engine refuses the combination this task needs unless the drafter is EAGLE/MTP."
+hf_model_family = "openai/gpt-oss-120b"
+hf_model_id = "openai/gpt-oss-120b"
+speculative_draft_hf_model_id = "nvidia/gpt-oss-120b-Eagle3"
+
+[metadata.inference_bench.target_environment]
+python = "3.12"
+engine_install = "task_scoped_vllm_342c4f1_with_source_overlay"
+
+[metadata.inference_bench.commands]
+
+[metadata.inference_bench.oracle]
+oracle_id = "uniform_decode_preserved_when_scheduling_spec_tokens"
+source = "task-local_reference_implementation"
+oracle_scope = "Upstream's fix: stop scheduling a request at all once the previous step is known to have reached max_tokens, and drop the clamp that otherwise hands it fewer than 1+num_speculative_tokens tokens. Shipped WITHOUT upstream's own comments, which name the mechanism outright and would hand the task away."
+
+[metadata.inference_bench.scoring]
+kind = "regression_recovery"
+metric = "throughput"
+measured_key = "throughput.total_tokens_per_sec"
+higher_is_better = true
+noise_floor = 1.03
+oracle_speedup = 1.170
+oracle_speedup_per_workload = { in1024_out1024_c256 = 1.110, in1024_out1024_c384 = 1.178, in1024_out1024_c512 = 1.226 }
+oracle_measured_on = "1xB200, the workload matrix: geometric mean of the three scored points, warmed rotated rounds, one engine boot per point. The declared oracle_speedup is that geomean; oracle_speedup_per_workload carries the per-shape values."
+
+[metadata.inference_bench.real_engine_thresholds.latency]
+max_e2e_mean_ms = 120000.0
+
+[metadata.inference_bench.real_engine_thresholds.throughput]
+min_request_per_sec = 0.1
+min_total_tokens_per_sec = 1.0
+
+[metadata.inference_bench.real_engine_thresholds.serve]
+min_request_per_sec = 0.1
+min_total_tokens_per_sec = 1.0
+max_ttft_mean_ms = 5000.0
+
+[metadata.inference_bench.workloads]
+in1024_out1024_c512 = { input_len = 1024, output_len = 1024, num_prompts = 1024, max_concurrency = 512 }
+in1024_out1024_c256 = { input_len = 1024, output_len = 1024, num_prompts = 512, max_concurrency = 256 }
+in1024_out1024_c384 = { input_len = 1024, output_len = 1024, num_prompts = 768, max_concurrency = 384 }
+in1024_out1024_c128 = { input_len = 1024, output_len = 1024, num_prompts = 256, max_concurrency = 128, role = "guard", min_ratio = 0.95 }
+
+[metadata.inference_bench.runtime]
+model = "openai/gpt-oss-120b"
+serve_args = "--tensor-parallel-size 1 --max-model-len 2560 --gpu-memory-utilization 0.9 --kv-cache-dtype fp8 --max-num-batched-tokens 8192 --no-enable-prefix-caching --async-scheduling --stream-interval 20 --trust-remote-code --speculative-config {\"method\":\"eagle3\",\"model\":\"nvidia/gpt-oss-120b-Eagle3\",\"num_speculative_tokens\":3} --compilation-config {\"max_cudagraph_capture_size\":2048,\"pass_config\":{\"enable_fi_allreduce_fusion\":true,\"enable_noop\":true}}"
+sampling_args = ""
+
+[metadata.inference_bench.artifacts]
+
+[environment.env]
+INFB_AGENT_TIMEOUT_SEC = "30000"

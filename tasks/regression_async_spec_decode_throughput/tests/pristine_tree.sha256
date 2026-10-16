@@ -1,0 +1,30 @@
+6609cb4983e3fa8931a602c0815fc0ae0ad6d8982843b9ce3a853f23a5dd10ac  2117
+symlinks ee9817f7f6bdc6c57007ffa8e0595e6637e4d7fd138d6bf2261598a8f860155b  12
+# THE AUTHORITY for the pristine arm of the scored ratio. `tests/` is not part of the tree the agent
+# works in, while the tree this seals sits at a path the agent can write for the whole turn.
+#
+# THE HOLE THIS CLOSES. tests/test.sh resolves the scored PRISTINE arm from `source_dir` in
+# ${workspace}/real_engine_source.json. That file is written before the agent starts and then sits in
+# the agent's own workspace, and the tree it names (/app/baseline_repo) is writable alongside it.
+# Editing that tree does not need the JSON touched at all, and it moves the DENOMINATOR of the ratio
+# being scored -- a slower baseline is the cheapest way to pass a speedup gate without repairing
+# anything.
+#
+# FORMAT: `<sha256>  <*.py count>`, both compared. A digest that matches while the count does not
+# means the seal's two fields disagree with each other, which must not read as a verified tree.
+#
+# DERIVED FROM A TREE A REAL RUN STAGED, by this task's own tests/test.sh staging path: 2117 regular
+# non-symlink *.py under /app/baseline_repo. Deriving it from upstream instead does not work -- the
+# staged tree and an upstream checkout differ by a couple of files, and a seal built the wrong way
+# round is void from the moment it lands.
+#
+# TO RE-DERIVE: run this task's tests/_pristine_digest.py over the tree test.sh stages, on this
+# task's own image. Any other tree is a different number.
+#
+# THE CHANNEL THIS DOES NOT COVER, recorded so it is not mistaken for covered: the content digest
+# skips symlinks, and the staging overlay links the compiled half of the engine in with `ln -sfn`
+# (12 links here). A path ABSENT from the pinned tree lands as a symlink that moves neither
+# this digest nor this count -- `_version.py` and a root `sitecustomize.py` are the two live shapes,
+# the second because CPython's site.py imports it by itself when the arm's tree is first on
+# PYTHONPATH. The inventory IS computed and recorded (`symlink_digest` in
+# artifacts/raw/pristine_tree_check.json), and the symlink line above seals it as well.

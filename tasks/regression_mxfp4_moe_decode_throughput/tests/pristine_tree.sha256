@@ -1,0 +1,34 @@
+4c919ed7fdab48af100dd94b892809e1b6c6f7dffd797adc4a54998b1f1d3903  # 1934 *.py
+
+# THE SEALED CONTENT DIGEST OF THE PRISTINE TREE -- the denominator of the scored ratio.
+#
+# WHAT IT IS. sha256 over, in sorted relative-path order, every regular (non-symlink) *.py in the
+# tree except those under .git/ or __pycache__/, each contributed as
+#     <relpath> NUL <sha256 of the file's bytes> LF
+# The algorithm is tests/_pristine_digest.py's.
+#
+# WHY IT EXISTS. `tests/` is staged into the verifier AFTER the agent's turn and is not part of
+# the tree the agent works in, so this is the one number in the run that cannot have been forged. Without it the rig produces a ratio against an unverified
+# denominator -- strictly worse than failing closed, because it still produces a score.
+#
+# HOW IT WAS DERIVED, and the claim is one route plus a cross-check, not more:
+#
+#   1. The route the image itself uses. `curl https://codeload.github.com/sgl-project/sglang/tar.gz/
+#      c8dc4d2d1f1ab32626f43a04accc67917078b22d`, unpacked with --strip-components=1, which is exactly
+#      what environment/Dockerfile stages into /opt/engine-src. 1934 *.py files.
+#   2. A per-file cross-check over a DIFFERENT transport. raw.githubusercontent.com's copy of
+#      python/sglang/srt/layers/quantization/mxfp4.py hashes to 8a835ab71a5d4ea9... , the same first
+#      16 hex as the tarball's copy -- which is also the value environment/Dockerfile's
+#      ENGINE_SRC_SHA256 content gate asserts at build time, so the two checks confirm each other.
+#
+#   NOT claimed: a git-clone derivation. The two routes above agree, so a third was not run.
+#
+# TO RE-DERIVE, if the pin ever moves:
+#   curl -fsSL -o /tmp/src.tgz https://codeload.github.com/sgl-project/sglang/tar.gz/<commit>
+#   mkdir -p /tmp/tree && tar -xzf /tmp/src.tgz --strip-components=1 -C /tmp/tree
+#   python3 tests/_pristine_digest.py /tmp/tree
+#
+# THE OVERLAY DOES NOT CHANGE THIS. scripts/stage_engine_extensions.sh links the preserved build-time
+# artefacts in with `ln -sfn`, so `_version.py` lands as a SYMLINK and the non-symlink rule above skips
+# it. At this engine version that is the only artefact there is -- sglang 0.5.7 publishes a pure-Python
+# wheel with no compiled extension -- so the overlay adds exactly one skipped symlink.

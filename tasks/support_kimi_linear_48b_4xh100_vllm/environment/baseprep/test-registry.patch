@@ -1,0 +1,14 @@
+diff --git a/tests/models/registry.py b/tests/models/registry.py
+index 17b1d7b527f6beaa076519e11ad52e938d19c3ad..9a2a1eb5f1a7498639903073b571360058ffc9b0 100644
+--- a/tests/models/registry.py
++++ b/tests/models/registry.py
+@@ -296,6 +296,9 @@ _TEXT_GENERATION_EXAMPLE_MODELS = {
+             "random": "ai21labs/Jamba-tiny-random",
+         },
+     ),
++    "KimiLinearForCausalLM": _HfExamplesInfo(
++        "moonshotai/Kimi-Linear-48B-A3B-Instruct", trust_remote_code=True
++    ),
+     "Lfm2ForCausalLM": _HfExamplesInfo("LiquidAI/LFM2-1.2B"),
+     "Lfm2MoeForCausalLM": _HfExamplesInfo(
+         "LiquidAI/LFM2-8B-A1B", min_transformers_version="4.58"

@@ -1,0 +1,63 @@
+{
+  "schema": "infb-kda-protocol/3",
+  "note": "The public measurement protocol of the native KDA layer: shapes and conventions, the error statistic, the loaded-layer sample examples and the complete-layer timing families. It carries no acceptance threshold and no evaluation case schedule; the accepted numerical error is numerical-policy.json.",
+  "layer": {
+    "kda_layers": 20,
+    "tensor_parallel_ranks": 4,
+    "heads_per_rank": 8,
+    "key_dim": 128,
+    "value_dim": 128,
+    "activation_dtype": "bfloat16",
+    "recurrent_state_dtype": "float32",
+    "recurrent_state_layout": "[slot, head, key, value]",
+    "convolution_width": 4,
+    "convolution_histories": 3,
+    "convolution_state_layout": "[slot, width - 1, local channels], the engine cache orientation",
+    "qk_normalization_epsilon": 1e-06,
+    "gate": "g = -exp(A_log) * softplus(raw_gate + dt_bias, beta=1, threshold=20)",
+    "state_update": "decayed = exp(g)[..., None] * state; delta = beta * (v - k @ decayed); next_state = decayed + outer(k, delta); attention = (q / sqrt(128)) @ next_state",
+    "output": "RMS norm with the checkpoint's epsilon and weight, times sigmoid(output gate); output projection; tensor-parallel sum"
+  },
+  "error_statistic": {
+    "relative_rmse": "sqrt(mean((actual - expected)^2)) / (sqrt(mean(expected^2)) + 1e-8), accumulated in FP32",
+    "max_abs": "max |actual - expected|",
+    "finite_first": "every expected and actual value must be finite before any statistic is taken",
+    "untouched_slots": "every state slot a call does not own must be bit-identical after it"
+  },
+  "sample": {
+    "seed_default": 37129,
+    "layer": "the first discovered native KDA layer",
+    "rows": "each case gives every row's new-token count (`lengths`) and its count of earlier computed tokens (`computed`). A row with no computed tokens is a fresh request: the mathematics starts it from zero state, whatever its state slot holds. Any other row continues its valid history from its slot. The call's attention metadata comes from the loaded runner's own metadata builder for the layer; rows take the runner's native order, absolute positions continue at each row's computed count, and a padded decode call carries the builder's padded extent. Every later step continues every row from what it computed.",
+    "cases": [
+      {"name": "fresh_prefill", "lengths": [8], "computed": [0], "steps": 1},
+      {"name": "continued_prefill", "lengths": [8], "computed": [64], "steps": 2},
+      {"name": "packed_prefill", "lengths": [5, 11], "computed": [0, 0], "steps": 2},
+      {"name": "decode", "lengths": [1, 1], "computed": [64, 64], "steps": 3},
+      {"name": "mixed_fresh_continued", "lengths": [1, 6, 1], "computed": [0, 48, 20], "steps": 2}
+    ],
+    "reported": "every rank: the layer's identity and source, the metadata builder's identity, input, output and state shapes, and per step the rows' lengths, computed counts, slots, native order and extent, the complete-output, core-attention and four state errors and whether unowned slots stayed bit-identical"
+  },
+  "timing": {
+    "families": [
+      {"index": 0, "family": "prefill", "lengths": [128]},
+      {"index": 1, "family": "prefill", "lengths": [512]},
+      {"index": 2, "family": "prefill", "lengths": [2048]},
+      {"index": 3, "family": "prefill_packed", "lengths": [2048, 2048, 2048, 2048]},
+      {"index": 4, "family": "decode", "lengths": [1]},
+      {"index": 5, "family": "decode", "lengths": [1, 1, 1]},
+      {"index": 6, "family": "decode", "lengths": "16 ones"},
+      {"index": 7, "family": "decode", "lengths": "64 ones"}
+    ],
+    "boundary": "the complete native KDA layer: projections, convolution, gate formation, Q/K normalization, delta recurrence, output normalization and gating, output projection, tensor-parallel reduction and all required temporary and state work; MLA and MoE excluded",
+    "working_set": "all 20 layers' distinct weights and caches; one controlled hidden input and output scratch reused sequentially",
+    "history_tokens": 2048,
+    "rows": "every timed row continues `history_tokens` computed tokens of valid history; metadata from the loaded runner's own builder for each layer, a padded decode call at the builder's padded extent",
+    "warmups": 3,
+    "draws": 5,
+    "repeats": 10,
+    "decode_mode": "one CUDA graph captured over the 20 layer calls",
+    "state_reset": "every draw starts from the same controlled states, reset outside the timed region",
+    "checks": "layers 0 and 19 are compared with the mathematics before and after each family's timing",
+    "statistic": "per draw, the slowest rank's synchronized wall time per layer call; the median over the draws; CUDA-event time accompanies it"
+  }
+}

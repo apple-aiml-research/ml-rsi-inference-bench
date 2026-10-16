@@ -1,0 +1,47 @@
+{
+ "schema": "infb-day0-oracle-lock/1",
+ "repo": "https://github.com/sgl-project/sglang.git",
+ "upstream_base": "a9944aec01e281f5c12c9651f981a53bdece6989",
+ "prepared_base": {
+  "commit": "9f6b624b4b4460f4b62aed3297cd2574dbf02b92",
+  "what": "one commit on the engine base adding only eval/ (the evaluation material at /app/eval/glm53_flash/: the task's public materials), the agent's starting point",
+  "reproduced_by": "environment/Dockerfile step 10: COPY public/ /app/eval/glm53_flash/, the public GSM8K test set fetched and sha256-checked into tests/data/gsm8k/, `git add --chmod=-x eval`, and a commit with pinned identity (Inference-Bench <inference-bench@local>), date (1790156485 +0000) and message; the step asserts the sha and that the diff from the engine base outside eval/ is empty"
+ },
+ "base": "9f6b624b4b4460f4b62aed3297cd2574dbf02b92",
+ "landing": {
+  "pr": 36507,
+  "sha": "97c6978369ac1e04c91fcc01c98acc25129a6000",
+  "merged_at": "2026-09-06T09:28:00Z",
+  "files": 103,
+  "insertions": 7740,
+  "deletions": 558
+ },
+ "repairs_in_squash": [
+  36755,
+  36884,
+  38079,
+  38201
+ ],
+ "post_merge_repairs": [],
+ "criticality_results": {},
+ "closure_oracle": "97c6978369ac1e04c91fcc01c98acc25129a6000",
+ "solution_patch": {
+  "path": "solution.patch",
+  "sha256": "0458417f19edace4c62b063eb8d216eb2f58018921826314ba3275f8503ed6fb",
+  "bytes": 467273,
+  "produced_by": "git --no-pager diff --no-ext-diff --no-color --binary a9944aec01e281f5c12c9651f981a53bdece6989 97c6978369ac1e04c91fcc01c98acc25129a6000",
+  "equals_landing_patch": true,
+  "files": 103,
+  "applies_to_tree": "dea660d1aa3a47e41a322ba10ba03381e915a910",
+  "applies_to_tree_note": "git write-tree after applying solution.patch to the prepared base 6f17ed93d51b, as the verifier image's snapshot step computes it; the layout read position by position, for the tensor-parallel layout rule in attention-numerics.md. The patch touches nothing under eval/, so its engine portion is engine_tree.",
+  "engine_tree": "0a199bfe24b194aa7bbcfc561b404ef1b4b0a6e1",
+  "engine_tree_note": "git write-tree after applying solution.patch to a checkout of base a9944aec; 103 changed paths. The reference commit itself is deliberately absent from the image, so the TREE is the only identity the verifier can check against, which is what the snapshot step does."
+ },
+ "model": {
+  "repo": "zai-org/GLM-5.3-Flash",
+  "revision": "690b705278a3a58e538fcb37c2ca8b5f9511213c",
+  "files": 72,
+  "bytes": 328366172624,
+  "index_sha256": "3c3f40366a53c3fd7974b4eab7881a365a98c2a4329150befebab99fe7c18b05"
+ }
+}
